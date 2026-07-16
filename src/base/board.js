@@ -2813,7 +2813,7 @@ JXG.extend(
          * @returns {Boolean} false if the first finger event is sent twice, or not a browser, or in selection mode. Otherwise returns true.
          */
         pointerDownListener: function (evt, object, allowDefaultEventHandling) {
-            var i, j, k, pos, c,
+            var i, j, k, pos,
                 elements, sel, target_obj,
                 type = 'mouse', // Used in case of no browser
                 found, target, ta;
@@ -2992,15 +2992,7 @@ JXG.extend(
                 }
             }
 
-            if (this.mode !== this.BOARD_MODE_MOVE_ORIGIN) {
-                // Add coords to sketch curves
-                // Only first and second finger are stored
-                c = this.getUsrCoordsOfMouse(evt);
-                i = (evt.isPrimary) ? 0 : 1;
-                this.sketches[i].dataX = [c[0]];
-                this.sketches[i].dataY = [c[1]];
-                this.isSketching[i] = true;
-            }
+            this.initSketchCurve(evt);
 
             // Allow browser scrolling
             // For this: pan by one finger has to be disabled
@@ -3165,7 +3157,7 @@ JXG.extend(
          * @returns {Boolean}
          */
         pointerMoveListener: function (evt) {
-            var i, j, pos, c, len,
+            var i, j, pos,
                 eps,
                 touchTargets,
                 type = 'mouse'; // in case of no browser
@@ -3221,21 +3213,7 @@ JXG.extend(
                 );
             } else if (!this.mouseOriginMove(evt)) {
 
-                // Add coords to sketch curves
-                // Only first and second finger are stored
-                i = (evt.isPrimary) ? 0 : 1;
-                if (this.attr.sketches.enabled && this.isSketching[i] === true) {
-                    c = this.getUsrCoordsOfMouse(evt);
-                    this.sketches[i].dataX.push(c[0]);
-                    this.sketches[i].dataY.push(c[1]);
-
-                    len = this.sketches[i].evalVisProp('maxlength');
-                    if (len !== null && this.sketches[i].dataX.length > len) {
-                        this.sketches[i].dataX = this.sketches[i].dataX.slice(-len);
-                        this.sketches[i].dataY = this.sketches[i].dataY.slice(-len);
-                    }
-                    this.update();
-                }
+                this.addToSketchCurve(evt);
 
                 if (this.mode === this.BOARD_MODE_DRAG) {
                     // Run through all jsxgraph elements which are touched by at least one finger.
@@ -3318,16 +3296,7 @@ JXG.extend(
                 }
             }
 
-            // Stop sketching into this.sketches
-            i = (evt.isPrimary) ? 0 : 1;
-            if (this.attr.sketches.enabled) {
-                this.isSketching[i] = false;
-                if (this.sketches[i].evalVisProp('deleteOnUp')) {
-                    this.sketches[i].dataX = [];
-                    this.sketches[i].dataY = [];
-                }
-            }
-
+            this.finalizeSketchCurve(evt);
             this.originMoveEnd();
             this.update();
 
@@ -3642,6 +3611,8 @@ JXG.extend(
                 this.gestureStartListener(evt);
             }
 
+            this.initSketchCurve(evt);
+
             this.options.precision.hasPoint = this.options.precision.mouse;
             this.triggerEventHandlers(['touchstart', 'down'], [evt]);
 
@@ -3656,8 +3627,7 @@ JXG.extend(
          */
         touchMoveListener: function (evt) {
             var i,
-                pos1,
-                pos2,
+                pos1, pos2,
                 touchTargets,
                 evtTouches = evt['touches'];
 
@@ -3694,6 +3664,9 @@ JXG.extend(
                 }
             } else {
                 if (!this.touchOriginMove(evt)) {
+
+                    this.addToSketchCurve(evt);
+
                     if (this.mode === this.BOARD_MODE_DRAG) {
                         // Runs over through all elements which are touched
                         // by at least one finger.
@@ -3806,6 +3779,8 @@ JXG.extend(
 
             this.triggerEventHandlers(['touchend', 'up'], [evt]);
             this.displayInfobox(false);
+
+            this.finalizeSketchCurve(evt);
 
             // selection
             if (this.selectingMode) {
@@ -3945,7 +3920,7 @@ JXG.extend(
          * @returns {Boolean} True if no element is found under the current mouse pointer, false otherwise.
          */
         mouseDownListener: function (evt) {
-            var pos, elements, result, c;
+            var pos, elements, result;
 
             // prevent accidental selection of text
             if (this.document.selection && Type.isFunction(this.document.selection.empty)) {
@@ -4019,15 +3994,7 @@ JXG.extend(
                 result = this.mouseOriginMoveStart(evt);
             }
 
-            if (this.mode !== this.BOARD_MODE_MOVE_ORIGIN) {
-                // Add coords to sketch curves
-                // Only first and second finger are stored
-                c = this.getUsrCoordsOfMouse(evt);
-                this.sketches[0].dataX = [c[0]];
-                this.sketches[0].dataY = [c[1]];
-                this.isSketching[0] = true;
-            }
-
+            this.initSketchCurve(evt);
             this.triggerEventHandlers(['mousedown', 'down'], [evt]);
 
             return result;
@@ -4038,7 +4005,7 @@ JXG.extend(
          * @param {Event} evt The browsers event object.
          */
         mouseMoveListener: function (evt) {
-            var pos, len, c;
+            var pos;
 
             if (!this.checkFrameRate(evt)) {
                 return false;
@@ -4069,19 +4036,7 @@ JXG.extend(
                 );
             } else if (!this.mouseOriginMove(evt)) {
 
-                // Add coords to sketch curves
-                if (this.attr.sketches.enabled && this.isSketching[0] === true) {
-                    c = this.getUsrCoordsOfMouse(evt);
-                    this.sketches[0].dataX.push(c[0]);
-                    this.sketches[0].dataY.push(c[1]);
-
-                    len = this.sketches[0].evalVisProp('maxlength');
-                    if (len !== null && this.sketches[0].dataX.length > len) {
-                        this.sketches[0].dataX = this.sketches[0].dataX.slice(-len);
-                        this.sketches[0].dataY = this.sketches[0].dataY.slice(-len);
-                    }
-                    this.update();
-                }
+                this.addToSketchCurve(evt);
 
                 if (this.mode === this.BOARD_MODE_DRAG) {
                     this.moveObject(pos[0], pos[1], this.mouse, evt, 'mouse');
@@ -4120,15 +4075,7 @@ JXG.extend(
                 }
             }
 
-            // Stop sketching into this.sketches
-            if (this.attr.sketches.enabled) {
-                this.isSketching[0] = false;
-                if (this.sketches[0].evalVisProp('deleteOnUp')) {
-                    this.sketches[0].dataX = [];
-                    this.sketches[0].dataY = [];
-                }
-            }
-
+            this.finalizeSketchCurve(evt);
             this.originMoveEnd();
             this.dehighlightAll();
             this.update();
@@ -7533,6 +7480,59 @@ JXG.extend(
             }
 
             return this;
+        },
+
+        initSketchCurve: function(evt) {
+            var i, c;
+            // Init sketchcurves
+            if (this.mode !== this.BOARD_MODE_MOVE_ORIGIN) {
+                // Add coords to sketch curves
+                // Only first and second finger are stored
+                c = this.getUsrCoordsOfMouse(evt);
+                i = (evt.isPrimary) ? 0 : 1;
+                this.sketches[i].dataX = [c[0]];
+                this.sketches[i].dataY = [c[1]];
+                this.isSketching[i] = true;
+            }
+        },
+
+        addToSketchCurve: function(evt) {
+            var i, c, len;
+
+            // Add coords to sketchcurves
+            // Only first and second finger are stored
+            i = (evt.isPrimary) ? 0 : 1;
+            if (this.attr.sketches.enabled && this.isSketching[i] === true) {
+                c = this.getUsrCoordsOfMouse(evt);
+                this.sketches[i].dataX.push(c[0]);
+                this.sketches[i].dataY.push(c[1]);
+
+                len = this.sketches[i].evalVisProp('maxlength');
+                if (len !== null && this.sketches[i].dataX.length > len) {
+                    this.sketches[i].dataX = this.sketches[i].dataX.slice(-len);
+                    this.sketches[i].dataY = this.sketches[i].dataY.slice(-len);
+                }
+                if (this.sketches[i].evalVisProp('visible')) {
+                    // Update just the sketchcurve:
+                    // this.sketches[i].prepareUpdate().update().updateVisibility().updateRenderer();
+                    // Update the full board:
+                    this.update();
+                }
+            }
+        },
+
+        finalizeSketchCurve: function(evt) {
+            var i;
+
+            // Stop sketching into this.sketches
+            i = (evt.isPrimary) ? 0 : 1;
+            if (this.attr.sketches.enabled) {
+                this.isSketching[i] = false;
+                if (this.sketches[i].evalVisProp('deleteOnUp')) {
+                    this.sketches[i].dataX = [];
+                    this.sketches[i].dataY = [];
+                }
+            }
         },
 
         /* **************************
