@@ -269,6 +269,10 @@ JXG.Dump = {
                 delete a.layer;
             }
         }
+        // Handle draft = false separately, see options.js - JXG.Validator
+        if (Type.exists(a.draft) && a.draft === false) {
+            delete a.draft;
+        }
 
         a.id = obj.id;
         a.name = obj.name;

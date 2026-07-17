@@ -2579,7 +2579,9 @@ JXG.Options = {
          * </script><pre>
          *
          */
-        transitionProperties: ['fill', 'fill-opacity', 'stroke', 'stroke-opacity', 'stroke-width'],
+        // transitionProperties: ['fill', 'fill-opacity', 'stroke', 'stroke-opacity', 'stroke-width'], // org
+        // transitionProperties for points.
+        transitionProperties: ['fill', 'fill-opacity', 'stroke', 'stroke-opacity', 'stroke-width', 'width', 'height', 'rx', 'ry'],
 
         /**
          * If false the element won't be visible on the board, otherwise it is shown.
@@ -7862,7 +7864,7 @@ JXG.Options = {
          */
         infoboxDigits: 'auto',
 
-        draft: false,
+        // draft: false,
 
         /**
          * List of attractor elements. If the distance of the point is less than
@@ -9622,7 +9624,7 @@ JXG.Options = {
          */
         digits: 2,
 
-        draft: false,
+        //draft: false,
 
         /**
          * Internationalization support for texts consisting of a number only.
