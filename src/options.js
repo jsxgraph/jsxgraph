@@ -9622,6 +9622,8 @@ JXG.Options = {
          */
         digits: 2,
 
+        draft: false,
+
         /**
          * Internationalization support for texts consisting of a number only.
          * <p>

@@ -114,11 +114,10 @@ JXG.Dump = {
     },
 
     /**
-     * Recursively determine the difference between objects
-     * instance and def.
-     * @param {Object} instance
-     * @param {Object} def
-     * @param {String} pre
+     * Recursively determine the difference between objects instance and def.
+     * @param {Object} instance Attribute object of the element. Usually a copy is supplied
+     * @param {Object} def Default attributes, the instance is compared to
+     * @param {String} pre Helper string for debug output
      * @returns
      */
     _minimizeSubObject: function(instance, def, pre) {
@@ -139,10 +138,12 @@ JXG.Dump = {
                     delete copy[pl];
                 } else if (Type.isArray(def[p]) && Type.isArray(copy[pl])) {
                     // Compare two arrays
+                    // console.log(p, 'arrays', 'instance:', copy[pl], 'default:', def[p])
                     if (Type.cmpArrays(copy[pl], def[p])) {
-                        // console.log(pre + "\t\tdelete ARR", p);
+                        // console.log(pre + "\t\tdelete array", p);
                         delete copy[pl];
                     } else {
+                        // console.log(pre + '\t keep array')
                         deleteAll = false;
                     }
                 } else {
@@ -155,11 +156,12 @@ JXG.Dump = {
                             // console.log(pre + "--> delete obj", p)
                             delete copy[pl];
                         } else {
-                            // console.log(pre + '|')
-                            // console.log(def[p], copy[pl])
+                            // console.log(pre + '|', 'keep obj')
+                            // console.log('default:', def[p], 'copy:', copy[pl])
                             deleteAll = false;
                         }
                     } else {
+                        // console.log(pre + '|', 'keep', pl)
                         deleteAll = false;
                     }
                 }
@@ -193,14 +195,18 @@ JXG.Dump = {
             defaults.push(arguments[i]);
         }
 
+        // First, take the generic GeometryElement options ('elements')
         def = Type.deepCopy(def, JXG.Options.elements, true);
+        // Second, take the options supplied as parameters
         for (i = defaults.length - 1; i >= 0; i--) {
             def = Type.deepCopy(def, defaults[i], true);
         }
 
         // console.log('element', copy)
         // console.log('default', def)
+        // "copy" is a copy of the attribute object of the element
         del = this._minimizeSubObject(copy, def, ' ');
+        // console.log('del', del)
         if (del === true) {
             copy = {};
         }
@@ -231,10 +237,12 @@ JXG.Dump = {
         var a, s, o;
 
         o = JXG.Options[obj.elType] || {};
+        // console.log('prepareAttributes', obj.id, obj.getAttributes(), o)
         a = this.minimizeObject(obj.getAttributes(), o);
 
         for (s in obj.subs) {
             if (obj.subs.hasOwnProperty(s)) {
+                // console.log('sub', s)
                 a[s] = this.minimizeObject(
                     obj.subs[s].getAttributes(),
                     o[s],
@@ -242,6 +250,23 @@ JXG.Dump = {
                 );
                 a[s].id = obj.subs[s].id;
                 a[s].name = obj.subs[s].name;
+            }
+        }
+
+        // Handle label separately
+        if (Type.exists(a.label)) {
+            o = JXG.Options.label || {};
+            a.label = this.minimizeObject(a.label, o);
+            if (Type.isEmpty(a.label)) {
+                delete a.label;
+            }
+        }
+
+        // Handle layer if it still exists
+        if (Type.exists(a.layer)) {
+            o = JXG.Options.layer || {};
+            if (a.layer === o[obj.elType]) {
+                delete a.layer;
             }
         }
 
