@@ -423,13 +423,14 @@ JXG.Dump = {
     /**
      * Exports the construction in <tt>board</tt> to JessieCode.
      * @param {JXG.Board} board
+     * @param {Boolean} [noAttributes=false] If true, output contains no attributes beside 'id' and 'name'
      * @returns {String} The construction as JessieCode code
      * @see JXG.Dump#dump
      * @see JXG.Dump#toJSON
      * @see JXG.Dump#toJavaScript
      */
-    toJessie: function (board) {
-        var i,
+    toJessie: function (board, noAttributes) {
+        var i, a,
             elements,
             id,
             dump = this.dump(board),
@@ -438,6 +439,16 @@ JXG.Dump = {
         dump.methods = this.setBoundingBox(dump.methods, board, "$board");
 
         elements = dump.elements;
+        // Delete unwanted attributes
+        if (noAttributes === true) {
+            for (i = 0; i < elements.length; i++) {
+                for (a in elements[i].attributes) {
+                    if (elements[i].attributes.hasOwnProperty(a) && a !== 'id' && a !== 'name') {
+                        delete elements[i].attributes[a];
+                    }
+                }
+            }
+        }
 
         for (i = 0; i < elements.length; i++) {
             if (elements[i].attributes.name.length > 0) {
