@@ -1227,7 +1227,7 @@ JXG.Options = {
          * @see SketchCurve
          */
         sketches: {
-            enabled: true,
+            enabled: false,
             0: {visible: false},
             1: {visible: false}
         },
