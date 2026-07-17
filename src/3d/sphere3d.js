@@ -347,6 +347,7 @@ JXG.extend(
             this.addChild(this.element2D);
             this.inherits.push(this.element2D);
             this.element2D.view = this.view;
+            this.element2D.dump = false;
         },
 
         // Already documented in element3d.js

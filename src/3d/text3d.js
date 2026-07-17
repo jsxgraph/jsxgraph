@@ -454,8 +454,8 @@ JXG.createText3D = function (board, parents, attributes) {
 
     attr = el.setAttr2D(attr);
     el.element2D = view.create('text', [c2d[1], c2d[2], text], attr);
-
     el.element2D.view = view;
+    el.element2D.dump = false;
     el.addChild(el.element2D);
     el.inherits.push(el.element2D);
     el.element2D.setParents(el);

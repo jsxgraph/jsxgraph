@@ -1757,7 +1757,7 @@ JXG.Options = {
          * @see JXG.GeometryElement#highlightFillOpacity
          * @default JXG.palette.red
          */
-        fillColor: Color.palette.red,
+        fillColor: 'black', //Color.palette.red,
 
         /**
          * Opacity for fill color.
@@ -2579,9 +2579,9 @@ JXG.Options = {
          * </script><pre>
          *
          */
-        // transitionProperties: ['fill', 'fill-opacity', 'stroke', 'stroke-opacity', 'stroke-width'], // org
+        transitionProperties: ['fill', 'fill-opacity', 'stroke', 'stroke-opacity', 'stroke-width'], // org
         // transitionProperties for points.
-        transitionProperties: ['fill', 'fill-opacity', 'stroke', 'stroke-opacity', 'stroke-width', 'width', 'height', 'rx', 'ry'],
+        //transitionProperties: ['fill', 'fill-opacity', 'stroke', 'stroke-opacity', 'stroke-width', 'width', 'height', 'rx', 'ry'],
 
         /**
          * If false the element won't be visible on the board, otherwise it is shown.

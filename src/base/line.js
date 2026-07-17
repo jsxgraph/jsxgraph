@@ -1275,7 +1275,7 @@ JXG.createLine = function (board, parents, attributes) {
     if (parents.length === 2) {
         // The line is defined by two points or coordinates of two points.
         // In the latter case, the points are created.
-        attr = Type.copyAttributes(attributes, board.options, "line", 'point1');
+        attr = Type.copyAttributes(attributes, board.options, 'line', 'point1');
         if (Type.isArray(parents[0]) && parents[0].length > 1) {
             p1 = board.create("point", parents[0], attr);
         } else if (Type.isString(parents[0]) || Type.isPoint(parents[0])) {

@@ -882,6 +882,7 @@ JXG.createPoint3D = function (board, parents, attributes) {
     attr = el.setAttr2D(attr);
     el.element2D = view.create('point', c2d, attr);
     el.element2D.view = view;
+    el.element2D.dump = false;
     el.addChild(el.element2D);
     el.inherits.push(el.element2D);
     el.element2D.setParents(el);

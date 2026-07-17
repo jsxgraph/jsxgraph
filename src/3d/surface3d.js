@@ -539,6 +539,7 @@ JXG.createParametricSurface3D = function (board, parents, attributes) {
     attr2d = el.setAttr2D(attr);
     el.element2D = view.create("curve", [[], []], attr2d);
     el.element2D.view = view;
+    el.element2D.dump = false;
     if (base !== null) {
         el.addTransform(base, transform);
         el.addParents(base);
