@@ -718,12 +718,6 @@ JXG.Board = function (container, renderer, id,
      * @see JXG.Board#sketch
      */
     this.sketches = [null, null];
-    // this.sketches = [
-    //     this.create('sketchcurve', [], this.attr.sketches[0]),
-    //     this.create('sketchcurve', [], this.attr.sketches[1])
-    // ];
-    // this.sketches[0].dump = false;
-    // this.sketches[1].dump = false;
 
     /**
      * Alias for the first sketchcurve, i.e. for board.sketches[0].
@@ -732,6 +726,16 @@ JXG.Board = function (container, renderer, id,
      */
     this.sketch = null; //this.sketches[0];
 
+    /**
+     * Array of length two of Boolean flags indicating if a pointer device (finger, mouse, pen) is
+     * adding points to board.sketches[i] (i=0,1). i=1 is only used for multi-touch with fingers.
+     * <p>
+     * User-supplied events might use this flag to test if sketching is active.
+     * Usually, this flag is true starting with a down event and ends with the up event.
+     * @type {Array}
+     * @see JXG.Board#sketches
+     *
+     */
     this.isSketching = [false, false];
 
     /**
@@ -7485,6 +7489,17 @@ JXG.extend(
             return this;
         },
 
+        /**
+         * Reset the sketchcurves in board.sketches[] to length 0 and add the position
+         * of the event as first point of the sketch curve. Called at down events.
+         * <p>
+         * Sets board.isSketching[i] = true where i depends on the finger (1st or 2nd).
+         *
+         * @private
+         * @param {Object} evt Event object
+         * @see JXG.Board#addToSketchCurve
+         * @see JXG.Board#finalizeSketchCurve
+         */
         initSketchCurve: function(evt) {
             var i, c;
             // Init sketchcurves
@@ -7501,6 +7516,16 @@ JXG.extend(
             }
         },
 
+        /**
+         * Add the position of the event to the sketchcurve i in board.sketches[].
+         * Called at move events.
+         * Point is only added if board.isSketching[i] = true.
+         *
+         * @private
+         * @param {Object} evt Event object
+         * @see JXG.Board#initSketchCurve
+         * @see JXG.Board#finalizeSketchCurve
+         */
         addToSketchCurve: function(evt) {
             var i, c, len;
 
@@ -7525,6 +7550,17 @@ JXG.extend(
             }
         },
 
+        /**
+         * Ends adding points to the sketchcurve i in board.sketches[].
+         * Called at up events.
+         * Sets board.isSketching[i] = false.
+         * Empties the curve if deleteOnUp==true;
+         *
+         * @private
+         * @param {Object} evt Event object
+         * @see JXG.Board#initSketchCurve
+         * @see JXG.Board#addToSketchCurve
+         */
         finalizeSketchCurve: function(evt) {
             var i;
 
