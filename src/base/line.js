@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2025
+    Copyright 2008-2026
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -72,14 +72,14 @@ JXG.Line = function (board, p1, p2, attributes) {
     this.constructor(board, attributes, Const.OBJECT_TYPE_LINE, Const.OBJECT_CLASS_LINE);
 
     /**
-     * Startpoint of the line. You really should not set this field directly as it may break JSXGraph's
+     * Starting point of the line. You really should not set this field directly as it may break JSXGraph's
      * update system so your construction won't be updated properly.
      * @type JXG.Point
      */
     this.point1 = this.board.select(p1);
 
     /**
-     * Endpoint of the line. Just like {@link JXG.Line.point1} you shouldn't write this field directly.
+     * End point of the line. Just like {@link JXG.Line.point1} you shouldn't write this field directly.
      * @type JXG.Point
      */
     this.point2 = this.board.select(p2);
@@ -137,27 +137,27 @@ JXG.Line = function (board, p1, p2, attributes) {
 
     // create Label
     this.createLabel();
-
-    this.methodMap = JXG.deepCopy(this.methodMap, {
-        point1: "point1",
-        point2: "point2",
-        getSlope: "Slope",
-        Slope: "Slope",
-        Direction: "Direction",
-        getRise: "getRise",
-        Rise: "getRise",
-        getYIntersect: "getRise",
-        YIntersect: "getRise",
-        getAngle: "getAngle",
-        Angle: "getAngle",
-        L: "L",
-        length: "L",
-        setFixedLength: "setFixedLength",
-        setStraight: "setStraight"
-    });
 };
 
 JXG.Line.prototype = new GeometryElement();
+
+Type.copyMethodMap(JXG.Line, {
+    point1: "point1",
+    point2: "point2",
+    getSlope: "Slope",
+    Slope: "Slope",
+    Direction: "Direction",
+    getRise: "getRise",
+    Rise: "getRise",
+    getYIntersect: "getRise",
+    YIntersect: "getRise",
+    getAngle: "getAngle",
+    Angle: "getAngle",
+    L: "L",
+    length: "L",
+    setFixedLength: "setFixedLength",
+    setStraight: "setStraight"
+});
 
 JXG.extend(
     JXG.Line.prototype,
@@ -555,10 +555,32 @@ JXG.extend(
 
         /**
          * Determines the angle between the positive x axis and the line.
+         * @param {String} [unit='radians'] Unit of the returned values. Possible units are
+         * <ul>
+         * <li> 'radians' (default): angle value in radians
+         * <li> 'degrees': angle value in degrees
+         * <li> 'semicircle': angle value in radians as a multiple of &pi;, e.g. if the angle is 1.5&pi;, 1.5 will be returned.
+         * <li> 'circle': angle value in radians as a multiple of 2&pi;
+         * </ul>
          * @returns {Number}
          */
-        getAngle: function () {
-            return Math.atan2(-this.stdform[1], this.stdform[2]);
+        getAngle: function (unit) {
+            var val,
+                rad = Math.atan2(-this.stdform[1], this.stdform[2]);
+
+            unit = unit.toLocaleLowerCase();
+
+            if (unit === '' || unit.indexOf('rad') === 0) {
+                val = rad;
+            } else if (unit.indexOf('deg') === 0) {
+                val = rad * 180 / Math.PI;
+            } else if (unit.indexOf('sem') === 0) {
+                val = rad / Math.PI;
+            } else if (unit.indexOf('cir') === 0) {
+                val = rad * 0.5 / Math.PI;
+            }
+
+            return val;
         },
 
         /**
@@ -841,6 +863,26 @@ JXG.extend(
             return this;
         },
 
+        removeTransform: function (transform) {
+            var i,
+                list = Type.isArray(transform) ? transform : [transform],
+                len = list.length;
+
+            for (i = 0; i < len; i++) {
+                Type.removeElementFromArray(this.point1.transformations, list[i]);
+                Type.removeElementFromArray(this.point2.transformations, list[i]);
+            }
+
+            return this;
+        },
+
+        clearTransforms: function () {
+            this.point1.transformations = [];
+            this.point2.transformations = [];
+
+            return this;
+        },
+
         // see GeometryElement.js
         snapToGrid: function (pos) {
             var c1, c2, dc, t, ticks, x, y, sX, sY;
@@ -885,7 +927,7 @@ JXG.extend(
                         v = Mat.crossProduct(v, c1.usrCoords);
                         c2 = Geometry.meetLineLine(v, this.stdform, 0, this.board);
                         */
-                        c2 = Geometry.projectPointToLine({ coords: c1 }, this, this.board);
+                        c2 = Geometry.projectPointToLine({coords: c1}, this, this.board);
 
                         dc = Statistics.subtract(
                             [1, Math.round(x / sX) * sX, Math.round(y / sY) * sY],
@@ -1031,7 +1073,7 @@ JXG.extend(
          * @returns {Array} [Z(t), X(t), Y(t)]
          * @see Line#X
          */
-        Ft: function(t) {
+        Ft: function (t) {
             var c = [this.Z(t), this.X(t), this.Y(t)];
             c[1] /= c[0];
             c[2] /= c[0];
@@ -1233,7 +1275,7 @@ JXG.createLine = function (board, parents, attributes) {
     if (parents.length === 2) {
         // The line is defined by two points or coordinates of two points.
         // In the latter case, the points are created.
-        attr = Type.copyAttributes(attributes, board.options, "line", 'point1');
+        attr = Type.copyAttributes(attributes, board.options, 'line', 'point1');
         if (Type.isArray(parents[0]) && parents[0].length > 1) {
             p1 = board.create("point", parents[0], attr);
         } else if (Type.isString(parents[0]) || Type.isPoint(parents[0])) {
@@ -2534,7 +2576,6 @@ JXG.createNormal = function (board, parents, attributes) {
                     p1, p2, t, A, B, C, D, dx, dy, d,
                     li, p_org, pp,
                     points, le;
-
 
                 if (c.bezierDegree === 1) {
                     if (i === c.numberPoints - 1) {

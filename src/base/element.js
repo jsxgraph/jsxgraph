@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2025
+    Copyright 2008-2026
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -253,32 +253,6 @@ JXG.GeometryElement = function (board, attributes, type, oclass) {
      * @default [1, 0, 0, 0, 1, 1, 0, 0]
      */
     this.stdform = [1, 0, 0, 0, 1, 1, 0, 0];
-
-    /**
-     * The methodMap determines which methods can be called from within JessieCode and under which name it
-     * can be used. The map is saved in an object, the name of a property is the name of the method used in JessieCode,
-     * the value of a property is the name of the method in JavaScript.
-     * @type Object
-     */
-    this.methodMap = {
-        setLabel: "setLabel",
-        label: "label",
-        setName: "setName",
-        getName: "getName",
-        Name: "getName",
-        addTransform: "addTransform",
-        setProperty: "setAttribute",
-        setAttribute: "setAttribute",
-        addChild: "addChild",
-        animate: "animate",
-        on: "on",
-        off: "off",
-        trigger: "trigger",
-        addTicks: "addTicks",
-        removeTicks: "removeTicks",
-        removeAllTicks: "removeAllTicks",
-        Bounds: "bounds"
-    };
 
     /**
      * Quadratic form representation of circles (and conics)
@@ -539,6 +513,7 @@ JXG.extend(
 
         /**
          * Add dependence on elements in JessieCode functions.
+         *
          * @param {Array} function_array Array of functions containing potential properties "deps" with
          * elements the function depends on.
          * @returns {JXG.Object} reference to the object itself
@@ -549,6 +524,12 @@ JXG.extend(
             for (i = 0; i < function_array.length; i++) {
                 for (e in function_array[i].deps) {
                     obj = function_array[i].deps[e];
+                    // 4.12.2025, 14.7.2026
+                    // addParents had to be removed since the type
+                    // of dependency is not clear.
+                    // Here, we have a functional dependency, not a geometric one.
+                    // addChild() adds the elements obj and this to both, decendants and ancestors.
+                    // It should not call addParents() because this would imply a geometric dependency.
                     // this.addParents(obj);
                     obj.addChild(this);
                 }
@@ -647,6 +628,24 @@ JXG.extend(
          * @returns {JXG.GeometryElement} Reference to the element.
          */
         addTransform: function (transform) {
+            return this;
+        },
+
+        /**
+         * Remove transformations of this element.
+         * @param {JXG.Transformation|Array} transform Either one {@link JXG.Transformation}
+         * or an array of {@link JXG.Transformation}s.
+         * @returns {JXG.GeometryElement} Reference to the element.
+         */
+        removeTransform: function (transform) {
+            return this;
+        },
+
+        /**
+         * Remove all {@link JXG.Transformation}s of this element.
+         * @returns {JXG.GeometryElement} Reference to the element.
+         */
+        clearTransforms: function () {
             return this;
         },
 
@@ -754,7 +753,7 @@ JXG.extend(
          * Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
          * @param {Array} coords coordinates in screen/user units
          * @param {Array} oldcoords previous coordinates in screen/user units
-         * @returns {JXG.GeometryElement} this element
+         * @returns {JXG.GeometryElement} {JXG.GeometryElement} A reference to the object
          */
         setPositionDirectly: function (method, coords, oldcoords) {
             var c = new Coords(method, coords, this.board, false),
@@ -762,6 +761,56 @@ JXG.extend(
                 dc = Statistics.subtract(c.usrCoords, oldc.usrCoords);
 
             this.setPosition(Const.COORDS_BY_USER, dc);
+
+            return this;
+        },
+
+        /**
+         * Moves the element to the top of its layer. Works only for SVG renderer and for simple elements
+         * consisting of one SVG node.
+         *
+         * @returns {JXG.GeometryElement} {JXG.GeometryElement} A reference to the object
+         * @example
+         *   // Move one of the points 'A' or ''B' to make
+         *   // their midpoint visible.
+         *   const point1 = board.create("point", [-3, 1]);
+         *   const point2 = board.create("point", [2,  1]);
+         *   var mid = board.create("midpoint", [point1, point2]);
+         *   const point3 = board.create("point", [-0.5, 1], {size: 10, color: 'blue'});
+         *
+         *   mid.coords.on('update', function() {
+         *       mid.toTopOfLayer();
+         *   });
+         *   point3.coords.on('update', function() {
+         *       point3.toTopOfLayer();
+         *   });
+         *
+         * </pre><div id="JXG97a85991-8a1d-4a8b-9d19-2c921c0a70a9" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG97a85991-8a1d-4a8b-9d19-2c921c0a70a9',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *             const point1 = board.create("point", [-3, 1]);
+         *             const point2 = board.create("point", [2,  1]);
+         *             var mid = board.create("midpoint", [point1, point2]);
+         *             const point3 = board.create("point", [-0.5, 1], {size: 10, color: 'blue'});
+         *
+         *             mid.coords.on('update', function() {
+         *                 mid.toTopOfLayer();
+         *             });
+         *             point3.coords.on('update', function() {
+         *                 point3.toTopOfLayer();
+         *             });
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
+         */
+        toTopOfLayer: function() {
+            if (this.board.renderer.type === 'svg' && Type.exists(this.rendNode)) {
+                this.rendNode.parentNode.appendChild(this.rendNode);
+            }
 
             return this;
         },
@@ -1313,6 +1362,10 @@ JXG.extend(
                                 this.rendNodeCheckbox.checked = !!value;
                             }
                             break;
+                        case 'clip':
+                            this._set(key, value);
+                            // this.board.renderer.setClipPath(this, !!value);
+                            break;
                         case "disabled":
                             // button, checkbox, input. Is not available on initial call.
                             if (Type.exists(this.rendNodeTag)) {
@@ -1422,6 +1475,15 @@ JXG.extend(
                                 this.addRotation(value);
                             }
                             break;
+                        case "straightfirst":
+                        case "straightlast":
+                            this._set(key, value);
+                            for (j in this.childElements) {
+                                if (this.childElements.hasOwnProperty(j) && this.childElements[j].elType === 'glider') {
+                                    this.childElements[j].fullUpdate();
+                                }
+                            }
+                            break;
                         case "tabindex":
                             if (Type.exists(this.rendNode)) {
                                 this.rendNode.setAttribute("tabindex", value);
@@ -1477,15 +1539,6 @@ JXG.extend(
                                 //this.label.setDisplayRendNode(this.evalVisProp('visible'));
                             }
                             this.hasLabel = value;
-                            break;
-                        case "straightfirst":
-                        case "straightlast":
-                            this._set(key, value);
-                            for (j in this.childElements) {
-                                if (this.childElements.hasOwnProperty(j) && this.childElements[j].elType === 'glider') {
-                                    this.childElements[j].fullUpdate();
-                                }
-                            }
                             break;
                         default:
                             if (Type.exists(this.visProp[key]) &&
@@ -1579,7 +1632,10 @@ JXG.extend(
          */
         evalVisProp: function (key) {
             var val, arr, i, le,
-                e, o, found;
+                e, o, found,
+                // Handle 'inherit':
+                lists = [this.descendants, this.ancestors],
+                entry, list;
 
             key = key.toLowerCase();
             if (key.indexOf('.') === -1) {
@@ -1616,11 +1672,18 @@ JXG.extend(
             }
             // val is not of type function
 
-            if (val === 'inherit') {
-                for (e in this.descendants) {
-                    if (this.descendants.hasOwnProperty(e)) {
-                        o = this.descendants[e];
-                        // Check if this is in inherits of one of its descendant
+            if (val === 'inherit' &&
+                // Exceptions:
+                (key !== 'visible' &&   // 'visible' is treated separately (for historic reasons)
+                 key !== 'showinfobox') // 'inherits' from board (not any ancestor or descendant)
+            ) {
+                for (entry in lists) if (lists.hasOwnProperty(entry)) {
+                    list = lists[entry];
+                    found = false;
+                    // list is descendant or ancestors
+                    for (e in list) if (list.hasOwnProperty(e)) {
+                        o = list[e];
+                        // Check if this is in inherits of one of its descendant/ancestors
                         found = false;
                         le = o.inherits.length;
                         for (i = 0; i < le; i++) {
@@ -1633,6 +1696,9 @@ JXG.extend(
                             val = o.evalVisProp(key);
                             break;
                         }
+                    }
+                    if (found) {
+                        break;
                     }
                 }
             }
@@ -1795,6 +1861,7 @@ JXG.extend(
                         ],
                         attr
                     );
+                    this.label.elType = 'label';
                     this.label.needsUpdate = true;
                     this.label.dump = false;
                     this.label.fullUpdate();
@@ -2564,6 +2631,15 @@ JXG.extend(
             return false;
         },
 
+        // for documentation purposes
+        /**
+         * The methodMap determines which methods can be called from within JessieCode and under which name it
+         * can be used. The map is saved in an object, the name of a property is the name of the method used in JessieCode,
+         * the value of a property is the name of the method in JavaScript.
+         * @type Object
+         */
+        methodMap: {},
+
         /* **************************
          *     EVENT DEFINITION
          * for documentation purposes
@@ -2805,6 +2881,28 @@ JXG.extend(
         //endregion
     }
 );
+
+Type.copyMethodMap(JXG.GeometryElement, {
+    setLabel: "setLabel",
+    label: "label",
+    setName: "setName",
+    getName: "getName",
+    Name: "getName",
+    addTransform: "addTransform",
+    removeTransform: "removeTransform",
+    clearTransforms: "clearTransforms",
+    setProperty: "setAttribute",
+    setAttribute: "setAttribute",
+    addChild: "addChild",
+    animate: "animate",
+    on: "on",
+    off: "off",
+    trigger: "trigger",
+    addTicks: "addTicks",
+    removeTicks: "removeTicks",
+    removeAllTicks: "removeAllTicks",
+    Bounds: "bounds"
+});
 
 export default JXG.GeometryElement;
 // const GeometryElement = JXG.GeometryElement;

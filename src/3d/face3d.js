@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2025
+    Copyright 2008-2026
         Matthias Ehmann,
         Carsten Miller,
         Andreas Walter,
@@ -100,13 +100,14 @@ JXG.Face3D = function (view, polyhedron, faceNumber, attributes) {
     if (this.faceNumber === 0) {
         this.updateCoords();
     }
-
-    this.methodMap = Type.deepCopy(this.methodMap, {
-        // TODO
-    });
 };
+
 JXG.Face3D.prototype = new JXG.GeometryElement();
+
 Type.copyPrototypeMethods(JXG.Face3D, JXG.GeometryElement3D, 'constructor3D');
+Type.copyMethodMap(JXG.Face3D, {
+    // TODO
+});
 
 JXG.extend(
     JXG.Face3D.prototype,
@@ -210,6 +211,20 @@ JXG.extend(
             return this;
         },
 
+        removeTransform: function (transform) {
+            if (this.faceNumber === 0) {
+                this.removeTransformGeneric(transform);
+            }
+            return this;
+        },
+
+        clearTransforms: function () {
+            if (this.faceNumber === 0) {
+                this.clearTransformsGeneric();
+            }
+            return this;
+        },
+
         updateTransform: function () {
             var t, c, i, j, b;
 
@@ -251,6 +266,7 @@ JXG.extend(
                 face;
 
             if (this.needsUpdate && !this.view.board._change3DView) {
+                // Do not update face coordinates and normal during view rotation
                 phdr = this.polyhedron;
 
                 if (this.faceNumber === 0) {
@@ -292,9 +308,50 @@ JXG.extend(
         updateRenderer: function () {
             if (this.needsUpdate) {
                 this.needsUpdate = false;
-                this.shader();
             }
             return this;
+        },
+
+        // To be merged with View3d.getRotationFromAngles
+        getRotationFromAngles: function (angles) {
+            var a, e, b, f,
+                cosBank, sinBank,
+                mat = [
+                    [1, 0, 0, 0],
+                    [0, 1, 0, 0],
+                    [0, 0, 1, 0],
+                    [0, 0, 0, 1]
+                ];
+
+            // mat projects homogeneous 3D coords in View3D
+            // to homogeneous 2D coordinates in the board
+            a = angles.az;
+            e = angles.el;
+            b = angles.bank;
+            f = -Math.sin(e);
+
+            mat[1][1] = -Math.cos(a);
+            mat[1][2] = Math.sin(a);
+            mat[1][3] = 0;
+
+            mat[2][1] = f * Math.sin(a);
+            mat[2][2] = f * Math.cos(a);
+            mat[2][3] = Math.cos(e);
+
+            mat[3][1] = Math.cos(e) * Math.sin(a);
+            mat[3][2] = Math.cos(e) * Math.cos(a);
+            mat[3][3] = Math.sin(e);
+
+            cosBank = Math.cos(b);
+            sinBank = Math.sin(b);
+            mat = Mat.matMatMult([
+                [1, 0, 0, 0],
+                [0, cosBank, sinBank, 0],
+                [0, -sinBank, cosBank, 0],
+                [0, 0, 0, 1]
+            ], mat);
+
+            return mat;
         },
 
         /**
@@ -308,10 +365,11 @@ JXG.extend(
          */
         shader: function() {
             var hue, sat, light, angle, hsl,
-                // bb = this.view.bbox3D,
+                sun, angles,
+                abs,
+                lightObj,
                 minFace, maxFace,
                 minLight, maxLight;
-
 
             if (this.evalVisProp('shader.enabled')) {
                 hue = this.evalVisProp('shader.hue');
@@ -320,9 +378,38 @@ JXG.extend(
                 maxLight = this.evalVisProp('shader.maxlightness');
 
                 if (this.evalVisProp('shader.type').toLowerCase() === 'angle') {
-                    // Angle normal / eye
-                    angle = Mat.innerProduct(this.view.matrix3DRotShift[3], this.normal);
-                    angle = Math.abs(angle);
+                    lightObj = this.evalVisProp('shader.light');
+
+                    switch (lightObj.type) {
+                        // 1: lighting==camera (default),
+                        // 2: Fixed: angle(object, camera),
+                        // 3: Fixed: angle(lighting, camera)
+                        case 2: // Fixed: angle(object, camera)
+                            angles = {
+                                az: lightObj.az * Math.PI / 180,
+                                el: lightObj.el * Math.PI / 180,
+                                bank: lightObj.bank * Math.PI / 180
+                            };
+                            sun = this.getRotationFromAngles(angles)[3];
+                            abs = lightObj.dir;
+                            break;
+                        case 3: // Fixed: angle(lighting, camera)
+                            angles = {
+                                az: this.view.angles.az + lightObj.az * Math.PI / 180,
+                                el: this.view.angles.el + lightObj.el * Math.PI / 180,
+                                bank: this.view.angles.bank
+                            };
+                            sun = this.getRotationFromAngles(angles)[3];
+                            abs = lightObj.dir;
+                            break;
+                        default: // Fixed: angle(lighting, camera) = 0
+                            sun = this.view.matrix3DRotShift[3];
+                            abs = lightObj.dir;
+                    }
+
+                    // angle = Mat.innerProduct(this.view.matrix3DRotShift[3], this.normal);
+                    angle = Mat.innerProduct(sun, this.normal);
+                    angle = (abs === 0) ? Math.abs(angle) : ((abs < 0) ? -angle : angle);
                     light = minLight + (maxLight - minLight) * angle;
                 } else {
                     // zIndex
@@ -335,6 +422,7 @@ JXG.extend(
                 hsl = 'hsl(' + hue + ',' + sat +'%,' + light + '%)';
 
                 this.element2D.visProp.fillcolor = hsl;
+                this._shadingDone = true;
                 return this.zIndex;
             }
         }
@@ -365,6 +453,7 @@ JXG.createFace3D = function (board, parents, attributes) {
     attr = el.setAttr2D(attr);
     el.element2D = view.create("curve", [[], []], attr);
     el.element2D.view = view;
+    el.element2D.dump = false;
 
     /**
      * @class
@@ -375,6 +464,13 @@ JXG.createFace3D = function (board, parents, attributes) {
         this.dataX = ret.X;
         this.dataY = ret.Y;
     };
+    // Deactivate hasPoint to increase speed.
+    // This is be too agressive, e.g. for the upcoming
+    // rotation3D circles (SoftwarePraktikum)
+    // We may enable have to enable hasPoint() for
+    // click events.
+    el.element2D.hasPoint = function() {};
+
     el.addChild(el.element2D);
     el.inherits.push(el.element2D);
     el.element2D.setParents(el);

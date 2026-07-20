@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2025
+    Copyright 2008-2026
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -150,24 +150,24 @@ JXG.Polygon = function (board, vertices, attributes) {
 
     // create label
     this.createLabel();
-
-    this.methodMap = JXG.deepCopy(this.methodMap, {
-        borders: "borders",
-        vertices: "vertices",
-        A: "Area",
-        Area: "Area",
-        Perimeter: "Perimeter",
-        L: "Perimeter",
-        boundingBox: "bounds",
-        BoundingBox: "bounds",
-        addPoints: "addPoints",
-        insertPoints: "insertPoints",
-        removePoints: "removePoints",
-        Intersect: "intersect"
-    });
 };
 
 JXG.Polygon.prototype = new GeometryElement();
+
+Type.copyMethodMap(JXG.Polygon, {
+    borders: "borders",
+    vertices: "vertices",
+    A: "Area",
+    Area: "Area",
+    Perimeter: "Perimeter",
+    L: "Perimeter",
+    boundingBox: "bounds",
+    BoundingBox: "bounds",
+    addPoints: "addPoints",
+    insertPoints: "insertPoints",
+    removePoints: "removePoints",
+    Intersect: "intersect"
+});
 
 JXG.extend(
     JXG.Polygon.prototype,

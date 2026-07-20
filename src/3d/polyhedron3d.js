@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2025
+    Copyright 2008-2026
         Matthias Ehmann,
         Carsten Miller,
         Andreas Walter,
@@ -28,14 +28,31 @@
  */
 /*global JXG:true, define: true*/
 
-/**
- * Create axes and rear and front walls of the
- * view3d bounding box bbox3D.
- */
 import JXG from "../jxg.js";
 import Const from "../base/constants.js";
 import Type from "../utils/type.js";
 
+/**
+ * A 3D polyhedron is a basic geometric element.
+ * @class Creates a new 3D point object. Do not use this constructor to create a 3D point. Use {@link JXG.View3D#create} with
+ * type {@link Polyhedron3D} instead.
+ *
+ * @augments JXG.GeometryElement3D
+ * @augments JXG.GeometryElement
+ * @param {JXG.View3D} view The 3D view the polyhedron is drawn on.
+ * @param {Object} polyhedron Defining data for the polyhedron, i.e. vertice coordinates and faces, which are lists of vertex numbers or keys. The structure of this object is
+ * <pre>polyhedron = {
+ *        view: view,
+ *        vertices: {},
+ *        coords: {},
+ *        coords2D: {},
+ *        zIndex: {},
+ *        faces: []
+ *  };</pre>
+ * @param {Array} faces List of face3d objects. These have been already generated in `createPolyhedron3D`.
+ * @param {Object} attributes An object containing visual properties like in {@link JXG.Options#polyhedron3d} and {@link JXG.Options#elements},
+ * and optionally a name and an id.
+ */
 JXG.Polyhedron3D = function (view, polyhedron, faces, attributes) {
     var e,
         genericMethods,
@@ -93,6 +110,12 @@ JXG.Polyhedron3D = function (view, polyhedron, faces, attributes) {
         "noHighlight"
     ];
 
+    /**
+     * Generate methods like `updateRenderer` or `setAttribute` which call simultaneously
+     * the method with the same name for each face3d element of the polyhedron.
+     * @param {String} what Method name
+     * @returns {Function} Function consisting of a loop that calls the method for each face.
+     */
     generateMethod = function (what) {
         return function () {
             var i;
@@ -111,15 +134,18 @@ JXG.Polyhedron3D = function (view, polyhedron, faces, attributes) {
     for (e = 0; e < genericMethods.length; e++) {
         this[genericMethods[e]] = generateMethod(genericMethods[e]);
     }
-
-    this.methodMap = Type.deepCopy(this.methodMap, {
-        setAttribute: "setAttribute",
-        setParents: "setParents",
-        addTransform: "addTransform"
-    });
 };
+
 JXG.Polyhedron3D.prototype = new JXG.GeometryElement();
+
 Type.copyPrototypeMethods(JXG.Polyhedron3D, JXG.GeometryElement3D, 'constructor3D');
+Type.copyMethodMap(JXG.Polyhedron3D, {
+    setAttribute: "setAttribute",
+    setParents: "setParents",
+    addTransform: "addTransform",
+    removeTransform: "removeTransform",
+    clearTransforms: "clearTransforms"
+});
 
 JXG.extend(
     JXG.Polyhedron3D.prototype,
@@ -131,6 +157,26 @@ JXG.extend(
                 this.faces[0].addTransform(el.faces[0], transform);
             } else {
                 throw new Error("Adding transformation failed. At least one of the two polyhedra has no faces.");
+            }
+            return this;
+        },
+
+        // Already documented in element3d.js
+        removeTransform: function (transform) {
+            if (this.faces.length > 0) {
+                this.faces[0].removeTransform(transform);
+            } else {
+                throw new Error("Removing transformation failed. The polyhedron has no faces.");
+            }
+            return this;
+        },
+
+        // Already documented in element3d.js
+        clearTransforms: function () {
+            if (this.faces.length > 0) {
+                this.faces[0].clearTransforms();
+            } else {
+                throw new Error("Removing transformation failed. The polyhedron has no faces.");
             }
             return this;
         },
@@ -684,7 +730,8 @@ JXG.createPolyhedron3D = function (board, parents, attributes) {
     el.setParents(el); // Sets el as parent to all faces.
     for (i = 0; i < le; i++) {
         el.inherits.push(el.faces[i]);
-        el.addChild(el.faces[i]);
+        // el.addChild(el.faces[i]); // This takes very long time. We avoid it with
+                                     // a special treatment in removeObject
     }
     if (base !== null) {
         el.addTransform(base, transform);

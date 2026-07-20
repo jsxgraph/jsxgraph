@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2025
+    Copyright 2008-2026
         Matthias Ehmann,
         Carsten Miller,
         Andreas Walter,
@@ -146,13 +146,14 @@ JXG.Text3D = function (view, F, text, slide, attributes) {
     this.position = [];
 
     this._c2d = null;
-
-    this.methodMap = Type.deepCopy(this.methodMap, {
-        // TODO
-    });
 };
+
 JXG.Text3D.prototype = new JXG.GeometryElement();
+
 Type.copyPrototypeMethods(JXG.Text3D, JXG.GeometryElement3D, 'constructor3D');
+Type.copyMethodMap(JXG.Text3D, {
+    // TODO
+});
 
 JXG.extend(
     JXG.Text3D.prototype,
@@ -453,8 +454,8 @@ JXG.createText3D = function (board, parents, attributes) {
 
     attr = el.setAttr2D(attr);
     el.element2D = view.create('text', [c2d[1], c2d[2], text], attr);
-
     el.element2D.view = view;
+    el.element2D.dump = false;
     el.addChild(el.element2D);
     el.inherits.push(el.element2D);
     el.element2D.setParents(el);

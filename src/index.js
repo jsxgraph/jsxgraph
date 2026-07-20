@@ -22,6 +22,7 @@ import './math/geometry.js';
 import './math/clip.js';
 import './math/poly.js';
 import './math/complex.js';
+import './math/tiling.js';
 import './renderer/abstract.js';
 import './reader/file.js';
 import './parser/geonext.js';

@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2025
+    Copyright 2008-2026
         Matthias Ehmann,
         Carsten Miller,
         Andreas Walter,
@@ -125,6 +125,20 @@ describe("Test JessieCode", function () {
         var f = board.jc.snippet('a4', true, '', false, false);
         var obj = f();
         expect(JXG.exists(obj.elType)).toEqual(true);
+    });
+
+    it("Jessiecode parse function 1", function() {
+        var f = 'function (x) { return ((((x + 3)^2) - 4.5) - 1.5); }';
+        var parsed = board.jc.parse(f + ';');
+        parsed = parsed.toString().replaceAll('\n', '').trim();
+        expect(parsed).toEqual(f);
+    });
+
+    it("Jessiecode parse function 2", function() {
+        var f = 'function (x) { return (sin((2^(x - 1))) + PI); }';
+        var parsed = board.jc.parse(f + ';');
+        parsed = parsed.toString().replaceAll('\n', '').trim() ;
+        expect(parsed).toEqual(f);
     });
 
 });

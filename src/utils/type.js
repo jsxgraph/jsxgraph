@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2025
+    Copyright 2008-2026
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -342,12 +342,17 @@ JXG.extend(
         },
 
         /**
-         * Converts a given CSS style string into a JavaScript object.
-         * @param {String} styles String containing CSS styles.
+         * Converts a given CSS style string into a JavaScript object. Uses JSON.parse.
+         * Has problems with CSS expressions containing blanks, like
+         * `background: #aaaaaa url("../jsxgraph/img/favicon.png")`.
+         *
+         * @param {String} cssString String containing CSS styles.
          * @returns {Object} Object containing CSS styles.
+         * @see JXG#css2js
+         * @deprecated
          */
-        cssParse: function (styles) {
-            var str = styles;
+        cssParse: function (cssString) {
+            var str = cssString;
             if (!this.isString(str)) return {};
 
             str = str.replace(/\s*;\s*$/g, '');
@@ -357,6 +362,39 @@ JXG.extend(
             str = '{"' + str + '"}';
 
             return JSON.parse(str);
+        },
+
+        /**
+         * Converts string containing CSS properties into
+         * array with key-value pair objects.
+         *
+         * @example
+         * "color:blue; background-color:yellow" is converted to
+         * [{'color': 'blue'}, {'backgroundColor': 'yellow'}]
+         *
+         * @param  {String} cssString String containing CSS properties
+         * @return {Array} Array of CSS key-value pairs
+         */
+        css2js: function (cssString) {
+            var pairs = [],
+                i, len,
+                key, val,
+                s,
+                list = JXG.trim(cssString).replace(/;$/, "").split(";");
+
+            len = list.length;
+            for (i = 0; i < len; ++i) {
+                if (JXG.trim(list[i]) !== "") {
+                    s = list[i].split(":");
+                    key = JXG.trim(
+                        // CSS syntax to camel case: font-family -> fontFamily
+                        s[0].replace(/-([a-z])/gi, function (match, char) { return char.toUpperCase(); })
+                    );
+                    val = JXG.trim(s[1]);
+                    pairs.push({ key: key, val: val });
+                }
+            }
+            return pairs;
         },
 
         /**
@@ -451,6 +489,7 @@ JXG.extend(
 
             if (f !== null) {
                 f.origin = term;
+                f.variable = variableName;
             }
 
             return f;
@@ -704,10 +743,12 @@ JXG.extend(
         },
 
         /**
-         * Generates a copy of an array and removes the duplicate entries. The original
-         * Array will be altered.
+         * Generates a copy of an array and removes the duplicate entries.
+         * The original array will be altered.
          * @param {Array} arr
          * @returns {Array}
+         *
+         * @see JXG.toUniqueArrayFloat
          */
         uniqueArray: function (arr) {
             var i,
@@ -753,6 +794,25 @@ JXG.extend(
             return ret;
         },
 
+        /**
+         * Generates a sorted copy of an array containing numbers and removes the duplicate entries up to a supplied precision eps.
+         * An array element arr[i] will be removed if abs(arr[i] - arr[i-1]) is less than eps.
+         *
+         * The original array will stay unaltered.
+         * @param {Array} arr
+         * @returns {Array}
+         *
+         * @param {Array} arr Array of numbers
+         * @param {Number} eps Precision
+         * @returns {Array}
+         *
+         * @example
+         * var arr = [2.3, 4, Math.PI, 2.300001, Math.PI+0.000000001];
+         * console.log(JXG.toUniqueArrayFloat(arr, 0.00001));
+         * // Output: Array(3) [ 2.3, 3.141592653589793, 4 ]
+         *
+         * @see JXG.uniqueArray
+         */
         toUniqueArrayFloat: function (arr, eps) {
             var a,
                 i, le;
@@ -761,7 +821,7 @@ JXG.extend(
             //     a = arr.toSorted(function(a, b) { return a - b; });
             // } else {
             // }
-            // Backwards compatibility
+            // Backwards compatibility to avoid toSorted
             a = arr.slice();
             a.sort(function (a, b) { return a - b; });
             le = a.length;
@@ -772,7 +832,6 @@ JXG.extend(
             }
             return a;
         },
-
 
         /**
          * Checks if an array contains an element equal to <tt>val</tt> but does not check the type!
@@ -1421,7 +1480,12 @@ JXG.extend(
                 };
 
             len = arguments.length;
-            if (len < 3 || primitives[s]) {
+            // Old code: if (len < 3 || primitives[s]) {
+            // If len > 3, the element is certainly not a primitive object,
+            // e.g. copyAttributes(attributes, JXG.Options, 'line', 'point1').
+            // That is, a later create('point', ...) will be the primitive call.
+            // This will not yet cover all cases of inheritance.
+            if (len < 3 || (len === 3 && primitives[s])) {
                 // Default options from Options.elements
                 a = JXG.deepCopy(options.elements, null, true);
             } else {
@@ -1502,9 +1566,9 @@ JXG.extend(
          * Copy all prototype methods from object "superObject" to object
          * "subObject". The constructor of superObject will be available
          * in subObject as subObject.constructor[constructorName].
-         * @param {Object} subObj A JavaScript object which receives new methods.
-         * @param {Object} superObj A JavaScript object which lends its prototype methods to subObject
-         * @returns {String} constructorName Under this name the constructor of superObj will be available
+         * @param {Object} subObject A JavaScript object which receives new methods.
+         * @param {Object} superObject A JavaScript object which lends its prototype methods to subObject
+         * @param {String} constructorName Under this name the constructor of superObj will be available
          * in subObject.
          * @private
          */
@@ -1514,8 +1578,59 @@ JXG.extend(
             subObject.prototype[constructorName] = superObject.prototype.constructor;
             for (key in superObject.prototype) {
                 if (superObject.prototype.hasOwnProperty(key)) {
-                    subObject.prototype[key] = superObject.prototype[key];
+                    if (key === 'methodMap') {
+                        JXG.copyMethodMap(subObject, superObject.prototype.methodMap);
+                    } else {
+                        subObject.prototype[key] = superObject.prototype[key];
+                    }
                 }
+            }
+        },
+
+        /**
+         * Create a copy of methodMap in "objectClass.prototype" and optional extend it.
+         * If objectClass.prototype.methodMap does not exist, it will be initialized.
+         *
+         * The methodMap determines which methods can be called from within JessieCode and under which name it
+         * can be used. The map is saved in an object, the name of a property is the name of the method used in JessieCode,
+         * the value of a property is the name of the method in JavaScript.
+         *
+         * @param {Object} objectClass
+         * @param {Object} [extension]
+         * @private
+         */
+        copyMethodMap: function (objectClass, extension) {
+            extension = extension || {};
+
+            objectClass.prototype.methodMap = objectClass.prototype.methodMap || {};
+            objectClass.prototype.methodMap = this.deepCopy(objectClass.prototype.methodMap, extension);
+        },
+
+        /**
+         * Copy methodMap of "object.prototype" to objects instance and optional extend it.
+         * If extension is of type String and extensionValue is defined, a key-value-pair is added.
+         *
+         * The methodMap determines which methods can be called from within JessieCode and under which name it
+         * can be used. The map is saved in an object, the name of a property is the name of the method used in JessieCode,
+         * the value of a property is the name of the method in JavaScript.
+         *
+         * @param {Object} object
+         * @param {Object|String} [extension]
+         * @param {String} [extensionValue]
+         * @private
+         */
+        extendInstanceMethodMap: function (object, extension, extensionValue) {
+            extension = extension || {};
+
+            // Create own copy only if instance still uses prototype version
+            if (!object.hasOwnProperty("methodMap")) {
+                object.methodMap = Object.assign({}, object.methodMap);
+            }
+
+            if (this.isObject(extension)) {
+                object.methodMap = this.deepCopy(object.methodMap, extension);
+            } else if (this.isString(extension) && this.exists(extensionValue)) {
+                object.methodMap[extension] = extensionValue;
             }
         },
 

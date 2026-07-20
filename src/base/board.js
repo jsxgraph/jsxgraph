@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2025
+    Copyright 2008-2026
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -105,10 +105,9 @@ JXG.Board = function (container, renderer, id,
     this.BOARD_MODE_MOVE_ORIGIN = 0x0002;
 
     /**
-     * Update is made with high quality, e.g. graphs are evaluated at much more points.
+     * This mode is active when the user zooms
      * @type Number
      * @constant
-     * @see JXG.Board#updateQuality
      */
     this.BOARD_MODE_ZOOM = 0x0011;
 
@@ -662,7 +661,91 @@ JXG.Board = function (container, renderer, id,
      */
     this.userLog = [];
 
+    /**
+     * Array of length two containing sketchcurves of the board. In case of mouse or pen
+     * only the first entry is used. In case of finger input, sketchcurves
+     * for the first and second finger are possible.
+     *
+     * @example
+     *  const board = JXG.JSXGraph.initBoard('jxgbox', {
+     *      boundingbox: [-10, 10, 10, -10],
+     *      axis: true,
+     *      sketches: {
+     *          enabled: true,
+     *          0: {strokeWidth: 2, visible: true, maxLength: 20},
+     *          1: {strokeWidth: 3, visible: true}
+     *      }
+     *  });
+     *
+     *  // Use event handler to access the actual curve
+     *  board.on('move', function(evt) {
+     *    console.log('move', this.sketches[0].dataX.length);
+     *  });
+     *
+     *  // Use event handler to access the actual curve
+     *  board.on('up', function(evt) {
+     *    console.log('up', this.sketches[0].dataX.length);
+     *  });
+     *
+     * </pre><div id="JXGf62e7217-a3ee-45b8-92e4-ce0d0d789df5" class="jxgbox" style="width: 300px; height: 300px;"></div>
+     * <script type="text/javascript">
+     *     (function() {
+     *         var board = JXG.JSXGraph.initBoard('JXGf62e7217-a3ee-45b8-92e4-ce0d0d789df5',
+     *             {   boundingbox: [-10, 10, 10, -10],
+     *                 axis: true,
+     *                 sketches: {
+     *                     enabled: true,
+     *                     0: {strokeWidth: 2, visible: true, maxLength: 20},
+     *                     1: {strokeWidth: 3, visible: true}
+     *                 }
+     *             });
+     *  // Use event handler to access the actual curve
+     *  board.on('move', function(evt) {
+     *    console.log('move', this.sketches[0].dataX.length);
+     *  });
+     *
+     *  // Use event handler to access the actual curve
+     *  board.on('up', function(evt) {
+     *    console.log('up', this.sketches[0].dataX.length);
+     *  });
+     *
+     *     })();
+     *
+     * </script><pre>
+     *
+     * @type Array
+     * @see SketchCurve
+     * @see JXG.Board#sketch
+     */
+    this.sketches = [null, null];
+
+    /**
+     * Alias for the first sketchcurve, i.e. for board.sketches[0].
+     * @type {JXG.Curve}
+     * @see JXG.Board#sketches
+     */
+    this.sketch = null; //this.sketches[0];
+
+    /**
+     * Array of length two of Boolean flags indicating if a pointer device (finger, mouse, pen) is
+     * adding points to board.sketches[i] (i=0,1). i=1 is only used for multi-touch with fingers.
+     * <p>
+     * User-supplied events might use this flag to test if sketching is active.
+     * Usually, this flag is true starting with a down event and ends with the up event.
+     * @type {Array}
+     * @see JXG.Board#sketches
+     *
+     */
+    this.isSketching = [false, false];
+
+    /**
+     *
+     */
     this.mathLib = Math;        // Math or JXG.Math.IntervalArithmetic
+
+    /**
+     *
+     */
     this.mathLibJXG = JXG.Math; // JXG.Math or JXG.Math.IntervalArithmetic
 
     if (this.attr.registerevents === true) {
@@ -707,37 +790,37 @@ JXG.Board = function (container, renderer, id,
             this.addWheelEventHandlers();
         }
     }
-
-    this.methodMap = {
-        update: 'update',
-        fullUpdate: 'fullUpdate',
-        on: 'on',
-        off: 'off',
-        trigger: 'trigger',
-        setAttribute: 'setAttribute',
-        setBoundingBox: 'setBoundingBox',
-        setView: 'setBoundingBox',
-        getBoundingBox: 'getBoundingBox',
-        BoundingBox: 'getBoundingBox',
-        getView: 'getBoundingBox',
-        View: 'getBoundingBox',
-        migratePoint: 'migratePoint',
-        colorblind: 'emulateColorblindness',
-        suspendUpdate: 'suspendUpdate',
-        unsuspendUpdate: 'unsuspendUpdate',
-        clearTraces: 'clearTraces',
-        left: 'clickLeftArrow',
-        right: 'clickRightArrow',
-        up: 'clickUpArrow',
-        down: 'clickDownArrow',
-        zoomIn: 'zoomIn',
-        zoomOut: 'zoomOut',
-        zoom100: 'zoom100',
-        zoomElements: 'zoomElements',
-        remove: 'removeObject',
-        removeObject: 'removeObject'
-    };
 };
+
+Type.copyMethodMap(JXG.Board, {
+    update: 'update',
+    fullUpdate: 'fullUpdate',
+    on: 'on',
+    off: 'off',
+    trigger: 'trigger',
+    setAttribute: 'setAttribute',
+    setBoundingBox: 'setBoundingBox',
+    setView: 'setBoundingBox',
+    getBoundingBox: 'getBoundingBox',
+    BoundingBox: 'getBoundingBox',
+    getView: 'getBoundingBox',
+    View: 'getBoundingBox',
+    migratePoint: 'migratePoint',
+    colorblind: 'emulateColorblindness',
+    suspendUpdate: 'suspendUpdate',
+    unsuspendUpdate: 'unsuspendUpdate',
+    clearTraces: 'clearTraces',
+    left: 'clickLeftArrow',
+    right: 'clickRightArrow',
+    up: 'clickUpArrow',
+    down: 'clickDownArrow',
+    zoomIn: 'zoomIn',
+    zoomOut: 'zoomOut',
+    zoom100: 'zoom100',
+    zoomElements: 'zoomElements',
+    remove: 'removeObject',
+    removeObject: 'removeObject'
+});
 
 JXG.extend(
     JXG.Board.prototype,
@@ -1298,6 +1381,7 @@ JXG.extend(
             this.drag_dy = y - this.origin.scrCoords[2];
 
             this.mode = this.BOARD_MODE_MOVE_ORIGIN;
+            this._change3DView = false;
             this.updateQuality = this.BOARD_QUALITY_LOW;
         },
 
@@ -1366,7 +1450,7 @@ JXG.extend(
                             dragEl = pEl;
                             collect.push(dragEl);
 
-                            // Save offset for large coords elements.
+                            // Store offset for large coords elements.
                             if (Type.exists(dragEl.coords)) {
                                 if (dragEl.elementClass === Const.OBJECT_CLASS_POINT ||
                                     dragEl.relativeCoords    // Relative texts like labels
@@ -1445,10 +1529,10 @@ JXG.extend(
          */
         moveObject: function (x, y, o, evt, type) {
             var newPos = new Coords(
-                Const.COORDS_BY_SCREEN,
-                this.getScrCoordsOfMouse(x, y),
-                this
-            ),
+                    Const.COORDS_BY_SCREEN,
+                    this.getScrCoordsOfMouse(x, y),
+                    this
+                ),
                 drag,
                 dragScrCoords,
                 newDragScrCoords;
@@ -2103,10 +2187,12 @@ JXG.extend(
 
                 if (window.navigator.msPointerEnabled) {
                     // IE10-
-                    Env.addEvent(this.containerObj, 'MSPointerDown', this.pointerDownListener, this);
+                    // Env.addEvent(this.containerObj, 'MSPointerDown', this.pointerDownListener, this);
+                    Env.addEvent(moveTarget, 'MSPointerDown', this.pointerDownListener, this);
                     Env.addEvent(moveTarget, 'MSPointerMove', this.pointerMoveListener, this);
                 } else {
-                    Env.addEvent(this.containerObj, 'pointerdown', this.pointerDownListener, this);
+                    // Env.addEvent(this.containerObj, 'pointerdown', this.pointerDownListener, this);
+                    Env.addEvent(moveTarget, 'pointerdown', this.pointerDownListener, this);
                     Env.addEvent(moveTarget, 'pointermove', this.pointerMoveListener, this);
                     Env.addEvent(moveTarget, 'pointerleave', this.pointerLeaveListener, this);
                     Env.addEvent(moveTarget, 'click', this.pointerClickListener, this);
@@ -2131,7 +2217,8 @@ JXG.extend(
             if (!this.hasMouseHandlers && Env.isBrowser) {
                 var moveTarget = this.attr.movetarget || this.containerObj;
 
-                Env.addEvent(this.containerObj, 'mousedown', this.mouseDownListener, this);
+                // Env.addEvent(this.containerObj, 'mousedown', this.mouseDownListener, this);
+                Env.addEvent(moveTarget, 'mousedown', this.mouseDownListener, this);
                 Env.addEvent(moveTarget, 'mousemove', this.mouseMoveListener, this);
                 Env.addEvent(moveTarget, 'click', this.mouseClickListener, this);
                 Env.addEvent(moveTarget, 'dblclick', this.mouseDblClickListener, this);
@@ -2151,7 +2238,8 @@ JXG.extend(
             if (!this.hasTouchHandlers && Env.isBrowser) {
                 var moveTarget = this.attr.movetarget || this.containerObj;
 
-                Env.addEvent(this.containerObj, 'touchstart', this.touchStartListener, this);
+                // Env.addEvent(this.containerObj, 'touchstart', this.touchStartListener, this);
+                Env.addEvent(moveTarget, 'touchstart', this.touchStartListener, this);
                 Env.addEvent(moveTarget, 'touchmove', this.touchMoveListener, this);
 
                 /*
@@ -2255,10 +2343,12 @@ JXG.extend(
 
                 if (window.navigator.msPointerEnabled) {
                     // IE10-
-                    Env.removeEvent(this.containerObj, 'MSPointerDown', this.pointerDownListener, this);
+                    // Env.removeEvent(this.containerObj, 'MSPointerDown', this.pointerDownListener, this);
+                    Env.removeEvent(moveTarget, 'MSPointerDown', this.pointerDownListener, this);
                     Env.removeEvent(moveTarget, 'MSPointerMove', this.pointerMoveListener, this);
                 } else {
-                    Env.removeEvent(this.containerObj, 'pointerdown', this.pointerDownListener, this);
+                    // Env.removeEvent(this.containerObj, 'pointerdown', this.pointerDownListener, this);
+                    Env.removeEvent(moveTarget, 'pointerdown', this.pointerDownListener, this);
                     Env.removeEvent(moveTarget, 'pointermove', this.pointerMoveListener, this);
                     Env.removeEvent(moveTarget, 'pointerleave', this.pointerLeaveListener, this);
                     Env.removeEvent(moveTarget, 'click', this.pointerClickListener, this);
@@ -2292,7 +2382,8 @@ JXG.extend(
             if (this.hasMouseHandlers && Env.isBrowser) {
                 var moveTarget = this.attr.movetarget || this.containerObj;
 
-                Env.removeEvent(this.containerObj, 'mousedown', this.mouseDownListener, this);
+                // Env.removeEvent(this.containerObj, 'mousedown', this.mouseDownListener, this);
+                Env.removeEvent(moveTarget, 'mousedown', this.mouseDownListener, this);
                 Env.removeEvent(moveTarget, 'mousemove', this.mouseMoveListener, this);
                 Env.removeEvent(moveTarget, 'click', this.mouseClickListener, this);
                 Env.removeEvent(moveTarget, 'dblclick', this.mouseDblClickListener, this);
@@ -2323,7 +2414,8 @@ JXG.extend(
             if (this.hasTouchHandlers && Env.isBrowser) {
                 var moveTarget = this.attr.movetarget || this.containerObj;
 
-                Env.removeEvent(this.containerObj, 'touchstart', this.touchStartListener, this);
+                // Env.removeEvent(this.containerObj, 'touchstart', this.touchStartListener, this);
+                Env.removeEvent(moveTarget, 'touchstart', this.touchStartListener, this);
                 Env.removeEvent(moveTarget, 'touchmove', this.touchMoveListener, this);
 
                 if (this.hasTouchEnd) {
@@ -2552,6 +2644,7 @@ JXG.extend(
             this.initMoveOrigin(pos[0], pos[1]);
 
             this.mode = this.BOARD_MODE_ZOOM;
+            this._change3DView = false;
             return false;
         },
 
@@ -2906,6 +2999,8 @@ JXG.extend(
                 }
             }
 
+            this.initSketchCurve(evt);
+
             // Allow browser scrolling
             // For this: pan by one finger has to be disabled
 
@@ -3069,7 +3164,8 @@ JXG.extend(
          * @returns {Boolean}
          */
         pointerMoveListener: function (evt) {
-            var i, j, pos, eps,
+            var i, j, pos,
+                eps,
                 touchTargets,
                 type = 'mouse'; // in case of no browser
 
@@ -3108,9 +3204,9 @@ JXG.extend(
             // Ignore pointer move event if too close at the border
             // and setPointerCapture is off
             if (Type.evaluate(this.attr.movetarget) === null &&
-                pos[0] <= eps || pos[1] <= eps ||
-                pos[0] >= this.canvasWidth - eps ||
-                pos[1] >= this.canvasHeight - eps
+                (pos[0] <= eps || pos[1] <= eps ||
+                 pos[0] >= this.canvasWidth - eps ||
+                 pos[1] >= this.canvasHeight - eps)
             ) {
                 return this.mode === this.BOARD_MODE_NONE;
             }
@@ -3123,6 +3219,9 @@ JXG.extend(
                     [evt, this.mode]
                 );
             } else if (!this.mouseOriginMove(evt)) {
+
+                this.addToSketchCurve(evt);
+
                 if (this.mode === this.BOARD_MODE_DRAG) {
                     // Run through all jsxgraph elements which are touched by at least one finger.
                     for (i = 0; i < this.touches.length; i++) {
@@ -3204,6 +3303,7 @@ JXG.extend(
                 }
             }
 
+            this.finalizeSketchCurve(evt);
             this.originMoveEnd();
             this.update();
 
@@ -3258,12 +3358,7 @@ JXG.extend(
                     Env.removeEvent(this.document, 'MSPointerUp', this.pointerUpListener, this);
                 } else {
                     Env.removeEvent(this.document, 'pointerup', this.pointerUpListener, this);
-                    Env.removeEvent(
-                        this.document,
-                        'pointercancel',
-                        this.pointerUpListener,
-                        this
-                    );
+                    Env.removeEvent(this.document, 'pointercancel', this.pointerUpListener, this);
                 }
                 this.hasPointerUp = false;
             }
@@ -3523,6 +3618,8 @@ JXG.extend(
                 this.gestureStartListener(evt);
             }
 
+            this.initSketchCurve(evt);
+
             this.options.precision.hasPoint = this.options.precision.mouse;
             this.triggerEventHandlers(['touchstart', 'down'], [evt]);
 
@@ -3537,8 +3634,7 @@ JXG.extend(
          */
         touchMoveListener: function (evt) {
             var i,
-                pos1,
-                pos2,
+                pos1, pos2,
                 touchTargets,
                 evtTouches = evt['touches'];
 
@@ -3575,6 +3671,9 @@ JXG.extend(
                 }
             } else {
                 if (!this.touchOriginMove(evt)) {
+
+                    this.addToSketchCurve(evt);
+
                     if (this.mode === this.BOARD_MODE_DRAG) {
                         // Runs over through all elements which are touched
                         // by at least one finger.
@@ -3687,6 +3786,8 @@ JXG.extend(
 
             this.triggerEventHandlers(['touchend', 'up'], [evt]);
             this.displayInfobox(false);
+
+            this.finalizeSketchCurve(evt);
 
             // selection
             if (this.selectingMode) {
@@ -3900,6 +4001,7 @@ JXG.extend(
                 result = this.mouseOriginMoveStart(evt);
             }
 
+            this.initSketchCurve(evt);
             this.triggerEventHandlers(['mousedown', 'down'], [evt]);
 
             return result;
@@ -3940,6 +4042,9 @@ JXG.extend(
                     [evt, this.mode]
                 );
             } else if (!this.mouseOriginMove(evt)) {
+
+                this.addToSketchCurve(evt);
+
                 if (this.mode === this.BOARD_MODE_DRAG) {
                     this.moveObject(pos[0], pos[1], this.mouse, evt, 'mouse');
                 } else {
@@ -3977,6 +4082,7 @@ JXG.extend(
                 }
             }
 
+            this.finalizeSketchCurve(evt);
             this.originMoveEnd();
             this.dehighlightAll();
             this.update();
@@ -5430,7 +5536,7 @@ JXG.extend(
          * @private
          */
         _removeObj: function (object, saveMethod) {
-            var el, i;
+            var el, o, i;
 
             if (Type.isArray(object)) {
                 for (i = 0; i < object.length; i++) {
@@ -5499,8 +5605,12 @@ JXG.extend(
                 // remove the object itself from our control structures
                 if (object._pos > -1) {
                     this.objectsList.splice(object._pos, 1);
+                    // Quadratic complexity for reindexing the positions:
                     for (i = object._pos; i < this.objectsList.length; i++) {
-                        this.objectsList[i]._pos--;
+                        o = this.objectsList[i];
+                        if (o._pos > -1) {
+                            o._pos--;
+                        }
                     }
                 } else if (object.type !== Const.OBJECT_TYPE_TURTLE) {
                     JXG.debug(
@@ -5867,9 +5977,9 @@ JXG.extend(
                     if (this.objectsList[el].visProp.islabel && this.objectsList[el].visProp.autoposition) {
                         autoPositionLabelList.push(el);
                     } else {
-                    this.objectsList[el].updateRenderer();
+                        this.objectsList[el].updateRenderer();
+                    }
                 }
-            }
 
                 currentIndex = autoPositionLabelList.length;
 
@@ -5907,22 +6017,36 @@ JXG.extend(
                 // last = Number.NEGATIVE_INFINITY.toExponential,
                 depth_order_layers = [],
                 objects_sorted,
-                // Sort the elements for the canvas rendering according to
-                // their layer, _pos, depthOrder (with this priority)
-                // @private
-                _compareFn = function(a, b) {
+
+                /**
+                 * Function to sort elements for depth ordering in canvas renderer.
+                 * Only relevant for elements having a zIndex.
+                 * Sort the elements for the canvas rendering according to
+                 * their layer, _pos, depthOrder (with this priority).
+                 * @param {JXG.GeometryObject} a
+                 * @param {JXG.GeometryObject} b
+                 * @returns Number
+                 * @private
+                 */
+                _compareDepth = function(a, b) {
                     if (a.visProp.layer !== b.visProp.layer) {
+                        // For elements in different layers, the element in the
+                        // higher layer is in front.
                         return a.visProp.layer - b.visProp.layer;
                     }
 
-                    // The objects are in the same layer, but the layer is not depth ordered
+                    // From here on, both objects are in the same layer.
+
                     if (depth_order_layers.indexOf(a.visProp.layer) === -1) {
+                        // The layer is not depth ordered.
                         return a._pos - b._pos;
                     }
 
+                    // From here on, both objects are in the same layer
+                    // and the layer is depth ordered.
+
                     // The objects are in the same layer and the layer is depth ordered
-                    // We have to sort 2D elements according to the zIndices of
-                    // their 3D parents.
+                    // But neither element is the 2D element of a 3D element.
                     if (!a.visProp.element3d && !b.visProp.element3d) {
                         return a._pos - b._pos;
                     }
@@ -5931,49 +6055,40 @@ JXG.extend(
                         return -1;
                     }
 
-                    if (b.visProp.element3d && !a.visProp.element3d) {
+                    if (!a.visProp.element3d && b.visProp.element3d) {
                         return 1;
                     }
 
+                    // Finqally, both elements are 2D elements of a 3D element.
                     return a.visProp.element3d.zIndex - b.visProp.element3d.zIndex;
                 };
 
-            // Only one view3d element is supported. Get the depth orderer layers and
+            // Only one view3d element is supported. Get the depth order layers and
             // update the zIndices of the 3D elements.
             for (el = 0; el < olen; el++) {
                 pEl = this.objectsList[el];
-                if (pEl.elType === 'view3d' && pEl.evalVisProp('depthorder.enabled')) {
+                if (pEl.elType === 'view3d' &&
+                    pEl.evalVisProp('depthorder.enabled')
+                ) {
                     depth_order_layers = pEl.evalVisProp('depthorder.layers');
                     pEl.updateRenderer();
                     break;
                 }
             }
 
-            objects_sorted = this.objectsList.toSorted(_compareFn);
+            // objects_sorted = this.objectsList.toSorted(_compareDepth);
+
+            // 3D elements are not rendered, but their subelements element2D
+            objects_sorted = this.objectsList.filter(function(e) { return !e.is3D; }).toSorted(_compareDepth);
             olen = objects_sorted.length;
             for (el = 0; el < olen; el++) {
-                objects_sorted[el].prepareUpdate().updateRenderer();
+                if (
+                    objects_sorted[el].visPropCalc.visible &&
+                    objects_sorted[el].type !== Const.OBJECT_TYPE_FACE3D // For these, updateRenderer is triggered in polyhedron3d.updateRenderer
+                ) {
+                    objects_sorted[el].prepareUpdate().updateRenderer();
+                }
             }
-
-            // for (i = 0; i < len; i++) {
-            //     minim = Number.POSITIVE_INFINITY;
-
-            //     for (lay in layers) {
-            //         if (layers.hasOwnProperty(lay)) {
-            //             if (layers[lay] > last && layers[lay] < minim) {
-            //                 minim = layers[lay];
-            //             }
-            //         }
-            //     }
-
-            //     for (el = 0; el < olen; el++) {
-            //         pEl = this.objectsList[el];
-            //         if (pEl.visProp.layer === minim) {
-            //             pEl.prepareUpdate().updateRenderer();
-            //         }
-            //     }
-            //     last = minim;
-            // }
 
             return this;
         },
@@ -6435,7 +6550,8 @@ JXG.extend(
          * </ul>
          * Some board attributes are immutable, like e.g. the renderer type.
          *
-         * @param {Object} attributes An object with attributes.
+         * @param {Object} attributes An object with attributes
+         * @param {Boolean} [force=false] if true the attributes are set regardless of the previous setting was identical.
          * @returns {JXG.Board} Reference to the board
          *
          * @example
@@ -6553,10 +6669,10 @@ JXG.extend(
          *
          *
          */
-        setAttribute: function (attr) {
+        setAttribute: function (attr, force) {
             var i, arg, pair,
                 key, value, oldvalue,// j, le,
-                node,
+                node, lst, e,
                 attributes = {};
 
             // Normalize the user input
@@ -6583,9 +6699,8 @@ JXG.extend(
                 value = (value.toLowerCase && value.toLowerCase() === 'false')
                     ? false
                     : value;
-
                 oldvalue = this.attr[key];
-                if (oldvalue === value) {
+                if (!force && oldvalue === value) {
                     continue;
                 }
                 switch (key) {
@@ -6598,6 +6713,17 @@ JXG.extend(
                         } else {
                             // TODO
                         }
+                        break;
+                    case 'cssstyle':
+                        lst = Type.css2js(value);
+                        node = this.containerObj;
+                        // node = this.renderer.svgRoot;
+                        for (e in lst) if (lst.hasOwnProperty(e)) {
+                            pair = lst[e];
+                            node.style[pair.key] = pair.val;
+                        }
+
+                        this._set(key, value);
                         break;
                     case 'boundingbox':
                         this.setBoundingBox(value, this.keepaspectratio);
@@ -6695,10 +6821,11 @@ JXG.extend(
             }
 
             // Redraw navbar to handle the remaining show* attributes
-            this.containerObj.ownerDocument.getElementById(
-                this.container + "_navigationbar"
-            ).remove();
-            this.renderer.drawNavigationBar(this, this.attr.navbar);
+            node = this.containerObj.ownerDocument.getElementById(this.container + "_navigationbar");
+            if (Type.exists(node)) {
+                node.remove();
+                this.renderer.drawNavigationBar(this, this.attr.navbar);
+            }
 
             this.triggerEventHandlers(["attribute"], [attributes, this]);
             this.fullUpdate();
@@ -7360,6 +7487,94 @@ JXG.extend(
             }
 
             return this;
+        },
+
+        /**
+         * Reset the sketchcurves in board.sketches[] to length 0 and add the position
+         * of the event as first point of the sketch curve. Called at down events.
+         * <p>
+         * Sets board.isSketching[i] = true where i depends on the finger (1st or 2nd).
+         *
+         * @private
+         * @param {Object} evt Event object
+         * @see JXG.Board#addToSketchCurve
+         * @see JXG.Board#finalizeSketchCurve
+         */
+        initSketchCurve: function(evt) {
+            var i, c;
+            // Init sketchcurves
+            if (this.mode !== this.BOARD_MODE_MOVE_ORIGIN) {
+                // Add coords to sketch curves
+                // Only first and second finger are stored
+                c = this.getUsrCoordsOfMouse(evt);
+                i = (evt.isPrimary) ? 0 : 1;
+                if (Type.exists(this.sketches[i])) {
+                    this.sketches[i].dataX = [c[0]];
+                    this.sketches[i].dataY = [c[1]];
+                    this.isSketching[i] = true;
+                }
+            }
+        },
+
+        /**
+         * Add the position of the event to the sketchcurve i in board.sketches[].
+         * Called at move events.
+         * Point is only added if board.isSketching[i] = true.
+         *
+         * @private
+         * @param {Object} evt Event object
+         * @see JXG.Board#initSketchCurve
+         * @see JXG.Board#finalizeSketchCurve
+         */
+        addToSketchCurve: function(evt) {
+            var i, c, len;
+
+            // Add coords to sketchcurves
+            // Only first and second finger are stored
+            i = (evt.isPrimary) ? 0 : 1;
+            if (this.attr.sketches.enabled && this.isSketching[i] === true) {
+                if (Type.exists(this.sketches[i])) {
+                    c = this.getUsrCoordsOfMouse(evt);
+                    this.sketches[i].dataX.push(c[0]);
+                    this.sketches[i].dataY.push(c[1]);
+
+                    len = this.sketches[i].evalVisProp('maxlength');
+                    if (len !== null && this.sketches[i].dataX.length > len) {
+                        this.sketches[i].dataX = this.sketches[i].dataX.slice(-len);
+                        this.sketches[i].dataY = this.sketches[i].dataY.slice(-len);
+                    }
+                    if (this.sketches[i].evalVisProp('visible')) {
+                        this.update();
+                    }
+                }
+            }
+        },
+
+        /**
+         * Ends adding points to the sketchcurve i in board.sketches[].
+         * Called at up events.
+         * Sets board.isSketching[i] = false.
+         * Empties the curve if deleteOnUp==true;
+         *
+         * @private
+         * @param {Object} evt Event object
+         * @see JXG.Board#initSketchCurve
+         * @see JXG.Board#addToSketchCurve
+         */
+        finalizeSketchCurve: function(evt) {
+            var i;
+
+            // Stop sketching into this.sketches
+            i = (evt.isPrimary) ? 0 : 1;
+            if (this.attr.sketches.enabled) {
+                if (Type.exists(this.sketches[i])) {
+                    this.isSketching[i] = false;
+                    if (this.sketches[i].evalVisProp('deleteOnUp')) {
+                        this.sketches[i].dataX = [];
+                        this.sketches[i].dataY = [];
+                    }
+                }
+            }
         },
 
         /* **************************

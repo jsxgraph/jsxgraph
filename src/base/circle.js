@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2025
+    Copyright 2008-2026
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -107,7 +107,7 @@ JXG.Circle = function (board, method, par1, par2, attributes) {
     /** Radius of the circle
      * only set if method equals 'pointRadius'
      * @type Number
-     * @default null
+     * @default 0
      * @see JXG.Circle#method
      */
     this.radius = 0;
@@ -183,24 +183,24 @@ JXG.Circle = function (board, method, par1, par2, attributes) {
             this.point2.addChild(this);
         }
     }
-
-    this.methodMap = Type.deepCopy(this.methodMap, {
-        setRadius: "setRadius",
-        getRadius: "getRadius",
-        Area: "Area",
-        area: "Area",
-        Perimeter: "Perimeter",
-        Circumference: "Perimeter",
-        radius: "Radius",
-        Radius: "Radius",
-        Diameter: "Diameter",
-        center: "center",
-        line: "line",
-        point2: "point2"
-    });
 };
 
 JXG.Circle.prototype = new GeometryElement();
+
+Type.copyMethodMap(JXG.Circle, {
+    setRadius: "setRadius",
+    getRadius: "getRadius",
+    Area: "Area",
+    area: "Area",
+    Perimeter: "Perimeter",
+    Circumference: "Perimeter",
+    radius: "Radius",
+    Radius: "Radius",
+    Diameter: "Diameter",
+    center: "center",
+    line: "line",
+    point2: "point2"
+});
 
 JXG.extend(
     JXG.Circle.prototype,
@@ -717,6 +717,32 @@ JXG.extend(
             return this;
         },
 
+        removeTransform: function (transform) {
+            var i,
+                list = Type.isArray(transform) ? transform : [transform],
+                len = list.length;
+
+            for (i = 0; i < len; i++) {
+                Type.removeElementFromArray(this.center.transformations, list[i]);
+
+                if (this.method === 'twoPoints') {
+                    Type.removeElementFromArray(this.point2.transformations, list[i]);
+                }
+            }
+
+            return this;
+        },
+
+        clearTransforms: function () {
+            this.center.transformations = [];
+
+            if (this.method === 'twoPoints') {
+                this.point2.transformations = [];
+            }
+
+            return this;
+        },
+
         // see element.js
         snapToGrid: function () {
             var forceIt = this.evalVisProp('snaptogrid');
@@ -910,7 +936,7 @@ JXG.extend(
  * var c1 = board.create('circle', [[1.3, 1.3], [0, 1.3]], {strokeColor: 'black', center: {visible:true}});
  * var c2 = board.create('circle', [c1, t], {strokeColor: 'black'});
  *
- * </pre><div id="JXG0686a222-6339-11e8-9fb9-901b0e1b8723" class="jxgbox" style="width: 300px; height: 300px;"></div>
+ * <div id="JXG0686a222-6339-11e8-9fb9-901b0e1b8723" class="jxgbox" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
  *     (function() {
  *         var board = JXG.JSXGraph.initBoard('JXG0686a222-6339-11e8-9fb9-901b0e1b8723',
@@ -918,7 +944,7 @@ JXG.extend(
  *     var t = board.create('transform', [2, 1.5], {type: 'scale'});
  *     var c1 = board.create('circle', [[1.3, 1.3], [0, 1.3]], {strokeColor: 'black', center: {visible:true}});
  *     var c2 = board.create('circle', [c1, t], {strokeColor: 'black'});
- *
+ *</pre>
  *     })();
  *
  * </script><pre>

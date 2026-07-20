@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2025
+    Copyright 2008-2026
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -295,23 +295,6 @@ JXG.createSlider = function (board, parents, attributes) {
             : Math.round((this.position * d) / ev_sw) * ev_sw  + this._smin;
     };
 
-    p3.methodMap = Type.deepCopy(p3.methodMap, {
-        Value: "Value",
-        setValue: "setValue",
-        smax: "_smax",
-        // Max: "_smax",
-        smin: "_smin",
-        // Min: "_smin",
-        setMax: "setMax",
-        setMin: "setMin",
-        point1: "point1",
-        point2: "point2",
-        baseline: "baseline",
-        highline: "highline",
-        ticks: "ticks",
-        label: "label"
-    });
-
     /**
      * End value of the slider range.
      * @memberOf Slider.prototype
@@ -434,6 +417,9 @@ JXG.createSlider = function (board, parents, attributes) {
         // reset the withlabel attribute
         p3.visProp.withlabel = true;
         p3.hasLabel = true;
+        p3.inherits.push(t);
+        t.addParents(p3);
+        p3.addChild(t);
     }
 
     /**
@@ -592,6 +578,23 @@ JXG.createSlider = function (board, parents, attributes) {
             p3.prepareUpdate().ticks.updateVisibility().updateRenderer();
         }
     }
+
+    Type.extendInstanceMethodMap(p3, {
+        Value: "Value",
+        setValue: "setValue",
+        smax: "_smax",
+        // Max: "_smax",
+        smin: "_smin",
+        // Min: "_smin",
+        setMax: "setMax",
+        setMin: "setMin",
+        point1: "point1",
+        point2: "point2",
+        baseline: "baseline",
+        highline: "highline",
+        ticks: "ticks",
+        label: "label"
+    });
 
     return p3;
 };

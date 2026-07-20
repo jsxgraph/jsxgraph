@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2025
+    Copyright 2008-2026
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -54,7 +54,7 @@ import NoRenderer from "./renderer/no.js";
 /**
  * Constructs a new JSXGraph singleton object.
  * @class The JXG.JSXGraph singleton stores all properties required
- * to load, save, create and free a board.
+ * to load, store, create and free a board.
  */
 JXG.JSXGraph = {
     /**
@@ -214,6 +214,7 @@ JXG.JSXGraph = {
         board.resizeContainer(dimensions.width, dimensions.height, true, true);
         board._createSelectionPolygon(attr);
         board.renderer.drawNavigationBar(board, attr.navbar);
+
         JXG.boards[board.id] = board;
     },
 
@@ -495,13 +496,13 @@ JXG.JSXGraph = {
             theme = {},
             board;
 
-        attributes = attributes || {};
+        attributes = attributes || {}; // User supplied attributes
         // Merge a possible theme
         if (attributes.theme !== 'default' && Type.exists(JXG.themes[attributes.theme])) {
             theme = JXG.themes[attributes.theme];
         }
-        options = Type.deepCopy(Options, theme, true);
-        attr = this._setAttributes(attributes, options);
+        options = Type.deepCopy(Options, theme, true);    // Copy global options
+        attr = this._setAttributes(attributes, options);  // Merge user supplied attributes into global options
 
         dimensions = Env.getDimensions(box, attr.document);
 
@@ -607,7 +608,19 @@ JXG.JSXGraph = {
         if (attr.grid) {
             board.create("grid", [], typeof attr.grid === "object" ? attr.grid : {});
         }
+
+        board.sketches = [
+            board.create('sketchcurve', [], board.attr.sketches[0]),
+            board.create('sketchcurve', [], board.attr.sketches[1])
+        ];
+        board.sketches[0].dump = false;
+        board.sketches[1].dump = false;
+        board.sketch = board.sketches[0];
+
         board.unsuspendUpdate();
+
+        // Set CSS styles of JSXGraph div
+        board.setAttribute({cssStyle: attr.cssstyle}, true);
 
         return board;
     },

@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2025
+    Copyright 2008-2026
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -152,30 +152,6 @@ JXG.CoordsElement = function (coordinates, isLabel) {
     this.Xjc = null;
     this.Yjc = null;
 
-    // documented in GeometryElement
-    this.methodMap = Type.deepCopy(this.methodMap, {
-        move: "moveTo",
-        moveTo: "moveTo",
-        moveAlong: "moveAlong",
-        visit: "visit",
-        glide: "makeGlider",
-        makeGlider: "makeGlider",
-        intersect: "makeIntersection",
-        makeIntersection: "makeIntersection",
-        X: "X",
-        Y: "Y",
-        Coords: "Coords",
-        free: "free",
-        setPosition: "setGliderPosition",
-        setGliderPosition: "setGliderPosition",
-        addConstraint: "addConstraint",
-        dist: "Dist",
-        Dist: "Dist",
-        onPolygon: "onPolygon",
-        startAnimation: "startAnimation",
-        stopAnimation: "stopAnimation"
-    });
-
     /*
      * this.element may have been set by the object constructor.
      */
@@ -184,6 +160,29 @@ JXG.CoordsElement = function (coordinates, isLabel) {
     }
     this.isDraggable = true;
 };
+
+Type.copyMethodMap(JXG.CoordsElement, {
+    move: "moveTo",
+    moveTo: "moveTo",
+    moveAlong: "moveAlong",
+    visit: "visit",
+    glide: "makeGlider",
+    makeGlider: "makeGlider",
+    intersect: "makeIntersection",
+    makeIntersection: "makeIntersection",
+    X: "X",
+    Y: "Y",
+    Coords: "Coords",
+    free: "free",
+    setPosition: "setGliderPosition",
+    setGliderPosition: "setGliderPosition",
+    addConstraint: "addConstraint",
+    dist: "Dist",
+    Dist: "Dist",
+    onPolygon: "onPolygon",
+    startAnimation: "startAnimation",
+    stopAnimation: "stopAnimation"
+});
 
 JXG.extend(
     JXG.CoordsElement.prototype,
@@ -1736,6 +1735,40 @@ JXG.extend(
         },
 
         /**
+         * Remove transformations of this element.
+         * @param {JXG.Transformation|Array} transform Either one {@link JXG.Transformation}
+         * or an array of {@link JXG.Transformation}s.
+         * @returns {JXG.CoordsElement} Reference to itself.
+         */
+        removeTransform: function ( transform) {
+            var i,
+                list = Type.isArray(transform) ? transform : [transform],
+                len = list.length;
+
+            for (i = 0; i < len; i++) {
+                Type.removeElementFromArray(this.transformations, list[i]);
+            }
+
+            if (this.transformations.length === 0) {
+                this.baseElement = null;
+            }
+
+            return this;
+        },
+
+        /**
+         * Remove all {@link JXG.Transformation}s of this element.
+         * @param {JXG.GeometryElement} el
+         * @returns {JXG.CoordsElement} Reference to itself.
+         */
+        clearTransforms: function () {
+            this.transformations = [];
+            this.baseElement = null;
+
+            return this;
+        },
+
+        /**
          * Animate a point.
          * @param {Number|Function} direction The direction the glider is animated. Can be +1 or -1.
          * @param {Number|Function} stepCount The number of steps in which the parent element is divided.
@@ -1972,14 +2005,14 @@ JXG.extend(
          * let buttonMove = board.create('button', [-2, 4, 'left',
          * () => {
          *    isLeftRight = !isLeftRight;
-         *    buttonMove.rendNodeButton.innerHTML = isLeftRight ? 'left' : 'right'
-         *    let x = isLeftRight ? 4 : -4
-         *    let sym = isLeftRight ? 'triangleleft' : 'triangleright'
+         *    buttonMove.rendNodeButton.innerHTML = isLeftRight ? 'left' : 'right';
+         *    let x = isLeftRight ? 4 : -4;
+         *    let sym = isLeftRight ? 'triangleleft' : 'triangleright';
          *
-         *    A.moveTo([x, 3], 1000, { callback: () => A.setAttribute({ face: sym, size: 5 }) })
-         *    B.moveTo([x, 2], 1000, { callback: () => B.setAttribute({ face: sym, size: 5 }), effect: "<>" })
-         *    C.moveTo([x, 1], 1000, { callback: () => C.setAttribute({ face: sym, size: 5 }), effect: "<" })
-         *    D.moveTo([x, 0], 1000, { callback: () => D.setAttribute({ face: sym, size: 5 }), effect: ">" })
+         *    A.moveTo([x, 3], 1000, { callback: () => A.setAttribute({ face: sym, size: 5 }) });
+         *    B.moveTo([x, 2], 1000, { callback: () => B.setAttribute({ face: sym, size: 5 }), effect: "<>" });
+         *    C.moveTo([x, 1], 1000, { callback: () => C.setAttribute({ face: sym, size: 5 }), effect: "<" });
+         *    D.moveTo([x, 0], 1000, { callback: () => D.setAttribute({ face: sym, size: 5 }), effect: ">" });
          *
          * }]);
          *
@@ -1995,14 +2028,14 @@ JXG.extend(
          * let buttonMove = board.create('button', [-2, 4, 'left',
          * () => {
          *    isLeftRight = !isLeftRight;
-         *    buttonMove.rendNodeButton.innerHTML = isLeftRight ? 'left' : 'right'
-         *    let x = isLeftRight ? 4 : -4
-         *    let sym = isLeftRight ? 'triangleleft' : 'triangleright'
+         *    buttonMove.rendNodeButton.innerHTML = isLeftRight ? 'left' : 'right';
+         *    let x = isLeftRight ? 4 : -4;
+         *    let sym = isLeftRight ? 'triangleleft' : 'triangleright';
          *
-         *    A.moveTo([x, 3], 1000, { callback: () => A.setAttribute({ face: sym, size: 5 }) })
-         *    B.moveTo([x, 2], 1000, { callback: () => B.setAttribute({ face: sym, size: 5 }), effect: "<>" })
-         *    C.moveTo([x, 1], 1000, { callback: () => C.setAttribute({ face: sym, size: 5 }), effect: "<" })
-         *    D.moveTo([x, 0], 1000, { callback: () => D.setAttribute({ face: sym, size: 5 }), effect: ">" })
+         *    A.moveTo([x, 3], 1000, { callback: () => A.setAttribute({ face: sym, size: 5 }) });
+         *    B.moveTo([x, 2], 1000, { callback: () => B.setAttribute({ face: sym, size: 5 }), effect: "<>" });
+         *    C.moveTo([x, 1], 1000, { callback: () => C.setAttribute({ face: sym, size: 5 }), effect: "<" });
+         *    D.moveTo([x, 0], 1000, { callback: () => D.setAttribute({ face: sym, size: 5 }), effect: ">" });
          *
          * }]);
          *}

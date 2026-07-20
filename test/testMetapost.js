@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2025
+    Copyright 2008-2026
         Matthias Ehmann,
         Carsten Miller,
         Andreas Walter,
@@ -27,7 +27,7 @@
     and <https://opensource.org/licenses/MIT/>.
  */
 
-describe("Test JXG.Math.Clip", function () {
+describe("Test JXG.Math.Metapost", function () {
     var board;
 
     document.getElementsByTagName("body")[0].innerHTML =

@@ -1,3 +1,8 @@
+1.13.0
+===
+
+API changes: the property of the elements `smartlabel`, `slopetriangle`, and `label` are now `smartlabel`, `slopetriangle`, and `label`.
+
 1.12.2
 ===
 

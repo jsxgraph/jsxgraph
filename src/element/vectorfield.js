@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2025
+    Copyright 2008-2026
         Matthias Ehmann,
         Carsten Miller,
         Alfred Wassermann
@@ -253,7 +253,7 @@ JXG.createVectorField = function (board, parents, attributes) {
         }
     };
 
-    el.methodMap = Type.deepCopy(el.methodMap, {
+    Type.extendInstanceMethodMap(el, {
         setF: "setF"
     });
 
@@ -413,7 +413,7 @@ JXG.createSlopeField = function (board, parents, attributes) {
         };
     };
 
-    el.methodMap = Type.deepCopy(el.methodMap, {
+    Type.extendInstanceMethodMap(el, {
         setF: "setF"
     });
 

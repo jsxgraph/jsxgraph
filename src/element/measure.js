@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2025
+    Copyright 2008-2026
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -132,7 +132,7 @@ JXG.createTapemeasure = function (board, parents, attributes) {
         li.inherits.push(ti);
     }
 
-    // override the segments's remove method to ensure the removal of all elements
+    // override the segments' remove method to ensure the removal of all elements
     /** @ignore */
     li.remove = function () {
         if (withTicks) {
@@ -176,10 +176,6 @@ JXG.createTapemeasure = function (board, parents, attributes) {
         ti.dump = false;
     }
 
-    li.methodMap = JXG.deepCopy(li.methodMap, {
-        Value: "Value"
-    });
-
     li.prepareUpdate().update();
     if (!board.isSuspendedUpdate) {
         li.updateVisibility().updateRenderer();
@@ -187,6 +183,10 @@ JXG.createTapemeasure = function (board, parents, attributes) {
         li.point1.updateVisibility().updateRenderer();
         li.point2.updateVisibility().updateRenderer();
     }
+
+    Type.extendInstanceMethodMap(li, {
+        Value: "Value"
+    });
 
     return li;
 };
@@ -369,7 +369,7 @@ JXG.createMeasurement = function (board, parents, attributes) {
             // In some cases, object keys must not be numbers. This allows key 'dim1' instead of '1'.
             unit = el.eval(units['dim' + dim]);
         } else {
-            unit = el.evalVisProp('baseunit');
+            unit = el.evalVisProp('baseUnit');
 
             if (dim === 0) {
                 unit = '';
@@ -418,10 +418,10 @@ JXG.createMeasurement = function (board, parents, attributes) {
             val = el.Value(),
             i;
 
-        if (el.evalVisProp('showprefix')) {
+        if (el.evalVisProp('showPrefix')) {
             prefix = el.evalVisProp('prefix');
         }
-        if (el.evalVisProp('showsuffix')) {
+        if (el.evalVisProp('showSuffix')) {
             suffix = el.evalVisProp('suffix');
         }
 
@@ -486,8 +486,9 @@ JXG.createMeasurement = function (board, parents, attributes) {
         return prefix + val + unit + suffix;
     });
 
-    el.methodMap = Type.deepCopy(el.methodMap, {
+    Type.extendInstanceMethodMap(el, {
         Value: "Value",
+        V: "Value",
         Dimension: "Dimension",
         Unit: "Unit",
         getTerm: "getTerm",

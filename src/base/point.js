@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2025
+    Copyright 2008-2026
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -580,7 +580,7 @@ JXG.createGlider = function (board, parents, attributes) {
 
 /**
  * @class A point intersecting two 1-dimensional elements.
- * It is one point of the set  * consisting of the intersection points of the two elements.
+ * It is one point of the set consisting of the intersection points of the two elements.
  * The following element types can be (mutually) intersected: line, circle,
  * curve, polygon, polygonal chain.
  *

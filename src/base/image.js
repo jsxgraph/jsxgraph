@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2025
+    Copyright 2008-2026
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -103,20 +103,20 @@ JXG.Image = function (board, coords, attributes, url, size) {
 
     this.board.renderer.drawImage(this);
     this.board.finalizeAdding(this);
-
-    this.methodMap = JXG.deepCopy(this.methodMap, {
-        addTransformation: "addTransform",
-        trans: "addTransform",
-        W: "W",
-        Width: "W",
-        H: "H",
-        Height: "H",
-        setSize: "setSize"
-    });
 };
 
 JXG.Image.prototype = new GeometryElement();
+
 Type.copyPrototypeMethods(JXG.Image, CoordsElement, 'coordsConstructor');
+Type.copyMethodMap(JXG.Image, {
+    addTransformation: "addTransform",
+    trans: "addTransform",
+    W: "W",
+    Width: "W",
+    H: "H",
+    Height: "H",
+    setSize: "setSize"
+});
 
 JXG.extend(
     JXG.Image.prototype,
@@ -265,15 +265,31 @@ JXG.extend(
         },
 
         addTransform: function (transform) {
-            var i;
+            var i,
+                list = Type.isArray(transform) ? transform : [transform],
+                len = list.length;
 
-            if (Type.isArray(transform)) {
-                for (i = 0; i < transform.length; i++) {
-                    this.transformations.push(transform[i]);
-                }
-            } else {
-                this.transformations.push(transform);
+            for (i = 0; i < len; i++) {
+                this.transformations.push(list[i]);
             }
+
+            return this;
+        },
+
+        removeTransform: function (transform) {
+            var i,
+                list = Type.isArray(transform) ? transform : [transform],
+                len = list.length;
+
+            for (i = 0; i < len; i++) {
+                Type.removeElementFromArray(this.transformations, list[i]);
+            }
+
+            return this;
+        },
+
+        clearTransforms: function () {
+            this.transformations = [];
 
             return this;
         },

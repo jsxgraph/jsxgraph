@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2025
+    Copyright 2008-2026
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -124,7 +124,7 @@ JXG.Turtle = function (board, parents, attributes) {
     this.board = board;
     this.visProp.curveType = 'plot';
 
-    // Save visProp in this._attributes.
+    // Store visProp in this._attributes.
     // this._attributes is overwritten by setPenSize, setPenColor...
     // Setting the color or size affects the turtle from the time of
     // calling the method,
@@ -163,60 +163,60 @@ JXG.Turtle = function (board, parents, attributes) {
 
     this.init(x, y, dir);
 
-        this.methodMap = Type.deepCopy(this.methodMap, {
-            forward: 'forward',
-            fd: 'forward',
-            back: 'back',
-            bk: 'back',
-            right: 'right',
-            rt: 'right',
-            left: 'left',
-            lt: 'left',
-            penUp: 'penUp',
-            pu: 'penUp',
-            up: 'penUp',
-            penDown: 'penDown',
-            pd: 'penDown',
-            down: 'penDown',
-            clearScreen: 'clearScreen',
-            cs: 'clearScreen',
-            clean: 'clean',
-            setPos: 'setPos',
-            home: 'home',
-            hideTurtle: 'hideTurtle',
-            ht: 'hideTurtle',
-            hide: 'hideTurtle',
-            showTurtle: 'showTurtle',
-            st: 'showTurtle',
-            show: 'showTurtle',
-            penSize: 'setPenSize',
-            setPenSize: 'setPenSize',
-            penColor: 'setPenColor',
-            setPenColor: 'setPenColor',
-            highlightPenColor: 'setHighlightPenColor',
-            setHighlightPenColor: 'setHighlightPenColor',
-            getPenColor: 'getPenColor',
-            Color: 'getPenColor',
-            getHighlightPenColor: 'getHighlightPenColor',
-            HighlightColor: 'getHighlightPenColor',
-            getPenSize: 'getPenSize',
-            Size: 'getPenSize',
-            pushTurtle: 'pushTurtle',
-            push: 'pushTurtle',
-            popTurtle: 'popTurtle',
-            pop: 'popTurtle',
-            lookTo: 'lookTo',
-            pos: 'pos',
-            Pos: 'pos',
-            moveTo: 'moveTo',
-            X: 'X',
-            Y: 'Y'
-        });
-
     return this;
 };
 
 JXG.Turtle.prototype = new GeometryElement();
+
+Type.copyMethodMap(JXG.Turtle, {
+    forward: 'forward',
+    fd: 'forward',
+    back: 'back',
+    bk: 'back',
+    right: 'right',
+    rt: 'right',
+    left: 'left',
+    lt: 'left',
+    penUp: 'penUp',
+    pu: 'penUp',
+    up: 'penUp',
+    penDown: 'penDown',
+    pd: 'penDown',
+    down: 'penDown',
+    clearScreen: 'clearScreen',
+    cs: 'clearScreen',
+    clean: 'clean',
+    setPos: 'setPos',
+    home: 'home',
+    hideTurtle: 'hideTurtle',
+    ht: 'hideTurtle',
+    hide: 'hideTurtle',
+    showTurtle: 'showTurtle',
+    st: 'showTurtle',
+    show: 'showTurtle',
+    penSize: 'setPenSize',
+    setPenSize: 'setPenSize',
+    penColor: 'setPenColor',
+    setPenColor: 'setPenColor',
+    highlightPenColor: 'setHighlightPenColor',
+    setHighlightPenColor: 'setHighlightPenColor',
+    getPenColor: 'getPenColor',
+    Color: 'getPenColor',
+    getHighlightPenColor: 'getHighlightPenColor',
+    HighlightColor: 'getHighlightPenColor',
+    getPenSize: 'getPenSize',
+    Size: 'getPenSize',
+    pushTurtle: 'pushTurtle',
+    push: 'pushTurtle',
+    popTurtle: 'popTurtle',
+    pop: 'popTurtle',
+    lookTo: 'lookTo',
+    pos: 'pos',
+    Pos: 'pos',
+    moveTo: 'moveTo',
+    X: 'X',
+    Y: 'Y'
+});
 
 JXG.extend(
     JXG.Turtle.prototype,

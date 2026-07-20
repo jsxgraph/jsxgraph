@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2025
+    Copyright 2008-2026
         Matthias Ehmann,
         Carsten Miller,
         Andreas Walter,
@@ -117,13 +117,13 @@ JXG.Curve3D = function (view, F, X, Y, Z, range, attributes) {
     }
 
     this.range = range;
-
-    this.methodMap = Type.deepCopy(this.methodMap, {
-        // TODO
-    });
 };
 JXG.Curve3D.prototype = new JXG.GeometryElement();
+
 Type.copyPrototypeMethods(JXG.Curve3D, JXG.GeometryElement3D, 'constructor3D');
+Type.copyMethodMap(JXG.Curve3D, {
+    // TODO
+});
 
 JXG.extend(
     JXG.Curve3D.prototype,
@@ -273,6 +273,18 @@ JXG.extend(
             return this;
         },
 
+        // Already documented in GeometryElement
+        removeTransform: function (transform) {
+            this.removeTransformGeneric(transform);
+            return this;
+        },
+
+        // Already documented in GeometryElement
+        clearTransforms: function () {
+            this.clearTransformsGeneric();
+            return this;
+        },
+
         /**
          *
          * @returns {JXG.Curve3D} Reference to itself
@@ -332,9 +344,10 @@ JXG.extend(
             return Geometry.projectCoordsToParametric(p, this, 1, params);
         }
 
-        // projectScreenCoords: function (pScr, params) {
+        // Use method from element3d.js
+        // projectScreenCoords: function (pScr, params, cyclic) {
         //     this.initParamsIfNeeded(params);
-        //     return Geometry.projectScreenCoordsToParametric(pScr, this, params);
+        //     return Geometry.projectScreenCoordsToParametric(pScr, this, params, cyclic);
         // }
     }
 );
@@ -428,6 +441,7 @@ JXG.createCurve3D = function (board, parents, attributes) {
     attr = el.setAttr2D(attr);
     el.element2D = view.create("curve", [[], []], attr);
     el.element2D.view = view;
+    el.element2D.dump = false;
     if (base !== null) {
         el.addTransform(base, transform);
         el.addParents(base);
@@ -674,7 +688,7 @@ JXG.createVectorfield3D = function (board, parents, attributes) {
         }
     };
 
-    el.methodMap = Type.deepCopy(el.methodMap, {
+    Type.extendInstanceMethodMap(el, {
         setF: "setF"
     });
 

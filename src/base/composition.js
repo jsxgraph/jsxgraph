@@ -1,5 +1,5 @@
 /*
- Copyright 2008-2025
+ Copyright 2008-2026
  Matthias Ehmann,
  Michael Gerhaeuser,
  Carsten Miller,
@@ -155,15 +155,6 @@ JXG.Composition = function (elements) {
     // unused, required for select()
     this.groups = {};
 
-    this.methodMap = {
-        setAttribute: "setAttribute",
-        setProperty: "setAttribute",
-        setParents: "setParents",
-        add: "add",
-        remove: "remove",
-        select: "select"
-    };
-
     for (e in elements) {
         if (elements.hasOwnProperty(e)) {
             this.add(e, elements[e]);
@@ -173,6 +164,15 @@ JXG.Composition = function (elements) {
     this.dump = true;
     this.subs = {};
 };
+
+Type.copyMethodMap(JXG.Composition, {
+    setAttribute: "setAttribute",
+    setProperty: "setAttribute",
+    setParents: "setParents",
+    add: "add",
+    remove: "remove",
+    select: "select"
+});
 
 JXG.extend(
     JXG.Composition.prototype,
@@ -204,7 +204,7 @@ JXG.extend(
 
                 this.objectsList.push(element);
                 this[what] = element;
-                this.methodMap[what] = element;
+                Type.extendInstanceMethodMap(this, what, what);
 
                 return true;
             }
@@ -232,6 +232,13 @@ JXG.extend(
 
             if (found) {
                 delete this.elements[this[what].id];
+                if (Type.exists(this[what].name)) {
+                   delete this.elementsByName[this[what].name];
+                }
+                Type.removeElementFromArray(this.objectsList, this[what]);
+                if (this.hasOwnProperty("methodMap")) {
+                    delete this.methodMap[what];
+                }
                 delete this[what];
             }
 

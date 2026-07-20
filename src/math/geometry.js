@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2025
+    Copyright 2008-2026
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -2136,6 +2136,11 @@ JXG.extend(
                 beta = this.rad(arc.radiuspoint, arc.center, arc.anglepoint),
                 ev_s = arc.evalVisProp('selection');
 
+            if (arc.evalVisProp('orientation') === 'clockwise') {
+                angle = 2 * Math.PI - angle;
+                beta = 2 * Math.PI - beta;
+            }
+
             if ((ev_s === "minor" && beta > Math.PI) || (ev_s === "major" && beta < Math.PI)) {
                 alpha = beta;
                 beta = 2 * Math.PI;
@@ -2428,7 +2433,6 @@ JXG.extend(
          * @returns {Array} [[z, x, y], t1, t2, t, ||c1[t1]-c2[t2]||**2]. The last entry is set to
          * 10000 if the intersection is outside of the given domain (range) for the first curve.
          * @private
-         * @see JXG.Math.Geometry._meetCurveCurveRecursive
          * @see JXG.Math.Geometry._meetCurveCurveIterative
          * @see JXG.Math.Numerics.generalizedDampedNewton
          * @see JXG.Math.Geometry.meetCurveCurveCobyla
@@ -2583,11 +2587,11 @@ JXG.extend(
          * @param {String} [method] Intersection method, possible values are 'newton' and 'segment'.
          * If both curves are given by functions (assumed to be continuous), 'newton' is the default, otherwise
          * 'segment' is the default.
+         * @parame {Boolean} testSegment If true require that the intersection is inside of the allowed bounds for both elements (in _meetCurveCurveIterative)
          * @returns {JXG.Coords} intersection point
          *
          * @see JXG.Math.Geometry.meetCurveCurveDiscrete
-         * @see JXG.Math.Geometry._meetCurveCurveRecursive
-         * @see JXG.Math.Geometry.meetCurveCurveIterative
+         * @see JXG.Math.Geometry._meetCurveCurveIterative
          */
         meetCurveCurve: function (c1, c2, nr, t2ini, board, method, testSegment) {
             var co,
@@ -2666,7 +2670,8 @@ JXG.extend(
                 //   the curve is not a parametric curve, e.g. implicit plots
                 v = this.meetCurveLineDiscrete(cu, li, nr, board, !alwaysIntersect);
             } else {
-                v = this.meetCurveCurve(cu, li, nr, 0, board, 'newton', !alwaysIntersect);
+                v = this.meetCurveLineContinuous(cu, li, nr, board, !alwaysIntersect);
+                // v = this.meetCurveCurve(cu, li, nr, 0, board, 'newton', !alwaysIntersect);
             }
 
             return v;
@@ -4307,8 +4312,9 @@ JXG.extend(
         /**
          * Given the 2D screen coordinates of a point, finds the nearest point on the given
          * parametric curve or surface, and returns its view-space coordinates.
-         * @param {Array} p 3D coordinates for which the closest point on the curve point is searched.
+         * @param {Array} p Homogeneous 3D coordinates for which the closest point on the curve point is searched.
          * @param {JXG.Curve3D|JXG.Surface3D} target Parametric curve or surface to project to.
+         * @param {Number} n Dimension of the host element to which the coords are projected.
          * @param {Array} params New position of point on the target (i.e. it is a return value),
          * modified in place during the search, ending up at the nearest point.
          * Usually, point.position is supplied for params.
@@ -4330,12 +4336,11 @@ JXG.extend(
             // adapt simplex size to parameter range
             if (n === 1) {
                 r_u = [Type.evaluate(target.range[0]), Type.evaluate(target.range[1])];
-
                 rhobeg = 0.1 * (r_u[1] - r_u[0]);
+
             } else if (n === 2) {
                 r_u = [Type.evaluate(target.range_u[0]), Type.evaluate(target.range_u[1])];
                 r_v = [Type.evaluate(target.range_v[0]), Type.evaluate(target.range_v[1])];
-
                 rhobeg = 0.1 * Math.min(
                     r_u[1] - r_u[0],
                     r_v[1] - r_v[0]
@@ -4346,13 +4351,14 @@ JXG.extend(
             // Minimize distance of the new position to the original position
             _minFunc = function (n, m, w, con) {
                 var p_new = [
+                        1,
                         target.X.apply(target, w),
                         target.Y.apply(target, w),
                         target.Z.apply(target, w)
                     ],
-                    xDiff = p[0] - p_new[0],
-                    yDiff = p[1] - p_new[1],
-                    zDiff = p[2] - p_new[2];
+                    xDiff = p[1] - p_new[1],
+                    yDiff = p[2] - p_new[2],
+                    zDiff = p[3] - p_new[3];
 
                 if (m >= 2) {
                     con[0] =  w[0] - r_u[0];
@@ -4366,30 +4372,50 @@ JXG.extend(
                 return xDiff * xDiff + yDiff * yDiff + zDiff * zDiff;
             };
 
-            // First optimization without range constraints to give a smooth draag experience on
+            // First optimization without range constraints to give a smooth drag experience on
             // cyclic structures.
 
             // Set the start values
             if (params.length === 0) {
                 // If length > 0: take the previous position as start values for the optimization
                 params[0] = f * (r_u[0] + r_u[1]);
-                if (n === 2) { params[1] = f * (r_v[0] + r_v[1]); }
+                if (n === 2) {
+                    params[1] = f * (r_v[0] + r_v[1]);
+                }
+            } else {
+                params[0] = (params[0] <= r_u[0]) ? r_u[0] + Mat.eps : params[0];
+                params[0] = (params[0] >= r_u[1]) ? r_u[1] - Mat.eps : params[0];
+                if (n === 2) {
+                    params[1] = (params[1] <= r_v[0]) ? r_v[0] + Mat.eps : params[1];
+                    params[1] = (params[1] >= r_v[1]) ? r_v[1] - Mat.eps : params[1];
+                }
             }
-            Mat.Nlp.FindMinimum(_minFunc, n, 0, params, rhobeg, rhoend, iprint, maxfun);
+
+            Mat.Nlp.FindMinimum(_minFunc, n, m, params, rhobeg, rhoend, iprint, maxfun);
+
             // Update p which is used subsequently in _minFunc
-            p = [target.X.apply(target, params),
+            p = [
+                1,
+                target.X.apply(target, params),
                 target.Y.apply(target, params),
                 target.Z.apply(target, params)
             ];
 
-            // If the optimal params are outside of the rang
+            // If the optimal params are outside of the range:
             // Second optimization to obey the range constraints
 
             if (this._paramsOutOfRange(params, r_u, r_v)) {
                 // Set the start values again
-                params[0] = f * (r_u[0] + r_u[1]);
-                if (n === 2) { params[1] = f * (r_v[0] + r_v[1]); }
-
+                // params[0] = f * (r_u[0] + r_u[1]);
+                // if (n === 2) {
+                //     params[1] = f * (r_v[0] + r_v[1]);
+                // }
+                params[0] = (params[0] <= r_u[0]) ? r_u[0] + Mat.eps : params[0];
+                params[0] = (params[0] >= r_u[1]) ? r_u[1] - Mat.eps : params[0];
+                if (n === 2) {
+                    params[1] = (params[1] <= r_v[0]) ? r_v[0] + Mat.eps : params[1];
+                    params[1] = (params[1] >= r_v[1]) ? r_v[1] - Mat.eps : params[1];
+                }
                 Mat.Nlp.FindMinimum(_minFunc, n, m, params, rhobeg, rhoend, iprint, maxfun);
             }
 
@@ -4400,66 +4426,81 @@ JXG.extend(
             ];
         },
 
-        // /**
-        //  * Given a the screen coordinates of a point, finds the point on the
-        //  * given parametric curve or surface which is nearest in screen space,
-        //  * and returns its view-space coordinates.
-        //  * @param {Array} pScr Screen coordinates to project.
-        //  * @param {JXG.Curve3D|JXG.Surface3D} target Parametric curve or surface to project to.
-        //  * @param {Array} params Parameters of point on the target, initially specifying the starting point of
-        //  * the search. The parameters are modified in place during the search, ending up at the nearest point.
-        //  * @returns {Array} Array of length 4 containing the coordinates of the nearest point on the curve or surface.
-        //  */
-        // projectScreenCoordsToParametric: function (pScr, target, params) {
-        //     // The variables and parameters for the Cobyla constrained
-        //     // minimization algorithm are explained in the Cobyla.js comments
-        //     var rhobeg, // initial size of simplex (Cobyla)
-        //         rhoend, // finial size of simplex (Cobyla)
-        //         iprint = 0, // no console output (Cobyla)
-        //         maxfun = 200, // call objective function at most 200 times (Cobyla)
-        //         dim = params.length,
-        //         _minFunc; // objective function (Cobyla)
+        /**
+         * Given a the screen coordinates of a point, finds the point on the
+         * given parametric curve or surface which is nearest in screen space,
+         * and returns its view-space coordinates.
+         * @param {Array} pScr Screen coordinates to project.
+         * @param {JXG.Plane3D|JXG.Curve3D|JXG.Surface3D} target Plane, parametric curve or surface to project to.
+         * @param {Array} params Parameters of point on the target, initially specifying the starting point of
+         * the search. The parameters are modified in place during the search, ending up at the nearest point.
+         * @returns {Array} Array of length 4 containing the coordinates of the nearest point on the curve or surface.
+         */
+        projectScreenCoordsToParametric: function (pScr, target, params, cyclic) {
+            // The variables and parameters for the Cobyla constrained
+            // minimization algorithm are explained in the Cobyla.js comments
+            var rhobeg, // initial size of simplex (Cobyla)
+                rhoend, // finial size of simplex (Cobyla)
+                iprint = 0, // no console output (Cobyla)
+                maxfun = 200, // call objective function at most 200 times (Cobyla)
+                dim = params.length,
+                r_u, r_v,
+                _minFunc; // objective function (Cobyla)
 
-        //     // adapt simplex size to parameter range
-        //     if (dim === 1) {
-        //         rhobeg = 0.1 * (target.range[1] - target.range[0]);
-        //     } else if (dim === 2) {
-        //         rhobeg = 0.1 * Math.min(
-        //             target.range_u[1] - target.range_u[0],
-        //             target.range_v[1] - target.range_v[0]
-        //         );
-        //     }
-        //     rhoend = rhobeg / 5e6;
+            // Adapt simplex size to parameter range
+            if (dim === 1) {
+                r_u = [Type.evaluate(target.range[0]), Type.evaluate(target.range[1])];
+                rhobeg = 0.1 * (r_u[1] - r_u[0]);
+            } else if (dim === 2) {
+                r_u = [Type.evaluate(target.range_u[0]), Type.evaluate(target.range_u[1])];
+                r_v = [Type.evaluate(target.range_v[0]), Type.evaluate(target.range_v[1])];
 
-        //     // minimize screen distance to cursor
-        //     _minFunc = function (n, m, w, con) {
-        //         var c3d = [
-        //             1,
-        //             target.X.apply(target, w),
-        //             target.Y.apply(target, w),
-        //             target.Z.apply(target, w)
-        //         ],
-        //         c2d = target.view.project3DTo2D(c3d),
-        //         xDiff = pScr[0] - c2d[1],
-        //         yDiff = pScr[1] - c2d[2];
+                rhobeg = 0.1 * Math.min(
+                    r_u[1] - r_u[0],
+                    r_v[1] - r_v[0]
+                );
+            }
 
-        //         if (n === 1) {
-        //             con[0] = w[0] - target.range[0];
-        //             con[1] = -w[0] + target.range[1];
-        //         } else if (n === 2) {
-        //             con[0] = w[0] - target.range_u[0];
-        //             con[1] = -w[0] + target.range_u[1];
-        //             con[2] = w[1] - target.range_v[0];
-        //             con[3] = -w[1] + target.range_v[1];
-        //         }
+            rhoend = rhobeg / 5e6;
 
-        //         return xDiff * xDiff + yDiff * yDiff;
-        //     };
+            // Minimize screen distance to cursor
+            _minFunc = function (n, m, w, con) {
+                var c3d = [
+                    1,
+                    target.X.apply(target, w),
+                    target.Y.apply(target, w),
+                    target.Z.apply(target, w)
+                ],
+                c2d = target.view.project3DTo2D(c3d),
+                xDiff = pScr[0] - c2d[1],
+                yDiff = pScr[1] - c2d[2];
 
-        //     Mat.Nlp.FindMinimum(_minFunc, dim, 2 * dim, params, rhobeg, rhoend, iprint, maxfun);
+                if (n === 1) {
+                    con[0] = w[0] - r_u[0];
+                    con[1] = -w[0] + r_u[1];
+                } else if (n === 2) {
+                    con[0] = w[0] - r_u[0];
+                    con[1] = -w[0] + r_u[1];
+                    con[2] = w[1] - r_v[0];
+                    con[3] = -w[1] + r_v[1];
+                }
 
-        //     return [1, target.X.apply(target, params), target.Y.apply(target, params), target.Z.apply(target, params)];
-        // },
+                return xDiff * xDiff + yDiff * yDiff;
+            };
+
+            if (cyclic) {
+                // Cyclic
+                Mat.Nlp.FindMinimum(_minFunc, dim, 0 /*2 * dim*/, params, rhobeg, rhoend, iprint, maxfun);
+                params[0] = (params[0] + 20 * r_u[1]) % (r_u[1] - r_u[0]);
+                if (dim === 2) {
+                    params[1] = (params[1] + 20 * r_v[1]) % (r_v[1] - r_v[0]);
+                }
+            } else {
+                Mat.Nlp.FindMinimum(_minFunc, dim, 2 * dim, params, rhobeg, rhoend, iprint, maxfun);
+            }
+
+            return [1, target.X.apply(target, params), target.Y.apply(target, params), target.Z.apply(target, params)];
+        },
 
         project3DTo3DPlane: function (point, normal, foot) {
             // TODO: homogeneous 3D coordinates

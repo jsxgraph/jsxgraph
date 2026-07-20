@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2025
+    Copyright 2008-2026
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -138,18 +138,18 @@ JXG.Curve = function (board, parents, attributes) {
     if (Type.isString(this.yterm)) {
         this.notifyParents(this.yterm);
     }
-
-    this.methodMap = Type.deepCopy(this.methodMap, {
-        generateTerm: "generateTerm",
-        setTerm: "generateTerm",
-        move: "moveTo",
-        moveTo: "moveTo",
-        MinX: "minX",
-        MaxX: "maxX"
-    });
 };
 
 JXG.Curve.prototype = new GeometryElement();
+
+Type.copyMethodMap(JXG.Curve, {
+    generateTerm: "generateTerm",
+    setTerm: "generateTerm",
+    move: "moveTo",
+    moveTo: "moveTo",
+    MinX: "minX",
+    MaxX: "maxX"
+});
 
 JXG.extend(
     JXG.Curve.prototype,
@@ -750,6 +750,7 @@ JXG.extend(
         updateCurve: function () {
             var i, len, mi, ma,
                 x, y,
+                bb, eps,
                 version = this.visProp.plotversion,
                 //t1, t2, l1,
                 suspendUpdate = false;
@@ -842,18 +843,26 @@ JXG.extend(
                         }
                     }
                 }
-
-                // for (i = 0; i < len; i++) {
-                //     this.updateTransform(this.points[i]);
-                // }
             }
 
             if (
-                this.evalVisProp('curvetype') !== "plot" &&
+                this.bezierDegree === 1 &&
+                // this.evalVisProp('curvetype') !== "plot" &&
                 this.evalVisProp('rdpsmoothing')
             ) {
                 // console.time('rdp');
-                this.points = Numerics.RamerDouglasPeucker(this.points, 0.2);
+                // RDP in screen coords:
+                // this.points = Numerics.RamerDouglasPeucker(this.points, 0.2);
+
+                // RDP in user coords:
+                // Use a default size of 800 x 800 pixel and
+                // maximum distance of 0.2 pixel:
+                // Determine the geometric mean M of the horizontal and vertical box size in user coords, i.e.
+                // 1 u = 1000 / M px => 1 px = M / 1000 u => eps := 0.2 * M / 800
+                bb = this.board.getBoundingBox();
+                eps = this.evalVisProp('rdpthreshold') * Math.sqrt((bb[2] - bb[0]) * (bb[1] - bb[3])) * 0.00125;
+                this.points = Numerics.RamerDouglasPeucker(this.points, eps, true);
+
                 this.numberPoints = this.points.length;
                 // console.timeEnd('rdp');
                 // console.log(this.numberPoints);
@@ -918,6 +927,24 @@ JXG.extend(
             for (i = 0; i < len; i++) {
                 this.transformations.push(list[i]);
             }
+
+            return this;
+        },
+
+        removeTransform: function (transform) {
+            var i,
+                list = Type.isArray(transform) ? transform : [transform],
+                len = list.length;
+
+            for (i = 0; i < len; i++) {
+                Type.removeElementFromArray(this.transformations, list[i]);
+            }
+
+            return this;
+        },
+
+        clearTransforms: function () {
+            this.transformations = [];
 
             return this;
         },
@@ -1143,6 +1170,7 @@ JXG.extend(
         getLabelPosition: function(pos, distance) {
             var x, y, xy,
                 c, d, e,
+                c_t, c_te, c_ma, c_mi,
                 lbda,
                 mi, ma, ar,
                 t, dx, dy,
@@ -1153,42 +1181,59 @@ JXG.extend(
             ma = this.maxX();
             ar = Numerics.findDomain(this.X, [mi, ma], null, false);
             ar = Numerics.findDomain(this.Y, ar, null, false);
-            mi = Math.max(ar[0], ar[0]);
-            ma = Math.min(ar[1], ar[1]);
+            mi = Math.max(ar[0], ar[0]); // ???
+            ma = Math.min(ar[1], ar[1]); // ???
 
             xy = Type.parsePosition(pos);
             lbda = Type.parseNumber(xy.pos, ma - mi, 1);
 
-            if (xy.pos.indexOf('fr') < 0 &&
-                xy.pos.indexOf('%') < 0) {
-                // 'px' or numbers are not supported
+            if (xy.pos.indexOf('fr') < 0 && xy.pos.indexOf('%') < 0) {
+                // The unit has to be 'fr' or '%'. 'px' or plain numbers are not supported
                 lbda = 0;
             }
 
             t = mi + lbda;
 
-            x = this.X(t);
-            y = this.Y(t);
+            // x = this.X(t);
+            // y = this.Y(t);
+            c_t = this.Ft(t); // Include transformations
+            x = c_t[1];
+            y = c_t[2];
             // If x or y are NaN, the label is set to the line
             // between the first and last point.
             if (isNaN(x + y)) {
                 lbda /= (ma - mi);
                 t = mi + lbda;
-                x = this.X(mi) + lbda * (this.X(ma) - this.X(mi));
-                y = this.Y(mi) + lbda * (this.Y(ma) - this.Y(mi));
+
+                // x = this.X(mi) + lbda * (this.X(ma) - this.X(mi));
+                // y = this.Y(mi) + lbda * (this.Y(ma) - this.Y(mi));
+                c_mi = this.Ft(mi);
+                c_ma = this.Ft(ma);
+                x = c_mi[1] + lbda * (c_ma[1] - c_mi[1]);
+                y = c_mi[2] + lbda * (c_ma[2] - c_mi[2]);
             }
             c = (new Coords(Const.COORDS_BY_USER, [x, y], this.board)).scrCoords;
 
             e = Mat.eps;
             if (t < mi + e) {
-                dx = (this.X(t + e) - this.X(t)) / e;
-                dy = (this.Y(t + e) - this.Y(t)) / e;
+                // dx = (this.X(t + e) - this.X(t)) / e;
+                // dy = (this.Y(t + e) - this.Y(t)) / e;
+                c_te = this.Ft(t + e);
+                dx = (c_te[1] - c_t[1]) / e;
+                dy = (c_te[2] - c_t[2]) / e;
             } else if (t > ma - e) {
-                dx = (this.X(t) - this.X(t - e)) / e;
-                dy = (this.Y(t) - this.Y(t - e)) / e;
+                // dx = (this.X(t) - this.X(t - e)) / e;
+                // dy = (this.Y(t) - this.Y(t - e)) / e;
+                c_te = this.Ft(t - e);
+                dx = (c_t[1] - c_te[1]) / e;
+                dy = (c_t[2] - c_te[2]) / e;
             } else {
-                dx = 0.5 * (this.X(t + e) - this.X(t - e)) / e;
-                dy = 0.5 * (this.Y(t + e) - this.Y(t - e)) / e;
+                // dx = 0.5 * (this.X(t + e) - this.X(t - e)) / e;
+                // dy = 0.5 * (this.Y(t + e) - this.Y(t - e)) / e;
+                c_te = this.Ft(t + e);
+                c_t  = this.Ft(t - e);
+                dx = 0.5 * (c_te[1] - c_t[1]) / e;
+                dy = 0.5 * (c_te[2] - c_t[2]) / e;
             }
             dx = isNaN(dx) ? 1. : dx;
             dy = isNaN(dy) ? 1. : dy;
@@ -1219,10 +1264,12 @@ JXG.extend(
                 // t, dx, dy, d,
                 // dist = 1.5,
                 c,
-                ax = 0.05 * this.board.canvasWidth,
-                ay = 0.05 * this.board.canvasHeight,
-                bx = 0.95 * this.board.canvasWidth,
-                by = 0.95 * this.board.canvasHeight;
+                lo = 0.1,
+                up = 0.9,
+                ax = lo * this.board.canvasWidth,
+                ay = lo * this.board.canvasHeight,
+                bx = up * this.board.canvasWidth,
+                by = up * this.board.canvasHeight;
 
             if (!Type.exists(this.label)) {
                 return new Coords(Const.COORDS_BY_SCREEN, [NaN, NaN], this.board);
@@ -1233,6 +1280,7 @@ JXG.extend(
             }
 
             if (pos.indexOf('right') < 0 && pos.indexOf('left') < 0) {
+                // Old system
                 switch (this.evalVisProp('label.position')) {
                     case "ulft":
                         x = ax;
@@ -1268,52 +1316,8 @@ JXG.extend(
                         y = 0.5 * by;
                 }
             } else {
-                // New positioning
+                // New positioning, e.g. "25% left"
                 return this.getLabelPosition(pos, this.label.evalVisProp('distance'));
-                // xy = Type.parsePosition(pos);
-                // lbda = Type.parseNumber(xy.pos, this.maxX() - this.minX(), 1);
-
-                // if (xy.pos.indexOf('fr') < 0 &&
-                //     xy.pos.indexOf('%') < 0) {
-                //     // 'px' or numbers are not supported
-                //     lbda = 0;
-                // }
-
-                // t = this.minX() + lbda;
-                // x = this.X(t);
-                // y = this.Y(t);
-                // c = (new Coords(Const.COORDS_BY_USER, [x, y], this.board)).scrCoords;
-
-                // e = Mat.eps;
-                // if (t < this.minX() + e) {
-                //     dx = (this.X(t + e) - this.X(t)) / e;
-                //     dy = (this.Y(t + e) - this.Y(t)) / e;
-                // } else if (t > this.maxX() - e) {
-                //     dx = (this.X(t) - this.X(t - e)) / e;
-                //     dy = (this.Y(t) - this.Y(t - e)) / e;
-                // } else {
-                //     dx = 0.5 * (this.X(t + e) - this.X(t - e)) / e;
-                //     dy = 0.5 * (this.Y(t + e) - this.Y(t - e)) / e;
-                // }
-                // d = Mat.hypot(dx, dy);
-
-                // if (xy.side === 'left') {
-                //     dy *= -1;
-                // } else {
-                //     dx *= -1;
-                // }
-
-                // // Position left or right
-
-                // if (Type.exists(this.label)) {
-                //     dist = 0.5 * this.label.evalVisProp('distance') / d;
-                // }
-
-                // x = c[1] + dy * this.label.size[0] * dist;
-                // y = c[2] - dx * this.label.size[1] * dist;
-
-                // return new Coords(Const.COORDS_BY_SCREEN, [x, y], this.board);
-
             }
             c = new Coords(Const.COORDS_BY_SCREEN, [x, y], this.board, false);
             return Geometry.projectCoordsToCurve(
@@ -3048,17 +3052,26 @@ JXG.registerElement("curveunion", JXG.createCurveUnion);
 // JXG.registerElement("curveconcat", JXG.createCurveConcat);
 
 /**
- * @class Vertical or horizontal box plot curve to present numerical data through their quartiles.
- * The direction of the box plot is controlled by the attribute "dir".
+ * @class Vertical or horizontal boxplot or also called box-and-whisker plot to present numerical data through their quartiles.
+ * The direction of the boxplot is controlled by the attribute "dir". Internally, a boxplot is realized with a single JSXGraph curve.
+ * <p>
+ * Given a data set, the input array Q for the boxplot can be computed e.g. with the method {@link JXG.Math.Statistics.boxplot}.
+ *
+ * @example
+ * var data = [57, 57, 57, 58, 63, 66, 66, 67, 67, 68, 69, 70, 70, 70, 70, 72, 73, 75, 75, 76, 76, 78, 79, 81];
+ * var Q = JXG.Math.Statistics.boxplot(data);
+ * var b = board.create('boxplot', [Q, 2, 4]);
+ *
  * @pseudo
  * @name Boxplot
- * @param {Array} quantiles Array containing at least five quantiles. The elements can be of type number, function or string.
- * @param {Number|Function} axis Axis position of the box plot
- * @param {Number|Function} width Width of the rectangle part of the box plot. The width of the first and 4th quantile
+ * @param {Array} quantiles Array containing five quantiles (e.g. min, first quartile, median, third quartile, maximum) and an optional array with outlier values. The elements of this array can be of type number, function or string. The optional aub-array outlier is an array of numbers or a function returning an array of numbers.
+ * @param {Number|Function} axis Axis position of the boxplot
+ * @param {Number|Function} width Width of the rectangle part of the boxplot. The width of the first and 3th quartile
  * is relative to this width and can be controlled by the attribute "smallWidth".
  * @augments JXG.Curve
  * @constructor
  * @type JXG.Curve
+ * @see JXG.Math.Statistics#boxplot
  *
  * @example
  * var Q = [ -1, 2, 3, 3.5, 5 ];
@@ -3078,16 +3091,17 @@ JXG.registerElement("curveunion", JXG.createCurveUnion);
  * </script><pre>
  *
  * @example
- * var Q = [ -1, 2, 3, 3.5, 5 ];
- * var b = board.create('boxplot', [Q, 3, 4], {dir: 'horizontal', smallWidth: 0.25, color:'red'});
+ * // With outliers
+ * var Q = [ -1, 2, 3, 3.5, 5, [-4, -6] ];
+ * var b = board.create('boxplot', [Q, 3, 4], {dir: 'horizontal', width: 2, smallWidth: 0.25, color:'red'});
  *
  * </pre><div id="JXG0deb9cb2-84bc-470d-a6db-8be9a5694813" class="jxgbox" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
  *     (function() {
  *         var board = JXG.JSXGraph.initBoard('JXG0deb9cb2-84bc-470d-a6db-8be9a5694813',
  *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
- *     var Q = [ -1, 2, 3, 3.5, 5 ];
- *     var b = board.create('boxplot', [Q, 3, 4], {dir: 'horizontal', smallWidth: 0.25, color:'red'});
+ *     var Q = [ -1, 2, 3, 3.5, 5, [-4, -6] ];
+ *     var b = board.create('boxplot', [Q, 3, 4], {dir: 'horizontal', width: 2, smallWidth: 0.25, color:'red'});
  *
  *     })();
  *
@@ -3095,12 +3109,7 @@ JXG.registerElement("curveunion", JXG.createCurveUnion);
  *
  * @example
  * var data = [57, 57, 57, 58, 63, 66, 66, 67, 67, 68, 69, 70, 70, 70, 70, 72, 73, 75, 75, 76, 76, 78, 79, 81];
- * var Q = [];
- *
- * Q[0] = JXG.Math.Statistics.min(data);
- * Q = Q.concat(JXG.Math.Statistics.percentile(data, [25, 50, 75]));
- * Q[4] = JXG.Math.Statistics.max(data);
- *
+ * var Q = JXG.Math.Statistics.boxplot(data);
  * var b = board.create('boxplot', [Q, 0, 3]);
  *
  * </pre><div id="JXGef079e76-ae99-41e4-af29-1d07d83bf85a" class="jxgbox" style="width: 300px; height: 300px;"></div>
@@ -3109,12 +3118,7 @@ JXG.registerElement("curveunion", JXG.createCurveUnion);
  *         var board = JXG.JSXGraph.initBoard('JXGef079e76-ae99-41e4-af29-1d07d83bf85a',
  *             {boundingbox: [-5,90,5,30], axis: true, showcopyright: false, shownavigation: false});
  *     var data = [57, 57, 57, 58, 63, 66, 66, 67, 67, 68, 69, 70, 70, 70, 70, 72, 73, 75, 75, 76, 76, 78, 79, 81];
- *     var Q = [];
- *
- *     Q[0] = JXG.Math.Statistics.min(data);
- *     Q = Q.concat(JXG.Math.Statistics.percentile(data, [25, 50, 75]));
- *     Q[4] = JXG.Math.Statistics.max(data);
- *
+ *     var Q = JXG.Math.Statistics.boxplot(data, [25, 50, 75]);
  *     var b = board.create('boxplot', [Q, 0, 3]);
  *
  *     })();
@@ -3150,13 +3154,13 @@ JXG.createBoxPlot = function (board, parents, attributes) {
 
     if (parents.length !== 3) {
         throw new Error(
-            "JSXGraph: Can't create box plot with given parent'" +
+            "JSXGraph: Can't create boxplot with given parent'" +
             "\nPossible parent types: [array, number|function, number|function] containing quantiles, axis, width"
         );
     }
     if (parents[0].length < 5) {
         throw new Error(
-            "JSXGraph: Can't create box plot with given parent[0]'" +
+            "JSXGraph: Can't create boxplot with given parent[0]'" +
             "\nparent[0] has to contain at least 5 quantiles."
         );
     }
@@ -3175,7 +3179,8 @@ JXG.createBoxPlot = function (board, parents, attributes) {
      * @ignore
      */
     box.updateDataArray = function () {
-        var v1, v2, l1, l2, r1, r2, w2, dir, x;
+        var v1, v2, l1, l2, r1, r2, w2, dir, x,
+            i, le, q5, y, sx, sy, sx2, sy2, t, f;
 
         w2 = this.evalVisProp('smallwidth');
         dir = this.evalVisProp('dir');
@@ -3206,6 +3211,77 @@ JXG.createBoxPlot = function (board, parents, attributes) {
             this.Q[4](),
             this.Q[4]()
         ];
+
+        // Outliers
+        if (this.Q.length > 5 && Type.isArray(this.Q[5]())) {
+            v1.push(NaN);
+            v2.push(NaN);
+
+            f = this.evalVisProp('outlier.face');
+
+            if (dir === 'vertical') {
+                sx = this.evalVisProp('outlier.size') / this.board.unitX;
+                sy = this.evalVisProp('outlier.size') / this.board.unitY;
+            } else {
+                sy = this.evalVisProp('outlier.size') / this.board.unitX;
+                sx = this.evalVisProp('outlier.size') / this.board.unitY;
+            }
+            sx2 = sx * Math.sqrt(2);
+            sy2 = sy * Math.sqrt(2);
+
+            q5 = this.Q[5]();
+            le = q5.length;
+            for (i = 0; i < le; i++) {
+                y = q5[i];
+                switch (f) {
+                    case 'x':
+                    case 'cross':
+                        v1.push(x - sx, x + sx, NaN, x - sx, x + sx, NaN);
+                        v2.push(y + sy, y - sy, NaN, y - sy, y + sy, NaN);
+                        break;
+                    case '[]':
+                    case 'square':
+                        v1.push(x - sx, x + sx, x + sx, x - sx, x - sx, NaN);
+                        v2.push(y + sy, y + sy, y - sy, y - sy, y + sy, NaN);
+                        break;
+                    case '<>':
+                    case 'diamond':
+                        v1.push(x, x + sx, x, x - sx, x, NaN);
+                        v2.push(y + sy, y, y - sy, y, y + sy, NaN);
+                        break;
+                    case '<<>>':
+                    case 'diamond2':
+                        v1.push(x, x + sx2, x, x - sx2, x, NaN);
+                        v2.push(y + sy2, y, y - sy2, y, y + sy2, NaN);
+                        break;
+                    case '+':
+                    case 'plus':
+                        v1.push(x - sx, x + sx, NaN, x, x, NaN);
+                        v2.push(y, y, NaN, y - sy, y + sy, NaN);
+                        break;
+                    case '-':
+                    case 'minus':
+                        v1.push(x - sx, x + sx, NaN);
+                        v2.push(y, y, NaN);
+                        break;
+                    case '|':
+                    case 'divide':
+                        v1.push(x, x, NaN);
+                        v2.push(y - sy, y + sy, NaN);
+                        break;
+                    default:
+                    case 'o':
+                    case 'circle':
+                        for (t = 0; t <= 2 * Math.PI; t += (2 * Math.PI) / 17) {
+                            v1.push(x - sx * Math.sin(t));
+                            v2.push(y - sy * Math.cos(t));
+                        }
+                        v1.push(NaN);
+                        v2.push(NaN);
+                }
+            }
+        }
+
         if (dir === 'vertical') {
             this.dataX = v1;
             this.dataY = v2;
@@ -3553,6 +3629,33 @@ JXG.createImplicitCurve = function (board, parents, attributes) {
 
 JXG.registerElement("implicitcurve", JXG.createImplicitCurve);
 
+/**
+ * @class Sketch a curve by dragging the pointer device on the board.
+ * If enabled:true, it is always done even if the curve is invisible.
+ * A JSXGraph borad contains a length two array board.sketches
+ * with two sketchcurves.
+ *
+ * @pseudo
+ * @name SketchCurve
+ * @augments JXG.Curve
+ * @constructor
+ * @type JXG.Curve
+ * @see JXG.Board#sketches
+ * @see JXG.Board#sketch
+ * @private
+ */
+JXG.createSketchCurve = function (board, parents, attributes) {
+    var c, attr;
+
+    attr = Type.copyAttributes(attributes, board.options, 'sketchcurve');
+    c = board.create("curve", [[], []], attr);
+
+    c.elType = 'sketchcurve';
+
+    return c;
+};
+
+JXG.registerElement("sketchcurve", JXG.createSketchCurve);
 
 export default JXG.Curve;
 
