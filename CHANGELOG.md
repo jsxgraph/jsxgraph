@@ -6,80 +6,76 @@ API changes: the property of the elements `smartlabel`, `slopetriangle`, and `la
 New features
 -----------
 
+- Shortcut `JXG.board()` for `JXG.JSXGraph.initBoard()`
+- JSXGraph wrapper div: `JXG.appBox()`, uses `setClipPath`
 - boxplot: enable plotting of outliers. Add '-' and '|' as faces for outliers of boxplots
-- Shortcut `JXG.boar()` for `JXG.JSXGraph.initBoard()`
-- JXG.appBox()
-- setClipPath
 - 3D: enable user supplied shading angle
-- face3d attribute: shader.light
-- new method GeometryElement.toTopOfLayer()
+- 3D: face3d attribute: shader.light
+- 3D: Add attribute "cyclic" to point3d (glider)
+- 3D: New 3D transformations types: 'affine', 'affinematrix', 'generic', 'matrix'
+- 3D: Add polyhedron3d as visualization for surface3d with new attributes `style` and `polyhedron`
+- 3D: Add polyhedron as visualization for plane3d with new attributes `style` and `polyhedron`
+- 3D: Add style 'colorarray' to surface polyhedron3d
+- New transformation types (2D): 'affine', 'affinematrix'
+- Add functions `removeTransform` and `clearTransforms`
 - Angle, sector, arc: allow clockwise variants
 - New method JXG.Math.Statistics.boxplot(data)
-- New 3d transformations types: 'affine', 'affinematrix', 'generic', 'matrix'
-- New transformation types (2D): 'affine', 'affinematrix'
-- Add constant Env.maxScreenCoords
-- Add polyhedron3d as visualization for surface3d
-- Ass polyhedron as visualization for plane3d
-- Add colorarray to surface polyhedron3d
-- New attributes style and polyhedron for parametricsurface3d
 - New curve attribute: RDPthreshold
 - New board attribute "cssStyle" (includes background)
 - New color function `JXG.hsv2hsl()`
 - New color function `JXG.mixColor()`
-- Smartlabels: new attributes `visibleThreshold`, `formatValue`
+- smartlabels: new attributes `visibleThreshold`, `formatValue`
 - slopetriangle: add functions `deltaX` and `deltaY`, add attribute `formatValue`
-- Add attribute "cyclic" to point3d (glider)
 - JessieCode: add function `minParentheses()`
-- Add functions `removeTransform` and `clearTransforms`
-- New element sketchcurve used in `board.sketches`
-- `JXG.Dump.toJessie(board, noAttributes)` new param noAttributes
+- New element 'sketchcurve'. It is available as `board.sketches`
+- `JXG.Dump.toJessie(board, noAttributes)` new param `'noAttributes'`
+- new method `GeometryElement.toTopOfLayer()`
 
 Improvements
 ------------
 
-- handling of attribute value 'inherit' 
-- Improved Dump.minimizeObject()
-- dumpToURI() of MathJax text
+- 3D: box3d use plane gradients
+- 3D: face3d: add shader attribute [fixed=false]
+- 3D: realize axis3d by 3D lines
+- 3D speed: handle azimuth and elevation pointer events together and more
+- 3D axes (center): show labels by default
+- 3D glider
+- 3D: Enable (again) dragging of 3D point gliders on plane3d withoud pressing shift key
 - Update node packages needed for JSXGraph development
 - Ticks: combine attribute 'clip' with _isInsideCanvas()
-- svg.dumpToDataURI: include logo
-- Refactor eslint settings
+- `svg.dumpToDataURI`: include logo
+- dumpToURI() of MathJax text
+- Improved `Dump.minimizeObject()` minimizes list of changed attributes
 - Disable use of BOARD_QUALITY_LOW for plotting (experimental)
 - Reactivate attribute RDPsmoothing for plotting
 - Add `<sketchoicon>` to `convertSketchometry2CSS`
 - RDPsmoothing
 - Reduce `max_level` in implicitplot and prepare RDP in user coords
 - Establish default RDP simplification in user space
-- box3d plane gradients
-- Face3d: add shader attribute [fixed=false]
-- 3D: realize axis3d by 3D lines
-- 3D speed: handle azimuth and elevation pointer events together and more
 - smartlabels: multiple improvements
 - slopetriangle: multiple improvements
-- Enable dragging of 3D point gliders on plane3d wthoud pressing shift key
-- 3D glider
 - Unit tests: automatically choose chrome or chromium
 - Transformations: store type in `this.transformationType`
 - Transformatons: melting transformation and fix regression
-- 3D axes (center): show labels by default
-- Complex numbers:  `toString(digits)` new parameter digits, new method toArray()
-
+- Complex numbers: `toString(digits)` new parameter digits, new method `toArray()`
+- Add constant `Env.maxScreenCoords`
+- Handling of attribute value 'inherit' 
+- Refactor eslint settings
 
 Bug fixes
 ---------
 
-- intersection of inequalities
+- Intersection of inequalities
 - Bug fixes in mathematical routines, together with unit tests (found by KI)
-- color of arrow heads
-- slider
+- Color of arrow heads
+- Slider bug
 - JessieCode regression
-- headless support
-- handling of moveTarget
+- Headless browser support
+- Handling of moveTarget
 - 3D event handler and Firefox
-- eventhandling board + 3D
+- Eventhandling board + 3D
 - Fix regression: showInfoBox
 - Measurements: dimension for `Diameter
-- Remove clipping of scrCoords. Not longer necessary in modern browsers
 - Opacity for arrow heads
 - change `elType` of slope trigangles to `slopetriangle` (instead of `polygon`)
 - change `elType` of smartlabels to `smartlabel` (instead of `text`)
@@ -90,8 +86,9 @@ Bug fixes
 - Visibility of function graph labels
 - Intersection of lines and curves
 - Multiplication of complex numbers
+- Remove clipping of scrCoords. Not longer necessary in modern browsers
 
-PR: Christian Perfect, CloudShannon, Andreas Walter
+PRs by Christian Perfect, CloudShannon, Andreas Walter
 
 
 1.12.2
