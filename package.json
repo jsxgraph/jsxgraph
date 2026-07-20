@@ -75,12 +75,12 @@
     "npmignore": "^0.3.1",
     "path-browserify": "^1.0.1",
     "prettier": "^3.8.1",
-    "terser": "^5.10.0",
-    "webpack": "^5.105.4",
-    "webpack-cli": "^4.9.2"
+    "terser-webpack-plugin": ">=5.6.1",
+    "webpack": ">=5.105.4",
+    "webpack-cli": ">=7.2.1"
   },
   "engines": {
-    "node": ">=24.18.0"
+    "node": ">=20.19.0"
   },
   "scripts": {
     "buildCore": "webpack --config config/webpack.config.js",
