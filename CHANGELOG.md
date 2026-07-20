@@ -3,6 +3,97 @@
 
 API changes: the property of the elements `smartlabel`, `slopetriangle`, and `label` are now `smartlabel`, `slopetriangle`, and `label`.
 
+New features
+-----------
+
+- boxplot: enable plotting of outliers. Add '-' and '|' as faces for outliers of boxplots
+- Shortcut `JXG.boar()` for `JXG.JSXGraph.initBoard()`
+- JXG.appBox()
+- setClipPath
+- 3D: enable user supplied shading angle
+- face3d attribute: shader.light
+- new method GeometryElement.toTopOfLayer()
+- Angle, sector, arc: allow clockwise variants
+- New method JXG.Math.Statistics.boxplot(data)
+- New 3d transformations types: 'affine', 'affinematrix', 'generic', 'matrix'
+- New transformation types (2D): 'affine', 'affinematrix'
+- Add constant Env.maxScreenCoords
+- Add polyhedron3d as visualization for surface3d
+- Ass polyhedron as visualization for plane3d
+- Add colorarray to surface polyhedron3d
+- New attributes style and polyhedron for parametricsurface3d
+- New curve attribute: RDPthreshold
+- New board attribute "cssStyle" (includes background)
+- New color function `JXG.hsv2hsl()`
+- New color function `JXG.mixColor()`
+- Smartlabels: new attributes `visibleThreshold`, `formatValue`
+- slopetriangle: add functions `deltaX` and `deltaY`, add attribute `formatValue`
+- Add attribute "cyclic" to point3d (glider)
+- JessieCode: add function `minParentheses()`
+- Add functions `removeTransform` and `clearTransforms`
+- New element sketchcurve used in `board.sketches`
+- `JXG.Dump.toJessie(board, noAttributes)` new param noAttributes
+
+Improvements
+------------
+
+- handling of attribute value 'inherit' 
+- Improved Dump.minimizeObject()
+- dumpToURI() of MathJax text
+- Update node packages needed for JSXGraph development
+- Ticks: combine attribute 'clip' with _isInsideCanvas()
+- svg.dumpToDataURI: include logo
+- Refactor eslint settings
+- Disable use of BOARD_QUALITY_LOW for plotting (experimental)
+- Reactivate attribute RDPsmoothing for plotting
+- Add `<sketchoicon>` to `convertSketchometry2CSS`
+- RDPsmoothing
+- Reduce `max_level` in implicitplot and prepare RDP in user coords
+- Establish default RDP simplification in user space
+- box3d plane gradients
+- Face3d: add shader attribute [fixed=false]
+- 3D: realize axis3d by 3D lines
+- 3D speed: handle azimuth and elevation pointer events together and more
+- smartlabels: multiple improvements
+- slopetriangle: multiple improvements
+- Enable dragging of 3D point gliders on plane3d wthoud pressing shift key
+- 3D glider
+- Unit tests: automatically choose chrome or chromium
+- Transformations: store type in `this.transformationType`
+- Transformatons: melting transformation and fix regression
+- 3D axes (center): show labels by default
+- Complex numbers:  `toString(digits)` new parameter digits, new method toArray()
+
+
+Bug fixes
+---------
+
+- intersection of inequalities
+- Bug fixes in mathematical routines, together with unit tests (found by KI)
+- color of arrow heads
+- slider
+- JessieCode regression
+- headless support
+- handling of moveTarget
+- 3D event handler and Firefox
+- eventhandling board + 3D
+- Fix regression: showInfoBox
+- Measurements: dimension for `Diameter
+- Remove clipping of scrCoords. Not longer necessary in modern browsers
+- Opacity for arrow heads
+- change `elType` of slope trigangles to `slopetriangle` (instead of `polygon`)
+- change `elType` of smartlabels to `smartlabel` (instead of `text`)
+- change `elType` of labels to `label` (instead of `text`)
+- Apply curve transformations to label, too
+- `projectCoordsToParametric()`
+- Consistent use of homogeneous coordinates for plane3d elements
+- Visibility of function graph labels
+- Intersection of lines and curves
+- Multiplication of complex numbers
+
+PR: Christian Perfect, CloudShannon, Andreas Walter
+
+
 1.12.2
 ===
 
