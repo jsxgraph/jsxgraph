@@ -80,7 +80,7 @@
     "webpack-cli": "^4.9.2"
   },
   "engines": {
-    "node": ">=0.6.0"
+    "node": ">=24.18.0"
   },
   "scripts": {
     "buildCore": "webpack --config config/webpack.config.js",

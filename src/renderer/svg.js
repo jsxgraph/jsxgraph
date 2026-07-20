@@ -291,10 +291,12 @@ JXG.SVGRenderer = function (container, dim) {
      */
     this.updateClipPathRect = function (w, h) {
         var id = this.uniqName('ClipFull'),
-            node;
+            clipNode, node;
 
-        if (Type.exists(this.container.ownerDocument.getElementById(id).firstChild)) {
-            node = this.container.ownerDocument.getElementById(id).firstChild;
+        // if (Type.exists(this.container.ownerDocument.getElementById(id).firstChild)) {
+        clipNode = this.container.ownerDocument.getElementById(id);
+        if (Type.exists(clipNode) && Type.exists(clipNode.firstChild)) {
+            node = clipNode.firstChild;
             if (Type.exists(node)) {
                 node.setAttributeNS(null, 'width', w);
                 node.setAttributeNS(null, 'height', h);
