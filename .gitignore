@@ -1,5 +1,6 @@
 trunk
 .htaccess
+.npmrc
 **/.htaccess
 src/.htaccess
 .c9revisions
@@ -30,4 +31,3 @@ doc/jsdoc-tk/template/static/jsxgraph.css
 html-report
 HOWTO-RELEASE.md
 releasetxt.md
-
