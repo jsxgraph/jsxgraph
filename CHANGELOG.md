@@ -35,7 +35,7 @@ Improvements
 ------------
 
 - 3D: box3d use plane gradients
-- 3D: face3d: add shader attribute [fixed=false]
+- 3D: face3d - add shader attribute [fixed=false]
 - 3D: realize axis3d by 3D lines
 - 3D speed: handle azimuth and elevation pointer events together and more
 - 3D axes (center): show labels by default
