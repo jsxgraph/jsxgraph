@@ -568,7 +568,11 @@ JXG.extend(
             var val,
                 rad = Math.atan2(-this.stdform[1], this.stdform[2]);
 
-            unit = unit.toLocaleLowerCase();
+            if (Type.isString(unit) && unit !== '') {
+                unit = unit.toLocaleLowerCase();
+            } else {
+                return rad;
+            }
 
             if (unit === '' || unit.indexOf('rad') === 0) {
                 val = rad;
