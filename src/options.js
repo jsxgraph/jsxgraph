@@ -1606,6 +1606,16 @@ JXG.Options = {
             live: 'assertive' // 'assertive', 'polite', 'none'
         },
 
+        /**
+         * If set to false, the JSXGraph element can be dragged out of the JSXGraph board. Used in {@link JXG#appBox}.
+         *
+         * @name clip
+         * @memberOf JXG.GeometryElement.prototype
+         * @type Boolean
+         * @default true
+         *
+         * @see JXG#appBox
+         */
         clip: true,
 
         /**

@@ -7,7 +7,8 @@ New features
 -----------
 
 - Shortcut `JXG.board()` for `JXG.JSXGraph.initBoard()`
-- JSXGraph wrapper div: `JXG.appBox()`, uses `setClipPath`
+- JSXGraph wrapper div: `JXG.appBox()`, uses the new attribute `clip`
+- New element 'sketchcurve'. It is available as `board.sketches`
 - 3D: enable user supplied shading angle
 - 3D: face3d attribute: shader.light
 - 3D: Add attribute "cyclic" to point3d (glider)
@@ -27,7 +28,6 @@ New features
 - smartlabels: new attributes `visibleThreshold`, `formatValue`
 - slopetriangle: add functions `deltaX` and `deltaY`, add attribute `formatValue`
 - JessieCode: add function `minParentheses()`
-- New element 'sketchcurve'. It is available as `board.sketches`
 - `JXG.Dump.toJessie(board, noAttributes)` new param `'noAttributes'`
 - new method `GeometryElement.toTopOfLayer()`
 
