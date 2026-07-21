@@ -52,8 +52,8 @@ Improvements
 - RDPsmoothing
 - Reduce `max_level` in implicitplot and prepare RDP in user coords
 - Establish default RDP simplification in user space
-- smartlabels: multiple improvements
-- slopetriangle: multiple improvements
+- smartlabels: various improvements
+- slopetriangle: various improvements
 - Unit tests: automatically choose chrome or chromium
 - Transformations: store type in `this.transformationType`
 - Transformatons: melting transformation and fix regression
@@ -66,7 +66,7 @@ Bug fixes
 ---------
 
 - Intersection of inequalities
-- Bug fixes in mathematical routines, together with unit tests (found by KI)
+- Bug fixes in mathematical routines, together with unit tests (by AI)
 - Color of arrow heads
 - Slider bug
 - JessieCode regression

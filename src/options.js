@@ -10299,6 +10299,23 @@ JXG.Options = {
          * @memberOf Text.prototype
          * @default null
          * @type Object
+         *
+         * @example
+         * var p = board.create('point', [0,1]);
+         * board.create('text', [1, 0, 'message'], {anchor:p});
+         *
+         * </pre><div id="JXGe2654e93-5992-4ba3-b7b1-69fa8ef8a75c" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXGe2654e93-5992-4ba3-b7b1-69fa8ef8a75c',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *     var p = board.create('point', [0,1]);
+         *     board.create('text', [1, 0, 'message'], {anchor:p});
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
          */
         anchor: null,
 
