@@ -200,7 +200,7 @@ import Point from "../base/point.js";
  * });
  *
  * </pre><div id="JXG76e78c5f-3598-4d44-b43f-1d78fd15302c" class="jxgbox" style="width: 300px; height: 300px;"></div>
- * <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" id="MathJax-script"></script>
+ * <script src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" id="MathJax-script"></script>
  * <script type="text/javascript">
  *     (function() {
  *         var board = JXG.JSXGraph.initBoard('JXG76e78c5f-3598-4d44-b43f-1d78fd15302c',

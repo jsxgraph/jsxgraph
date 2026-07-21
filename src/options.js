@@ -312,7 +312,7 @@ JXG.Options = {
          *  });
          *
          * </pre><div id="JXG484d2f00-c853-4acb-a8bd-46a9e232d13b" class="jxgbox" style="width: 300px; height: 300px;"></div>
-         * <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" id="MathJax-script"></script>
+         * <script src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" id="MathJax-script"></script>
          * <script type="text/javascript">
          *     (function() {
          *         var board = JXG.JSXGraph.initBoard('JXG484d2f00-c853-4acb-a8bd-46a9e232d13b',
@@ -9990,7 +9990,7 @@ JXG.Options = {
          *   }
          * };
          * </script>
-         * <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" id="MathJax-script"></script>
+         * <script src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" id="MathJax-script"></script>
          * <div id="JXGe2a04876-5813-4db0-b7e8-e48bf4e220b9" class="jxgbox" style="width: 400px; height: 400px;"></div>
          * <script type="text/javascript">
          *     (function() {
@@ -10036,7 +10036,7 @@ JXG.Options = {
          *
          * @example
          * // Load MathJax:
-         * // &lt;script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"&lt;&lt;/script&gt;
+         * // &lt;script src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js"&lt;&lt;/script&gt;
          *
          * // function and its derivative
          * var f1 = function(x) { return x * x * x; },
@@ -10086,7 +10086,7 @@ JXG.Options = {
          *     }],{fontSize: 15, useMathJax: true});
          *
          * </pre>
-         * <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" id="MathJax-script"></script>
+         * <script src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" id="MathJax-script"></script>
          * <div id="JXG8c2b65e7-4fc4-43f7-b23c-5076a7fa9621" class="jxgbox" style="width: 400px; height: 400px;"></div>
          * <script type="text/javascript">
          *     (function() {
@@ -10273,7 +10273,7 @@ JXG.Options = {
          *  board.create('text', [2, -2, 2 / 19], { toFraction: true, useMathjax: false });
          *
          * </pre><div id="JXGc10fe0b6-15ac-42b6-890f-2593b427d493" class="jxgbox" style="width: 300px; height: 300px;"></div>
-         * <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" id="MathJax-script"></script>
+         * <script src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" id="MathJax-script"></script>
          * <script type="text/javascript">
          *     (function() {
          *         var board = JXG.JSXGraph.initBoard('JXGc10fe0b6-15ac-42b6-890f-2593b427d493',
