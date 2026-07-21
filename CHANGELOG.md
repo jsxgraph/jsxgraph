@@ -8,7 +8,6 @@ New features
 
 - Shortcut `JXG.board()` for `JXG.JSXGraph.initBoard()`
 - JSXGraph wrapper div: `JXG.appBox()`, uses `setClipPath`
-- boxplot: enable plotting of outliers. Add '-' and '|' as faces for outliers of boxplots
 - 3D: enable user supplied shading angle
 - 3D: face3d attribute: shader.light
 - 3D: Add attribute "cyclic" to point3d (glider)
@@ -20,6 +19,7 @@ New features
 - Add functions `removeTransform` and `clearTransforms`
 - Angle, sector, arc: allow clockwise variants
 - New method JXG.Math.Statistics.boxplot(data)
+- boxplot: enable plotting of outliers. Add '-' and '|' as faces for outliers of boxplots
 - New curve attribute: RDPthreshold
 - New board attribute "cssStyle" (includes background)
 - New color function `JXG.hsv2hsl()`

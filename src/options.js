@@ -1219,17 +1219,17 @@ JXG.Options = {
          * @name JXG.Board#sketches
          * @type Object
          * @default <pre>{
-         *   enabled: true,
-         *   0: {visible: false},
-         *   1: {visible: false}
+         *   enabled: false,
+         *   0: {visible: true},
+         *   1: {visible: true}
          * }</pre>
          *
          * @see SketchCurve
          */
         sketches: {
             enabled: false,
-            0: {visible: false},
-            1: {visible: false}
+            0: {visible: true},
+            1: {visible: true}
         },
 
         /**
