@@ -2729,11 +2729,8 @@ JXG.Options = {
          * </pre><div id="JXGa2873c8f-df8d-4a1d-ae15-5f1bdc55a0e9" class="jxgbox" style="width: 300px; height: 300px;"></div>
          * <script type="text/javascript">
          *     (function() {
-         *         var board = JXG.JSXGraph.initBoard('JXGa2873c8f-df8d-4a1d-ae15-5f1bdc55a0e9',
-         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
-         *
-         *         const board = JXG.JSXGraph.initBoard('jxgbox', {
-         *           boundingBox: [-10, 10, 10, -10], axis: true,
+         *         const board = JXG.JSXGraph.initBoard('JXGa2873c8f-df8d-4a1d-ae15-5f1bdc55a0e9', {
+         *           boundingBox: [-10, 10, 10, -10], axis: true, showcopyright: false, shownavigation: false,
          *           defaultAxes: {
          *             x: {
          *               margin: -4,
