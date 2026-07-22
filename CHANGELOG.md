@@ -1,3 +1,21 @@
+1.13.1
+===
+
+Improvements
+------------
+
+- Upgrade to MathJax v4 in API docs
+- Add "JSXGraph example:" to `console.log()` outputs in API docs
+
+Bug fixes
+---------
+
+- use of `Line.getAngle()` without parameters
+- Various fixes in API docs, in particular use of MathJax and 'intl'
+- radar chart
+- Remove several `console.log()`
+- `polyhedron3d` shader: attribute `visible` was missing
+
 1.13.0
 ===
 
@@ -59,7 +77,7 @@ Improvements
 - Transformatons: melting transformation and fix regression
 - Complex numbers: `toString(digits)` new parameter digits, new method `toArray()`
 - Add constant `Env.maxScreenCoords`
-- Handling of attribute value 'inherit' 
+- Handling of attribute value 'inherit'
 - Refactor eslint settings
 
 Bug fixes
