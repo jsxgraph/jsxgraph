@@ -521,6 +521,7 @@ JXG.Options = {
          * });
          *
          * var t = board.create('text', [0.05, 0.2, -Math.PI*100], {
+         *         formatNumber: true,
          *         digits: 2,
          *         intl: {
          *                 enabled: true,
@@ -543,6 +544,7 @@ JXG.Options = {
          *     boundingbox:[-0.5, 0.5, 0.5, -0.5]
          *     });
          *     var t = board.create('text', [0.05, 0.2, -Math.PI*100], {
+         *         formatNumber: true,
          *         digits: 2,
          *         intl: {
          *                 enabled: true,
@@ -9661,6 +9663,7 @@ JXG.Options = {
          *
          * @example
          * var t = board.create('text', [1, 2, -Math.PI*100], {
+         *         formatNumber: true,
          *         digits: 2,
          *         intl: {
          *                 enabled: true,
@@ -9677,6 +9680,7 @@ JXG.Options = {
          *         var board = JXG.JSXGraph.initBoard('JXGb7162923-1beb-4e56-8817-19aa66e226d1',
          *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
          *     var t = board.create('text', [1, 2, -Math.PI*100], {
+         *             formatNumber: true,
          *             digits: 2,
          *             intl: {
          *                     enabled: true,
@@ -9726,7 +9730,7 @@ JXG.Options = {
          *     (function() {
          *         var board = JXG.JSXGraph.initBoard('JXG560aeb1c-55fb-45da-8ad5-d3ad26216056',
          *             {boundingbox: [-0.5, 0.5, 0.5, -0.5], axis: true, showcopyright: false, shownavigation: false});
-         *     var t = board.create('text', [0.3, -0.3, ''], {
+         *     var t = board.create('text', [0.05, -0.2, ''], {
          *         intl: {
          *             enabled: true,
          *             locale: 'it-IT',
