@@ -904,8 +904,9 @@ JXG.extend(
                 // console.log(el.id, el.visPropCalc.visible, el.visPropCalc.visible, Type.exists(el.shader), vis)
                 // vis = (el.visPropCalc.visible === false) ? false : vis;
                 // if (el.visPropCalc.visible && Type.exists(el.shader)) {
-                vis = el.visPropCalc.visible;
-                if (vis && Type.exists(el.shader)) {
+                // vis = el.visPropCalc.visible;
+                // console.log(el.id, el.visProp, el.visProp.visible)
+                if (Type.exists(el.shader)) {
                     if (this.board._change3DView && el.evalVisProp('shader.fixed')) {
                         // In case, 3D view is rotated and the shader is fixed
                         // we can avoid the call of shader()
