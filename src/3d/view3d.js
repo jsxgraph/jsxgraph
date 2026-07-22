@@ -895,18 +895,12 @@ JXG.extend(
     },
 
     updateShaders: function() {
-        var id, el, v, vis;
+        var id, el, v;
         for (id in this.objects) {
             if (this.objects.hasOwnProperty(id)) {
                 el = this.objects[id];
 
-                // vis = el.evalVisProp('visible');
-                // console.log(el.id, el.visPropCalc.visible, el.visPropCalc.visible, Type.exists(el.shader), vis)
-                // vis = (el.visPropCalc.visible === false) ? false : vis;
-                // if (el.visPropCalc.visible && Type.exists(el.shader)) {
-                // vis = el.visPropCalc.visible;
-                // console.log(el.id, el.visProp, el.visProp.visible)
-                if (Type.exists(el.shader)) {
+                if (el.visPropCalc.visible && Type.exists(el.shader)) {
                     if (this.board._change3DView && el.evalVisProp('shader.fixed')) {
                         // In case, 3D view is rotated and the shader is fixed
                         // we can avoid the call of shader()
