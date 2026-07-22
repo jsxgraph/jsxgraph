@@ -9617,17 +9617,19 @@ JXG.Options = {
          * @memberOf Text.prototype
          * @default false
          * @type Boolean
-         *
+         * @see Text#toFraction
+         * @see Text#digits
          */
         formatNumber: false,
 
         /**
-         * Used to round texts given by a number.
+         * Used to round texts consisting solely of a number. Needs the attribute formatNumber:true.
          *
          * @name digits
          * @memberOf Text.prototype
          * @default 2
          * @type Number
+         * @see Text#formatNumber
          */
         digits: 2,
 
@@ -10257,17 +10259,17 @@ JXG.Options = {
         katexMacros: {},
 
         /**
-         * Display number as integer + nominator / denominator. Works together
-         * with MathJax, KaTex or as plain text.
+         * Display number as integer + nominator / denominator. Needs also the setting formatNumber: true
+         * Works together with MathJax, KaTex or as plain text.
          * @name toFraction
          * @memberOf Text.prototype
          * @type Boolean
          * @default false
-         * @see JXG#toFraction
+         * @see JXG#formatNumber
          *
          * @example
-         *  board.create('text', [2, 2, 2 / 7], { anchorY: 'top', toFraction: true, useMathjax: true });
-         *  board.create('text', [2, -2, 2 / 19], { toFraction: true, useMathjax: false });
+         *  board.create('text', [2, 2, 2 / 7], { anchorY: 'top', toFraction: true, formatNumber: true, useMathjax: true });
+         *  board.create('text', [2, -2, 2 / 19], { toFraction: true, formatNumber: true, useMathjax: false });
          *
          * </pre><div id="JXGc10fe0b6-15ac-42b6-890f-2593b427d493" class="jxgbox" style="width: 300px; height: 300px;"></div>
          * <script src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" id="MathJax-script"></script>
@@ -10275,8 +10277,8 @@ JXG.Options = {
          *     (function() {
          *         var board = JXG.JSXGraph.initBoard('JXGc10fe0b6-15ac-42b6-890f-2593b427d493',
          *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
-         *             board.create('text', [2, 2, 2 / 7], { anchorY: 'top', toFraction: true, useMathjax: true });
-         *             board.create('text', [2, -2, 2 / 19], { toFraction: true, useMathjax: false });
+         *             board.create('text', [2, 2, 2 / 7], { anchorY: 'top', formatNumber: true, toFraction: true, useMathjax: true });
+         *             board.create('text', [2, -2, 2 / 19], { toFraction: true, formatNumber: true, useMathjax: false });
          *
          *     })();
          *
