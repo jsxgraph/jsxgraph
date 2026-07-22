@@ -11,10 +11,10 @@ Bug fixes
 ---------
 
 - use of `Line.getAngle()` without parameters
+- `polyhedron3d` shader: attribute `visible` was missing
 - Various fixes in API docs, in particular use of MathJax and 'intl'
 - radar chart
 - Remove several `console.log()`
-- `polyhedron3d` shader: attribute `visible` was missing
 
 1.13.0
 ===
