@@ -1603,7 +1603,7 @@ JXG.extend(
  * The coordinates can either be absolute (i.e. respective to the coordinate system of the board) or be relative to the coordinates of an element
  * given in {@link Text#anchor}.
  * <p>
- * HTML, MathJaX, KaTeX and GEONExT syntax can be handled.
+ * HTML, MathJaX, KaTeX, ASCIIMathML, and GEONExT syntax can be handled.
  * <p>
  * There are two ways to display texts:
  * <ul>
