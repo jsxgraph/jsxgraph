@@ -7445,14 +7445,15 @@ JXG.Options = {
          * board.create("measurement", [0, -2, ["Direction", s]], {
          *     dim: 'direction',
          *     formatDirection: function (self,x,y) {
-         *        return '\\[\\frac{' + x + '}{' + y + '} = ' +
-         *            (!isFinite(x/y) ? '\\infty' : JXG.toFixed(x/y, self.visProp.digits)) +
+         *        return '\\[\\frac{' + y + '}{' + x + '} = ' +
+         *            (!isFinite(y/x) ? '\\infty' : JXG.toFixed(y/x, self.visProp.digits)) +
          *            '\\]';
          *     },
          *     useMathJax: true
          * });
          *
          * </pre><div id="JXG57435de0-16f2-42be-94d8-3d2b31caefcd" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" id="MathJax-script"></script>
          * <script type="text/javascript">
          *     (function() {
          *         var board = JXG.JSXGraph.initBoard('JXG57435de0-16f2-42be-94d8-3d2b31caefcd',
@@ -7464,8 +7465,8 @@ JXG.Options = {
          *     board.create("measurement", [0, -2, ["Direction", s]], {
          *         dim: 'direction',
          *         formatDirection: function (self,x,y) {
-         *            return '\\[\\frac{' + x + '}{' + y + '} = ' +
-         *                (!isFinite(x/y) ? '\\infty' : JXG.toFixed(x/y, self.visProp.digits)) +
+         *            return '\\[\\frac{' + y + '}{' + x + '} = ' +
+         *                (!isFinite(y/x) ? '\\infty' : JXG.toFixed(y/x, self.visProp.digits)) +
          *                '\\]';
          *         },
          *         useMathJax: true
