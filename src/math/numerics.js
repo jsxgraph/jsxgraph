@@ -3822,13 +3822,13 @@ Mat.Numerics = {
      *
      * @example
      * var f = (x) => Math.sqrt(x);
-     * console.log("JSXGraph example:", JXG.Math.Numerics.findDomain(f, [-5, 5]));
+     * console.log(JXG.Math.Numerics.findDomain(f, [-5, 5]));
      *
      * // Output: [ -0.00020428174445492973, 5 ]
      *
      * @example
      * var f = (x) => Math.sqrt(x);
-     * console.log("JSXGraph example:", JXG.Math.Numerics.findDomain(f, [-5, 5], null, false));
+     * console.log(JXG.Math.Numerics.findDomain(f, [-5, 5], null, false));
      *
      * // Output: [ 0.00020428174562965915, 5 ]
      */
