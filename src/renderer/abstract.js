@@ -1294,7 +1294,7 @@ JXG.extend(
 
                         if (el.evalVisProp('usemathjax')) {
                             // Typesetting directly might not work because MathJax was not yet loaded completely
-                            // try {
+                            try {
                                 if (MathJax.typeset) {
                                     // Version 3
                                     MathJax.typeset([el.rendNode]);
@@ -1318,9 +1318,9 @@ JXG.extend(
                                 //         vshift
                                 //     );
                                 // }
-                            // } catch (e) {
-                            //     JXG.debug("MathJax (not yet) loaded");
-                            // }
+                            } catch (e) {
+                                JXG.debug("MathJax (not yet) loaded");
+                            }
                         } else if (el.evalVisProp('usekatex')) {
                             try {
                                 // Checkboxes et. al. do not possess rendNodeLabel during the first update.

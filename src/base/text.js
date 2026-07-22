@@ -1600,6 +1600,7 @@ JXG.extend(
 /**
  * @class Constructs a text element.
  *
+ *
  * The coordinates can either be absolute (i.e. respective to the coordinate system of the board) or be relative to the coordinates of an element
  * given in {@link Text#anchor}.
  * <p>

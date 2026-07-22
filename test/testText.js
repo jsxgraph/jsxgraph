@@ -42,6 +42,8 @@ describe("Test text handling", function () {
     });
 
     document.getElementsByTagName("body")[0].innerHTML =
+        // '<script src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" id="MathJax-script"></script>' +
+        '<script src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-svg.js" id="MathJax-script"></script>' +
         '<div id="jxgbox" style="width: 100px; height: 100px;"></div>';
     board = JXG.JSXGraph.initBoard("jxgbox", {
         renderer: "svg",
