@@ -381,6 +381,15 @@ Mat.Extrapolate = {
      *     console.log("JSXGraph example: x0=", x0, f.toString());
      *     console.log("JSXGraph example: ", JXG.Math.Extrapolate.limit(x0, h, f).join(', '));
      *  }
+     * // Output:
+     * // JSXGraph example: x0= 1e-7 (x) => Math.log(x)
+     * // JSXGraph example:  -2237.727342885339, finite, 0
+     * //
+     * // JSXGraph example: x0= 1e-7 (x) => Math.tan(x - Math.PI * 0.5)
+     * // JSXGraph example:  -11056039.511692017, infinite, 0.5333333333333333
+     * //
+     * // JSXGraph example: x0= 1e-7 (x) => 4 / x
+     * // JSXGraph example:  20000039.99939709, infinite, 0.9333333333333333
      *
      * </pre><div id="JXG5e8c6a7e-eeae-43fb-a669-26b5c9e40cab" class="jxgbox" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
