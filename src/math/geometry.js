@@ -690,7 +690,7 @@ JXG.extend(
          *
          *     hull = JXG.Math.Geometry.GrahamScan(p);
          *     for (i = 0; i < hull.length; i++) {
-         *       console.log(hull[i]);
+         *       console.log("JSXGraph example:", hull[i]);
          *       q.push(hull[i].c);
          *     }
          *     board.create('polygon', q);
@@ -716,7 +716,7 @@ JXG.extend(
          *
          *         hull = JXG.Math.Geometry.GrahamScan(p);
          *         for (i = 0; i < hull.length; i++) {
-         *           console.log(hull[i]);
+         *           console.log("JSXGraph example:", hull[i]);
          *           q.push(hull[i].c);
          *         }
          *         board.create('polygon', q);
@@ -1071,7 +1071,7 @@ JXG.extend(
          *     }
          * });
          *
-         * console.log(JXG.Math.Geometry.isConvex(pol));
+         * console.log("JSXGraph example:", JXG.Math.Geometry.isConvex(pol));
          * // > true
          *
          *
@@ -1095,10 +1095,7 @@ JXG.extend(
          *         }
          *     });
          *
-         *     console.log(JXG.Math.Geometry.isConvex(pol));
-         *
-         *
-         *
+         *     console.log("JSXGraph example:", JXG.Math.Geometry.isConvex(pol));
          *     })();
          *
          * </script><pre>

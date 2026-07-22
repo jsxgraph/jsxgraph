@@ -378,8 +378,8 @@ Mat.Extrapolate = {
      * var x0 = 0.0000001;
      * var h = 0.1;
      * for (let f of [f1, f2, f3]) {
-     *     console.log("x0=", x0, f.toString());
-     *     console.log(JXG.Math.Extrapolate.limit(x0, h, f));
+     *     console.log("JSXGraph example: x0=", x0, f.toString());
+     *     console.log("JSXGraph example: ", JXG.Math.Extrapolate.limit(x0, h, f).join(', '));
      *  }
      *
      * </pre><div id="JXG5e8c6a7e-eeae-43fb-a669-26b5c9e40cab" class="jxgbox" style="width: 300px; height: 300px;"></div>
@@ -394,8 +394,8 @@ Mat.Extrapolate = {
      *     var x0 = 0.0000001;
      *     var h = 0.1;
      *     for (let f of [f1, f2, f3]) {
-     *         console.log("x0=", x0, f.toString());
-     *         console.log(JXG.Math.Extrapolate.limit(x0, h, f));
+     *         console.log("JSXGraph example: x0=", x0, f.toString());
+     *         console.log("JSXGraph example: ", JXG.Math.Extrapolate.limit(x0, h, f).join(', '));
      *      }
      *
      *     })();

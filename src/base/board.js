@@ -679,12 +679,12 @@ JXG.Board = function (container, renderer, id,
      *
      *  // Use event handler to access the actual curve
      *  board.on('move', function(evt) {
-     *    console.log('move', this.sketches[0].dataX.length);
+     *    console.log('JSXGraph example: move', this.sketches[0].dataX.length);
      *  });
      *
      *  // Use event handler to access the actual curve
      *  board.on('up', function(evt) {
-     *    console.log('up', this.sketches[0].dataX.length);
+     *    console.log('JSXGraph example: up', this.sketches[0].dataX.length);
      *  });
      *
      * </pre><div id="JXGf62e7217-a3ee-45b8-92e4-ce0d0d789df5" class="jxgbox" style="width: 300px; height: 300px;"></div>
@@ -701,12 +701,12 @@ JXG.Board = function (container, renderer, id,
      *             });
      *  // Use event handler to access the actual curve
      *  board.on('move', function(evt) {
-     *    console.log('move', this.sketches[0].dataX.length);
+     *    console.log('JSXGraph example: move', this.sketches[0].dataX.length);
      *  });
      *
      *  // Use event handler to access the actual curve
      *  board.on('up', function(evt) {
-     *    console.log('up', this.sketches[0].dataX.length);
+     *    console.log('JSXGraph example: up', this.sketches[0].dataX.length);
      *  });
      *
      *     })();
@@ -7796,7 +7796,7 @@ JXG.extend(
          * @example
          * var c = board.create('circle', [[1, 1], 2]);
          * board.on('hit', function(evt, el) {
-         *     console.log('Hit element', el);
+         *     console.log('JSXGraph example: Hit element', el);
          * });
          *
          * </pre><div id='JXG19eb31ac-88e6-11e8-bcb5-901b0e1b8723' class='jxgbox' style='width: 300px; height: 300px;'></div>
@@ -7806,7 +7806,7 @@ JXG.extend(
          *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
          *     var c = board.create('circle', [[1, 1], 2]);
          *     board.on('hit', function(evt, el) {
-         *         console.log('Hit element', el);
+         *         console.log('JSXGraph example: Hit element', el);
          *     });
          *
          *     })();
