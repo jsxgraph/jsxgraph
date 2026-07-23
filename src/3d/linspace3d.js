@@ -1807,10 +1807,10 @@ JXG.createPlane3D = function (board, parents, attributes) {
             // Eliminate the call to the expensive el.updateDataArray();
             el.element2D.updateDataArray = function() {};
 
-            ru0 = el.range_u[0];
-            ru1 = el.range_u[1];
-            rv0 = el.range_v[0];
-            rv1 = el.range_v[1];
+            ru0 = Type.evaluate(el.range_u[0]);
+            ru1 = Type.evaluate(el.range_u[1]);
+            rv0 = Type.evaluate(el.range_v[0]);
+            rv1 = Type.evaluate(el.range_v[1]);
 
             // // Attempt to handle infinite planes
             // bb = el.view.bbox3D;
