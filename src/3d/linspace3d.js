@@ -1682,7 +1682,8 @@ JXG.createPlane3D = function (board, parents, attributes) {
         surface, coords,
         su, sv, type, tiling,
         m, ma, mi, ma_a, mi_a, s, v,
-        ru0, ru1, rv0, rv1,
+        ru0, ru1, rv0, rv1, e,
+        staticColorMap = true,
         // bb, size,
         base = null,
         transform = null;
@@ -1862,6 +1863,14 @@ JXG.createPlane3D = function (board, parents, attributes) {
                 mi_a = m[1];
                 s = el.evalVisProp('colormap.s');
                 v = el.evalVisProp('colormap.v');
+                for (e in el.visProp.colormap) {
+                    if (el.visProp.colormap.hasOwnProperty(e)) {
+                        if (Type.isFunction(el.visProp.colormap[e])) {
+                            staticColorMap = false;
+                            break;
+                        }
+                    }
+                }
 
                 attr.polyhedron.fillcolorarray = [];
                 attr.polyhedron.fillcolor = (self) => {
@@ -1872,12 +1881,15 @@ JXG.createPlane3D = function (board, parents, attributes) {
                         le = face.length;
 
                     // Dynamic version
-                    // m = self.evalVisProp('max');
-                    // ma = m[0];
-                    // ma_a = m[1];
-                    // m = self.evalVisProp('min');
-                    // mi = m[0];
-                    // mi_a = m[1];
+                    if (!staticColorMap) {
+                        m = el.evalVisProp('colormap.max');
+                        ma = m[0];
+                        ma_a = m[1];
+                        m = el.evalVisProp('colormap.min');
+                        mi = m[0];
+                        mi_a = m[1];
+                    }
+
                     if (le !== 0) {
                         for (j = 0; j < le; j++) {
                             z += p.coords[face[j]][3];
@@ -1886,8 +1898,12 @@ JXG.createPlane3D = function (board, parents, attributes) {
                     }
                     z = mi_a + (z - mi) * (ma_a - mi_a) / (ma - mi);
 
-                    // hsl = JXG.hsv2hsl(z, el.evalVisProp('colormap.s'), el.evalVisProp('colormap.v')); // Dynamic version - slower
-                    hsl = JXG.hsv2hsl(z, s, v);
+                    if (staticColorMap) {
+                        hsl = JXG.hsv2hsl(z, s, v);
+                    } else {
+                        // Dynamic version - slower
+                        hsl = JXG.hsv2hsl(z, el.evalVisProp('colormap.s'), el.evalVisProp('colormap.v'));
+                    }
                     return `hsl(${z} ${hsl[1] * 100}% ${hsl[2] * 100}%)`;
                 };
             } else if (type === 'shader') {
