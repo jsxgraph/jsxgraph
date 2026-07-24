@@ -46,7 +46,7 @@ import Mat from "./math.js";
  */
 Mat.Tiling = {
     /**
-     * A function which is used to triangulate a given rectangle.
+     * A function which is used to triangulate a given rectangle (partition it into triangles).
      * The rectangle is represented by four points p1, p2, p3, p4 (arrays of coordinates) given as parameters.
      * It is triangulated in rows.
      * The number and shape of the triangles depends on parameters stepsU and stepsV.
@@ -274,7 +274,7 @@ Mat.Tiling = {
     },
 
     /**
-     * A function, which is used to rectangulate a given rectangle.
+     * A function which is used to rectangulate a given rectangle (partition it into rectangles).
      * The rectangle is rectangulated in rows. The number of rectangles the original
      * rectangle is divided into depends on the parameters stepsU and stepsV.
      * The rectangle is represented by the 4 points (arrays of coordinates) given as
@@ -324,7 +324,7 @@ Mat.Tiling = {
      * </script><pre>
      *
      *
-     * */
+     */
     rectangulation: function (p1, p2, p3, p4, stepsU, stepsV) {
         // Vectors used for checking if the given coordinates create a rectangle
         var vec1 = [p2[0] - p1[0], p2[1] - p1[1]],

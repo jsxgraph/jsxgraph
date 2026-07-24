@@ -495,6 +495,7 @@ JXG.createParametricSurface3D = function (board, parents, attributes) {
     var view = parents[0],
         F, X, Y, Z,
         range_u, range_v, attr, attr2d,
+        ru0, ru1, rv0, rv1,
         base = null,
         transform = null,
         coords, surface,// steps,
@@ -560,6 +561,10 @@ JXG.createParametricSurface3D = function (board, parents, attributes) {
 
     // Set style
     if (type !== 'wireframe') {
+        ru0 = Type.evaluate(el.range_u[0]);
+        ru1 = Type.evaluate(el.range_u[1]);
+        rv0 = Type.evaluate(el.range_v[0]);
+        rv1 = Type.evaluate(el.range_v[1]);
 
         if (tiling === 'triangle' || tiling === 'rectangle') {
             if (tiling === 'triangle') {
@@ -572,10 +577,10 @@ JXG.createParametricSurface3D = function (board, parents, attributes) {
 
                 // Uses steps and range of surface3d to create a base of triangles across the visible area of the surface3d object
                 surface = Tiling.triangulation(
-                    [el.range_u[0], el.range_v[0]],
-                    [el.range_u[0], el.range_v[1]],
-                    [el.range_u[1], el.range_v[1]],
-                    [el.range_u[1], el.range_v[0]],
+                    [ru0, rv0],
+                    [ru0, rv1],
+                    [ru1, rv1],
+                    [ru1, rv0],
                     // Given ratio or equilateral triangle if stepsV==0
                     el.evalVisProp('stepsu'), el.evalVisProp('stepsv')
                 );
@@ -587,10 +592,10 @@ JXG.createParametricSurface3D = function (board, parents, attributes) {
 
                 // Use stepsU, stepsV (see options3d) and range of surface3d to create a base of rectangles across the visible area of the surface3d object
                 surface = Tiling.rectangulation(
-                    [el.range_u[0], el.range_v[0]],
-                    [el.range_u[0], el.range_v[1]],
-                    [el.range_u[1], el.range_v[1]],
-                    [el.range_u[1], el.range_v[0]],
+                    [ru0, rv0],
+                    [ru0, rv1],
+                    [ru1, rv1],
+                    [ru1, rv0],
                     el.evalVisProp('stepsu'), el.evalVisProp('stepsv')
                 );
             }
