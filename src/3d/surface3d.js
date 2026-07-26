@@ -566,6 +566,10 @@ JXG.createParametricSurface3D = function (board, parents, attributes) {
         ru1 = Type.evaluate(el.range_u[1]);
         rv0 = Type.evaluate(el.range_v[0]);
         rv1 = Type.evaluate(el.range_v[1]);
+        // ru0 = el.range_u[0];
+        // ru1 = el.range_u[1];
+        // rv0 = el.range_v[0];
+        // rv1 = el.range_v[1];
 
         if (tiling === 'triangle' || tiling === 'rectangle') {
             if (tiling === 'triangle') {
@@ -599,6 +603,7 @@ JXG.createParametricSurface3D = function (board, parents, attributes) {
                     [ru1, rv0],
                     el.evalVisProp('stepsu'), el.evalVisProp('stepsv')
                 );
+
             }
         }
 

@@ -286,14 +286,14 @@ Mat.Tiling = {
      * @param {Array} p2
      * @param {Array} p3
      * @param {Array} p4
-     * @param {Number} stepsU
-     * @param {Number} stepsV
+     * @param {Number} stepsU Immutable
+     * @param {Number} stepsV Immutable
      * @returns [coords,faces]
      * @memberof JXG.Math.Tiling
      *
      * @example
      * var i,
-     *     surface = JXG.Math.Toiling.rectangulation([0,0], [0,5], [2,5], [2,0], 6, 6);
+     *     surface = JXG.Math.Tiling.rectangulation([0,0], [0,5], [2,5], [2,0], 6, 6);
      * for (i = 0; i < surface[1].length; i++) {
      *     board.create('polygon',[
      *         surface[0][surface[1][i][0]],
@@ -348,7 +348,8 @@ Mat.Tiling = {
             vec3[0] * vec2[0] + vec3[1] * vec2[1] !== 0 ||
             vec4[0] * vec3[0] + vec4[1] * vec3[1] !== 0
         ) {
-            throw new Error(" the board created is not rectangle  ");
+            // throw new Error("rectangulation: area is not rectangle  ");
+            console.log("rectangulation: area is not rectangle  ");
         }
 
         // Set initial values for wSide, hSide
@@ -357,8 +358,10 @@ Mat.Tiling = {
 
         // Check for longer side of rectangle:
         // longer side is appointed height, shorter side is appointed width
-        s1 = Math.sqrt((p2[0] - p1[0]) * (p2[0] - p1[0]) + (p2[1] - p1[1]) * (p2[1] - p1[1]));
-        s2 = Math.sqrt((p3[0] - p2[0]) * (p3[0] - p2[0]) + (p3[1] - p2[1]) * (p3[1] - p2[1]));
+        // s1 = Math.sqrt((p2[0] - p1[0]) * (p2[0] - p1[0]) + (p2[1] - p1[1]) * (p2[1] - p1[1]));
+        // s2 = Math.sqrt((p3[0] - p2[0]) * (p3[0] - p2[0]) + (p3[1] - p2[1]) * (p3[1] - p2[1]));
+        s1 = Mat.hypot(vec1[0], vec1[1]);
+        s2 = Mat.hypot(vec2[0], vec2[1]);
 
         if (s1 <= s2) {
             // Determine start and end points of the width-side and height-side
@@ -376,7 +379,7 @@ Mat.Tiling = {
         heightX = (hSide[1][0] - hSide[0][0]) / stepsU;
         heightY = (hSide[1][1] - hSide[0][1]) / stepsU;
 
-        // Initialize startPointLayer, which saves coordinates of the first point of the current layer
+        // Initialize startPointLayer that stores coordinates of the first point of the current layer
         startPointLayer = [];
 
         // Push coordinates of base point (p1)
