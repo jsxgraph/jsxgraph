@@ -36,7 +36,7 @@
  * algorithms for creating meshes for surface3d elements.
  */
 import Mat from "./math.js";
-
+import Type from "../utils/type.js";
 
 /**
  * The JXG.Math.Tiling namespace.
@@ -325,7 +325,68 @@ Mat.Tiling = {
      *
      *
      */
-    rectangulation: function (p1, p2, p3, p4, stepsU, stepsV) {
+    rectangulation: function (el, rg_u, rg_v, stepsU, stepsV) {
+        var vertices = [],
+            faces = [],
+            i, j, le;
+
+        for (j = 0; j <= stepsV; j++) {
+            for (i = 0; i <= stepsU; i++) {
+                vertices.push(
+                    // () => F(
+                    //     JXG.evaluate(rg1[0]) + i * (JXG.evaluate(rg1[1]) - JXG.evaluate(rg1[0])) / stepsU,
+                    //     JXG.evaluate(rg2[0]) + j * (JXG.evaluate(rg2[1]) - JXG.evaluate(rg2[0])) / stepsV
+                    // )
+                    (function (ii, jj) {
+                        return [
+                            function () {
+                                return el.F(
+                                    JXG.evaluate(rg_u[0]) + ii * (JXG.evaluate(rg_u[1]) - JXG.evaluate(rg_u[0])) / stepsU,
+                                    JXG.evaluate(rg_v[0]) + jj * (JXG.evaluate(rg_v[1]) - JXG.evaluate(rg_v[0])) / stepsV
+                                )[0];
+                            },
+                            function () {
+                                return el.F(
+                                    JXG.evaluate(rg_u[0]) + ii * (JXG.evaluate(rg_u[1]) - JXG.evaluate(rg_u[0])) / stepsU,
+                                    JXG.evaluate(rg_v[0]) + jj * (JXG.evaluate(rg_v[1]) - JXG.evaluate(rg_v[0])) / stepsV
+                                )[1];
+                            },
+                            function () {
+                                return el.F(
+                                    JXG.evaluate(rg_u[0]) + ii * (JXG.evaluate(rg_u[1]) - JXG.evaluate(rg_u[0])) / stepsU,
+                                    JXG.evaluate(rg_v[0]) + jj * (JXG.evaluate(rg_v[1]) - JXG.evaluate(rg_v[0])) / stepsV
+                                )[2];
+                            }
+                        ];
+                    })(i, j)
+                );
+                if (i > 0 && j > 0) {
+                    le = vertices.length - 1;
+                    faces.push(
+                        // [le - 1 - stepsU - 1, le - 1 - stepsU, le, le - 1]
+                        [le - 1, le, le - 1 - stepsU, le - 1 - stepsU - 1]
+                    );
+                    // console.log(
+                    //     Type.evaluate(vertices[le][0]),
+                    //     Type.evaluate(vertices[le][1]),
+                    //     Type.evaluate(vertices[le][2])
+                    // )
+                    // console.log(faces[le])
+                }
+            }
+        }
+        return [vertices, faces];
+
+        // Connect rectangles by grouping indices of points
+        // for (
+        //     j = coords.length - stepsV - 1;
+        //     j < coords.length - 1;
+        //     j++
+        // ) {
+        //     faces.push([j, j - stepsV - 1, j - stepsV, j + 1]);
+        // }
+    },
+    rectangulation_old: function (p1, p2, p3, p4, stepsU, stepsV) {
         // Vectors used for checking if the given coordinates create a rectangle
         var vec1 = [p2[0] - p1[0], p2[1] - p1[1]],
             vec2 = [p3[0] - p2[0], p3[1] - p2[1]],
@@ -449,6 +510,11 @@ Mat.Tiling = {
                     return function(x, y) { return el.F(u, v); };
                 })(surface[0][i][0], surface[0][i][1])
             ); // Capture values explicitly
+            // dynamicPoints.push(
+            //     (function (u, v) {
+            //         return function(x, y) { return el.F(Type.evaluate(u), Type.evaluate(v)); };
+            //     })(surface[0][i][0], surface[0][i][1])
+            // ); // Capture values explicitly
         }
 
         return dynamicPoints;

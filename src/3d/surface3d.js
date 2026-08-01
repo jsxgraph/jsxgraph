@@ -562,14 +562,14 @@ JXG.createParametricSurface3D = function (board, parents, attributes) {
 
     // Set style
     if (type !== 'wireframe') {
-        ru0 = Type.evaluate(el.range_u[0]);
-        ru1 = Type.evaluate(el.range_u[1]);
-        rv0 = Type.evaluate(el.range_v[0]);
-        rv1 = Type.evaluate(el.range_v[1]);
-        // ru0 = el.range_u[0];
-        // ru1 = el.range_u[1];
-        // rv0 = el.range_v[0];
-        // rv1 = el.range_v[1];
+        // ru0 = Type.evaluate(el.range_u[0]);
+        // ru1 = Type.evaluate(el.range_u[1]);
+        // rv0 = Type.evaluate(el.range_v[0]);
+        // rv1 = Type.evaluate(el.range_v[1]);
+        ru0 = el.range_u[0];
+        ru1 = el.range_u[1];
+        rv0 = el.range_v[0];
+        rv1 = el.range_v[1];
 
         if (tiling === 'triangle' || tiling === 'rectangle') {
             if (tiling === 'triangle') {
@@ -597,10 +597,9 @@ JXG.createParametricSurface3D = function (board, parents, attributes) {
 
                 // Use stepsU, stepsV (see options3d) and range of surface3d to create a base of rectangles across the visible area of the surface3d object
                 surface = Tiling.rectangulation(
-                    [ru0, rv0],
-                    [ru0, rv1],
-                    [ru1, rv1],
-                    [ru1, rv0],
+                    el,
+                    el.range_u,
+                    el.range_v,
                     el.evalVisProp('stepsu'), el.evalVisProp('stepsv')
                 );
 
@@ -616,10 +615,10 @@ JXG.createParametricSurface3D = function (board, parents, attributes) {
         // mapMeshTo3D is used to map the 2d-points created with triangulation / rectangulation to 3D.
         // These points are realized as functions to enable dynamic changes to the surface3d,
         // stores the dynamic points in coords
-        coords = Tiling.mapMeshTo3D(surface, el);
+        // coords = Tiling.mapMeshTo3D(surface, el);
 
         // Reincorporate the dynamic points in coords into surface
-        surface = [coords, surface[1]];
+        // surface = [coords, surface[1]];
 
         if (type === 'colormap') {
             attr.polyhedron.shader.enabled = false;
