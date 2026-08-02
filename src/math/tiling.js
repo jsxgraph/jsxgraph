@@ -340,22 +340,25 @@ Mat.Tiling = {
                     (function (ii, jj) {
                         return [
                             function () {
-                                return el.F(
+                                var v = el.F(
                                     JXG.evaluate(rg_u[0]) + ii * (JXG.evaluate(rg_u[1]) - JXG.evaluate(rg_u[0])) / stepsU,
                                     JXG.evaluate(rg_v[0]) + jj * (JXG.evaluate(rg_v[1]) - JXG.evaluate(rg_v[0])) / stepsV
-                                )[0];
+                                );
+                                return (v.length === 4) ? v[1] : v[0];
                             },
                             function () {
-                                return el.F(
+                                var v = el.F(
                                     JXG.evaluate(rg_u[0]) + ii * (JXG.evaluate(rg_u[1]) - JXG.evaluate(rg_u[0])) / stepsU,
                                     JXG.evaluate(rg_v[0]) + jj * (JXG.evaluate(rg_v[1]) - JXG.evaluate(rg_v[0])) / stepsV
-                                )[1];
+                                );
+                                return (v.length === 4) ? v[2] : v[1];
                             },
                             function () {
-                                return el.F(
+                                var v = el.F(
                                     JXG.evaluate(rg_u[0]) + ii * (JXG.evaluate(rg_u[1]) - JXG.evaluate(rg_u[0])) / stepsU,
                                     JXG.evaluate(rg_v[0]) + jj * (JXG.evaluate(rg_v[1]) - JXG.evaluate(rg_v[0])) / stepsV
-                                )[2];
+                                );
+                                return (v.length === 4) ? v[3] : v[2];
                             }
                         ];
                     })(i, j)
@@ -409,8 +412,8 @@ Mat.Tiling = {
             vec3[0] * vec2[0] + vec3[1] * vec2[1] !== 0 ||
             vec4[0] * vec3[0] + vec4[1] * vec3[1] !== 0
         ) {
-            // throw new Error("rectangulation: area is not rectangle  ");
-            console.log("rectangulation: area is not rectangle  ");
+            throw new Error("rectangulation_old: area is not rectangle  ");
+            // console.log("rectangulation_old: area is not rectangle  ");
         }
 
         // Set initial values for wSide, hSide

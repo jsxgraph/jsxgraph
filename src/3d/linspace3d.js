@@ -1821,6 +1821,15 @@ JXG.createPlane3D = function (board, parents, attributes) {
             // rv0 = (Math.abs(rv0) === Infinity) ? -size : rv0;
             // rv1 = (Math.abs(rv1) === Infinity) ? size : rv1;
 
+            el.F = function (u, v) {
+                return [
+                    el.point.coords[0] + u * el.vec1[0] + v * el.vec2[0],
+                    el.point.coords[1] + u * el.vec1[1] + v * el.vec2[1],
+                    el.point.coords[2] + u * el.vec1[2] + v * el.vec2[2],
+                    el.point.coords[3] + u * el.vec1[3] + v * el.vec2[3]
+                ];
+            };
+
             if (tiling === 'triangle') {
                 surface = Tiling.triangulation(
                     [ru0, rv0],
@@ -1830,26 +1839,23 @@ JXG.createPlane3D = function (board, parents, attributes) {
                     su, sv
                 );
             } else {
+                // surface = Tiling.rectangulation(
+                //     [ru0, rv0],
+                //     [ru0, rv1],
+                //     [ru1, rv1],
+                //     [ru1, rv0],
+                //     su, sv
+                // );
                 surface = Tiling.rectangulation(
-                    [ru0, rv0],
-                    [ru0, rv1],
-                    [ru1, rv1],
-                    [ru1, rv0],
+                    el,
+                    el.range_u,
+                    el.range_v,
                     su, sv
                 );
             }
 
-            el.F = function (u, v) {
-                return [
-                    el.point.coords[0] + u * el.vec1[0] + v * el.vec2[0],
-                    el.point.coords[1] + u * el.vec1[1] + v * el.vec2[1],
-                    el.point.coords[2] + u * el.vec1[2] + v * el.vec2[2],
-                    el.point.coords[3] + u * el.vec1[3] + v * el.vec2[3]
-                ];
-            };
-            coords = Tiling.mapMeshTo3D(surface, el);
-
-            surface = [coords, surface[1]];
+            // coords = Tiling.mapMeshTo3D(surface, el);
+            // surface = [coords, surface[1]];
 
             if (type === 'colormap') {
                 attr.polyhedron.shader.enabled = false;
