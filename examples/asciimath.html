@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link href="https://fonts.googleapis.com/css2?family=STIX Two Math" rel="stylesheet">
+
+    <script type="text/javascript" src="../distrib/jsxgraphcore.js"></script>
+</head>
+
+<body>
+    <h2>AsciiMath</h2>
+    <div id="jxgbox" class="jxgbox" style="width:600px; height:450px;"></div>
+    <script type="text/javascript">
+
+        console.log("%cChrome don't offer a Math font by default. Include this link in your header:",
+            "color:red;background-color:white;",
+            "<link href=\"https://fonts.googleapis.com/css2?family=STIX Two Math\" rel=\"stylesheet\">")
+
+        var board = JXG.JSXGraph.initBoard('jxgbox');
+
+        let origin = board.create('point', [-2, 0], { name: '`[0,0]', fixed: true, opacity: 0 })
+        let a = board.create('point', [-4, 2], { name: '`vec x' })
+        board.create('segment', [origin, a], { lastarrow: true, name: () => `\` slope ${(a.X()+2).toFixed(1)}/${a.Y().toFixed(1)}` , withlabel: true })
+
+        let t1 = 'd/dxf(x)=lim_(h->0)(f(x+h)-f(x))/h';
+        board.create('text', [1, 4, '`'+t1]);
+        board.create('text', [1, 3.2,`\`color (black) ("${t1}")`]);     // can't use plain text since poorMansLatex takes over
+
+        let t2 = 'f(x)=sum_(n=0)^oo(f^((n))(a))/(n!)(x-a)^n';
+        board.create('text', [1, 2, '`'+t2])
+        board.create('text', [1, 1.2,`\`color (black) ("${t2}")`]);   
+
+        let t3 = `x/x={(1,if x!=0),("undefined",if x=0):}`;
+        let t3a = t3.split('"').join('&quot;'); // substitute double quotes in AsciiMath defn
+        board.create('text', [1, 0, '`'+t3])
+        board.create('text', [1, -.8,`\`color (black) ("${t3a}")`]);   
+
+
+        let slidr = board.create('slider', [[-4, -2], [0, -2], [-10, 1, 10]], { name: '`a/b', })
+
+    </script>
+</body>
+
+</html>
