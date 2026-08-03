@@ -1721,7 +1721,7 @@ declare namespace JXG {
      */
     export interface BoxplotAttributes extends CurveAttributes {
         /**
-         * Direction of the box plot.
+         * Direction of the boxplot.
          */
         dir?: "horizontal" | "vertical";
         /**

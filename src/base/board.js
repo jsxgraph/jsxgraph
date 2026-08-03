@@ -105,10 +105,9 @@ JXG.Board = function (container, renderer, id,
     this.BOARD_MODE_MOVE_ORIGIN = 0x0002;
 
     /**
-     * Update is made with high quality, e.g. graphs are evaluated at much more points.
+     * This mode is active when the user zooms
      * @type Number
      * @constant
-     * @see JXG.Board#updateQuality
      */
     this.BOARD_MODE_ZOOM = 0x0011;
 
@@ -662,7 +661,91 @@ JXG.Board = function (container, renderer, id,
      */
     this.userLog = [];
 
+    /**
+     * Array of length two containing sketchcurves of the board. In case of mouse or pen
+     * only the first entry is used. In case of finger input, sketchcurves
+     * for the first and second finger are possible.
+     *
+     * @example
+     *  const board = JXG.JSXGraph.initBoard('jxgbox', {
+     *      boundingbox: [-10, 10, 10, -10],
+     *      axis: true,
+     *      sketches: {
+     *          enabled: true,
+     *          0: {strokeWidth: 2, visible: true, maxLength: 20},
+     *          1: {strokeWidth: 3, visible: true}
+     *      }
+     *  });
+     *
+     *  // Use event handler to access the actual curve
+     *  board.on('move', function(evt) {
+     *    console.log('JSXGraph example: move', this.sketches[0].dataX.length);
+     *  });
+     *
+     *  // Use event handler to access the actual curve
+     *  board.on('up', function(evt) {
+     *    console.log('JSXGraph example: up', this.sketches[0].dataX.length);
+     *  });
+     *
+     * </pre><div id="JXGf62e7217-a3ee-45b8-92e4-ce0d0d789df5" class="jxgbox" style="width: 300px; height: 300px;"></div>
+     * <script type="text/javascript">
+     *     (function() {
+     *         var board = JXG.JSXGraph.initBoard('JXGf62e7217-a3ee-45b8-92e4-ce0d0d789df5',
+     *             {   boundingbox: [-10, 10, 10, -10],
+     *                 axis: true,
+     *                 sketches: {
+     *                     enabled: true,
+     *                     0: {strokeWidth: 2, visible: true, maxLength: 20},
+     *                     1: {strokeWidth: 3, visible: true}
+     *                 }
+     *             });
+     *  // Use event handler to access the actual curve
+     *  board.on('move', function(evt) {
+     *    console.log('JSXGraph example: move', this.sketches[0].dataX.length);
+     *  });
+     *
+     *  // Use event handler to access the actual curve
+     *  board.on('up', function(evt) {
+     *    console.log('JSXGraph example: up', this.sketches[0].dataX.length);
+     *  });
+     *
+     *     })();
+     *
+     * </script><pre>
+     *
+     * @type Array
+     * @see SketchCurve
+     * @see JXG.Board#sketch
+     */
+    this.sketches = [null, null];
+
+    /**
+     * Alias for the first sketchcurve, i.e. for board.sketches[0].
+     * @type {JXG.Curve}
+     * @see JXG.Board#sketches
+     */
+    this.sketch = null; //this.sketches[0];
+
+    /**
+     * Array of length two of Boolean flags indicating if a pointer device (finger, mouse, pen) is
+     * adding points to board.sketches[i] (i=0,1). i=1 is only used for multi-touch with fingers.
+     * <p>
+     * User-supplied events might use this flag to test if sketching is active.
+     * Usually, this flag is true starting with a down event and ends with the up event.
+     * @type {Array}
+     * @see JXG.Board#sketches
+     *
+     */
+    this.isSketching = [false, false];
+
+    /**
+     *
+     */
     this.mathLib = Math;        // Math or JXG.Math.IntervalArithmetic
+
+    /**
+     *
+     */
     this.mathLibJXG = JXG.Math; // JXG.Math or JXG.Math.IntervalArithmetic
 
     if (this.attr.registerevents === true) {
@@ -2916,6 +2999,8 @@ JXG.extend(
                 }
             }
 
+            this.initSketchCurve(evt);
+
             // Allow browser scrolling
             // For this: pan by one finger has to be disabled
 
@@ -3079,7 +3164,8 @@ JXG.extend(
          * @returns {Boolean}
          */
         pointerMoveListener: function (evt) {
-            var i, j, pos, eps,
+            var i, j, pos,
+                eps,
                 touchTargets,
                 type = 'mouse'; // in case of no browser
 
@@ -3133,6 +3219,9 @@ JXG.extend(
                     [evt, this.mode]
                 );
             } else if (!this.mouseOriginMove(evt)) {
+
+                this.addToSketchCurve(evt);
+
                 if (this.mode === this.BOARD_MODE_DRAG) {
                     // Run through all jsxgraph elements which are touched by at least one finger.
                     for (i = 0; i < this.touches.length; i++) {
@@ -3214,6 +3303,7 @@ JXG.extend(
                 }
             }
 
+            this.finalizeSketchCurve(evt);
             this.originMoveEnd();
             this.update();
 
@@ -3528,6 +3618,8 @@ JXG.extend(
                 this.gestureStartListener(evt);
             }
 
+            this.initSketchCurve(evt);
+
             this.options.precision.hasPoint = this.options.precision.mouse;
             this.triggerEventHandlers(['touchstart', 'down'], [evt]);
 
@@ -3542,8 +3634,7 @@ JXG.extend(
          */
         touchMoveListener: function (evt) {
             var i,
-                pos1,
-                pos2,
+                pos1, pos2,
                 touchTargets,
                 evtTouches = evt['touches'];
 
@@ -3580,6 +3671,9 @@ JXG.extend(
                 }
             } else {
                 if (!this.touchOriginMove(evt)) {
+
+                    this.addToSketchCurve(evt);
+
                     if (this.mode === this.BOARD_MODE_DRAG) {
                         // Runs over through all elements which are touched
                         // by at least one finger.
@@ -3692,6 +3786,8 @@ JXG.extend(
 
             this.triggerEventHandlers(['touchend', 'up'], [evt]);
             this.displayInfobox(false);
+
+            this.finalizeSketchCurve(evt);
 
             // selection
             if (this.selectingMode) {
@@ -3905,6 +4001,7 @@ JXG.extend(
                 result = this.mouseOriginMoveStart(evt);
             }
 
+            this.initSketchCurve(evt);
             this.triggerEventHandlers(['mousedown', 'down'], [evt]);
 
             return result;
@@ -3945,6 +4042,9 @@ JXG.extend(
                     [evt, this.mode]
                 );
             } else if (!this.mouseOriginMove(evt)) {
+
+                this.addToSketchCurve(evt);
+
                 if (this.mode === this.BOARD_MODE_DRAG) {
                     this.moveObject(pos[0], pos[1], this.mouse, evt, 'mouse');
                 } else {
@@ -3982,6 +4082,7 @@ JXG.extend(
                 }
             }
 
+            this.finalizeSketchCurve(evt);
             this.originMoveEnd();
             this.dehighlightAll();
             this.update();
@@ -7388,6 +7489,94 @@ JXG.extend(
             return this;
         },
 
+        /**
+         * Reset the sketchcurves in board.sketches[] to length 0 and add the position
+         * of the event as first point of the sketch curve. Called at down events.
+         * <p>
+         * Sets board.isSketching[i] = true where i depends on the finger (1st or 2nd).
+         *
+         * @private
+         * @param {Object} evt Event object
+         * @see JXG.Board#addToSketchCurve
+         * @see JXG.Board#finalizeSketchCurve
+         */
+        initSketchCurve: function(evt) {
+            var i, c;
+            // Init sketchcurves
+            if (this.mode !== this.BOARD_MODE_MOVE_ORIGIN) {
+                // Add coords to sketch curves
+                // Only first and second finger are stored
+                c = this.getUsrCoordsOfMouse(evt);
+                i = (evt.isPrimary) ? 0 : 1;
+                if (Type.exists(this.sketches[i])) {
+                    this.sketches[i].dataX = [c[0]];
+                    this.sketches[i].dataY = [c[1]];
+                    this.isSketching[i] = true;
+                }
+            }
+        },
+
+        /**
+         * Add the position of the event to the sketchcurve i in board.sketches[].
+         * Called at move events.
+         * Point is only added if board.isSketching[i] = true.
+         *
+         * @private
+         * @param {Object} evt Event object
+         * @see JXG.Board#initSketchCurve
+         * @see JXG.Board#finalizeSketchCurve
+         */
+        addToSketchCurve: function(evt) {
+            var i, c, len;
+
+            // Add coords to sketchcurves
+            // Only first and second finger are stored
+            i = (evt.isPrimary) ? 0 : 1;
+            if (this.attr.sketches.enabled && this.isSketching[i] === true) {
+                if (Type.exists(this.sketches[i])) {
+                    c = this.getUsrCoordsOfMouse(evt);
+                    this.sketches[i].dataX.push(c[0]);
+                    this.sketches[i].dataY.push(c[1]);
+
+                    len = this.sketches[i].evalVisProp('maxlength');
+                    if (len !== null && this.sketches[i].dataX.length > len) {
+                        this.sketches[i].dataX = this.sketches[i].dataX.slice(-len);
+                        this.sketches[i].dataY = this.sketches[i].dataY.slice(-len);
+                    }
+                    if (this.sketches[i].evalVisProp('visible')) {
+                        this.update();
+                    }
+                }
+            }
+        },
+
+        /**
+         * Ends adding points to the sketchcurve i in board.sketches[].
+         * Called at up events.
+         * Sets board.isSketching[i] = false.
+         * Empties the curve if deleteOnUp==true;
+         *
+         * @private
+         * @param {Object} evt Event object
+         * @see JXG.Board#initSketchCurve
+         * @see JXG.Board#addToSketchCurve
+         */
+        finalizeSketchCurve: function(evt) {
+            var i;
+
+            // Stop sketching into this.sketches
+            i = (evt.isPrimary) ? 0 : 1;
+            if (this.attr.sketches.enabled) {
+                if (Type.exists(this.sketches[i])) {
+                    this.isSketching[i] = false;
+                    if (this.sketches[i].evalVisProp('deleteOnUp')) {
+                        this.sketches[i].dataX = [];
+                        this.sketches[i].dataY = [];
+                    }
+                }
+            }
+        },
+
         /* **************************
          *     EVENT DEFINITION
          * for documentation purposes
@@ -7607,7 +7796,7 @@ JXG.extend(
          * @example
          * var c = board.create('circle', [[1, 1], 2]);
          * board.on('hit', function(evt, el) {
-         *     console.log('Hit element', el);
+         *     console.log('JSXGraph example: Hit element', el);
          * });
          *
          * </pre><div id='JXG19eb31ac-88e6-11e8-bcb5-901b0e1b8723' class='jxgbox' style='width: 300px; height: 300px;'></div>
@@ -7617,7 +7806,7 @@ JXG.extend(
          *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
          *     var c = board.create('circle', [[1, 1], 2]);
          *     board.on('hit', function(evt, el) {
-         *         console.log('Hit element', el);
+         *         console.log('JSXGraph example: Hit element', el);
          *     });
          *
          *     })();

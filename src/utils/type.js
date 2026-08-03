@@ -1480,7 +1480,12 @@ JXG.extend(
                 };
 
             len = arguments.length;
-            if (len < 3 || primitives[s]) {
+            // Old code: if (len < 3 || primitives[s]) {
+            // If len > 3, the element is certainly not a primitive object,
+            // e.g. copyAttributes(attributes, JXG.Options, 'line', 'point1').
+            // That is, a later create('point', ...) will be the primitive call.
+            // This will not yet cover all cases of inheritance.
+            if (len < 3 || (len === 3 && primitives[s])) {
                 // Default options from Options.elements
                 a = JXG.deepCopy(options.elements, null, true);
             } else {

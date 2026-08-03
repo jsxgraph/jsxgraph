@@ -596,7 +596,7 @@ JXG.extend(
                 len = parents.length,
                 get_anchor = function () {
                     var x1, x2, y1, y2,
-                        relCoords = this.evalVisProp('label.offset).slice(0');
+                        relCoords = this.evalVisProp('label.offset').slice(0);
 
                     x1 = this.point1.X();
                     x2 = this.point2.X();

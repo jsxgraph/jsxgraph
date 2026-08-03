@@ -568,7 +568,11 @@ JXG.extend(
             var val,
                 rad = Math.atan2(-this.stdform[1], this.stdform[2]);
 
-            unit = unit.toLocaleLowerCase();
+            if (Type.isString(unit) && unit !== '') {
+                unit = unit.toLocaleLowerCase();
+            } else {
+                return rad;
+            }
 
             if (unit === '' || unit.indexOf('rad') === 0) {
                 val = rad;
@@ -1275,7 +1279,7 @@ JXG.createLine = function (board, parents, attributes) {
     if (parents.length === 2) {
         // The line is defined by two points or coordinates of two points.
         // In the latter case, the points are created.
-        attr = Type.copyAttributes(attributes, board.options, "line", 'point1');
+        attr = Type.copyAttributes(attributes, board.options, 'line', 'point1');
         if (Type.isArray(parents[0]) && parents[0].length > 1) {
             p1 = board.create("point", parents[0], attr);
         } else if (Type.isString(parents[0]) || Type.isPoint(parents[0])) {
@@ -1704,7 +1708,7 @@ JXG.registerElement("arrow", JXG.createArrow);
  *
  *
  * </pre><div id="JXG34174cc4-0050-4ab4-af69-e91365d0666f" class="jxgbox" style="width: 300px; height: 300px;"></div>
- * <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" id="MathJax-script"></script>
+ * <script src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" id="MathJax-script"></script>
  * <script type="text/javascript">
  *     (function() {
  *         var board = JXG.JSXGraph.initBoard('JXG34174cc4-0050-4ab4-af69-e91365d0666f',

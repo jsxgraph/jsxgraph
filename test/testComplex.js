@@ -78,7 +78,7 @@ describe("Test JXG.Complex", function () {
         expect(new JXG.Complex(3, 4).toString()).toEqual("3 + 4i");
         expect(new JXG.Complex(0, 0).toString()).toEqual("0 + 0i");
         // Negative imaginary: always uses " + " separator
-        expect(new JXG.Complex(3, -4).toString()).toEqual("3 + -4i");
+        expect(new JXG.Complex(3, -4).toString()).toEqual("3 - 4i");
     });
 
     // ---------------------------------------------------------------
@@ -152,6 +152,14 @@ describe("Test JXG.Complex", function () {
         expect(z.imaginary).toEqual(10);
     });
 
+    it("mult: square complex number", function () {
+        // (1+2i)^2 = -1 + 4i
+        var z = new JXG.Complex(1, 2);
+        z.mult(z);
+        expect(z.real).toEqual(-3);
+        expect(z.imaginary).toEqual(4);
+    });
+
     it("mult: returns this (chaining)", function () {
         var z = new JXG.Complex(1, 2),
             ret = z.mult(2);
@@ -175,6 +183,13 @@ describe("Test JXG.Complex", function () {
         z.div(new JXG.Complex(3, 4));
         expect(z.real).toBeCloseTo(11 / 25, 15);
         expect(z.imaginary).toBeCloseTo(2 / 25, 15);
+    });
+
+    it("div: complex number by itself", function () {
+        var z = new JXG.Complex(1, 2);
+        z.div(z);
+        expect(z.real).toBeCloseTo(1);
+        expect(z.imaginary).toBeCloseTo(0);
     });
 
     it("div: by zero (real)", function () {

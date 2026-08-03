@@ -1293,7 +1293,7 @@ JXG.extend(
                         el.htmlStr = content;
 
                         if (el.evalVisProp('usemathjax')) {
-                            // Typesetting directly might not work because MathJax was not loaded completely
+                            // Typesetting directly might not work because MathJax was not yet loaded completely
                             try {
                                 if (MathJax.typeset) {
                                     // Version 3

@@ -492,6 +492,34 @@ describe("Test geometry functions", function () {
         expect(hull.length).toEqual(2);
     });
 
+    it("GrahamScan: large input triggers Akl-Toussaint heuristic", function () {
+        // N > 1024 activates the octagon heuristic.
+        // Place hull vertices at high indices (>= 8) so the
+        // buggy `i in [...]` operator (which only matches 0-7)
+        // cannot protect them; they must survive via the
+        // corrected `.includes(i)` or the triangle tests.
+        var i, pts = [], hull, hullCoords;
+
+        // 1021 interior points at the centre
+        for (i = 0; i < 1021; i++) {
+            pts.push([1, 5, 5]);
+        }
+        // 4 hull vertices at indices 1021-1024
+        pts.push([1, 0, 0]);
+        pts.push([1, 10, 0]);
+        pts.push([1, 10, 10]);
+        pts.push([1, 0, 10]);
+
+        hull = JXG.Math.Geometry.GrahamScan(pts);
+        expect(hull.length).toEqual(4);
+
+        // Verify that the actual hull coordinates are the four corners
+        hullCoords = hull.map(function (h) { return [h.c[1], h.c[2]]; }).sort(function (a, b) {
+            return a[0] - b[0] || a[1] - b[1];
+        });
+        expect(hullCoords).toEqual([[0, 0], [0, 10], [10, 0], [10, 10]]);
+    });
+
     it("isConvex: convex square → true", function () {
         var sq = [[1, 0, 0], [1, 1, 0], [1, 1, 1], [1, 0, 1]];
         expect(JXG.Math.Geometry.isConvex(sq)).toEqual(true);

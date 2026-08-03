@@ -652,6 +652,7 @@ JXG.createLine3D = function (board, parents, attributes) {
         attr.straightlast = false;
         el.element2D = view.create('segment', [endpoints[0].element2D, endpoints[1].element2D], attr);
         el.element2D.view = view;
+        el.element2D.dump = false;
 
         /**
          * Shadow points that determine the visible line.
@@ -731,6 +732,7 @@ JXG.createLine3D = function (board, parents, attributes) {
         attr.straightlast = false;
         el.element2D = view.create('segment', [point1.element2D, point2.element2D], attr);
         el.element2D.view = view;
+        el.element2D.dump = false;
 
         /**
          * Array of length 2 containing the endings of the Line3D element. These are the defining points,
@@ -1680,7 +1682,8 @@ JXG.createPlane3D = function (board, parents, attributes) {
         surface, coords,
         su, sv, type, tiling,
         m, ma, mi, ma_a, mi_a, s, v,
-        ru0, ru1, rv0, rv1,
+        ru0, ru1, rv0, rv1, e,
+        staticColorMap = true,
         // bb, size,
         base = null,
         transform = null;
@@ -1752,6 +1755,7 @@ JXG.createPlane3D = function (board, parents, attributes) {
     attr = el.setAttr2D(attr);
     el.element2D = view.create('curve', [[], []], attr);
     el.element2D.view = view;
+    el.element2D.dump = false;
 
     if (base !== null && transform !== null) {
         el.addTransform(base, transform);
@@ -1804,10 +1808,10 @@ JXG.createPlane3D = function (board, parents, attributes) {
             // Eliminate the call to the expensive el.updateDataArray();
             el.element2D.updateDataArray = function() {};
 
-            ru0 = el.range_u[0];
-            ru1 = el.range_u[1];
-            rv0 = el.range_v[0];
-            rv1 = el.range_v[1];
+            ru0 = Type.evaluate(el.range_u[0]);
+            ru1 = Type.evaluate(el.range_u[1]);
+            rv0 = Type.evaluate(el.range_v[0]);
+            rv1 = Type.evaluate(el.range_v[1]);
 
             // // Attempt to handle infinite planes
             // bb = el.view.bbox3D;
@@ -1816,6 +1820,15 @@ JXG.createPlane3D = function (board, parents, attributes) {
             // ru1 = (Math.abs(ru1) === Infinity) ? size : ru1;
             // rv0 = (Math.abs(rv0) === Infinity) ? -size : rv0;
             // rv1 = (Math.abs(rv1) === Infinity) ? size : rv1;
+
+            el.F = function (u, v) {
+                return [
+                    el.point.coords[0] + u * el.vec1[0] + v * el.vec2[0],
+                    el.point.coords[1] + u * el.vec1[1] + v * el.vec2[1],
+                    el.point.coords[2] + u * el.vec1[2] + v * el.vec2[2],
+                    el.point.coords[3] + u * el.vec1[3] + v * el.vec2[3]
+                ];
+            };
 
             if (tiling === 'triangle') {
                 surface = Tiling.triangulation(
@@ -1826,26 +1839,23 @@ JXG.createPlane3D = function (board, parents, attributes) {
                     su, sv
                 );
             } else {
+                // surface = Tiling.rectangulation(
+                //     [ru0, rv0],
+                //     [ru0, rv1],
+                //     [ru1, rv1],
+                //     [ru1, rv0],
+                //     su, sv
+                // );
                 surface = Tiling.rectangulation(
-                    [ru0, rv0],
-                    [ru0, rv1],
-                    [ru1, rv1],
-                    [ru1, rv0],
+                    el,
+                    el.range_u,
+                    el.range_v,
                     su, sv
                 );
             }
 
-            el.F = function (u, v) {
-                return [
-                    el.point.coords[0] + u * el.vec1[0] + v * el.vec2[0],
-                    el.point.coords[1] + u * el.vec1[1] + v * el.vec2[1],
-                    el.point.coords[2] + u * el.vec1[2] + v * el.vec2[2],
-                    el.point.coords[3] + u * el.vec1[3] + v * el.vec2[3]
-                ];
-            };
-            coords = Tiling.mapMeshTo3D(surface, el);
-
-            surface = [coords, surface[1]];
+            // coords = Tiling.mapMeshTo3D(surface, el);
+            // surface = [coords, surface[1]];
 
             if (type === 'colormap') {
                 attr.polyhedron.shader.enabled = false;
@@ -1859,6 +1869,14 @@ JXG.createPlane3D = function (board, parents, attributes) {
                 mi_a = m[1];
                 s = el.evalVisProp('colormap.s');
                 v = el.evalVisProp('colormap.v');
+                for (e in el.visProp.colormap) {
+                    if (el.visProp.colormap.hasOwnProperty(e)) {
+                        if (Type.isFunction(el.visProp.colormap[e])) {
+                            staticColorMap = false;
+                            break;
+                        }
+                    }
+                }
 
                 attr.polyhedron.fillcolorarray = [];
                 attr.polyhedron.fillcolor = (self) => {
@@ -1869,12 +1887,15 @@ JXG.createPlane3D = function (board, parents, attributes) {
                         le = face.length;
 
                     // Dynamic version
-                    // m = self.evalVisProp('max');
-                    // ma = m[0];
-                    // ma_a = m[1];
-                    // m = self.evalVisProp('min');
-                    // mi = m[0];
-                    // mi_a = m[1];
+                    if (!staticColorMap) {
+                        m = el.evalVisProp('colormap.max');
+                        ma = m[0];
+                        ma_a = m[1];
+                        m = el.evalVisProp('colormap.min');
+                        mi = m[0];
+                        mi_a = m[1];
+                    }
+
                     if (le !== 0) {
                         for (j = 0; j < le; j++) {
                             z += p.coords[face[j]][3];
@@ -1883,8 +1904,12 @@ JXG.createPlane3D = function (board, parents, attributes) {
                     }
                     z = mi_a + (z - mi) * (ma_a - mi_a) / (ma - mi);
 
-                    // hsl = JXG.hsv2hsl(z, el.evalVisProp('colormap.s'), el.evalVisProp('colormap.v')); // Dynamic version - slower
-                    hsl = JXG.hsv2hsl(z, s, v);
+                    if (staticColorMap) {
+                        hsl = JXG.hsv2hsl(z, s, v);
+                    } else {
+                        // Dynamic version - slower
+                        hsl = JXG.hsv2hsl(z, el.evalVisProp('colormap.s'), el.evalVisProp('colormap.v'));
+                    }
                     return `hsl(${z} ${hsl[1] * 100}% ${hsl[2] * 100}%)`;
                 };
             } else if (type === 'shader') {

@@ -1,7 +1,113 @@
+1.13.1
+===
+
+Improvements
+------------
+
+- Upgrade to MathJax v4 in API docs
+- Add "JSXGraph example:" to `console.log()` outputs in API docs
+
+Bug fixes
+---------
+
+- use of `Line.getAngle()` without parameters
+- `polyhedron3d` shader: attribute `visible` was missing
+- Various fixes in API docs, in particular use of MathJax and 'intl'
+- radar chart
+- Remove several `console.log()`
+
 1.13.0
 ===
 
 API changes: the property of the elements `smartlabel`, `slopetriangle`, and `label` are now `smartlabel`, `slopetriangle`, and `label`.
+
+New features
+-----------
+
+- Shortcut `JXG.board()` for `JXG.JSXGraph.initBoard()`
+- JSXGraph wrapper div: `JXG.appBox()`, uses the new attribute `clip`
+- New element 'sketchcurve'. It is available as `board.sketches`
+- 3D: enable user supplied shading angle
+- 3D: face3d attribute: shader.light
+- 3D: Add attribute "cyclic" to point3d (glider)
+- 3D: New 3D transformations types: 'affine', 'affinematrix', 'generic', 'matrix'
+- 3D: Add polyhedron3d as visualization for surface3d with new attributes `style` and `polyhedron`
+- 3D: Add polyhedron as visualization for plane3d with new attributes `style` and `polyhedron`
+- 3D: Add style 'colorarray' to surface polyhedron3d
+- New transformation types (2D): 'affine', 'affinematrix'
+- Add functions `removeTransform` and `clearTransforms`
+- Angle, sector, arc: allow clockwise variants
+- New method JXG.Math.Statistics.boxplot(data)
+- boxplot: enable plotting of outliers. Add '-' and '|' as faces for outliers of boxplots
+- New curve attribute: RDPthreshold
+- New board attribute "cssStyle" (includes background)
+- New color function `JXG.hsv2hsl()`
+- New color function `JXG.mixColor()`
+- smartlabels: new attributes `visibleThreshold`, `formatValue`
+- slopetriangle: add functions `deltaX` and `deltaY`, add attribute `formatValue`
+- JessieCode: add function `minParentheses()`
+- `JXG.Dump.toJessie(board, noAttributes)` new param `'noAttributes'`
+- new method `GeometryElement.toTopOfLayer()`
+
+Improvements
+------------
+
+- 3D: box3d use plane gradients
+- 3D: face3d - add shader attribute [fixed=false]
+- 3D: realize axis3d by 3D lines
+- 3D speed: handle azimuth and elevation pointer events together and more
+- 3D axes (center): show labels by default
+- 3D glider
+- 3D: Enable (again) dragging of 3D point gliders on plane3d withoud pressing shift key
+- Update node packages needed for JSXGraph development
+- Ticks: combine attribute 'clip' with _isInsideCanvas()
+- `svg.dumpToDataURI`: include logo
+- dumpToURI() of MathJax text
+- Improved `Dump.minimizeObject()` minimizes list of changed attributes
+- Disable use of BOARD_QUALITY_LOW for plotting (experimental)
+- Reactivate attribute RDPsmoothing for plotting
+- Add `<sketchoicon>` to `convertSketchometry2CSS`
+- RDPsmoothing
+- Reduce `max_level` in implicitplot and prepare RDP in user coords
+- Establish default RDP simplification in user space
+- smartlabels: various improvements
+- slopetriangle: various improvements
+- Unit tests: automatically choose chrome or chromium
+- Transformations: store type in `this.transformationType`
+- Transformatons: melting transformation and fix regression
+- Complex numbers: `toString(digits)` new parameter digits, new method `toArray()`
+- Add constant `Env.maxScreenCoords`
+- Handling of attribute value 'inherit'
+- Refactor eslint settings
+
+Bug fixes
+---------
+
+- Intersection of inequalities
+- Bug fixes in mathematical routines, together with unit tests (by AI)
+- Color of arrow heads
+- Slider bug
+- JessieCode regression
+- Headless browser support
+- Handling of moveTarget
+- 3D event handler and Firefox
+- Eventhandling board + 3D
+- Fix regression: showInfoBox
+- Measurements: dimension for `Diameter
+- Opacity for arrow heads
+- change `elType` of slope trigangles to `slopetriangle` (instead of `polygon`)
+- change `elType` of smartlabels to `smartlabel` (instead of `text`)
+- change `elType` of labels to `label` (instead of `text`)
+- Apply curve transformations to label, too
+- `projectCoordsToParametric()`
+- Consistent use of homogeneous coordinates for plane3d elements
+- Visibility of function graph labels
+- Intersection of lines and curves
+- Multiplication of complex numbers
+- Remove clipping of scrCoords. Not longer necessary in modern browsers
+
+PRs by Christian Perfect, CloudShannon, Andreas Walter
+
 
 1.12.2
 ===

@@ -899,6 +899,7 @@ JXG.extend(
         for (id in this.objects) {
             if (this.objects.hasOwnProperty(id)) {
                 el = this.objects[id];
+
                 if (el.visPropCalc.visible && Type.exists(el.shader)) {
                     if (this.board._change3DView && el.evalVisProp('shader.fixed')) {
                         // In case, 3D view is rotated and the shader is fixed

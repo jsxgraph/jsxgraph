@@ -114,11 +114,10 @@ JXG.Dump = {
     },
 
     /**
-     * Recursively determine the difference between objects
-     * instance and def.
-     * @param {Object} instance
-     * @param {Object} def
-     * @param {String} pre
+     * Recursively determine the difference between objects instance and def.
+     * @param {Object} instance Attribute object of the element. Usually a copy is supplied
+     * @param {Object} def Default attributes, the instance is compared to
+     * @param {String} pre Helper string for debug output
      * @returns
      */
     _minimizeSubObject: function(instance, def, pre) {
@@ -139,10 +138,12 @@ JXG.Dump = {
                     delete copy[pl];
                 } else if (Type.isArray(def[p]) && Type.isArray(copy[pl])) {
                     // Compare two arrays
+                    // console.log(p, 'arrays', 'instance:', copy[pl], 'default:', def[p])
                     if (Type.cmpArrays(copy[pl], def[p])) {
-                        // console.log(pre + "\t\tdelete ARR", p);
+                        // console.log(pre + "\t\tdelete array", p);
                         delete copy[pl];
                     } else {
+                        // console.log(pre + '\t keep array')
                         deleteAll = false;
                     }
                 } else {
@@ -155,11 +156,12 @@ JXG.Dump = {
                             // console.log(pre + "--> delete obj", p)
                             delete copy[pl];
                         } else {
-                            // console.log(pre + '|')
-                            // console.log(def[p], copy[pl])
+                            // console.log(pre + '|', 'keep obj')
+                            // console.log('default:', def[p], 'copy:', copy[pl])
                             deleteAll = false;
                         }
                     } else {
+                        // console.log(pre + '|', 'keep', pl)
                         deleteAll = false;
                     }
                 }
@@ -193,14 +195,18 @@ JXG.Dump = {
             defaults.push(arguments[i]);
         }
 
+        // First, take the generic GeometryElement options ('elements')
         def = Type.deepCopy(def, JXG.Options.elements, true);
+        // Second, take the options supplied as parameters
         for (i = defaults.length - 1; i >= 0; i--) {
             def = Type.deepCopy(def, defaults[i], true);
         }
 
         // console.log('element', copy)
         // console.log('default', def)
+        // "copy" is a copy of the attribute object of the element
         del = this._minimizeSubObject(copy, def, ' ');
+        // console.log('del', del)
         if (del === true) {
             copy = {};
         }
@@ -231,10 +237,12 @@ JXG.Dump = {
         var a, s, o;
 
         o = JXG.Options[obj.elType] || {};
+        // console.log('prepareAttributes', obj.id, obj.getAttributes(), o)
         a = this.minimizeObject(obj.getAttributes(), o);
 
         for (s in obj.subs) {
             if (obj.subs.hasOwnProperty(s)) {
+                // console.log('sub', s)
                 a[s] = this.minimizeObject(
                     obj.subs[s].getAttributes(),
                     o[s],
@@ -243,6 +251,27 @@ JXG.Dump = {
                 a[s].id = obj.subs[s].id;
                 a[s].name = obj.subs[s].name;
             }
+        }
+
+        // Handle label separately
+        if (Type.exists(a.label)) {
+            o = JXG.Options.label || {};
+            a.label = this.minimizeObject(a.label, o);
+            if (Type.isEmpty(a.label)) {
+                delete a.label;
+            }
+        }
+
+        // Handle layer if it still exists
+        if (Type.exists(a.layer)) {
+            o = JXG.Options.layer || {};
+            if (a.layer === o[obj.elType]) {
+                delete a.layer;
+            }
+        }
+        // Handle draft = false separately, see options.js - JXG.Validator
+        if (Type.exists(a.draft) && a.draft === false) {
+            delete a.draft;
         }
 
         a.id = obj.id;
@@ -265,9 +294,14 @@ JXG.Dump = {
      * Generate a store-able structure with all elements. This is used by {@link JXG.Dump#toJessie} and
      * {@link JXG.Dump#toJavaScript} to generate the script.
      * @param {JXG.Board} board
+     * @param {Boolean} [json=false] If a JavaScript object for JSON should be returned then do
+     * not enclose strings in quotes.
      * @returns {Array} An array with all metadata necessary to save the construction.
+     * @see JXG.Dump#toJSON
+     * @see JXG.Dump#toJavaScript
+     * @see JXG.Dump#toJessie
      */
-    dump: function (board) {
+    dump: function (board, json) {
         var e,
             obj,
             element,
@@ -286,6 +320,7 @@ JXG.Dump = {
             if (!obj.dumped && obj.dump) {
                 element.type = obj.getType();
                 element.parents = obj.getParents().slice();
+                element.children = [];
 
                 // Extract coordinates of a point
                 if (element.type === "point" && element.parents[0] === 1) {
@@ -294,6 +329,7 @@ JXG.Dump = {
 
                 for (s = 0; s < element.parents.length; s++) {
                     if (
+                        !(json === true) && // This is needed in Dump.toJSON()
                         Type.isString(element.parents[s]) &&
                         element.parents[s][0] !== "'" &&
                         element.parents[s][0] !== '"'
@@ -387,10 +423,14 @@ JXG.Dump = {
     /**
      * Exports the construction in <tt>board</tt> to JessieCode.
      * @param {JXG.Board} board
-     * @returns {String} JessieCode
+     * @param {Boolean} [noAttributes=false] If true, output contains no attributes beside 'id' and 'name'
+     * @returns {String} The construction as JessieCode code
+     * @see JXG.Dump#dump
+     * @see JXG.Dump#toJSON
+     * @see JXG.Dump#toJavaScript
      */
-    toJessie: function (board) {
-        var i,
+    toJessie: function (board, noAttributes) {
+        var i, a,
             elements,
             id,
             dump = this.dump(board),
@@ -399,13 +439,25 @@ JXG.Dump = {
         dump.methods = this.setBoundingBox(dump.methods, board, "$board");
 
         elements = dump.elements;
+        // Delete unwanted attributes
+        if (noAttributes === true) {
+            for (i = 0; i < elements.length; i++) {
+                for (a in elements[i].attributes) {
+                    if (elements[i].attributes.hasOwnProperty(a) && a !== 'id' && a !== 'name') {
+                        delete elements[i].attributes[a];
+                    }
+                }
+            }
+        }
 
         for (i = 0; i < elements.length; i++) {
             if (elements[i].attributes.name.length > 0) {
                 script.push("// " + elements[i].attributes.name);
             }
             script.push(
-                "s" + i + " = " + elements[i].type + "(" + elements[i].parents.join(", ") + ") " + this.toJCAN(elements[i].attributes).replace(/\n/, "\\n") + ";"
+                "s" + i + " = " + elements[i].type +
+                    "(" + elements[i].parents.join(", ") + ") " +
+                    this.toJCAN(elements[i].attributes).replace(/\n/, "\\n") + ";"
             );
 
             if (elements[i].type === 'axis') {
@@ -446,9 +498,63 @@ JXG.Dump = {
     },
 
     /**
+     * Export the construction as JSON string. Wrapper of {@link JXG.Dump#dump}, i.e.
+     * a store-able structure with all elements.
+     *
+     * @param {JXG.Board} board
+     * @param {Boolean} [asObj=false] If false, return a JSON string, else return a JavaScript object.
+     * @returns {String} The construction as JSON string (or object)
+     *
+     * @see JXG.Dump#dump
+     * @see JXG.Dump#toJessie
+     * @see JXG.Dump#toJavaScript
+     */
+    toJSON: function(board, asObj) {
+        var dump = this.dump(board, true),
+            i, el, c,
+            elements = dump.elements;
+
+        for (i = 0; i < elements.length; i++) {
+            elements[i].properties = {};
+            elements[i].ancestors = [];
+
+            el = board.objects[elements[i].attributes.id];
+            if (Type.exists(el)) {
+                for (c in el.childElements) {
+                    if (el.childElements.hasOwnProperty(c) && el.childElements[c].dump) {
+                        elements[i].children.push(c);
+                    }
+                }
+                elements[i].children = Type.uniqueArray(elements[i].children);
+
+                // For JSON: draggable is draggable AND visible
+                elements[i].properties.isDraggable = el.isDraggable && el.visPropCalc.visible;
+                elements[i].properties.elType = el.elType;
+
+                //console.log(el.ancestors)
+                for (c in el.ancestors) {
+                    if (el.ancestors.hasOwnProperty(c) && el.ancestors[c].dump) {
+                        elements[i].ancestors.push(c);
+                    }
+                }
+                elements[i].ancestors = Type.uniqueArray(elements[i].ancestors);
+            }
+        }
+        dump.userLog = board.userLog.slice();
+
+        if (asObj === true) {
+            return dump;
+        }
+        return JSON.stringify(dump);
+    },
+
+    /**
      * Exports the construction in <tt>board</tt> to JavaScript.
      * @param {JXG.Board} board
-     * @returns {String} JavaScript
+     * @returns {String} The construction as JavaScript code
+     * @see JXG.Dump#dump
+     * @see JXG.Dump#toJSON
+     * @see JXG.Dump#toJessie
      */
     toJavaScript: function (board) {
         var i,

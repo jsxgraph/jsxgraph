@@ -599,6 +599,7 @@ JXG.extend(Options, {
         fillColor: JXG.palette.yellow,
         fillOpacity: 0.4,
         needsRegularUpdate: true,
+        visible: true, // TODO: why not inherited from GeometryElement
 
         /**
          * Shading of faces. For this, the HSL color scheme is used.

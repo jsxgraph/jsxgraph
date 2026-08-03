@@ -1713,7 +1713,7 @@ JXG.extend(
  * });
  *
  * </pre><div id="JXG4455acb2-6bf3-4801-8887-d7fcc1e4e1da" class="jxgbox" style="width: 300px; height: 300px;"></div>
- * <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" id="MathJax-script"></script>
+ * <script src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" id="MathJax-script"></script>
  * <script type="text/javascript">
  *     (function() {
  *         var board = JXG.JSXGraph.initBoard('JXG4455acb2-6bf3-4801-8887-d7fcc1e4e1da',

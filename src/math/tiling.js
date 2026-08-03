@@ -36,7 +36,7 @@
  * algorithms for creating meshes for surface3d elements.
  */
 import Mat from "./math.js";
-
+import Type from "../utils/type.js";
 
 /**
  * The JXG.Math.Tiling namespace.
@@ -46,7 +46,7 @@ import Mat from "./math.js";
  */
 Mat.Tiling = {
     /**
-     * A function which is used to triangulate a given rectangle.
+     * A function which is used to triangulate a given rectangle (partition it into triangles).
      * The rectangle is represented by four points p1, p2, p3, p4 (arrays of coordinates) given as parameters.
      * It is triangulated in rows.
      * The number and shape of the triangles depends on parameters stepsU and stepsV.
@@ -274,7 +274,7 @@ Mat.Tiling = {
     },
 
     /**
-     * A function, which is used to rectangulate a given rectangle.
+     * A function which is used to rectangulate a given rectangle (partition it into rectangles).
      * The rectangle is rectangulated in rows. The number of rectangles the original
      * rectangle is divided into depends on the parameters stepsU and stepsV.
      * The rectangle is represented by the 4 points (arrays of coordinates) given as
@@ -286,14 +286,14 @@ Mat.Tiling = {
      * @param {Array} p2
      * @param {Array} p3
      * @param {Array} p4
-     * @param {Number} stepsU
-     * @param {Number} stepsV
+     * @param {Number} stepsU Immutable
+     * @param {Number} stepsV Immutable
      * @returns [coords,faces]
      * @memberof JXG.Math.Tiling
      *
      * @example
      * var i,
-     *     surface = JXG.Math.Toiling.rectangulation([0,0], [0,5], [2,5], [2,0], 6, 6);
+     *     surface = JXG.Math.Tiling.rectangulation([0,0], [0,5], [2,5], [2,0], 6, 6);
      * for (i = 0; i < surface[1].length; i++) {
      *     board.create('polygon',[
      *         surface[0][surface[1][i][0]],
@@ -324,8 +324,72 @@ Mat.Tiling = {
      * </script><pre>
      *
      *
-     * */
-    rectangulation: function (p1, p2, p3, p4, stepsU, stepsV) {
+     */
+    rectangulation: function (el, rg_u, rg_v, stepsU, stepsV) {
+        var vertices = [],
+            faces = [],
+            i, j, le;
+
+        for (j = 0; j <= stepsV; j++) {
+            for (i = 0; i <= stepsU; i++) {
+                vertices.push(
+                    // () => F(
+                    //     JXG.evaluate(rg1[0]) + i * (JXG.evaluate(rg1[1]) - JXG.evaluate(rg1[0])) / stepsU,
+                    //     JXG.evaluate(rg2[0]) + j * (JXG.evaluate(rg2[1]) - JXG.evaluate(rg2[0])) / stepsV
+                    // )
+                    (function (ii, jj) {
+                        return [
+                            function () {
+                                var v = el.F(
+                                    JXG.evaluate(rg_u[0]) + ii * (JXG.evaluate(rg_u[1]) - JXG.evaluate(rg_u[0])) / stepsU,
+                                    JXG.evaluate(rg_v[0]) + jj * (JXG.evaluate(rg_v[1]) - JXG.evaluate(rg_v[0])) / stepsV
+                                );
+                                return (v.length === 4) ? v[1] : v[0];
+                            },
+                            function () {
+                                var v = el.F(
+                                    JXG.evaluate(rg_u[0]) + ii * (JXG.evaluate(rg_u[1]) - JXG.evaluate(rg_u[0])) / stepsU,
+                                    JXG.evaluate(rg_v[0]) + jj * (JXG.evaluate(rg_v[1]) - JXG.evaluate(rg_v[0])) / stepsV
+                                );
+                                return (v.length === 4) ? v[2] : v[1];
+                            },
+                            function () {
+                                var v = el.F(
+                                    JXG.evaluate(rg_u[0]) + ii * (JXG.evaluate(rg_u[1]) - JXG.evaluate(rg_u[0])) / stepsU,
+                                    JXG.evaluate(rg_v[0]) + jj * (JXG.evaluate(rg_v[1]) - JXG.evaluate(rg_v[0])) / stepsV
+                                );
+                                return (v.length === 4) ? v[3] : v[2];
+                            }
+                        ];
+                    })(i, j)
+                );
+                if (i > 0 && j > 0) {
+                    le = vertices.length - 1;
+                    faces.push(
+                        // [le - 1 - stepsU - 1, le - 1 - stepsU, le, le - 1]
+                        [le - 1, le, le - 1 - stepsU, le - 1 - stepsU - 1]
+                    );
+                    // console.log(
+                    //     Type.evaluate(vertices[le][0]),
+                    //     Type.evaluate(vertices[le][1]),
+                    //     Type.evaluate(vertices[le][2])
+                    // )
+                    // console.log(faces[le])
+                }
+            }
+        }
+        return [vertices, faces];
+
+        // Connect rectangles by grouping indices of points
+        // for (
+        //     j = coords.length - stepsV - 1;
+        //     j < coords.length - 1;
+        //     j++
+        // ) {
+        //     faces.push([j, j - stepsV - 1, j - stepsV, j + 1]);
+        // }
+    },
+    rectangulation_old: function (p1, p2, p3, p4, stepsU, stepsV) {
         // Vectors used for checking if the given coordinates create a rectangle
         var vec1 = [p2[0] - p1[0], p2[1] - p1[1]],
             vec2 = [p3[0] - p2[0], p3[1] - p2[1]],
@@ -348,7 +412,8 @@ Mat.Tiling = {
             vec3[0] * vec2[0] + vec3[1] * vec2[1] !== 0 ||
             vec4[0] * vec3[0] + vec4[1] * vec3[1] !== 0
         ) {
-            throw new Error(" the board created is not rectangle  ");
+            throw new Error("rectangulation_old: area is not rectangle  ");
+            // console.log("rectangulation_old: area is not rectangle  ");
         }
 
         // Set initial values for wSide, hSide
@@ -357,8 +422,10 @@ Mat.Tiling = {
 
         // Check for longer side of rectangle:
         // longer side is appointed height, shorter side is appointed width
-        s1 = Math.sqrt((p2[0] - p1[0]) * (p2[0] - p1[0]) + (p2[1] - p1[1]) * (p2[1] - p1[1]));
-        s2 = Math.sqrt((p3[0] - p2[0]) * (p3[0] - p2[0]) + (p3[1] - p2[1]) * (p3[1] - p2[1]));
+        // s1 = Math.sqrt((p2[0] - p1[0]) * (p2[0] - p1[0]) + (p2[1] - p1[1]) * (p2[1] - p1[1]));
+        // s2 = Math.sqrt((p3[0] - p2[0]) * (p3[0] - p2[0]) + (p3[1] - p2[1]) * (p3[1] - p2[1]));
+        s1 = Mat.hypot(vec1[0], vec1[1]);
+        s2 = Mat.hypot(vec2[0], vec2[1]);
 
         if (s1 <= s2) {
             // Determine start and end points of the width-side and height-side
@@ -376,7 +443,7 @@ Mat.Tiling = {
         heightX = (hSide[1][0] - hSide[0][0]) / stepsU;
         heightY = (hSide[1][1] - hSide[0][1]) / stepsU;
 
-        // Initialize startPointLayer, which saves coordinates of the first point of the current layer
+        // Initialize startPointLayer that stores coordinates of the first point of the current layer
         startPointLayer = [];
 
         // Push coordinates of base point (p1)
@@ -446,6 +513,11 @@ Mat.Tiling = {
                     return function(x, y) { return el.F(u, v); };
                 })(surface[0][i][0], surface[0][i][1])
             ); // Capture values explicitly
+            // dynamicPoints.push(
+            //     (function (u, v) {
+            //         return function(x, y) { return el.F(Type.evaluate(u), Type.evaluate(v)); };
+            //     })(surface[0][i][0], surface[0][i][1])
+            // ); // Capture values explicitly
         }
 
         return dynamicPoints;

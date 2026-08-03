@@ -312,7 +312,7 @@ JXG.Options = {
          *  });
          *
          * </pre><div id="JXG484d2f00-c853-4acb-a8bd-46a9e232d13b" class="jxgbox" style="width: 300px; height: 300px;"></div>
-         * <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" id="MathJax-script"></script>
+         * <script src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-svg.js" id="MathJax-script"></script>
          * <script type="text/javascript">
          *     (function() {
          *         var board = JXG.JSXGraph.initBoard('JXG484d2f00-c853-4acb-a8bd-46a9e232d13b',
@@ -521,6 +521,7 @@ JXG.Options = {
          * });
          *
          * var t = board.create('text', [0.05, 0.2, -Math.PI*100], {
+         *         formatNumber: true,
          *         digits: 2,
          *         intl: {
          *                 enabled: true,
@@ -543,6 +544,7 @@ JXG.Options = {
          *     boundingbox:[-0.5, 0.5, 0.5, -0.5]
          *     });
          *     var t = board.create('text', [0.05, 0.2, -Math.PI*100], {
+         *         formatNumber: true,
          *         digits: 2,
          *         intl: {
          *                 enabled: true,
@@ -1215,6 +1217,24 @@ JXG.Options = {
         },
 
         /**
+         * Control the sketchcurves for pointer device or first and second finger.
+         * @name JXG.Board#sketches
+         * @type Object
+         * @default <pre>{
+         *   enabled: false,
+         *   0: {visible: true},
+         *   1: {visible: true}
+         * }</pre>
+         *
+         * @see SketchCurve
+         */
+        sketches: {
+            enabled: false,
+            0: {visible: true},
+            1: {visible: true}
+        },
+
+        /**
          * Show a button which allows to clear all traces of a board.
          * This button can be accessed by JavaScript or CSS with
          * the ID <tt>"{board_id}_navigation_button_cleartraces"</tt> or by the CSS classes
@@ -1588,6 +1608,16 @@ JXG.Options = {
             live: 'assertive' // 'assertive', 'polite', 'none'
         },
 
+        /**
+         * If set to false, the JSXGraph element can be dragged out of the JSXGraph board. Used in {@link JXG#appBox}.
+         *
+         * @name clip
+         * @memberOf JXG.GeometryElement.prototype
+         * @type Boolean
+         * @default true
+         *
+         * @see JXG#appBox
+         */
         clip: true,
 
         /**
@@ -1739,7 +1769,7 @@ JXG.Options = {
          * @see JXG.GeometryElement#highlightFillOpacity
          * @default JXG.palette.red
          */
-        fillColor: Color.palette.red,
+        fillColor: 'black', //Color.palette.red,
 
         /**
          * Opacity for fill color.
@@ -2506,7 +2536,7 @@ JXG.Options = {
         traceAttributes: {},
 
         /**
-         * Transition duration (in milliseconds) for certain cahnges of properties like color and opacity.
+         * Transition duration (in milliseconds) for certain changes of properties like color and opacity.
          * The properties can be set in the attribute transitionProperties
          * Works in SVG renderer, only.
          * @type Number
@@ -2561,7 +2591,9 @@ JXG.Options = {
          * </script><pre>
          *
          */
-        transitionProperties: ['fill', 'fill-opacity', 'stroke', 'stroke-opacity', 'stroke-width'],
+        transitionProperties: ['fill', 'fill-opacity', 'stroke', 'stroke-opacity', 'stroke-width'], // org
+        // transitionProperties for points.
+        //transitionProperties: ['fill', 'fill-opacity', 'stroke', 'stroke-opacity', 'stroke-width', 'width', 'height', 'rx', 'ry'],
 
         /**
          * If false the element won't be visible on the board, otherwise it is shown.
@@ -2699,11 +2731,8 @@ JXG.Options = {
          * </pre><div id="JXGa2873c8f-df8d-4a1d-ae15-5f1bdc55a0e9" class="jxgbox" style="width: 300px; height: 300px;"></div>
          * <script type="text/javascript">
          *     (function() {
-         *         var board = JXG.JSXGraph.initBoard('JXGa2873c8f-df8d-4a1d-ae15-5f1bdc55a0e9',
-         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
-         *
-         *         const board = JXG.JSXGraph.initBoard('jxgbox', {
-         *           boundingBox: [-10, 10, 10, -10], axis: true,
+         *         const board = JXG.JSXGraph.initBoard('JXGa2873c8f-df8d-4a1d-ae15-5f1bdc55a0e9', {
+         *           boundingBox: [-10, 10, 10, -10], axis: true, showcopyright: false, shownavigation: false,
          *           defaultAxes: {
          *             x: {
          *               margin: -4,
@@ -7418,14 +7447,15 @@ JXG.Options = {
          * board.create("measurement", [0, -2, ["Direction", s]], {
          *     dim: 'direction',
          *     formatDirection: function (self,x,y) {
-         *        return '\\[\\frac{' + x + '}{' + y + '} = ' +
-         *            (!isFinite(x/y) ? '\\infty' : JXG.toFixed(x/y, self.visProp.digits)) +
+         *        return '\\[\\frac{' + y + '}{' + x + '} = ' +
+         *            (!isFinite(y/x) ? '\\infty' : JXG.toFixed(y/x, self.visProp.digits)) +
          *            '\\]';
          *     },
          *     useMathJax: true
          * });
          *
          * </pre><div id="JXG57435de0-16f2-42be-94d8-3d2b31caefcd" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-svg.js" id="MathJax-script"></script>
          * <script type="text/javascript">
          *     (function() {
          *         var board = JXG.JSXGraph.initBoard('JXG57435de0-16f2-42be-94d8-3d2b31caefcd',
@@ -7437,8 +7467,8 @@ JXG.Options = {
          *     board.create("measurement", [0, -2, ["Direction", s]], {
          *         dim: 'direction',
          *         formatDirection: function (self,x,y) {
-         *            return '\\[\\frac{' + x + '}{' + y + '} = ' +
-         *                (!isFinite(x/y) ? '\\infty' : JXG.toFixed(x/y, self.visProp.digits)) +
+         *            return '\\[\\frac{' + y + '}{' + x + '} = ' +
+         *                (!isFinite(y/x) ? '\\infty' : JXG.toFixed(y/x, self.visProp.digits)) +
          *                '\\]';
          *         },
          *         useMathJax: true
@@ -7844,7 +7874,7 @@ JXG.Options = {
          */
         infoboxDigits: 'auto',
 
-        draft: false,
+        // draft: false,
 
         /**
          * List of attractor elements. If the distance of the point is less than
@@ -8474,6 +8504,40 @@ JXG.Options = {
             highlightStrokeColor: Color.palette.red,
             name: ''
         }
+
+        /**#@-*/
+    },
+
+    /* special sketchcurve options */
+    sketchcurve: {
+        /**#@+
+         * @visprop
+         */
+
+        visible: true,
+        strokeColor: JXG.palette.red,
+        highlight: false,
+        strokeWidth: 1,
+        lineCap: 'round',
+
+        // Not yet implemented:
+        // gradient: 'linear',
+        // gradientSecondColor: 'rgba(255, 0, 0, 0)',
+
+        /**
+         * On up event immediately delete sketch curve
+         * @type {number}
+         * @name SketchCurve#deleteOnUp
+         * @default false
+         */
+        deleteOnUp: false,
+
+        /**
+         * Set max number of points of a sketch curve. No limit if set to null.
+         * @type {number}
+         * @name SketchCurve#maxLength
+         */
+        maxLength: null
 
         /**#@-*/
     },
@@ -9556,19 +9620,23 @@ JXG.Options = {
          * @memberOf Text.prototype
          * @default false
          * @type Boolean
-         *
+         * @see Text#toFraction
+         * @see Text#digits
          */
         formatNumber: false,
 
         /**
-         * Used to round texts given by a number.
+         * Used to round texts consisting solely of a number. Needs the attribute formatNumber:true.
          *
          * @name digits
          * @memberOf Text.prototype
          * @default 2
          * @type Number
+         * @see Text#formatNumber
          */
         digits: 2,
+
+        //draft: false,
 
         /**
          * Internationalization support for texts consisting of a number only.
@@ -9595,6 +9663,7 @@ JXG.Options = {
          *
          * @example
          * var t = board.create('text', [1, 2, -Math.PI*100], {
+         *         formatNumber: true,
          *         digits: 2,
          *         intl: {
          *                 enabled: true,
@@ -9611,6 +9680,7 @@ JXG.Options = {
          *         var board = JXG.JSXGraph.initBoard('JXGb7162923-1beb-4e56-8817-19aa66e226d1',
          *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
          *     var t = board.create('text', [1, 2, -Math.PI*100], {
+         *             formatNumber: true,
          *             digits: 2,
          *             intl: {
          *                     enabled: true,
@@ -9660,7 +9730,7 @@ JXG.Options = {
          *     (function() {
          *         var board = JXG.JSXGraph.initBoard('JXG560aeb1c-55fb-45da-8ad5-d3ad26216056',
          *             {boundingbox: [-0.5, 0.5, 0.5, -0.5], axis: true, showcopyright: false, shownavigation: false});
-         *     var t = board.create('text', [0.3, -0.3, ''], {
+         *     var t = board.create('text', [0.05, -0.2, ''], {
          *         intl: {
          *             enabled: true,
          *             locale: 'it-IT',
@@ -9851,10 +9921,10 @@ JXG.Options = {
 
         /**
          * If true, MathJax will be used to render the input string.
-         * Supports MathJax 2 as well as Mathjax 3.
+         * Supports MathJax 2 and above.
          * It is recommended to use this option together with the option
-         * "parse: false". Otherwise, 4 backslashes (e.g. \\\\alpha) are needed
-         * instead of two (e.g. \\alpha).
+         * "parse: false". Otherwise, 4 backslashes (e.g. &bsol;&bsol;&bsol;&bsol;alpha) are needed
+         * instead of two (e.g. &bsol;&bsol;alpha).
          *
          * @name useMathJax
          * @memberOf Text.prototype
@@ -9863,19 +9933,20 @@ JXG.Options = {
          * @see Text#parse
          *
          * @example
-         *  // Before loading MathJax, it has to be configured something like this:
-         * window.MathJax = {
-         *   tex: {
-         *     inlineMath: [ ['$','$'], ["\\(","\\)"] ],
-         *     displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
-         *     packages: ['base', 'ams']
-         *   },
-         *   options: {
-         *     ignoreHtmlClass: 'tex2jax_ignore',
-         *     processHtmlClass: 'tex2jax_process'
-         *   }
-         * };
+         * // Before loading MathJax, it can be configured like this:
+         * &lt;script&gt;
+         *     MathJax = {
+         *       tex: {
+         *         inlineMath: {'[+]': [['$', '$']]},
+         *         displayMath: {'[+]': [['$$', '$$']]},
+         *         packages: ['base', 'ams']
+         *       }
+         *     };
+         * &lt;/script&gt;
+         * // Then, MathJax is loaded:
+         * &lt;script src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-svg.js" id="MathJax-script"&gt;&lt;/script&gt;
          *
+         * // Here is the JSXGraph part:
          * // Display style
          * board.create('text',[ 2,2,  function(){return '$$X=\\frac{2}{x}$$'}], {
          *     fontSize: 15, color:'green', useMathJax: true});
@@ -9903,7 +9974,7 @@ JXG.Options = {
          *
          * var nvect1 = board.create('text', [-4, -3, '\\[\\overrightarrow{V}\\]'],
          * {
-         *   fontSize: 24, parse: false
+         *   fontSize: 24, parse: false, useMathJax: true
          * });
          * var nvect1 = board.create('text', [-2, -4, function() {return '$\\overrightarrow{G}$';}],
          * {
@@ -9912,19 +9983,15 @@ JXG.Options = {
          *
          * </pre>
          * <script>
-         * window.MathJax = {
-         *   tex: {
-         *     inlineMath: [ ['$','$'], ["\\(","\\)"] ],
-         *     displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
-         *     packages: ['base', 'ams']
-         *   },
-         *   options: {
-         *     ignoreHtmlClass: 'tex2jax_ignore',
-         *     processHtmlClass: 'tex2jax_process'
-         *   }
-         * };
+         *     MathJax = {
+         *       tex: {
+         *         inlineMath: {'[+]': [['$', '$']]},
+         *         displayMath: {'[+]': [['$$', '$$']]},
+         *         packages: ['base', 'ams']
+         *       }
+         *     };
          * </script>
-         * <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" id="MathJax-script"></script>
+         * <script src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-svg.js" id="MathJax-script"></script>
          * <div id="JXGe2a04876-5813-4db0-b7e8-e48bf4e220b9" class="jxgbox" style="width: 400px; height: 400px;"></div>
          * <script type="text/javascript">
          *     (function() {
@@ -9955,28 +10022,26 @@ JXG.Options = {
          *             label: {useMathJax: true}
          *         });
          *
-         *     var nvect1 = board.create('text', [-4, -3, '\\[\\overrightarrow{V}\\]'],
-         *     {
-         *       fontSize: 24, parse: false
+         *     var nvect1 = board.create('text', [-4, -3, '\\[\\overrightarrow{V}\\]'], {
+         *       fontSize: 24, parse: false, useMathJax: true
          *     });
-         *     var nvect1 = board.create('text', [-2, -4, function() {return '$\\overrightarrow{G}$';}],
-         *     {
+         *     var nvect1 = board.create('text', [-2, -4, function() {return '$\\overrightarrow{G}$';}], {
          *       fontSize: 24, useMathJax: true
          *     });
-         *     })();
+         *   })();
          *
          * </script><pre>
          *
          *
          * @example
          * // Load MathJax:
-         * // &lt;script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"&lt;&lt;/script&gt;
+         * // &lt;script src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-svg.js"&gt;&lt;/script&gt;
          *
          * // function and its derivative
          * var f1 = function(x) { return x * x * x; },
-         * graph1 = board.create('functiongraph', [f1, -0.1, 1.1]),
+         *     graph1 = board.create('functiongraph', [f1, -0.1, 1.1]),
          *
-         * A = board.create('glider', [0.5, f1(0.5), graph1], {
+         *     A = board.create('glider', [0.5, f1(0.5), graph1], {
          *             name: 'f(x)',
          *             color: 'black',
          *             face:'x',
@@ -9984,43 +10049,42 @@ JXG.Options = {
          *             size: 3,
          *             label: {offset: [-30, 10], fontSize: 15}
          *         }),
-         * B = board.create('glider', [0.7, f1(0.7), graph1], {
+         *     B = board.create('glider', [0.7, f1(0.7), graph1], {
          *             name: 'f(x+&Delta;x)',
          *             size: 3,
          *             label: {offset: [-60, 10], fontSize: 15}
          *         }),
          *
-         * secant_line = board.create('line', [A,B],{dash: 1, color: 'green'}),
-         * a_h_segment = board.create('segment', [A, [
+         *     secant_line = board.create('line', [A,B],{dash: 1, color: 'green'}),
+         *     a_h_segment = board.create('segment', [A, [
          *                     function(){ return B.X() > A.X() ? B.X() : A.X()},
          *                     function(){ return B.X() > A.X() ? A.Y() : B.Y()}
-         *                 ]],{ name: '&Delta;x', dash: 1, color: 'black'});
+         *                 ]],{ name: '&Delta;x', dash: 1, color: 'black'}),
          *
-         * b_v_segment = board.create('segment', [B, [
+         *     b_v_segment = board.create('segment', [B, [
          *                     function(){ return B.X() > A.X() ? B.X() : A.X()},
          *                     function(){ return B.X() > A.X() ? A.Y() : B.Y()}
          *                 ]],{ name: '&Delta;y', dash: 1, color: 'black'}),
          *
-         * ma = board.create('midpoint', [a_h_segment.point1, a_h_segment.point2
-         *     ], {visible: false});
+         *     ma = board.create('midpoint', [a_h_segment.point1, a_h_segment.point2], {visible: false});
          *
          * board.create('text', [0, 0, function() {return '\\[\\Delta_x='+(B.X()-A.X()).toFixed(4)+'\\]'}], {
-         *     anchor: ma, useMathJax: true, fixed: true, color: 'green', anchorY: 'top'
+         *     anchor: ma, parse: false, useMathJax: true, fixed: true, color: 'green', anchorY: 'top'
          * });
          *
-         * mb = board.create('midpoint', [b_v_segment.point1, b_v_segment.point2], {visible: false});
+         * var mb = board.create('midpoint', [b_v_segment.point1, b_v_segment.point2], {visible: false});
+         *
          * board.create('text', [0, 0, function() {return '\\[\\Delta_y='+(B.Y()-A.Y()).toFixed(4)+'\\]'}], {
-         *     anchor: mb, useMathJax: true, fixed: true, color: 'green'
+         *     anchor: mb, parse: false, useMathJax: true, fixed: true, color: 'green'
          * });
          *
-         * dval = board.create('text',[0.1, 0.8,
-         *     function(){
+         * var dval = board.create('text',[0.1, 0.8,
+         *       function(){
          *         return '\\[\\frac{\\Delta_y}{\\Delta_x}=\\frac{' + ((B.Y()-A.Y()).toFixed(4)) + '}{' + ((B.X()-A.X()).toFixed(4)) +
          *             '}=' + (((B.Y()-A.Y()).toFixed(4))/((B.X()-A.X()).toFixed(4))).toFixed(4) + '\\]';
-         *     }],{fontSize: 15, useMathJax: true});
+         *       }],{fontSize: 15, useMathJax: true});
          *
          * </pre>
-         * <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" id="MathJax-script"></script>
          * <div id="JXG8c2b65e7-4fc4-43f7-b23c-5076a7fa9621" class="jxgbox" style="width: 400px; height: 400px;"></div>
          * <script type="text/javascript">
          *     (function() {
@@ -10048,7 +10112,7 @@ JXG.Options = {
          *     a_h_segment = board.create('segment', [A, [
          *                         function(){ return B.X() > A.X() ? B.X() : A.X()},
          *                         function(){ return B.X() > A.X() ? A.Y() : B.Y()}
-         *                     ]],{ name: '&Delta;x', dash: 1, color: 'black'});
+         *                     ]],{ name: '&Delta;x', dash: 1, color: 'black'}),
          *
          *     b_v_segment = board.create('segment', [B, [
          *                         function(){ return B.X() > A.X() ? B.X() : A.X()},
@@ -10062,12 +10126,13 @@ JXG.Options = {
          *         anchor: ma, useMathJax: true, fixed: true, color: 'green', anchorY: 'top'
          *     });
          *
-         *     mb = board.create('midpoint', [b_v_segment.point1, b_v_segment.point2], {visible: false});
+         *     var mb = board.create('midpoint', [b_v_segment.point1, b_v_segment.point2], {visible: false});
+         *
          *     board.create('text', [0, 0, function() {return '\\[\\Delta_y='+(B.Y()-A.Y()).toFixed(4)+'\\]'}], {
          *         anchor: mb, useMathJax: true, fixed: true, color: 'green'
          *     });
          *
-         *     dval = board.create('text',[0.1, 0.8,
+         *     var dval = board.create('text',[0.1, 0.8,
          *         function(){
          *             return '\\[\\frac{\\Delta_y}{\\Delta_x}=\\frac{' + ((B.Y()-A.Y()).toFixed(4)) + '}{' + ((B.X()-A.X()).toFixed(4)) +
          *                 '}=' + (((B.Y()-A.Y()).toFixed(4))/((B.X()-A.X()).toFixed(4))).toFixed(4) + '\\]';
@@ -10081,13 +10146,13 @@ JXG.Options = {
          * var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-1, 10, 11, -2], axis: true});
          * board.options.text.useMathjax = true;
          *
-         * a = board.create('slider',[[-0.7,1.5],[5,1.5],[0,0.5,1]], {
+         * var a = board.create('slider',[[-0.7,1.5],[5,1.5],[0,0.5,1]], {
          *     suffixlabel:'\\(t_1=\\)',
          *     unitLabel: ' \\(\\text{ ms}\\)',
          *     snapWidth:0.01}),
          *
-         * func = board.create('functiongraph',[function(x){return (a.Value()*x*x)}], {strokeColor: "red"});
-         * text1 = board.create('text', [5, 1, function(){
+         *     func = board.create('functiongraph',[function(x){return (a.Value()*x*x)}], {strokeColor: "red"}),
+         *     text1 = board.create('text', [5, 1, function(){
          *             return '\\(a(t)= { 1 \\over ' + a.Value().toFixed(3) + '}\\)';
          *         }], {fontSize: 15, fixed:true, strokeColor:'red', anchorY: 'top', parse: false});
          *
@@ -10098,12 +10163,12 @@ JXG.Options = {
          *             {boundingbox: [-1, 10, 11, -2], axis: true, showcopyright: false, shownavigation: false});
          *     board.options.text.useMathjax = true;
          *
-         *     a = board.create('slider',[[-0.7,1.5],[5,1.5],[0,0.5,1]], {
+         *     var a = board.create('slider',[[-0.7,1.5],[5,1.5],[0,0.5,1]], {
          *         suffixlabel:'\\(t_1=\\)',
          *         unitLabel: ' \\(\\text{ ms}\\)',
          *         snapWidth:0.01}),
          *
-         *     func = board.create('functiongraph',[function(x){return (a.Value()*x*x)}], {strokeColor: "red"});
+         *     func = board.create('functiongraph',[function(x){return (a.Value()*x*x)}], {strokeColor: "red"}),
          *     text1 = board.create('text', [5, 1, function(){
          *                 return '\\(a(t)= { 1 \\over ' + a.Value().toFixed(3) + '}\\)';
          *             }], {fontSize: 15, fixed:true, strokeColor:'red', anchorY: 'top', parse: false});
@@ -10149,7 +10214,7 @@ JXG.Options = {
          *
          * </pre>
          * <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.13.10/dist/katex.min.css" integrity="sha384-0cCFrwW/0bAk1Z/6IMgIyNU3kfTcNirlObr4WjrUU7+hZeD6ravdYJ3kPWSeC31M" crossorigin="anonymous">
-         * <script src="https://cdn.jsdelivr.net/npm/katex@0.13.10/dist/katex.min.js" integrity="sha384-dtFDxK2tSkECx/6302Z4VN2ZRqt6Gis+b1IwCjJPrn0kMYFQT9rbtyQWg5NFWAF7" crossorigin="anonymous"></script>
+         * <!--<script src="https://cdn.jsdelivr.net/npm/katex@0.13.10/dist/katex.min.js" integrity="sha384-dtFDxK2tSkECx/6302Z4VN2ZRqt6Gis+b1IwCjJPrn0kMYFQT9rbtyQWg5NFWAF7" crossorigin="anonymous"></script>-->
          * <div id="JXG497f065c-cfc1-44c3-ba21-5fa581668869" class="jxgbox" style="width: 300px; height: 300px;"></div>
          * <script type="text/javascript">
          *     (function() {
@@ -10194,26 +10259,25 @@ JXG.Options = {
         katexMacros: {},
 
         /**
-         * Display number as integer + nominator / denominator. Works together
-         * with MathJax, KaTex or as plain text.
+         * Display number as integer + nominator / denominator. Needs also the setting formatNumber: true
+         * Works together with MathJax, KaTex or as plain text.
          * @name toFraction
          * @memberOf Text.prototype
          * @type Boolean
          * @default false
-         * @see JXG#toFraction
+         * @see Text#formatNumber
          *
          * @example
-         *  board.create('text', [2, 2, 2 / 7], { anchorY: 'top', toFraction: true, useMathjax: true });
-         *  board.create('text', [2, -2, 2 / 19], { toFraction: true, useMathjax: false });
+         *  board.create('text', [2, 2, 2 / 7], { anchorY: 'top', fontSize: 24, toFraction: true, formatNumber: true, useMathjax: true });
+         *  board.create('text', [2, -2, 2 / 19], { toFraction: true, formatNumber: true, useMathjax: false });
          *
          * </pre><div id="JXGc10fe0b6-15ac-42b6-890f-2593b427d493" class="jxgbox" style="width: 300px; height: 300px;"></div>
-         * <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" id="MathJax-script"></script>
          * <script type="text/javascript">
          *     (function() {
          *         var board = JXG.JSXGraph.initBoard('JXGc10fe0b6-15ac-42b6-890f-2593b427d493',
          *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
-         *             board.create('text', [2, 2, 2 / 7], { anchorY: 'top', toFraction: true, useMathjax: true });
-         *             board.create('text', [2, -2, 2 / 19], { toFraction: true, useMathjax: false });
+         *             board.create('text', [2, 2, 2 / 7], { anchorY: 'top', fontSize: 24, formatNumber: true, toFraction: true, useMathjax: true });
+         *             board.create('text', [2, -2, 2 / 19], { toFraction: true, formatNumber: true, useMathjax: false });
          *
          *     })();
          *
@@ -10243,6 +10307,23 @@ JXG.Options = {
          * @memberOf Text.prototype
          * @default null
          * @type Object
+         *
+         * @example
+         * var p = board.create('point', [0,1]);
+         * board.create('text', [1, 0, 'message'], {anchor:p});
+         *
+         * </pre><div id="JXGe2654e93-5992-4ba3-b7b1-69fa8ef8a75c" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXGe2654e93-5992-4ba3-b7b1-69fa8ef8a75c',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *     var p = board.create('point', [0,1]);
+         *     board.create('text', [1, 0, 'message'], {anchor:p});
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
          */
         anchor: null,
 

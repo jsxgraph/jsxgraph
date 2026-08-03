@@ -495,12 +495,14 @@ JXG.createParametricSurface3D = function (board, parents, attributes) {
     var view = parents[0],
         F, X, Y, Z,
         range_u, range_v, attr, attr2d,
+        ru0, ru1, rv0, rv1,
         base = null,
         transform = null,
         coords, surface,// steps,
         tiling, type,
         // colormap:
         m, ma, mi, ma_a, mi_a, s, v,
+        staticColorMap = true, e,
         el;
 
     if (parents.length === 3) {
@@ -539,6 +541,7 @@ JXG.createParametricSurface3D = function (board, parents, attributes) {
     attr2d = el.setAttr2D(attr);
     el.element2D = view.create("curve", [[], []], attr2d);
     el.element2D.view = view;
+    el.element2D.dump = false;
     if (base !== null) {
         el.addTransform(base, transform);
         el.addParents(base);
@@ -559,6 +562,14 @@ JXG.createParametricSurface3D = function (board, parents, attributes) {
 
     // Set style
     if (type !== 'wireframe') {
+        // ru0 = Type.evaluate(el.range_u[0]);
+        // ru1 = Type.evaluate(el.range_u[1]);
+        // rv0 = Type.evaluate(el.range_v[0]);
+        // rv1 = Type.evaluate(el.range_v[1]);
+        ru0 = el.range_u[0];
+        ru1 = el.range_u[1];
+        rv0 = el.range_v[0];
+        rv1 = el.range_v[1];
 
         if (tiling === 'triangle' || tiling === 'rectangle') {
             if (tiling === 'triangle') {
@@ -571,10 +582,10 @@ JXG.createParametricSurface3D = function (board, parents, attributes) {
 
                 // Uses steps and range of surface3d to create a base of triangles across the visible area of the surface3d object
                 surface = Tiling.triangulation(
-                    [el.range_u[0], el.range_v[0]],
-                    [el.range_u[0], el.range_v[1]],
-                    [el.range_u[1], el.range_v[1]],
-                    [el.range_u[1], el.range_v[0]],
+                    [ru0, rv0],
+                    [ru0, rv1],
+                    [ru1, rv1],
+                    [ru1, rv0],
                     // Given ratio or equilateral triangle if stepsV==0
                     el.evalVisProp('stepsu'), el.evalVisProp('stepsv')
                 );
@@ -586,12 +597,12 @@ JXG.createParametricSurface3D = function (board, parents, attributes) {
 
                 // Use stepsU, stepsV (see options3d) and range of surface3d to create a base of rectangles across the visible area of the surface3d object
                 surface = Tiling.rectangulation(
-                    [el.range_u[0], el.range_v[0]],
-                    [el.range_u[0], el.range_v[1]],
-                    [el.range_u[1], el.range_v[1]],
-                    [el.range_u[1], el.range_v[0]],
+                    el,
+                    el.range_u,
+                    el.range_v,
                     el.evalVisProp('stepsu'), el.evalVisProp('stepsv')
                 );
+
             }
         }
 
@@ -604,10 +615,10 @@ JXG.createParametricSurface3D = function (board, parents, attributes) {
         // mapMeshTo3D is used to map the 2d-points created with triangulation / rectangulation to 3D.
         // These points are realized as functions to enable dynamic changes to the surface3d,
         // stores the dynamic points in coords
-        coords = Tiling.mapMeshTo3D(surface, el);
+        // coords = Tiling.mapMeshTo3D(surface, el);
 
         // Reincorporate the dynamic points in coords into surface
-        surface = [coords, surface[1]];
+        // surface = [coords, surface[1]];
 
         if (type === 'colormap') {
             attr.polyhedron.shader.enabled = false;
@@ -621,6 +632,14 @@ JXG.createParametricSurface3D = function (board, parents, attributes) {
             mi_a = m[1];
             s = el.evalVisProp('colormap.s');
             v = el.evalVisProp('colormap.v');
+            for (e in el.visProp.colormap) {
+                if (el.visProp.colormap.hasOwnProperty(e)) {
+                    if (Type.isFunction(el.visProp.colormap[e])) {
+                        staticColorMap = false;
+                        break;
+                    }
+                }
+            }
 
             attr.polyhedron.fillcolorarray = [];
             attr.polyhedron.fillcolor = (self) => {
@@ -631,12 +650,15 @@ JXG.createParametricSurface3D = function (board, parents, attributes) {
                         le = face.length;
 
                     // Dynamic version
-                    // m = self.evalVisProp('max');
-                    // ma = m[0];
-                    // ma_a = m[1];
-                    // m = self.evalVisProp('min');
-                    // mi = m[0];
-                    // mi_a = m[1];
+                    if (!staticColorMap) {
+                        m = el.evalVisProp('colormap.max');
+                        ma = m[0];
+                        ma_a = m[1];
+                        m = el.evalVisProp('colormap.min');
+                        mi = m[0];
+                        mi_a = m[1];
+                    }
+
                     if (le !== 0) {
                         for (j = 0; j < le; j++) {
                             z += p.coords[face[j]][3];
@@ -645,8 +667,12 @@ JXG.createParametricSurface3D = function (board, parents, attributes) {
                     }
                     z = mi_a + (z - mi) * (ma_a - mi_a) / (ma - mi);
 
-                    // hsl = JXG.hsv2hsl(z, el.evalVisProp('colormap.s'), el.evalVisProp('colormap.v')); // Dynamic version - slower
-                    hsl = JXG.hsv2hsl(z, s, v);
+                    if (staticColorMap) {
+                        hsl = JXG.hsv2hsl(z, s, v);
+                    } else {
+                        // Dynamic version - slower
+                        hsl = JXG.hsv2hsl(z, el.evalVisProp('colormap.s'), el.evalVisProp('colormap.v'));
+                    }
                     return `hsl(${z} ${hsl[1] * 100}% ${hsl[2] * 100}%)`;
                 };
         } else if (type === 'shader') {

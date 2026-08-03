@@ -1178,7 +1178,7 @@ Mat.Clip = {
      *
      * @param {Array} path Resulting path
      * @param {JXG.Math.Clip.Vertex} vertex Point to be added
-     * @param {Boolean} DEBUG debug output to console.log
+     * @param {Boolean} DEBUG if true, write debug output to console.log
      * @returns {Boolean} true: point has been visited before, false otherwise
      * @private
      */

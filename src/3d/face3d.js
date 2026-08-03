@@ -453,6 +453,7 @@ JXG.createFace3D = function (board, parents, attributes) {
     attr = el.setAttr2D(attr);
     el.element2D = view.create("curve", [[], []], attr);
     el.element2D.view = view;
+    el.element2D.dump = false;
 
     /**
      * @class
@@ -464,7 +465,10 @@ JXG.createFace3D = function (board, parents, attributes) {
         this.dataY = ret.Y;
     };
     // Deactivate hasPoint to increase speed.
-    // This might be too agressive
+    // This is be too agressive, e.g. for the upcoming
+    // rotation3D circles (SoftwarePraktikum)
+    // We may enable have to enable hasPoint() for
+    // click events.
     el.element2D.hasPoint = function() {};
 
     el.addChild(el.element2D);
