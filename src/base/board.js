@@ -6705,11 +6705,10 @@ JXG.extend(
                 }
                 switch (key) {
                     case 'axis':
-                        if (value === false) {
-                            if (Type.exists(this.defaultAxes)) {
-                                this.defaultAxes.x.setAttribute({ visible: false });
-                                this.defaultAxes.y.setAttribute({ visible: false });
-                            }
+                        if (Type.exists(this.defaultAxes)) {
+                            this.defaultAxes.x.setAttribute({ visible: value });
+                            this.defaultAxes.y.setAttribute({ visible: value });
+                            this.attr['axis'] = value;
                         } else {
                             // TODO
                         }
