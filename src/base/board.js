@@ -6713,13 +6713,13 @@ JXG.extend(
                             if (value === true) {
                                 // create the default axis
                                 this.defaultAxes = {};
-                                this.defaultAxes.x = board.create("axis", [[0, 0], [1, 0]]);
-                                this.defaultAxes.y = board.create("axis", [[0, 0], [0, 1]]);
+                                this.defaultAxes.x = this.create("axis", [[0, 0], [1, 0]]);
+                                this.defaultAxes.y = this.create("axis", [[0, 0], [0, 1]]);
                                 this.attr[key] = true;
                             }
                         }
                         break;
-                    case 'cssstyle':
+                case 'cssstyle':
                         lst = Type.css2js(value);
                         node = this.containerObj;
                         // node = this.renderer.svgRoot;
