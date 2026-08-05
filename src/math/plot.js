@@ -58,6 +58,9 @@ Mat.Plot = {
             len = points.length;
 
         for (i = 0; i < len; i++) {
+            if (points[i] === undefined) {
+                continue;
+            }
             p = points[i].usrCoords;
             if (!isNaN(p[1]) && !isNaN(p[2]) && Math.abs(p[0]) > Mat.eps) {
                 b = true;
