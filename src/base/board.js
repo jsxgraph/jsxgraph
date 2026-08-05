@@ -6705,13 +6705,18 @@ JXG.extend(
                 }
                 switch (key) {
                     case 'axis':
-                        if (value === false) {
-                            if (Type.exists(this.defaultAxes)) {
-                                this.defaultAxes.x.setAttribute({ visible: false });
-                                this.defaultAxes.y.setAttribute({ visible: false });
-                            }
+                        if (Type.exists(this.defaultAxes)) {
+                            this.defaultAxes.x.setAttribute({ visible: value });
+                            this.defaultAxes.y.setAttribute({ visible: value });
+                            this.attr[key] = value;
                         } else {
-                            // TODO
+                            if (value === true) {
+                                // create the default axis
+                                this.defaultAxes = {};
+                                this.defaultAxes.x = board.create("axis", [[0, 0], [1, 0]]);
+                                this.defaultAxes.y = board.create("axis", [[0, 0], [0, 1]]);
+                                this.attr[key] = true;
+                            }
                         }
                         break;
                     case 'cssstyle':
