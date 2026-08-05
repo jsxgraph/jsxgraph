@@ -1481,43 +1481,40 @@ JXG.extend(
                 }
             }
             return [isTransformed, curve_org];
+        },
+
+        /**
+         * Return the points of the curve as array of length-two-arrays [x, y].
+         * The returned coordinates are in user coordinates.
+         * <p>
+         * The points of the curve are either the elements of the properties dataX and dataY or
+         * the result of the plotting algorithm. In any case, the points are stored in the private
+         * property points.
+         * @returns {Array}
+         */
+        getCoords: function() {
+            var len, i,
+                arr = [];
+
+            // if (this.dataX === null || this.dataY === null) {
+            //     return [];
+            // }
+
+            // len = this.dataX.length;
+            // len = (len < this.dataY.length) ? this.dataY.length : len;
+
+            // for (i = 0; i < len; i++) {
+            //     arr.push([this.dataX[i], this.dataY[i]]);
+            // }
+
+            len = this.numberPoints;
+            for (i = 0; i < len; i++) {
+                arr.push(this.points[i].usrCoords.slice(1));
+            }
+            return arr;
         }
 
-        // See JXG.Math.Geometry.pnpoly
-        // pnpoly: function (x_in, y_in, coord_type) {
-        //     var i,
-        //         j,
-        //         len,
-        //         x,
-        //         y,
-        //         crds,
-        //         v = this.points,
-        //         isIn = false;
 
-        //     if (coord_type === Const.COORDS_BY_USER) {
-        //         crds = new Coords(Const.COORDS_BY_USER, [x_in, y_in], this.board);
-        //         x = crds.scrCoords[1];
-        //         y = crds.scrCoords[2];
-        //     } else {
-        //         x = x_in;
-        //         y = y_in;
-        //     }
-
-        //     len = this.points.length;
-        //     for (i = 0, j = len - 2; i < len - 1; j = i++) {
-        //         if (
-        //             v[i].scrCoords[2] > y !== v[j].scrCoords[2] > y &&
-        //             x <
-        //                 ((v[j].scrCoords[1] - v[i].scrCoords[1]) * (y - v[i].scrCoords[2])) /
-        //                     (v[j].scrCoords[2] - v[i].scrCoords[2]) +
-        //                     v[i].scrCoords[1]
-        //         ) {
-        //             isIn = !isIn;
-        //         }
-        //     }
-
-        //     return isIn;
-        // }
     }
 );
 
