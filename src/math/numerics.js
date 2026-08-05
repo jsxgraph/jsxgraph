@@ -4774,9 +4774,13 @@ Mat.Numerics = {
             newPts.push(pts[k]);
             do {
                 ++k;
-                isnan = (usr) ?
-                    isNaN(pts[k].usrCoords[1] + pts[k].usrCoords[2]) :
-                    isNaN(pts[k].scrCoords[1] + pts[k].scrCoords[2]);
+                if (k > j || pts[k] === undefined || pts[k].usrCoords === undefined) {
+                    isnan = true;
+                } else {
+                    isnan = (usr) ?
+                        isNaN(pts[k].usrCoords[1] + pts[k].usrCoords[2]) :
+                        isNaN(pts[k].scrCoords[1] + pts[k].scrCoords[2]);
+                }
             } while (k <= j && isnan);
             if (k <= j) {
                 newPts.push(pts[k]);

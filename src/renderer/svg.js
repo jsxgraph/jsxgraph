@@ -1155,6 +1155,9 @@ JXG.extend(
 
             if (el.bezierDegree === 1) {
                 for (i = 0; i < len; i++) {
+                    if (el.points[i] === undefined) {
+                        continue;
+                    }
                     scr = el.points[i].scrCoords;
                     if (isNaN(scr[1]) || isNaN(scr[2])) {
                         // PenUp
@@ -1213,6 +1216,9 @@ JXG.extend(
             } else if (el.bezierDegree === 3) {
                 i = 0;
                 while (i < len) {
+                    if (el.points[i] === undefined) {
+                        continue;
+                    }
                     scr = el.points[i].scrCoords;
                     scx = scr[1];
                     scy = scr[2];
