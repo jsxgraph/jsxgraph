@@ -36,7 +36,7 @@ import JXG from "../jxg.js";
 import Options from "../options.js";
 import AbstractRenderer from "./abstract.js";
 import Const from "../base/constants.js";
-// import Env from "../utils/env.js";
+import Env from "../utils/env.js";
 import Type from "../utils/type.js";
 import Color from "../utils/color.js";
 import Base64 from "../utils/base64.js";
@@ -1141,7 +1141,10 @@ JXG.extend(
                 symbl = ' L ',
                 symbc = ' C ',
                 nextSymb = symbm,
-                // M = Env.maxScreenCoord,
+                M = Env.maxScreenCoord,
+                scr2, d,
+                // sc1, sc2,
+                // sc, scr2,
                 // d, z1, scr1, lbda, mu,
                 // xt, xb, yt, yb,
                 // xl, xr, yl, yr,
@@ -1168,7 +1171,7 @@ JXG.extend(
                         // see https://oreillymedia.github.io/Using_SVG/extras/ch08-precision.html#:~:text=If%20you%20are%20creating%20a,no%20bigger%20than%20%C2%B15%2C000.
                         // Attention: there may be conflicts with RDP smoothing.
                         //
-                        // March 2026: This restriction seems to be osbsolete.
+                        // March 2026: This restriction seems to be obsolete.
                         // Meanwhile all major browsers support 32 floats, see
                         // https://www.w3.org/TR/SVG/types.html, section "4.2.1. Real number precision"
                         //
@@ -1178,13 +1181,42 @@ JXG.extend(
                         // Change not in-place (preferred 2026):
                         // sc1 = Math.max(Math.min(scr[1], M), -M);
                         // sc2 = Math.max(Math.min(scr[2], M), -M);
-                        //
                         scx = scr[1];
                         scy = scr[2];
 
                         // Some first steps to project coordinates to the virtual
-                        // clip box [-5000, 5000, 5000, -5000].
-                        // But - hopefully - we do not need to develop this anymore.
+                        // clip box [-M, M, M, -M].
+                        if (Math.abs(scx) > M || Math.abs(scy) > M) {
+                            // Search for point inside of virtual canvas
+                            if (i > 0) {
+                                scr2 = el.points[i - 1].scrCoords;
+                            } else if (i <  len) {
+                                scr2 = el.points[i + 1].scrCoords;
+                            } else {
+                                continue;
+                            }
+                            if (i < len - 1 && (isNaN(scr2[1]) || isNaN(scr2[2]))) {
+                                scr2 = el.points[i + 1].scrCoords;
+                            }
+                            if ((isNaN(scr2[1]) || isNaN(scr2[2]))) {
+                                continue;
+                            }
+
+                            // Approximate point
+                            if (Math.abs(scy) > M) {
+                                d = scy - scr2[2];
+                                scy = Math.max(Math.min(scy, M), -M);
+                                scx = scr2[1] + (scx - scr2[1]) * (scy - scr2[2]) / d;
+                            }
+                            if (Math.abs(scx) > M) {
+                                d = scx - scr2[1];
+                                scx = Math.max(Math.min(scx, M), -M);
+                                scy = scr2[2] + (scy - scr2[2]) * (scx - scr2[1]) / d;
+                            }
+                        }
+                        // scx = (Math.abs(scx) < M) ? scx : Math.max(Math.min(scx, M), -M);
+                        // scy = (Math.abs(scy) < M) ? scy : Math.max(Math.min(scy, M), -M);
+
                         // Intersections with the clip box.
                         // Todo: choose the right one.
                         // if (i > 0) {
@@ -1240,6 +1272,7 @@ JXG.extend(
                     i += 1;
                 }
             }
+
             return pStr;
         },
 

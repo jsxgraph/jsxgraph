@@ -61,12 +61,15 @@ JXG.extend(
 
         /**
          * Upper bound on pixel coordinates. This is used in svg and canvas renderer to avoid limitations on numbers there.
-         * 2026: seems to be obsolete. Browser implementations support 32 floating point values.
+         * 2026: can be enlarged to 2**24-1, the largest integer valiue that browsers do support.
+         * Browser implementations support 32bit floating point values.
          * <p>
-         * 1.13+: unused
+         *
          * @private
          */
-        maxScreenCoord: 5000,
+        maxScreenCoord: 16777215, // = (2**24 - 1),
+        // Too large: 2147483647 = Math.pow(2, 31) - 1,
+        // 5000,
 
         /**
          * Determines whether evt is a touch event.
