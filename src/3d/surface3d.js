@@ -504,6 +504,7 @@ JXG.createParametricSurface3D = function (board, parents, attributes) {
         el;
 
     if (parents.length === 3) {
+        // [view, base_el, transform]
         base = parents[1];
         transform = parents[2];
         F = null;
