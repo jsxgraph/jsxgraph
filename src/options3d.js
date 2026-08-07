@@ -337,6 +337,10 @@ JXG.extend(Options, {
             polyhedron: {
                 visible: 'inherit',
                 strokeWidth: 0.5,
+                strokeOpacity: 0.7,
+                strokeColor: '#cccccc',
+                fillOpacity: 0.30,
+                fillColorArray: ['#e7e7e7'],
                 shader: {
                     enabled: true,
                     fixed: true,
@@ -367,6 +371,10 @@ JXG.extend(Options, {
             polyhedron: {
                 visible: 'inherit',
                 strokeWidth: 0.5,
+                strokeOpacity: 0.7,
+                strokeColor: '#cccccc',
+                fillOpacity: 0.30,
+                fillColorArray: ['#e7e7e7'],
                 shader: {
                     enabled: true,
                     fixed: true,
@@ -397,6 +405,10 @@ JXG.extend(Options, {
             polyhedron: {
                 visible: 'inherit',
                 strokeWidth: 0.5,
+                strokeOpacity: 0.7,
+                strokeColor: '#cccccc',
+                fillOpacity: 0.30,
+                fillColorArray: ['#e7e7e7'],
                 shader: {
                     enabled: true,
                     fixed: true,
