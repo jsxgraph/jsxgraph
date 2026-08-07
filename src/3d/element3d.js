@@ -139,6 +139,7 @@ JXG.extend(JXG.GeometryElement3D.prototype, {
                         }
                     break;
                     default:
+                        this._set(key, value);
                         if (Type.exists(this.element2D)) {
                             this.element2D.setAttribute(attributes);
                         }
