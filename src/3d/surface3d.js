@@ -498,7 +498,7 @@ JXG.createParametricSurface3D = function (board, parents, attributes) {
         ru0, ru1, rv0, rv1,
         base = null,
         transform = null,
-        coords, surface,// steps,
+        surface,// steps,
         tiling, type,
         // colormap:
         m, ma, mi, ma_a, mi_a, s, v,

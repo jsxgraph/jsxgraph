@@ -36,7 +36,6 @@
  * algorithms for creating meshes for surface3d elements.
  */
 import Mat from "./math.js";
-import Type from "../utils/type.js";
 
 /**
  * The JXG.Math.Tiling namespace.

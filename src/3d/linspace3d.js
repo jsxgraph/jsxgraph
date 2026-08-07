@@ -1679,7 +1679,7 @@ JXG.createPlane3D = function (board, parents, attributes) {
         point, point2, point3,
         dir1, dir2, range_u, range_v,
         el, mesh3d,
-        surface, coords,
+        surface,
         su, sv, type, tiling,
         m, ma, mi, ma_a, mi_a, s, v,
         ru0, ru1, rv0, rv1, e,
@@ -1744,7 +1744,7 @@ JXG.createPlane3D = function (board, parents, attributes) {
             );
         }
     }
-console.log(attributes.layer)
+
     el = new JXG.Plane3D(view, point, dir1, range_u, dir2, range_v, attr);
     point.addChild(el);
 
@@ -1801,7 +1801,7 @@ console.log(attributes.layer)
             el.element2D.inherits.push(mesh3d); // Does work - instead
             mesh3d.setParents(el);
             el.mesh3d.view = view;
-        } else if (type !== 'border') {
+        } else {
             su = el.evalVisProp('stepsu');
             sv = el.evalVisProp('stepsv');
 
