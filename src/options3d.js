@@ -631,7 +631,7 @@ JXG.extend(Options, {
          *       az: -45, // TODO use radians, ignored for type==1
          *       el: 20,  // TODO use radians, ignored for type==1
          *       bank: 0, // TODO use radians, ignored for type==1, type==3
-         *       dir: -1  // -1, 0 (use abs), 1: Default: -1
+         *       dir: -1  // -1 (reverse), 0 (use abs), 1. Default: -1
          *   }
          * }</pre>
          *
@@ -781,7 +781,7 @@ JXG.extend(Options, {
                 az: -45, // TODO use radians, ignored for type==1
                 el: 20,  // TODO use radians, ignored for type==1
                 bank: 0, // TODO use radians, ignored for type==1, type==3
-                dir: -1  // -1, 0 (use abs), 1: Default: -1
+                dir: -1  // -1 (reverse), 0 (use abs), 1. Default: -1
             }
         }
 
