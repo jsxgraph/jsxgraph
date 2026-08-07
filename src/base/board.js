@@ -6719,7 +6719,7 @@ JXG.extend(
                             }
                         }
                         break;
-                case 'cssstyle':
+                    case 'cssstyle':
                         lst = Type.css2js(value);
                         node = this.containerObj;
                         // node = this.renderer.svgRoot;
