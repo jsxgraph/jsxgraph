@@ -65,6 +65,7 @@ JXG.Surface3D = function (view, F, X, Y, Z, range_u, range_v, attributes) {
     /**
      * Internal function defining the surface
      * without applying any transformations.
+     * Returns affine coordinates, i.e. [x, y, z]!
      *
      * @function
      * @param {Number} u
@@ -192,7 +193,7 @@ JXG.extend(
                 this.points.push([]);
                 for (i_v = 0, v = s_v; i_v <= steps_v; i_v++, v += delta_v) {
                     c3d = this.F(u, v);
-                    c3d.unshift(1);
+                    // c3d.unshift(1);
                     this.points[i_u].push(c3d);
                 }
             }
@@ -222,14 +223,15 @@ JXG.extend(
          * and applies its transformations.
          * @param {Number} u
          * @param {Number} v
-         * @returns
+         * @returns {Array} Homogeneous coordinates of F(u, v)
          */
         evalF: function(u, v) {
             var t, i,
                 c3d = [0, 0, 0, 0];
 
             if (this.transformations.length === 0 || !Type.exists(this.baseElement)) {
-                c3d = this._F(u, v);
+                c3d = this._F(u, v); // Affine coordinates
+                c3d.unshift(1);      // Homogeneous coordinates
                 return c3d;
             }
 
@@ -239,24 +241,24 @@ JXG.extend(
             }
 
             if (this === this.baseElement) {
-                c3d = this._F(u, v);
+                c3d = this._F(u, v);   // Affine coordinates
+                c3d.unshift(1);
             } else {
-                c3d = this.baseElement.evalF(u, v);
+                c3d = this.baseElement.evalF(u, v); // Homogeneous coordinates
             }
-            c3d.unshift(1);
             c3d = Mat.matVecMult(t[0].matrix, c3d);
             for (i = 1; i < t.length; i++) {
                 c3d = Mat.matVecMult(t[i].matrix, c3d);
             }
 
-            return c3d.slice(1);
+            return c3d;
         },
 
         /**
          * Function defining the surface plus applying transformations.
          * @param {Number} u
          * @param {Number} v
-        * @returns Array [x, y, z] of length 3
+        * @returns {Array} Homogeneous coordinates [1, x, y, z] of length 4
          */
         F: function(u, v) {
             return this.evalF(u, v);
@@ -270,7 +272,7 @@ JXG.extend(
         * @returns Number
         */
         X: function(u, v) {
-            return this.evalF(u, v)[0];
+            return this.evalF(u, v)[1];
         },
 
         /**
@@ -281,7 +283,7 @@ JXG.extend(
         * @returns Number
         */
         Y: function(u, v) {
-            return this.evalF(u, v)[1];
+            return this.evalF(u, v)[2];
         },
 
         /**
@@ -292,7 +294,7 @@ JXG.extend(
         * @returns Number
         */
         Z: function(u, v) {
-            return this.evalF(u, v)[2];
+            return this.evalF(u, v)[3];
         },
 
         /**
