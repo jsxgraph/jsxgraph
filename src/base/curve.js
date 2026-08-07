@@ -1486,32 +1486,23 @@ JXG.extend(
         },
 
         /**
-         * Return the points of the curve as array of length-two-arrays [x, y].
-         * The returned coordinates are in user coordinates.
+         * Return the points of the curve as array of length-three-arrays [z, x, y], i.e.
+         * return an array of homogeneous coordinates.
+         * The returned coordinates are in user coordinates. Finite homogeneous coordinates have the first value set to 1,
+         * i.e. it can be ignored.
          * <p>
          * The points of the curve are either the elements of the properties dataX and dataY or
          * the result of the plotting algorithm. In any case, the points are stored in the private
-         * property points.
+         * property "points".
          * @returns {Array}
          */
         getCoords: function() {
             var len, i,
                 arr = [];
 
-            // if (this.dataX === null || this.dataY === null) {
-            //     return [];
-            // }
-
-            // len = this.dataX.length;
-            // len = (len < this.dataY.length) ? this.dataY.length : len;
-
-            // for (i = 0; i < len; i++) {
-            //     arr.push([this.dataX[i], this.dataY[i]]);
-            // }
-
             len = this.numberPoints;
             for (i = 0; i < len; i++) {
-                arr.push(this.points[i].usrCoords.slice(1));
+                arr.push(this.points[i].usrCoords.slice());
             }
             return arr;
         }
