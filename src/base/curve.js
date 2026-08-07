@@ -1079,6 +1079,7 @@ JXG.extend(
                 // Discrete data as an array of coordinate pairs,
                 // i.e. transposed input
                 mat = Mat.transpose(xterm);
+                mat = (mat.length > 2) ? mat.splice(1) : mat;
                 this.dataX = mat[0];
                 this.dataY = mat[1];
                 this.numberPoints = this.dataX.length;
