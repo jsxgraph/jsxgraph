@@ -339,21 +339,25 @@ JXG.extend(
             return {X: dataX, Y: dataY};
         },
 
+        // Already documented in GeometryElement
         addTransform: function (el, transform) {
             this.addTransformGeneric(el, transform);
             return this;
         },
 
+        // Already documented in GeometryElement
         removeTransform: function (transform) {
             this.removeTransformGeneric(transform);
             return this;
         },
 
+        // Already documented in GeometryElement
         clearTransforms: function () {
             this.clearTransformsGeneric();
             return this;
         },
 
+        // Already documented in GeometryElement
         updateTransform: function () {
             var t, c, i, j, k,
                 len_u, len_v;
@@ -402,8 +406,10 @@ JXG.extend(
             return this;
         },
 
+        // Already documented in GeometryElement
         updateDataArray: function() { /* stub */ },
 
+        // Already documented in GeometryElement
         update: function () {
             if (this.needsUpdate) {
                 this.updateDataArray();
@@ -412,11 +418,13 @@ JXG.extend(
             return this;
         },
 
+        // Already documented in GeometryElement
         updateRenderer: function () {
             this.needsUpdate = false;
             return this;
         },
 
+        // Already documented in element3d.js
         projectCoords: function (p, params) {
             return Geometry.projectCoordsToParametric(p, this, 2, params);
         }
