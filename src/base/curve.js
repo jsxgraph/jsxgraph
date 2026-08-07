@@ -1049,7 +1049,7 @@ JXG.extend(
          * @see JXG.GeonextParser.geonext2JS
          */
         generateTerm: function (varname, xterm, yterm, mi, ma) {
-            var fx, fy, mat;
+            var fx, fy, mat, i;
 
             // Generate the methods X() and Y()
             if (Type.isArray(xterm)) {
@@ -1079,9 +1079,10 @@ JXG.extend(
                 // Discrete data as an array of coordinate pairs,
                 // i.e. transposed input
                 mat = Mat.transpose(xterm);
-                mat = (mat.length > 2) ? mat.splice(1) : mat;
-                this.dataX = mat[0];
-                this.dataY = mat[1];
+                // Ignore first cooordinate if given as [z, x, y]
+                i = (mat.length > 2) ? 1 : 0;
+                this.dataX = mat[i];
+                this.dataY = mat[i + 1];
                 this.numberPoints = this.dataX.length;
                 this.Y = this.interpolationFunctionFromArray.apply(this, ["Y"]);
             } else {
