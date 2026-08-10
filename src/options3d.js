@@ -2030,6 +2030,25 @@ JXG.extend(Options, {
         },
 
         /**
+         * Distance of the camera to the center of the view. Expects values
+         * larger than zero. If set to 'auto', r will be set to 1.01.
+         * <p>
+         * After a call of view.setView(az, el, r), view.nextView(),
+         * view.previousView(), or view.setCurrentView()
+         * with an optional r,
+         * the camera distance is set to this value of r until a call of view.freeR().
+         *
+         * @type {Number|String}
+         * @default 'auto'
+         * @see View3D#setView
+         * @see View3D#freeR
+         * @see View3D#nextView
+         * @see View3D#previousView
+         * @see View3D#setCurrentView
+         */
+        r: 'auto',
+
+        /**
          * Enable user handling by a virtual trackball that allows to move the 3D scene
          * with 3 degrees of freedom. If not enabled, direct user dragging (i.e. in the JSXGraph board, not manipulating the sliders) will only have
          * two degrees of freedom. This means, the z-axis will always be projected to a vertical 2D line.
@@ -2058,15 +2077,6 @@ JXG.extend(Options, {
             button: -1,
             key: 'none'
         },
-
-        /**
-         * Distance of the camera to the center of the view.
-         * If set to 'auto', r will be calculated automatically.
-         *
-         * @type {Number|String}
-         * @default 'auto'
-         */
-        r: 'auto',
 
         /**
          * Field of View defines the angle of view (in radians) of the camera, determining how much of the scene is captured within the frame.

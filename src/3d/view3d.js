@@ -189,8 +189,9 @@ JXG.View3D = function (board, parents, attributes) {
      * The distance from the camera to the origin. In other words, the
      * radius of the sphere where the camera sits.
      * @type Number
+     * @default null
      */
-    this.r = 1;
+    this.r = null;
 
     /**
      * The distance from the camera to the screen. Computed automatically from
@@ -200,10 +201,9 @@ JXG.View3D = function (board, parents, attributes) {
     this.focalDist = -1;
 
     /**
-     * Type of projection.
+     * Type of projection. Is set in in update().
      * @type String
      */
-    // Will be set in update().
     this.projectionType = 'parallel';
 
     /**
@@ -715,13 +715,20 @@ JXG.extend(
     getCameraDistance: function() {
         var rs, r, diam;
 
-        rs = this.evalVisProp('r');
+        if (this.r === null) {
+            // Use attribute r
+            rs = this.evalVisProp('r');
+        } else {
+            // Use previously set value in this.r
+            rs = this.r;
+        }
 
         if (rs === 'auto') {
             r = 1.01;
         } else {
             r = (this.projectionType === 'central') ? rs : (1 / rs);
         }
+
         if (this.projectionType === 'central') {
             diam = Mat.hypot(
                 this.bbox3D[0][0] - this.bbox3D[0][1],
@@ -731,7 +738,6 @@ JXG.extend(
             r = diam * r;
         }
 
-        this.r = r;
         return r;
     },
 
@@ -1778,21 +1784,37 @@ JXG.extend(
     },
 
     /**
+     * Stop ignoring attribute r. This is the case after a call of
+     * setView.
+     * @see View3D#setView
+     */
+    freeR: function() {
+        this.r = null;
+    },
+
+    /**
      * Sets camera view to the given values.
+     * If the optional value r is supplied that value has priority until the next call of
+     * setView or until a call of view.freeR().
+     * In particular, until the call of view.freeR() the attribute r is ignored.
      *
      * @param {Number} az Value of azimuth.
      * @param {Number} el Value of elevation.
      * @param {Number} [r] Value of radius.
      *
      * @returns {Object} Reference to the view.
+     * @see View3D#freeR
+     * @see View3D#r
+     * @see View3D#nextView
+     * @see View3D#previousView
+     * @see View3D#setCurrentView
      */
     setView: function (az, el, r) {
-        // r = r || this.r;
+        // Set the distance to a fixed value.
         if (r !== undefined) {
-            this.visProp.r = r;
+            this.r = r;
         }
         r = this.getCameraDistance();
-        this.r = r;
 
         this.az_slide.setValue(az);
         this.el_slide.setValue(el);
@@ -1805,6 +1827,10 @@ JXG.extend(
      * Changes view to the next view stored in the attribute `values`.
      *
      * @see View3D#values
+     * @see View3D#setView
+     * @see View3D#previousView
+     * @see View3D#setCurrentView
+     * @see View3D#freeR
      *
      * @returns {Object} Reference to the view.
      */
@@ -1822,6 +1848,10 @@ JXG.extend(
      * Changes view to the previous view stored in the attribute `values`.
      *
      * @see View3D#values
+     * @see View3D#setView
+     * @see View3D#nextView
+     * @see View3D#setCurrentView
+     * @see View3D#freeR
      *
      * @returns {Object} Reference to the view.
      */
@@ -1839,6 +1869,10 @@ JXG.extend(
      * Changes view to the determined view stored in the attribute `values`.
      *
      * @see View3D#values
+     * @see View3D#nextView
+     * @see View3D#previousView
+     * @see View3D#setCurrentView
+     * @see View3D#freeR
      *
      * @param {Number} n Index of view in attribute `values`.
      * @returns {Object} Reference to the view.
