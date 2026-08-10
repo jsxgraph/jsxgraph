@@ -703,6 +703,39 @@ JXG.extend(
     },
 
     /**
+     * Get distance from view box center to camera.
+     * In other words, the radius of the sphere where the camera sits.
+     * Distinguishes between projection tpye 'central' and 'parallel'.
+     * Uses the value of attribute 'r'.
+     *
+     * @returns Number
+     * @private
+     * @see View3D#r
+     */
+    getCameraDistance: function() {
+        var rs, r, diam;
+
+        rs = this.evalVisProp('r');
+
+        if (rs === 'auto') {
+            r = 1.01;
+        } else {
+            r = (this.projectionType === 'central') ? rs : (1 / rs);
+        }
+        if (this.projectionType === 'central') {
+            diam = Mat.hypot(
+                this.bbox3D[0][0] - this.bbox3D[0][1],
+                this.bbox3D[1][0] - this.bbox3D[1][1],
+                this.bbox3D[2][0] - this.bbox3D[2][1]
+            );
+            r = diam * r;
+        }
+
+        this.r = r;
+        return r;
+    },
+
+    /**
      * @private
      * @returns {Array}
      */
@@ -714,21 +747,10 @@ JXG.extend(
             // bbox3D is always at the world origin, i.e. T_obj is the unit matrix.
             // All vectors contain affine coordinates and have length 3
             // The matrices are of size 4x4.
-            r, diam, A;
+            r, A;
 
-        // set distance from view box center to camera
-        r = this.evalVisProp('r');
-        diam = Mat.hypot(
-            this.bbox3D[0][0] - this.bbox3D[0][1],
-            this.bbox3D[1][0] - this.bbox3D[1][1],
-            this.bbox3D[2][0] - this.bbox3D[2][1]
-        );
-        if (r === 'auto') {
-            r = diam * 1.01;
-        } else {
-            r = diam * r;
-        }
-        this.r = r;
+        // Set distance from view box center to camera
+        r = this.getCameraDistance();
 
         // compute camera transformation
         // this.boxToCam = this.matrix3DRot.map((row) => row.slice());
@@ -750,7 +772,7 @@ JXG.extend(
     // Update 3D-to-2D transformation matrix with the actual azimuth and elevation angles.
     // Called in board.updateElements()
     update: function () {
-        var r, rs, stretch,
+        var r, stretch,
             mat2D, objectToClip, size,
             dx, dy;
             // objectsList;
@@ -824,14 +846,7 @@ JXG.extend(
 
             case 'parallel': // Parallel projection
             default:
-                rs = this.evalVisProp('r');
-                if (rs === 'auto') {
-                    // r = this.r;
-                    r = 1.01;
-                } else {
-                    r = 1 / rs;
-                }
-                this.r = r;
+                r = this.getCameraDistance();
                 stretch = [
                     [1, 0, 0, 0],
                     [0, r, 0, 0],
@@ -1772,11 +1787,15 @@ JXG.extend(
      * @returns {Object} Reference to the view.
      */
     setView: function (az, el, r) {
-        r = r || this.r;
+        // r = r || this.r;
+        if (r !== undefined) {
+            this.visProp.r = r;
+        }
+        r = this.getCameraDistance();
+        this.r = r;
 
         this.az_slide.setValue(az);
         this.el_slide.setValue(el);
-        this.r = r;
         this.board.update();
 
         return this;
