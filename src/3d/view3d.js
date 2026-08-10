@@ -1784,8 +1784,9 @@ JXG.extend(
     },
 
     /**
-     * Stop ignoring attribute r. This is the case after a call of
-     * setView.
+     * Stop ignoring attribute r. After a call of view3d.setView, view3d.nextView,
+     * view3d.previousView, or view3d.setCurrentView this attribute is ignored.
+     * Call of view3d.freeR() will end this.
      * @see View3D#setView
      */
     freeR: function() {
@@ -1795,9 +1796,8 @@ JXG.extend(
     /**
      * Sets camera view to the given values.
      * If the optional value r is supplied that value has priority until the next call of
-     * setView or until a call of view.freeR().
-     * In particular, until the call of view.freeR() the attribute r is ignored.
-     *
+     * view3d.setView or until a call of view3d.freeR().
+     * In particular, the attribute r is ignored until a call of view3d.freeR().
      * @param {Number} az Value of azimuth.
      * @param {Number} el Value of elevation.
      * @param {Number} [r] Value of radius.
