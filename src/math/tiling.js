@@ -388,102 +388,102 @@ Mat.Tiling = {
         //     faces.push([j, j - stepsV - 1, j - stepsV, j + 1]);
         // }
     },
-    rectangulation_old: function (p1, p2, p3, p4, stepsU, stepsV) {
-        // Vectors used for checking if the given coordinates create a rectangle
-        var vec1 = [p2[0] - p1[0], p2[1] - p1[1]],
-            vec2 = [p3[0] - p2[0], p3[1] - p2[1]],
-            vec3 = [p4[0] - p3[0], p4[1] - p3[1]],
-            vec4 = [p1[0] - p4[0], p1[1] - p4[1]],
+    // rectangulation_old: function (p1, p2, p3, p4, stepsU, stepsV) {
+    //     // Vectors used for checking if the given coordinates create a rectangle
+    //     var vec1 = [p2[0] - p1[0], p2[1] - p1[1]],
+    //         vec2 = [p3[0] - p2[0], p3[1] - p2[1]],
+    //         vec3 = [p4[0] - p3[0], p4[1] - p3[1]],
+    //         vec4 = [p1[0] - p4[0], p1[1] - p4[1]],
 
-            coords = [],
-            faces = [],
-            wSide, hSide,
-            s1, s2,
-            i, j,
-            widthX, widthY,
-            heightX, heightY,
-            startPointLayer;
+    //         coords = [],
+    //         faces = [],
+    //         wSide, hSide,
+    //         s1, s2,
+    //         i, j,
+    //         widthX, widthY,
+    //         heightX, heightY,
+    //         startPointLayer;
 
-        // Check if the given coordinates create a rectangle, otherwise an exception is thrown
-        if (
-            vec1[0] * vec4[0] + vec1[1] * vec4[1] !== 0 ||
-            vec2[0] * vec1[0] + vec2[1] * vec1[1] !== 0 ||
-            vec3[0] * vec2[0] + vec3[1] * vec2[1] !== 0 ||
-            vec4[0] * vec3[0] + vec4[1] * vec3[1] !== 0
-        ) {
-            throw new Error("rectangulation_old: area is not rectangle  ");
-            // console.log("rectangulation_old: area is not rectangle  ");
-        }
+    //     // Check if the given coordinates create a rectangle, otherwise an exception is thrown
+    //     if (
+    //         vec1[0] * vec4[0] + vec1[1] * vec4[1] !== 0 ||
+    //         vec2[0] * vec1[0] + vec2[1] * vec1[1] !== 0 ||
+    //         vec3[0] * vec2[0] + vec3[1] * vec2[1] !== 0 ||
+    //         vec4[0] * vec3[0] + vec4[1] * vec3[1] !== 0
+    //     ) {
+    //         throw new Error("rectangulation_old: area is not rectangle  ");
+    //         // console.log("rectangulation_old: area is not rectangle  ");
+    //     }
 
-        // Set initial values for wSide, hSide
-        wSide = [0, 0];
-        hSide = [0, 0];
+    //     // Set initial values for wSide, hSide
+    //     wSide = [0, 0];
+    //     hSide = [0, 0];
 
-        // Check for longer side of rectangle:
-        // longer side is appointed height, shorter side is appointed width
-        // s1 = Math.sqrt((p2[0] - p1[0]) * (p2[0] - p1[0]) + (p2[1] - p1[1]) * (p2[1] - p1[1]));
-        // s2 = Math.sqrt((p3[0] - p2[0]) * (p3[0] - p2[0]) + (p3[1] - p2[1]) * (p3[1] - p2[1]));
-        s1 = Mat.hypot(vec1[0], vec1[1]);
-        s2 = Mat.hypot(vec2[0], vec2[1]);
+    //     // Check for longer side of rectangle:
+    //     // longer side is appointed height, shorter side is appointed width
+    //     // s1 = Math.sqrt((p2[0] - p1[0]) * (p2[0] - p1[0]) + (p2[1] - p1[1]) * (p2[1] - p1[1]));
+    //     // s2 = Math.sqrt((p3[0] - p2[0]) * (p3[0] - p2[0]) + (p3[1] - p2[1]) * (p3[1] - p2[1]));
+    //     s1 = Mat.hypot(vec1[0], vec1[1]);
+    //     s2 = Mat.hypot(vec2[0], vec2[1]);
 
-        if (s1 <= s2) {
-            // Determine start and end points of the width-side and height-side
-            wSide = [p1, p2];
-            hSide = [p2, p3];
-        } else {
-            // Determine start and end points of the width-side and height-side
-            wSide = [p2, p3];
-            hSide = [p1, p2];
-        }
+    //     if (s1 <= s2) {
+    //         // Determine start and end points of the width-side and height-side
+    //         wSide = [p1, p2];
+    //         hSide = [p2, p3];
+    //     } else {
+    //         // Determine start and end points of the width-side and height-side
+    //         wSide = [p2, p3];
+    //         hSide = [p1, p2];
+    //     }
 
-        // Calculate values of "shifting vectors"
-        widthX = (wSide[1][0] - wSide[0][0]) / stepsV;
-        widthY = (wSide[1][1] - wSide[0][1]) / stepsV;
-        heightX = (hSide[1][0] - hSide[0][0]) / stepsU;
-        heightY = (hSide[1][1] - hSide[0][1]) / stepsU;
+    //     // Calculate values of "shifting vectors"
+    //     widthX = (wSide[1][0] - wSide[0][0]) / stepsV;
+    //     widthY = (wSide[1][1] - wSide[0][1]) / stepsV;
+    //     heightX = (hSide[1][0] - hSide[0][0]) / stepsU;
+    //     heightY = (hSide[1][1] - hSide[0][1]) / stepsU;
 
-        // Initialize startPointLayer that stores coordinates of the first point of the current layer
-        startPointLayer = [];
+    //     // Initialize startPointLayer that stores coordinates of the first point of the current layer
+    //     startPointLayer = [];
 
-        // Push coordinates of base point (p1)
-        coords.push([p1[0], p1[1]]);
-        startPointLayer = coords[0];
+    //     // Push coordinates of base point (p1)
+    //     coords.push([p1[0], p1[1]]);
+    //     startPointLayer = coords[0];
 
-        // Calculate point coordinates of layer 0
-        for (j = 1; j <= stepsV; j++) {
-            coords.push([startPointLayer[0] + j * widthX, startPointLayer[1] + j * widthY]);
-        }
+    //     // Calculate point coordinates of layer 0
+    //     for (j = 1; j <= stepsV; j++) {
+    //         coords.push([startPointLayer[0] + j * widthX, startPointLayer[1] + j * widthY]);
+    //     }
 
-        for (i = 1; i <= stepsU; i++) {
-            startPointLayer = [];
+    //     for (i = 1; i <= stepsU; i++) {
+    //         startPointLayer = [];
 
-            // Calculate point coordinates of first point of layer
-            coords.push([
-                p1[0] + i * heightX,
-                p1[1] + i * heightY
-            ]);
-            startPointLayer = coords[coords.length - 1];
+    //         // Calculate point coordinates of first point of layer
+    //         coords.push([
+    //             p1[0] + i * heightX,
+    //             p1[1] + i * heightY
+    //         ]);
+    //         startPointLayer = coords[coords.length - 1];
 
-            // Calculating remaining point coordinates of layer
-            for (j = 1; j <= stepsV; j++) {
-                coords.push([
-                    startPointLayer[0] + j * widthX,
-                    startPointLayer[1] + j * widthY
-                ]);
-            }
+    //         // Calculating remaining point coordinates of layer
+    //         for (j = 1; j <= stepsV; j++) {
+    //             coords.push([
+    //                 startPointLayer[0] + j * widthX,
+    //                 startPointLayer[1] + j * widthY
+    //             ]);
+    //         }
 
-            // Connect rectangles by grouping indices of points
-            for (
-                j = coords.length - stepsV - 1;
-                j < coords.length - 1;
-                j++
-            ) {
-                faces.push([j, j - stepsV - 1, j - stepsV, j + 1]);
-            }
-        }
+    //         // Connect rectangles by grouping indices of points
+    //         for (
+    //             j = coords.length - stepsV - 1;
+    //             j < coords.length - 1;
+    //             j++
+    //         ) {
+    //             faces.push([j, j - stepsV - 1, j - stepsV, j + 1]);
+    //         }
+    //     }
 
-        return [coords, faces];
-    },
+    //     return [coords, faces];
+    // },
 
     /**
      * This function creates an array of dynamic 3-dimensional points
