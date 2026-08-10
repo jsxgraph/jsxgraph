@@ -190,7 +190,7 @@ JXG.View3D = function (board, parents, attributes) {
      * radius of the sphere where the camera sits.
      * @type Number
      */
-    this.r = -1;
+    this.r = 1;
 
     /**
      * The distance from the camera to the screen. Computed automatically from
@@ -714,17 +714,21 @@ JXG.extend(
             // bbox3D is always at the world origin, i.e. T_obj is the unit matrix.
             // All vectors contain affine coordinates and have length 3
             // The matrices are of size 4x4.
-            r, A;
+            r, diam, A;
 
         // set distance from view box center to camera
         r = this.evalVisProp('r');
+        diam = Mat.hypot(
+            this.bbox3D[0][0] - this.bbox3D[0][1],
+            this.bbox3D[1][0] - this.bbox3D[1][1],
+            this.bbox3D[2][0] - this.bbox3D[2][1]
+        );
         if (r === 'auto') {
-            r = Mat.hypot(
-                this.bbox3D[0][0] - this.bbox3D[0][1],
-                this.bbox3D[1][0] - this.bbox3D[1][1],
-                this.bbox3D[2][0] - this.bbox3D[2][1]
-            ) * 1.01;
+            r = diam * 1.01;
+        } else {
+            r = diam * r;
         }
+        this.r = r;
 
         // compute camera transformation
         // this.boxToCam = this.matrix3DRot.map((row) => row.slice());
@@ -744,14 +748,9 @@ JXG.extend(
     },
 
     // Update 3D-to-2D transformation matrix with the actual azimuth and elevation angles.
+    // Called in board.updateElements()
     update: function () {
-        var r = this.r,
-            stretch = [
-                [1, 0, 0, 0],
-                [0, -r, 0, 0],
-                [0, 0, -r, 0],
-                [0, 0, 0, 1]
-            ],
+        var r, rs, stretch,
             mat2D, objectToClip, size,
             dx, dy;
             // objectsList;
@@ -825,6 +824,21 @@ JXG.extend(
 
             case 'parallel': // Parallel projection
             default:
+                rs = this.evalVisProp('r');
+                if (rs === 'auto') {
+                    // r = this.r;
+                    r = 1.01;
+                } else {
+                    r = 1 / rs;
+                }
+                this.r = r;
+                stretch = [
+                    [1, 0, 0, 0],
+                    [0, r, 0, 0],
+                    [0, 0, r, 0],
+                    [0, 0, 0, r]
+                ];
+
                 // Add a final transformation to scale and shift the projection
                 // on the board, usually called viewport.
                 dx = this.bbox3D[0][1] - this.bbox3D[0][0];
