@@ -279,12 +279,11 @@ Mat.Tiling = {
      * The rectangle is represented by the 4 points (arrays of coordinates) given as
      * parameters.
      * @name rectangulation
-     * @type Array
      * @throws {Exception} if the given object - represented by four points - is no rectangle, exception is thrown
-     * @param {Array} p1
-     * @param {Array} p2
-     * @param {Array} p3
-     * @param {Array} p4
+     * @param {JXG.ParametricSurface3D|JXG.Plane3D} el element which is displayed using a polyhedron3d.
+     * From this element its function F is used.
+     * @param {Array} rg_u Begin and end of first direction (numbers or functions)
+     * @param {Array} rg_v Begin and end of second direction (numbers or functions)
      * @param {Number} stepsU Immutable
      * @param {Number} stepsV Immutable
      * @returns [coords,faces]
@@ -368,26 +367,12 @@ Mat.Tiling = {
                         // [le - 1 - stepsU - 1, le - 1 - stepsU, le, le - 1]
                         [le - 1, le, le - 1 - stepsU, le - 1 - stepsU - 1]
                     );
-                    // console.log(
-                    //     Type.evaluate(vertices[le][0]),
-                    //     Type.evaluate(vertices[le][1]),
-                    //     Type.evaluate(vertices[le][2])
-                    // )
-                    // console.log(faces[le])
                 }
             }
         }
         return [vertices, faces];
-
-        // Connect rectangles by grouping indices of points
-        // for (
-        //     j = coords.length - stepsV - 1;
-        //     j < coords.length - 1;
-        //     j++
-        // ) {
-        //     faces.push([j, j - stepsV - 1, j - stepsV, j + 1]);
-        // }
     },
+
     // rectangulation_old: function (p1, p2, p3, p4, stepsU, stepsV) {
     //     // Vectors used for checking if the given coordinates create a rectangle
     //     var vec1 = [p2[0] - p1[0], p2[1] - p1[1]],
