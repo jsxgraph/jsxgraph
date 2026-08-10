@@ -337,27 +337,27 @@ Mat.Tiling = {
                                 var ru = JXG.evaluate(rg_u),
                                     rv = JXG.evaluate(rg_v),
                                     v = el.F(
-                                    ru[0] + ii * (ru[1] - ru[0]) / stepsU,
-                                    rv[0] + jj * (rv[1] - rv[0]) / stepsV
-                                );
+                                        ru[0] + ii * (ru[1] - ru[0]) / stepsU,
+                                        rv[0] + jj * (rv[1] - rv[0]) / stepsV
+                                    );
                                 return (v.length === 4) ? v[1] : v[0];
                             },
                             function () {
                                 var ru = JXG.evaluate(rg_u),
                                     rv = JXG.evaluate(rg_v),
                                     v = el.F(
-                                    ru[0] + ii * (ru[1] - ru[0]) / stepsU,
-                                    rv[0] + jj * (rv[1] - rv[0]) / stepsV
-                                );
+                                        ru[0] + ii * (ru[1] - ru[0]) / stepsU,
+                                        rv[0] + jj * (rv[1] - rv[0]) / stepsV
+                                    );
                                 return (v.length === 4) ? v[2] : v[1];
                             },
                             function () {
                                 var ru = JXG.evaluate(rg_u),
                                     rv = JXG.evaluate(rg_v),
                                     v = el.F(
-                                    ru[0] + ii * (ru[1] - ru[0]) / stepsU,
-                                    rv[0] + jj * (rv[1] - rv[0]) / stepsV
-                                );
+                                        ru[0] + ii * (ru[1] - ru[0]) / stepsU,
+                                        rv[0] + jj * (rv[1] - rv[0]) / stepsV
+                                    );
                                 return (v.length === 4) ? v[3] : v[2];
                             }
                         ];
