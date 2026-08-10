@@ -331,30 +331,32 @@ Mat.Tiling = {
         for (j = 0; j <= stepsV; j++) {
             for (i = 0; i <= stepsU; i++) {
                 vertices.push(
-                    // () => F(
-                    //     JXG.evaluate(rg1[0]) + i * (JXG.evaluate(rg1[1]) - JXG.evaluate(rg1[0])) / stepsU,
-                    //     JXG.evaluate(rg2[0]) + j * (JXG.evaluate(rg2[1]) - JXG.evaluate(rg2[0])) / stepsV
-                    // )
                     (function (ii, jj) {
                         return [
                             function () {
-                                var v = el.F(
-                                    JXG.evaluate(rg_u[0]) + ii * (JXG.evaluate(rg_u[1]) - JXG.evaluate(rg_u[0])) / stepsU,
-                                    JXG.evaluate(rg_v[0]) + jj * (JXG.evaluate(rg_v[1]) - JXG.evaluate(rg_v[0])) / stepsV
+                                var ru = JXG.evaluate(rg_u),
+                                    rv = JXG.evaluate(rg_v),
+                                    v = el.F(
+                                    ru[0] + ii * (ru[1] - ru[0]) / stepsU,
+                                    rv[0] + jj * (rv[1] - rv[0]) / stepsV
                                 );
                                 return (v.length === 4) ? v[1] : v[0];
                             },
                             function () {
-                                var v = el.F(
-                                    JXG.evaluate(rg_u[0]) + ii * (JXG.evaluate(rg_u[1]) - JXG.evaluate(rg_u[0])) / stepsU,
-                                    JXG.evaluate(rg_v[0]) + jj * (JXG.evaluate(rg_v[1]) - JXG.evaluate(rg_v[0])) / stepsV
+                                var ru = JXG.evaluate(rg_u),
+                                    rv = JXG.evaluate(rg_v),
+                                    v = el.F(
+                                    ru[0] + ii * (ru[1] - ru[0]) / stepsU,
+                                    rv[0] + jj * (rv[1] - rv[0]) / stepsV
                                 );
                                 return (v.length === 4) ? v[2] : v[1];
                             },
                             function () {
-                                var v = el.F(
-                                    JXG.evaluate(rg_u[0]) + ii * (JXG.evaluate(rg_u[1]) - JXG.evaluate(rg_u[0])) / stepsU,
-                                    JXG.evaluate(rg_v[0]) + jj * (JXG.evaluate(rg_v[1]) - JXG.evaluate(rg_v[0])) / stepsV
+                                var ru = JXG.evaluate(rg_u),
+                                    rv = JXG.evaluate(rg_v),
+                                    v = el.F(
+                                    ru[0] + ii * (ru[1] - ru[0]) / stepsU,
+                                    rv[0] + jj * (rv[1] - rv[0]) / stepsV
                                 );
                                 return (v.length === 4) ? v[3] : v[2];
                             }

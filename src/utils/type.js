@@ -665,12 +665,23 @@ JXG.extend(
         /**
          * If <tt>val</tt> is a function, it will be evaluated without giving any parameters, else the input value
          * is just returned.
-         * @param val Could be anything. Preferably a number or a function.
+         * @param val Could be anything. Preferably a number or a function. If it is an array, evaluate() recurses
+         * into the elements.
          * @returns If <tt>val</tt> is a function, it is evaluated and the result is returned. Otherwise <tt>val</tt> is returned.
          */
         evaluate: function (val) {
+            var i, le, arr;
+
             if (this.isFunction(val)) {
                 return val();
+            }
+            if (this.isArray(val)) {
+                le = val.length;
+                arr = [];
+                for (i = 0; i < le; i++) {
+                    arr.push(this.evaluate(val[i]));
+                }
+                return arr;
             }
 
             return val;
