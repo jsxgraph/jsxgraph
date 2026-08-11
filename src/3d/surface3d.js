@@ -497,10 +497,9 @@ JXG.createParametricSurface3D = function (board, parents, attributes) {
     var view = parents[0],
         F, X, Y, Z,
         range_u, range_v, attr, attr2d,
-        ru0, ru1, rv0, rv1,
         base = null,
         transform = null,
-        surface,// steps,
+        surface,
         tiling, type,
         // colormap:
         m, ma, mi, ma_a, mi_a, s, v,
@@ -564,21 +563,9 @@ JXG.createParametricSurface3D = function (board, parents, attributes) {
 
     // Set style
     if (type !== 'wireframe') {
-        ru0 = el.range_u[0];
-        ru1 = el.range_u[1];
-        rv0 = el.range_v[0];
-        rv1 = el.range_v[1];
-
+        // Create a polyhedron representing the surface3d
         if (tiling === 'triangle' || tiling === 'rectangle') {
             if (tiling === 'triangle') {
-                // Check for tiling of surface: triangle
-                // In case tiling is set to triangle, we use JXG.Math.Tiling.triangulation
-                // to create a polyhedron representing the surface3d
-
-                // Steps used for triangulation is chosen as the maximum of stepsU and stepsV (see options3d)
-                // steps = Math.max(el.evalVisProp('stepsu'), el.evalVisProp('stepsv'));
-
-                // Uses steps and range of surface3d to create a base of triangles across the visible area of the surface3d object
                 surface = Tiling.triangulation(
                     el,
                     el.range_u,
@@ -587,11 +574,6 @@ JXG.createParametricSurface3D = function (board, parents, attributes) {
                 );
 
             } else if (tiling === "rectangle") {
-                // Check for tiling of functiongraph3d: rectangle
-                // In case tiling is set to rectangle, we use JXG.Math.Tiling.rectangulation
-                // to create a polyhedron representing the surface3d
-
-                // Use stepsU, stepsV (see options3d) and range of surface3d to create a base of rectangles across the visible area of the surface3d object
                 surface = Tiling.rectangulation(
                     el,
                     el.range_u,
@@ -607,14 +589,6 @@ JXG.createParametricSurface3D = function (board, parents, attributes) {
         el.element2D.setAttribute({ visible: false });
         // Eliminate the call to the expensive el.updateDataArray();
         el.element2D.updateDataArray = function() {};
-
-        // mapMeshTo3D is used to map the 2d-points created with triangulation / rectangulation to 3D.
-        // These points are realized as functions to enable dynamic changes to the surface3d,
-        // stores the dynamic points in coords
-        // coords = Tiling.mapMeshTo3D(surface, el);
-
-        // Reincorporate the dynamic points in coords into surface
-        // surface = [coords, surface[1]];
 
         if (type === 'colormap') {
             attr.polyhedron.shader.enabled = false;

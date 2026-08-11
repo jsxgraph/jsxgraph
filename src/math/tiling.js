@@ -156,7 +156,7 @@ Mat.Tiling = {
                                 val = el.F(u, v);
                             // return [u, v, val];
                             return (val.length === 4) ? val.slice(1) : val;
-                        }
+                        };
                     })(i, j, up)
                 );
 
@@ -241,35 +241,14 @@ Mat.Tiling = {
             for (i = 0; i <= stepsU; i++) {
                 vertices.push(
                     (function (ii, jj) {
-                        return [
-                            function () {
-                                var ru = JXG.evaluate(rg_u),
-                                    rv = JXG.evaluate(rg_v),
-                                    v = el.F(
-                                        ru[0] + ii * (ru[1] - ru[0]) / stepsU,
-                                        rv[0] + jj * (rv[1] - rv[0]) / stepsV
-                                    );
-                                return (v.length === 4) ? v[1] : v[0];
-                            },
-                            function () {
-                                var ru = JXG.evaluate(rg_u),
-                                    rv = JXG.evaluate(rg_v),
-                                    v = el.F(
-                                        ru[0] + ii * (ru[1] - ru[0]) / stepsU,
-                                        rv[0] + jj * (rv[1] - rv[0]) / stepsV
-                                    );
-                                return (v.length === 4) ? v[2] : v[1];
-                            },
-                            function () {
-                                var ru = JXG.evaluate(rg_u),
-                                    rv = JXG.evaluate(rg_v),
-                                    v = el.F(
-                                        ru[0] + ii * (ru[1] - ru[0]) / stepsU,
-                                        rv[0] + jj * (rv[1] - rv[0]) / stepsV
-                                    );
-                                return (v.length === 4) ? v[3] : v[2];
-                            }
-                        ];
+                        return function () {
+                            var ru = JXG.evaluate(rg_u),
+                                rv = JXG.evaluate(rg_v),
+                                u = ru[0] + ii * (ru[1] - ru[0]) / stepsU,
+                                v = rv[0] + jj * (rv[1] - rv[0]) / stepsV,
+                                val = el.F(u, v);
+                            return (val.length === 4) ? val.slice(1) : val;
+                        };
                     })(i, j)
                 );
                 if (i > 0 && j > 0) {
@@ -282,7 +261,7 @@ Mat.Tiling = {
             }
         }
         return [vertices, faces];
-    },
+    }
 
     // triangulation_old: function (p1, p2, p3, p4, stepsU, stepsV) {
     //     // Vectors used for checking if the given coordinates create a rectangle
@@ -529,42 +508,42 @@ Mat.Tiling = {
     //     return [coords, faces];
     // },
 
-    /**
-     * This function creates an array of dynamic 3-dimensional points
-     * based on an array of pairs of two coordinates.
-     * It uses a mathematical function to assign a third coordinate (the z-coordinate)
-     * to each pair of two coordinates.
-     * The 3-dimensional points are not stored directly.
-     * Instead the array stores JavaScript functions that utilize the mentioned mathematical function
-     * to return an array of three coordinates.
-     * This allows the recognition and proper visualization of changes to the underlying
-     * mathematical function.
-     * @name mapMeshTo3D
-     * @param {Array} surface
-     * @param {Parametricsurface3d} el
-     * @returns {Array} dynamicPoints array of [x, y, z] coordinates
-     *
-     * @private
-     * @memberof JXG.Math.Tiling
-     */
-    mapMeshTo3D: function (surface, el) {
-        var dynamicPoints = [], i;
+    // /**
+    //  * This function creates an array of dynamic 3-dimensional points
+    //  * based on an array of pairs of two coordinates.
+    //  * It uses a mathematical function to assign a third coordinate (the z-coordinate)
+    //  * to each pair of two coordinates.
+    //  * The 3-dimensional points are not stored directly.
+    //  * Instead the array stores JavaScript functions that utilize the mentioned mathematical function
+    //  * to return an array of three coordinates.
+    //  * This allows the recognition and proper visualization of changes to the underlying
+    //  * mathematical function.
+    //  * @name mapMeshTo3D
+    //  * @param {Array} surface
+    //  * @param {Parametricsurface3d} el
+    //  * @returns {Array} dynamicPoints array of [x, y, z] coordinates
+    //  *
+    //  * @private
+    //  * @memberof JXG.Math.Tiling
+    //  */
+    // mapMeshTo3D: function (surface, el) {
+    //     var dynamicPoints = [], i;
 
-        for (i = 0; i < surface[0].length; i++) {
-            dynamicPoints.push(
-                (function (u, v) {
-                    return function(x, y) { return el.F(u, v); };
-                })(surface[0][i][0], surface[0][i][1])
-            ); // Capture values explicitly
-            // dynamicPoints.push(
-            //     (function (u, v) {
-            //         return function(x, y) { return el.F(Type.evaluate(u), Type.evaluate(v)); };
-            //     })(surface[0][i][0], surface[0][i][1])
-            // ); // Capture values explicitly
-        }
+    //     for (i = 0; i < surface[0].length; i++) {
+    //         dynamicPoints.push(
+    //             (function (u, v) {
+    //                 return function(x, y) { return el.F(u, v); };
+    //             })(surface[0][i][0], surface[0][i][1])
+    //         ); // Capture values explicitly
+    //         // dynamicPoints.push(
+    //         //     (function (u, v) {
+    //         //         return function(x, y) { return el.F(Type.evaluate(u), Type.evaluate(v)); };
+    //         //     })(surface[0][i][0], surface[0][i][1])
+    //         // ); // Capture values explicitly
+    //     }
 
-        return dynamicPoints;
-    }
+    //     return dynamicPoints;
+    // }
 };
 
 export default Mat.Tiling;
