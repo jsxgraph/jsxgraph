@@ -91,35 +91,84 @@ Mat.Tiling = {
      * </script><pre>
      *
      * @example
-     * var i,
-     *     surface = JXG.Math.Tiling.triangulation([0,0], [0,4], [2,4], [2,0], 7, 3);
-     * for (i = 0; i < surface[1].length; i++) {
-     *     board.create('polygon',[
-     *         surface[0][surface[1][i][0]],
-     *         surface[0][surface[1][i][1]],
-     *         surface[0][surface[1][i][2]]
-     *     ]);
-     * }
+     * var rg = board.create('slider', [[-7, -7], [3, -7], [1, 4, 5]], { name: 'rg' }); // range
      *
+     * var box = [-5, 5];
+     * var view = board.create('view3d',
+     *     [[-5, -3], [8, 8],
+     *     [box, box, box]],
+     *     {
+     *         projection: 'central',
+     *         xPlaneRear: { visible: false },
+     *         yPlaneRear: { visible: false },
+     *         zPlaneRear: { visible: false }
+     *     });
      *
-     * </pre><div id="JXGee3b922e-0dcb-47f2-9ef8-c79cb13dd733" class="jxgbox" style="width: 300px; height: 300px;"></div>
+     * var range = [() => -rg.Value(), () => rg.Value()],
+     *     stepsU = 25,
+     *     // stepsV = 25,
+     *     F = (x, y) => [x, y, 3 * Math.sin(Math.sqrt(x ** 2 + y ** 2))];
+     *
+     * view.setView(0, Math.PI / 2); // Set view from above
+     *
+     * var el = { F: F }; // Fake surface3d element
+     *
+     * // stepsV not supplied -> approx. equilater triangles
+     * var surface = JXG.Math.Tiling.triangulation(el, range, range, stepsU);
+     * var pol = view.create('polyhedron3d', surface, {
+     *     shader: {
+     *         enabled: true,
+     *         light: {
+     *             dir: 0
+     *         }
+     *     },
+     *     fillColorArray: ['white'],
+     *     fillOpacity: 0.9,
+     *     strokeWidth: 0.2
+     * });
+     *
+     * </pre><div id="JXG37cb3ef3-a818-4114-97b6-954d0189e0fb" class="jxgbox" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
      *     (function() {
-     *         var board = JXG.JSXGraph.initBoard('JXGee3b922e-0dcb-47f2-9ef8-c79cb13dd733',
-     *             {boundingbox: [-1, 5, 3,-1], axis: true, showcopyright: false, shownavigation: false});
-     *     var i,
-     *         surface = JXG.Math.Tiling.triangulation([0,0],[0,4],[2,4],[2,0], 7, 3);
-     *     for (i = 0; i < surface[1].length; i++) {
-     *         board.create('polygon',[
-     *             surface[0][surface[1][i][0]],
-     *             surface[0][surface[1][i][1]],
-     *             surface[0][surface[1][i][2]]
-     *         ]);
-     *     }
+     *         var board = JXG.JSXGraph.initBoard('JXG37cb3ef3-a818-4114-97b6-954d0189e0fb',
+     *             {boundingbox: [-8, 8, 8,-8], axis: false, pan: { enabled: false }, showcopyright: false, shownavigation: false});
+     *     var rg = board.create('slider', [[-7, -7], [3, -7], [1, 4, 5]], { name: 'rg' });
+     *
+     *     var box = [-5, 5];
+     *     var view = board.create('view3d',
+     *         [[-5, -3], [8, 8],
+     *         [box, box, box]],
+     *         {
+     *             projection: 'central',
+     *             xPlaneRear: { visible: false },
+     *             yPlaneRear: { visible: false },
+     *             zPlaneRear: { visible: false }
+     *         });
+     *
+     *     var range = [() => -rg.Value(), () => rg.Value()],
+     *         stepsU = 25,
+     *         stepsV = 25,
+     *         F = (x, y) => [x, y, 3 * Math.sin(Math.sqrt(x ** 2 + y ** 2))];
+     *     view.setView(0, Math.PI / 2);
+     *
+     *     var el = { F: F }; // Fake surface3d element
+     *
+     *     var surface = JXG.Math.Tiling.triangulation(el, range, range, stepsU);
+     *     var pol = view.create('polyhedron3d', surface, {
+     *         shader: {
+     *             enabled: true,
+     *             light: {
+     *                 dir: 0
+     *             }
+     *         },
+     *         fillColorArray: ['white'],
+     *         fillOpacity: 0.9,
+     *         strokeWidth: 0.2
+     *     });
+     *
      *     })();
      *
      * </script><pre>
-     *
      *
      */
     triangulation: function (el, rg_u, rg_v, stepsU, stepsV) {
@@ -199,37 +248,86 @@ Mat.Tiling = {
      * @memberof JXG.Math.Tiling
      *
      * @example
-     * var i,
-     *     surface = JXG.Math.Tiling.rectangulation([0,0], [0,5], [2,5], [2,0], 6, 6);
-     * for (i = 0; i < surface[1].length; i++) {
-     *     board.create('polygon',[
-     *         surface[0][surface[1][i][0]],
-     *         surface[0][surface[1][i][1]],
-     *         surface[0][surface[1][i][2]],
-     *         surface[0][surface[1][i][3]]
-     *     ]);
-     * }
+     * var rg = board.create('slider', [[-7, -7], [3, -7], [1, 4, 5]], { name: 'rg' });
      *
-     * </pre><div id="JXG05cfba29-be76-482f-9d49-8ee4c36033e4" class="jxgbox" style="width: 300px; height: 300px;"></div>
+     * var box = [-5, 5];
+     * var view = board.create('view3d',
+     *     [[-5, -3], [8, 8],
+     *     [box, box, box]],
+     *     {
+     *         projection: 'central',
+     *         // axesPosition: 'center',
+     *         xPlaneRear: { visible: false },
+     *         yPlaneRear: { visible: false },
+     *         zPlaneRear: { visible: false }
+     *     });
+     *
+     * var range = [() => -rg.Value(), () => rg.Value()],
+     *     stepsU = 15,
+     *     stepsV = 5,
+     *     F = (x, y) => [x, y, 3 * Math.sin(Math.sqrt(x ** 2 + y ** 2))];
+     *
+     * view.setView(0, Math.PI / 2);  // Set view from above
+     *
+     * var el = { F: F }; // Fake surface3d element
+     *
+     * var surface = JXG.Math.Tiling.rectangulation(el, range, range, stepsU, stepsV);
+     * var pol = view.create('polyhedron3d', surface, {
+     *     shader: {
+     *         enabled: true,
+     *         light: {
+     *             dir: 0
+     *         }
+     *     },
+     *     fillColorArray: ['white'],
+     *     fillOpacity: 0.9,
+     *     strokeWidth: 0.2
+     * });
+     *
+     * </pre><div id="JXG8c99ffea-7edc-494a-b416-34d9c154d310" class="jxgbox" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
      *     (function() {
-     *         var board = JXG.JSXGraph.initBoard('JXG05cfba29-be76-482f-9d49-8ee4c36033e4',
-     *             {boundingbox: [-1, 6, 6,-1], axis: true, showcopyright: false, shownavigation: false});
-     *     var i,
-     *         surface = JXG.Math.Tiling.rectangulation([0,0],[0,5],[2,5],[2,0],6,6);
-     *     for (i=0; i<surface[1].length; i++) {
-     *         board.create('polygon',[
-     *            surface[0][surface[1][i][0]],
-     *            surface[0][surface[1][i][1]],
-     *            surface[0][surface[1][i][2]],
-     *            surface[0][surface[1][i][3]]
-     *         ]);
-     *     }
+     *         var board = JXG.JSXGraph.initBoard('JXG8c99ffea-7edc-494a-b416-34d9c154d310',
+     *             {boundingbox: [-8, 8, 8,-8], axis: false, pan: { enabled: false }, showcopyright: false, shownavigation: false});
+     *     var rg = board.create('slider', [[-7, -7], [3, -7], [1, 4, 5]], { name: 'rg' });
+     *
+     *     var box = [-5, 5];
+     *     var view = board.create('view3d',
+     *         [[-5, -3], [8, 8],
+     *         [box, box, box]],
+     *         {
+     *             projection: 'central',
+     *             // axesPosition: 'center',
+     *             xPlaneRear: { visible: false },
+     *             yPlaneRear: { visible: false },
+     *             zPlaneRear: { visible: false }
+     *         });
+     *
+     *     var range = [() => -rg.Value(), () => rg.Value()],
+     *         stepsU = 15,
+     *         stepsV = 5,
+     *         F = (x, y) => [x, y, 3 * Math.sin(Math.sqrt(x ** 2 + y ** 2))];
+     *
+     *     view.setView(0, Math.PI / 2);
+     *
+     *     var el = { F: F }; // Fake surface3d element
+     *
+     *     var surface = JXG.Math.Tiling.rectangulation(el, range, range, stepsU, stepsV);
+     *     var pol = view.create('polyhedron3d', surface, {
+     *         shader: {
+     *             enabled: true,
+     *             light: {
+     *                 dir: 0
+     *             }
+     *         },
+     *         fillColorArray: ['white'],
+     *         fillOpacity: 0.9,
+     *         strokeWidth: 0.2
+     *     });
      *
      *     })();
      *
      * </script><pre>
-     *
      *
      */
     rectangulation: function (el, rg_u, rg_v, stepsU, stepsV) {
