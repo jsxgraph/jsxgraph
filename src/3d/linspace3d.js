@@ -1682,7 +1682,7 @@ JXG.createPlane3D = function (board, parents, attributes) {
         surface,
         su, sv, type, tiling,
         m, ma, mi, ma_a, mi_a, s, v,
-        ru0, ru1, rv0, rv1, e,
+        e,
         staticColorMap = true,
         // bb, size,
         base = null,
@@ -1808,11 +1808,6 @@ JXG.createPlane3D = function (board, parents, attributes) {
             // Eliminate the call to the expensive el.updateDataArray();
             el.element2D.updateDataArray = function() {};
 
-            ru0 = Type.evaluate(el.range_u[0]);
-            ru1 = Type.evaluate(el.range_u[1]);
-            rv0 = Type.evaluate(el.range_v[0]);
-            rv1 = Type.evaluate(el.range_v[1]);
-
             // // Attempt to handle infinite planes
             // bb = el.view.bbox3D;
             // size = 0.5 * Math.sqrt((bb[0][0] - bb[0][1])**2 + (bb[1][0] - bb[1][1])**2 + (bb[2][0] - bb[2][1])**2);
@@ -1832,20 +1827,12 @@ JXG.createPlane3D = function (board, parents, attributes) {
 
             if (tiling === 'triangle') {
                 surface = Tiling.triangulation(
-                    [ru0, rv0],
-                    [ru0, rv1],
-                    [ru1, rv1],
-                    [ru1, rv0],
+                    el,
+                    el.range_u,
+                    el.range_v,
                     su, sv
                 );
             } else {
-                // surface = Tiling.rectangulation(
-                //     [ru0, rv0],
-                //     [ru0, rv1],
-                //     [ru1, rv1],
-                //     [ru1, rv0],
-                //     su, sv
-                // );
                 surface = Tiling.rectangulation(
                     el,
                     el.range_u,
