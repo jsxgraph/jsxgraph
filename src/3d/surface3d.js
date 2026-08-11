@@ -503,8 +503,7 @@ JXG.createParametricSurface3D = function (board, parents, attributes) {
         tiling, type,
         // colormap:
         m, ma, mi, ma_a, mi_a, s, v,
-        staticColorMap = true, e,
-        el;
+        staticColorMap, e, el;
 
     if (parents.length === 3) {
         base = parents[1];
@@ -593,7 +592,6 @@ JXG.createParametricSurface3D = function (board, parents, attributes) {
         if (type === 'colormap') {
             attr.polyhedron.shader.enabled = false;
 
-            // Static
             m = el.evalVisProp('colormap.max');
             ma = m[0];
             ma_a = m[1];
@@ -602,6 +600,10 @@ JXG.createParametricSurface3D = function (board, parents, attributes) {
             mi_a = m[1];
             s = el.evalVisProp('colormap.s');
             v = el.evalVisProp('colormap.v');
+
+            // Check if the colormap is static, i.e.
+            // no sub-property in colormap is a function
+            staticColorMap = true;
             for (e in el.visProp.colormap) {
                 if (el.visProp.colormap.hasOwnProperty(e)) {
                     if (Type.isFunction(el.visProp.colormap[e])) {
@@ -613,38 +615,40 @@ JXG.createParametricSurface3D = function (board, parents, attributes) {
 
             attr.polyhedron.fillcolorarray = [];
             attr.polyhedron.fillcolor = (self) => {
-                    var j, hsl,
-                        z = 0,
-                        p = self.polyhedron,
-                        face = p.faces[self.faceNumber],
-                        le = face.length;
+                var j, hsl,
+                    z = 0,
+                    p = self.polyhedron,
+                    face = p.faces[self.faceNumber],
+                    le = face.length;
 
-                    // Dynamic version
-                    if (!staticColorMap) {
-                        m = el.evalVisProp('colormap.max');
-                        ma = m[0];
-                        ma_a = m[1];
-                        m = el.evalVisProp('colormap.min');
-                        mi = m[0];
-                        mi_a = m[1];
-                    }
+                // Dynamic version
+                if (!staticColorMap) {
+                    m = el.evalVisProp('colormap.max');
+                    ma = m[0];
+                    ma_a = m[1];
+                    m = el.evalVisProp('colormap.min');
+                    mi = m[0];
+                    mi_a = m[1];
+                }
 
-                    if (le !== 0) {
-                        for (j = 0; j < le; j++) {
-                            z += p.coords[face[j]][3];
-                        }
-                        z /= le;
+                // Determine the z-coordinate of the face's centroid
+                if (le !== 0) {
+                    for (j = 0; j < le; j++) {
+                        z += p.coords[face[j]][3];
                     }
-                    z = mi_a + (z - mi) * (ma_a - mi_a) / (ma - mi);
+                    z /= le;
+                }
+                // Map z to the color interval
+                z = mi_a + (z - mi) * (ma_a - mi_a) / (ma - mi);
 
-                    if (staticColorMap) {
-                        hsl = JXG.hsv2hsl(z, s, v);
-                    } else {
-                        // Dynamic version - slower
-                        hsl = JXG.hsv2hsl(z, el.evalVisProp('colormap.s'), el.evalVisProp('colormap.v'));
-                    }
-                    return `hsl(${z} ${hsl[1] * 100}% ${hsl[2] * 100}%)`;
-                };
+                if (staticColorMap) {
+                    hsl = JXG.hsv2hsl(z, s, v);
+                } else {
+                    // Dynamic version - slower
+                    hsl = JXG.hsv2hsl(z, el.evalVisProp('colormap.s'), el.evalVisProp('colormap.v'));
+                }
+                return `hsl(${z} ${hsl[1] * 100}% ${hsl[2] * 100}%)`;
+            };
         } else if (type === 'shader') {
             attr.polyhedron.shader.enabled = true;
         } else {
