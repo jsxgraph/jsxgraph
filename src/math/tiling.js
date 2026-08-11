@@ -45,23 +45,22 @@ import Mat from "./math.js";
  */
 Mat.Tiling = {
     /**
-     * A function which is used to triangulate a given rectangle (partition it into triangles).
-     * The rectangle is represented by four points p1, p2, p3, p4 (arrays of coordinates) given as parameters.
-     * It is triangulated in rows.
-     * The number and shape of the triangles depends on parameters stepsU and stepsV.
+     * Triangulate (partition it into triangles) a given two dimensional domain.
+     * The number of triangles the original rectangle is divided into depends on the parameters stepsU and stepsV.
+     * Input are the ranges of u and v, as well as stepsU and stepsV which are static.
      * If the optional parameter stepsV is not given or is equal to 0, the rectangle is partitioned into
-     * equilateral triangles. Otherwise, the shape of the triangles depends on the ratio of stepsU / stepsV.
+     * nearly equilateral triangles.
+     * Otherwise, the shape of the triangles depends on the ratio of stepsU / stepsV.
      * @name triangulation
-     * @param {Array} p1
-     * @param {Array} p2
-     * @param {Array} p3
-     * @param {Array} p4
-     * @param {Number} stepsU
-     * @param {Number} [stepsV=0]
+     * @param {JXG.ParametricSurface3D|JXG.Plane3D} el element which is displayed using a polyhedron3d.
+     * From this element its function F is used.
+     * @param {Array} rg_u Begin and end of first direction (numbers or functions)
+     * @param {Array} rg_v Begin and end of second direction (numbers or functions)
+     * @param {Number} stepsU Immutable
+     * @param {Number} [stepsV=0] Immutable
      * @returns [coords,faces]
      * @memberof JXG.Math.Tiling
      *
-     * @throws {Exception} if the given object- represented by 4 points- is no rectangle ,an exception is thrown
      * @example
      * var i,
      *     surface = JXG.Math.Tiling.triangulation([0,0], [0,4], [2,4], [2,0], 6);
@@ -72,7 +71,6 @@ Mat.Tiling = {
      *         surface[0][surface[1][i][2]]
      *     ]);
      * }
-     *
      *
      * </pre><div id="JXG948307f3-fc6b-4dc6-92d6-40eaa7918ee0" class="jxgbox" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
@@ -124,162 +122,73 @@ Mat.Tiling = {
      *
      *
      */
-    triangulation: function (p1, p2, p3, p4, stepsU, stepsV) {
-        // Vectors used for checking if the given coordinates create a rectangle
-        var vec1 = [p2[0] - p1[0], p2[1] - p1[1]],
-            vec2 = [p3[0] - p2[0], p3[1] - p2[1]],
-            vec3 = [p4[0] - p3[0], p4[1] - p3[1]],
-            vec4 = [p1[0] - p4[0], p1[1] - p4[1]],
-
-            coords = [],
-            faces = [],
-            width, height,
-            wSide, hSide,
-            triangleWidth, triangleHeight,
-            s1, s2,
-            i, j,
-            numRows,
-            widthX, widthY, heightX, heightY,
-            oddPoints,
-            evenPoints;
-
-        // Check if the given coordinates create a rectangle, otherwise an exception is thrown
-        if (
-            vec1[0] * vec4[0] + vec1[1] * vec4[1] !== 0 ||
-            vec2[0] * vec1[0] + vec2[1] * vec1[1] !== 0 ||
-            vec3[0] * vec2[0] + vec3[1] * vec2[1] !== 0 ||
-            vec4[0] * vec3[0] + vec4[1] * vec3[1] !== 0
-        ) {
-            throw new Error(" the board created is not rectangle  ");
-        }
-
-        // Set initial values for wSide, hSide
-        wSide = [0, 0];
-        hSide = [0, 0];
-
-        // Check for longer side of rectangle:
-        // longer side is appointed height, shorter side is appointed width
-        s1 = Math.sqrt((p2[0] - p1[0]) * (p2[0] - p1[0]) + (p2[1] - p1[1]) * (p2[1] - p1[1]));
-        s2 = Math.sqrt((p3[0] - p2[0]) * (p3[0] - p2[0]) + (p3[1] - p2[1]) * (p3[1] - p2[1]));
-        if (s1 <= s2) {
-            width = s1;
-            height = s2;
-            // Determine start and end points of the width-side and height-side
-            wSide = [p1, p2];
-            hSide = [p2, p3];
-        } else {
-            width = s2;
-            height = s1;
-            // Determine start and end points of the width-side and height-side
-            wSide = [p2, p3];
-            hSide = [p1, p2];
-        }
-        // Calculate height and width of the triangles and number of rows
-        triangleWidth = width / stepsU;
+    triangulation: function (el, rg_u, rg_v, stepsU, stepsV) {
+        var i, j, le,
+            up,
+            ru, rv, du, dv,
+            vertices = [],
+            faces = [];
 
         if (stepsV === undefined || stepsV === 0) {
-            // Equilateral triangles, depending on parameter "stepsU"
-            triangleHeight = (triangleWidth * Math.sqrt(3)) / 2;
-            numRows = Math.round(height / triangleHeight);
-        } else {
-            // Two parameters stepsU, stepsV
-            numRows = stepsV;
-            triangleHeight = height / numRows;
+            // Approximate equilateral triangles
+            ru = JXG.evaluate(rg_u);
+            rv = JXG.evaluate(rg_v);
+            du = (ru[1] - ru[0]) / stepsU;
+            dv = du * Math.sqrt(3) / 2;
+            stepsV = Math.round(Math.abs(rv[1] - rv[0]) / dv);
         }
+        for (j = 0; j <= stepsV; j++) {
+            up = (j % 2 === 0) ? stepsU : stepsU + 1;
+            for (i = 0; i <= up; i++) {
+                // Generate vertices
+                vertices.push(
+                    (function (ii, jj, up) {
+                        var s = ii;
+                        if (jj % 2 === 1) {
+                            s = (ii === up) ? (ii - 1) : ((ii > 0) ? (ii - 0.5) : s);
+                        }
 
-        // Calculate values of "shifting vectors"
-        widthX = (wSide[1][0] - wSide[0][0]) / stepsU;
-        widthY = (wSide[1][1] - wSide[0][1]) / stepsU;
-        heightX = (hSide[1][0] - hSide[0][0]) / numRows;
-        heightY = (hSide[1][1] - hSide[0][1]) / numRows;
+                        return function () {
+                            var ru = JXG.evaluate(rg_u),
+                                rv = JXG.evaluate(rg_v),
+                                u = ru[0] + s * (ru[1] - ru[0]) / stepsU,
+                                v = rv[0] + jj * (rv[1] - rv[0]) / stepsV,
+                                val = el.F(u, v);
+                            // return [u, v, val];
+                            return (val.length === 4) ? val.slice(1) : val;
+                        }
+                    })(i, j, up)
+                );
 
-        oddPoints = [];
-        evenPoints = [];
-
-        // Push coordinates of the base point (p1)
-        coords.push([p1[0], p1[1]]);
-        evenPoints.push(coords.length - 1);
-
-        // Calculate point coordinates of layer 0 and store indices in evenPoints
-        for (i = 1; i <= stepsU; i++) {
-            coords.push([p1[0] + i * widthX, p1[1] + i * widthY]); // Points first line
-            evenPoints.push(coords.length - 1);
-        }
-
-        for (i = 1; i <= numRows; i++) {
-            if (i % 2 === 0) {
-                // Points and faces of layers with an even index
-
-                evenPoints = [];
-                // Calculate first point coordinates within the layer
-                coords.push([
-                    p1[0] + i * heightX,
-                    p1[1] + i * heightY
-                ]);
-                // evenPoints stores index of the first point of the layer
-                evenPoints.push(coords.length - 1);
-                // Calculate all other point coordinates within the layer
-                for (j = 1; j <= stepsU; j++) {
-                    coords.push([
-                        coords[evenPoints[0]][0] + j * widthX,
-                        coords[evenPoints[0]][1] + j * widthY
-                    ]);
-                    //evenPoints stores index of the most recently calculated point of the layer
-                    evenPoints.push(coords.length - 1);
-                }
-                // Connect the faces of the row by grouping indices of points
-                faces.push([evenPoints[0], oddPoints[0], oddPoints[1]]);
-                for (j = 1; j <= stepsU; j++) {
-                    faces.push([evenPoints[j - 1], oddPoints[j], evenPoints[j]]);
-                    faces.push([evenPoints[j], oddPoints[j], oddPoints[j + 1]]);
-                }
-            } else {
-                // Points and faces of layers with an odd index
-
-                oddPoints = [];
-                // Calculate first point coordinates within the layer
-                coords.push([
-                    p1[0] + i * heightX,
-                    p1[1] + i * heightY
-                ]);
-                // oddPoints stores index of the first point of the layer
-                oddPoints.push(coords.length - 1);
-                // Calculate all other point coordinates within the layer except for the last point
-                for (j = 1; j <= stepsU; j++) {
-                    coords.push([
-                        coords[oddPoints[0]][0] + j * widthX - widthX / 2,
-                        coords[oddPoints[0]][1] + j * widthY - widthY / 2
-                    ]);
-                    // oddPoints stores index of the most recently calculated point of the layer
-                    oddPoints.push(coords.length - 1);
-                }
-                // Calculate last point coordinates within the layer
-                coords.push([
-                    coords[oddPoints[0]][0] + stepsU * widthX,
-                    coords[oddPoints[0]][1] + stepsU * widthY
-                ]);
-                // oddPoints stores index of last point within the layer
-                oddPoints.push(coords.length - 1);
-                // Connect the faces of the row by grouping indices of points
-                faces.push([oddPoints[0], evenPoints[0], oddPoints[1]]);
-                for (j = 1; j <= stepsU; j++) {
-                    faces.push([oddPoints[j], evenPoints[j - 1], evenPoints[j]]);
-                    faces.push([oddPoints[j], evenPoints[j], oddPoints[j + 1]]);
+                // Generate faces
+                if (j > 0) {
+                    le = vertices.length - 1;
+                    if (j % 2 === 1) {
+                        if (i > 0) {
+                            faces.push([le - 1, le, le - 2 - stepsU]);
+                            if (i < up) {
+                                faces.push([le, le - 1 - stepsU, le - 2 - stepsU]);
+                            } else {
+                                faces.push([le - 1, le, le - 2 - stepsU]);
+                            }
+                        }
+                    } else {
+                        if (i > 0) {
+                            faces.push([le, le - 2 - stepsU, le - 1]);
+                        }
+                        faces.push([le, le - 1 - stepsU, le - 2 - stepsU]);
+                    }
                 }
             }
         }
-
-        return [coords, faces];
+        return [vertices, faces];
     },
 
     /**
-     * A function which is used to rectangulate a given rectangle (partition it into rectangles).
-     * The rectangle is rectangulated in rows. The number of rectangles the original
-     * rectangle is divided into depends on the parameters stepsU and stepsV.
-     * The rectangle is represented by the 4 points (arrays of coordinates) given as
-     * parameters.
+     * Rectangulate (partition it into rectangles) a given two dimensional domain.
+     * The number of rectangles the original rectangle is divided into depends on the parameters stepsU and stepsV.
+     * Input are the ranges of u and v, as well as stepsU and stepsV which are static.
      * @name rectangulation
-     * @throws {Exception} if the given object - represented by four points - is no rectangle, exception is thrown
      * @param {JXG.ParametricSurface3D|JXG.Plane3D} el element which is displayed using a polyhedron3d.
      * From this element its function F is used.
      * @param {Array} rg_u Begin and end of first direction (numbers or functions)
@@ -374,6 +283,154 @@ Mat.Tiling = {
         }
         return [vertices, faces];
     },
+
+    // triangulation_old: function (p1, p2, p3, p4, stepsU, stepsV) {
+    //     // Vectors used for checking if the given coordinates create a rectangle
+    //     var vec1 = [p2[0] - p1[0], p2[1] - p1[1]],
+    //         vec2 = [p3[0] - p2[0], p3[1] - p2[1]],
+    //         vec3 = [p4[0] - p3[0], p4[1] - p3[1]],
+    //         vec4 = [p1[0] - p4[0], p1[1] - p4[1]],
+
+    //         coords = [],
+    //         faces = [],
+    //         width, height,
+    //         wSide, hSide,
+    //         triangleWidth, triangleHeight,
+    //         s1, s2,
+    //         i, j,
+    //         numRows,
+    //         widthX, widthY, heightX, heightY,
+    //         oddPoints,
+    //         evenPoints;
+
+    //     // Check if the given coordinates create a rectangle, otherwise an exception is thrown
+    //     if (
+    //         vec1[0] * vec4[0] + vec1[1] * vec4[1] !== 0 ||
+    //         vec2[0] * vec1[0] + vec2[1] * vec1[1] !== 0 ||
+    //         vec3[0] * vec2[0] + vec3[1] * vec2[1] !== 0 ||
+    //         vec4[0] * vec3[0] + vec4[1] * vec3[1] !== 0
+    //     ) {
+    //         throw new Error(" the board created is not rectangle  ");
+    //     }
+
+    //     // Set initial values for wSide, hSide
+    //     wSide = [0, 0];
+    //     hSide = [0, 0];
+
+    //     // Check for longer side of rectangle:
+    //     // longer side is appointed height, shorter side is appointed width
+    //     s1 = Math.sqrt((p2[0] - p1[0]) * (p2[0] - p1[0]) + (p2[1] - p1[1]) * (p2[1] - p1[1]));
+    //     s2 = Math.sqrt((p3[0] - p2[0]) * (p3[0] - p2[0]) + (p3[1] - p2[1]) * (p3[1] - p2[1]));
+    //     if (s1 <= s2) {
+    //         width = s1;
+    //         height = s2;
+    //         // Determine start and end points of the width-side and height-side
+    //         wSide = [p1, p2];
+    //         hSide = [p2, p3];
+    //     } else {
+    //         width = s2;
+    //         height = s1;
+    //         // Determine start and end points of the width-side and height-side
+    //         wSide = [p2, p3];
+    //         hSide = [p1, p2];
+    //     }
+    //     // Calculate height and width of the triangles and number of rows
+    //     triangleWidth = width / stepsU;
+
+    //     if (stepsV === undefined || stepsV === 0) {
+    //         // Equilateral triangles, depending on parameter "stepsU"
+    //         triangleHeight = (triangleWidth * Math.sqrt(3)) / 2;
+    //         numRows = Math.round(height / triangleHeight);
+    //     } else {
+    //         // Two parameters stepsU, stepsV
+    //         numRows = stepsV;
+    //         triangleHeight = height / numRows;
+    //     }
+
+    //     // Calculate values of "shifting vectors"
+    //     widthX = (wSide[1][0] - wSide[0][0]) / stepsU;
+    //     widthY = (wSide[1][1] - wSide[0][1]) / stepsU;
+    //     heightX = (hSide[1][0] - hSide[0][0]) / numRows;
+    //     heightY = (hSide[1][1] - hSide[0][1]) / numRows;
+
+    //     oddPoints = [];
+    //     evenPoints = [];
+
+    //     // Push coordinates of the base point (p1)
+    //     coords.push([p1[0], p1[1]]);
+    //     evenPoints.push(coords.length - 1);
+
+    //     // Calculate point coordinates of layer 0 and store indices in evenPoints
+    //     for (i = 1; i <= stepsU; i++) {
+    //         coords.push([p1[0] + i * widthX, p1[1] + i * widthY]); // Points first line
+    //         evenPoints.push(coords.length - 1);
+    //     }
+
+    //     for (i = 1; i <= numRows; i++) {
+    //         if (i % 2 === 0) {
+    //             // Points and faces of layers with an even index
+
+    //             evenPoints = [];
+    //             // Calculate first point coordinates within the layer
+    //             coords.push([
+    //                 p1[0] + i * heightX,
+    //                 p1[1] + i * heightY
+    //             ]);
+    //             // evenPoints stores index of the first point of the layer
+    //             evenPoints.push(coords.length - 1);
+    //             // Calculate all other point coordinates within the layer
+    //             for (j = 1; j <= stepsU; j++) {
+    //                 coords.push([
+    //                     coords[evenPoints[0]][0] + j * widthX,
+    //                     coords[evenPoints[0]][1] + j * widthY
+    //                 ]);
+    //                 //evenPoints stores index of the most recently calculated point of the layer
+    //                 evenPoints.push(coords.length - 1);
+    //             }
+    //             // Connect the faces of the row by grouping indices of points
+    //             faces.push([evenPoints[0], oddPoints[0], oddPoints[1]]);
+    //             for (j = 1; j <= stepsU; j++) {
+    //                 faces.push([evenPoints[j - 1], oddPoints[j], evenPoints[j]]);
+    //                 faces.push([evenPoints[j], oddPoints[j], oddPoints[j + 1]]);
+    //             }
+    //         } else {
+    //             // Points and faces of layers with an odd index
+
+    //             oddPoints = [];
+    //             // Calculate first point coordinates within the layer
+    //             coords.push([
+    //                 p1[0] + i * heightX,
+    //                 p1[1] + i * heightY
+    //             ]);
+    //             // oddPoints stores index of the first point of the layer
+    //             oddPoints.push(coords.length - 1);
+    //             // Calculate all other point coordinates within the layer except for the last point
+    //             for (j = 1; j <= stepsU; j++) {
+    //                 coords.push([
+    //                     coords[oddPoints[0]][0] + j * widthX - widthX / 2,
+    //                     coords[oddPoints[0]][1] + j * widthY - widthY / 2
+    //                 ]);
+    //                 // oddPoints stores index of the most recently calculated point of the layer
+    //                 oddPoints.push(coords.length - 1);
+    //             }
+    //             // Calculate last point coordinates within the layer
+    //             coords.push([
+    //                 coords[oddPoints[0]][0] + stepsU * widthX,
+    //                 coords[oddPoints[0]][1] + stepsU * widthY
+    //             ]);
+    //             // oddPoints stores index of last point within the layer
+    //             oddPoints.push(coords.length - 1);
+    //             // Connect the faces of the row by grouping indices of points
+    //             faces.push([oddPoints[0], evenPoints[0], oddPoints[1]]);
+    //             for (j = 1; j <= stepsU; j++) {
+    //                 faces.push([oddPoints[j], evenPoints[j - 1], evenPoints[j]]);
+    //                 faces.push([oddPoints[j], evenPoints[j], oddPoints[j + 1]]);
+    //             }
+    //         }
+    //     }
+
+    //     return [coords, faces];
+    // },
 
     // rectangulation_old: function (p1, p2, p3, p4, stepsU, stepsV) {
     //     // Vectors used for checking if the given coordinates create a rectangle

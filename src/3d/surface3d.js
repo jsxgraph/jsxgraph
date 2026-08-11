@@ -580,11 +580,9 @@ JXG.createParametricSurface3D = function (board, parents, attributes) {
 
                 // Uses steps and range of surface3d to create a base of triangles across the visible area of the surface3d object
                 surface = Tiling.triangulation(
-                    [ru0, rv0],
-                    [ru0, rv1],
-                    [ru1, rv1],
-                    [ru1, rv0],
-                    // Given ratio or equilateral triangle if stepsV==0
+                    el,
+                    el.range_u,
+                    el.range_v,
                     el.evalVisProp('stepsu'), el.evalVisProp('stepsv')
                 );
 
