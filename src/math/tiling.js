@@ -62,35 +62,6 @@ Mat.Tiling = {
      * @memberof JXG.Math.Tiling
      *
      * @example
-     * var i,
-     *     surface = JXG.Math.Tiling.triangulation([0,0], [0,4], [2,4], [2,0], 6);
-     * for (i = 0; i < surface[1].length; i++) {
-     *     board.create('polygon',[
-     *         surface[0][surface[1][i][0]],
-     *         surface[0][surface[1][i][1]],
-     *         surface[0][surface[1][i][2]]
-     *     ]);
-     * }
-     *
-     * </pre><div id="JXG948307f3-fc6b-4dc6-92d6-40eaa7918ee0" class="jxgbox" style="width: 300px; height: 300px;"></div>
-     * <script type="text/javascript">
-     *     (function() {
-     *         var board = JXG.JSXGraph.initBoard('JXG948307f3-fc6b-4dc6-92d6-40eaa7918ee0',
-     *             {boundingbox: [-1, 5, 3,-1], axis: true, showcopyright: false, shownavigation: false});
-     *     var i,
-     *         surface = JXG.Math.Tiling.triangulation([0,0],[0,4],[2,4],[2,0], 6);
-     *     for (i = 0; i < surface[1].length; i++) {
-     *         board.create('polygon',[
-     *             surface[0][surface[1][i][0]],
-     *             surface[0][surface[1][i][1]],
-     *             surface[0][surface[1][i][2]]
-     *         ]);
-     *     }
-     *     })();
-     *
-     * </script><pre>
-     *
-     * @example
      * var rg = board.create('slider', [[-7, -7], [3, -7], [1, 4, 5]], { name: 'rg' }); // range
      *
      * var box = [-5, 5];
