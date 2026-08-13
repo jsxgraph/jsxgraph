@@ -747,7 +747,7 @@ JXG.extend(
      */
     _updateCentralProjection: function () {
         var zf = 20, // near clip plane
-            zn = 8, // far clip plane
+            zn = 8,  // far clip plane
 
             // See https://www.mathematik.uni-marburg.de/~thormae/lectures/graphics1/graphics_6_1_eng_web.html
             // bbox3D is always at the world origin, i.e. T_obj is the unit matrix.
@@ -758,7 +758,7 @@ JXG.extend(
         // Set distance from view box center to camera
         r = this.getCameraDistance();
 
-        // compute camera transformation
+        // Compute camera transformation
         // this.boxToCam = this.matrix3DRot.map((row) => row.slice());
         this.boxToCam = this.matrix3DRot.map(function (row) { return row.slice(); });
         this.boxToCam[3][0] = -r;

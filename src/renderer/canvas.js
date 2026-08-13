@@ -1394,6 +1394,7 @@ JXG.extend(
                     } else {
                         // Chrome has problems with values  being too far away.
                         // 2026: seems to be obsolete, see comments in SVG.updatePathStringPrim
+                        // In SVG we still have to clip with M = 2**24-1
                         // If needed, it should be adapted to not do changes in place, see svg
                         // if (scr[1] > M) {
                         //     scr[1] = M;

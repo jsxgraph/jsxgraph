@@ -2114,8 +2114,11 @@ JXG.extend(
                 // we need to call the listener when having @media: print.
                 try {
                     // window.matchMedia('print').addEventListener('change', this.printListenerMatch.apply(this, arguments));
-                    window.matchMedia('print').addEventListener('change', this.printListenerMatch.bind(this));
-                    window.matchMedia('screen').addEventListener('change', this.printListenerMatch.bind(this));
+                    this.printListenerMatchBound = this.printListenerMatch.bind(this);
+                    this.printMediaQuery = window.matchMedia('print');
+                    this.screenMediaQuery = window.matchMedia('screen');
+                    this.printMediaQuery.addEventListener('change', this.printListenerMatchBound);
+                    this.screenMediaQuery.addEventListener('change', this.printListenerMatchBound);
                     this.resizeHandlers.push('print');
                 } catch (err) {
                     JXG.debug("Error adding printListener", err);
@@ -2165,8 +2168,11 @@ JXG.extend(
                             Env.removeEvent(window, 'scroll', this.scrollListener, this);
                             break;
                         case 'print':
-                            window.matchMedia('print').removeEventListener('change', this.printListenerMatch.bind(this), false);
-                            window.matchMedia('screen').removeEventListener('change', this.printListenerMatch.bind(this), false);
+                            this.printMediaQuery.removeEventListener('change', this.printListenerMatchBound, false);
+                            this.screenMediaQuery.removeEventListener('change', this.printListenerMatchBound, false);
+                            this.printMediaQuery = null;
+                            this.screenMediaQuery = null;
+                            this.printListenerMatchBound = null;
                             break;
                         // case 'afterprint':
                         //     Env.removeEvent(window, 'afterprint', this.printListener, this);
@@ -6705,13 +6711,18 @@ JXG.extend(
                 }
                 switch (key) {
                     case 'axis':
-                        if (value === false) {
-                            if (Type.exists(this.defaultAxes)) {
-                                this.defaultAxes.x.setAttribute({ visible: false });
-                                this.defaultAxes.y.setAttribute({ visible: false });
-                            }
+                        if (Type.exists(this.defaultAxes)) {
+                            this.defaultAxes.x.setAttribute({ visible: value });
+                            this.defaultAxes.y.setAttribute({ visible: value });
+                            this.attr[key] = value;
                         } else {
-                            // TODO
+                            if (value === true) {
+                                // create the default axis
+                                this.defaultAxes = {};
+                                this.defaultAxes.x = this.create("axis", [[0, 0], [1, 0]]);
+                                this.defaultAxes.y = this.create("axis", [[0, 0], [0, 1]]);
+                                this.attr[key] = true;
+                            }
                         }
                         break;
                     case 'cssstyle':

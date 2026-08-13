@@ -114,10 +114,11 @@ JXG.extend(
     /** @lends JXG.Face3D.prototype */ {
 
         /**
-         * Update the coordinates of all vertices of the polyhedron
+         * Update the coordinates of ALL vertices of the polyhedron.
          * @function
          * @name Face3D#updateCoords
          * @returns {Face3D} reference to itself
+         * @see Polyhedron3D#def
          */
         updateCoords: function() {
             var i, j, le, p,

@@ -325,11 +325,15 @@ JXG.extend(Options, {
          */
         xPlaneFront: {
             visible: false,
+            type: 'wireframe',
             strokeWidth: 1,
             strokeColor: '#dddddd',
-            fillColor: '#dddddd',
+            fillColor: 'none',
             layer: 0,
-            mesh3d: { layer: 1 },
+            mesh3d: {
+                layer: 1,
+                visible: false
+            },
 
             stepsU: 10,
             stepsV: 10,
@@ -337,6 +341,10 @@ JXG.extend(Options, {
             polyhedron: {
                 visible: 'inherit',
                 strokeWidth: 0.5,
+                strokeOpacity: 0.7,
+                strokeColor: '#cccccc',
+                fillOpacity: 0.30,
+                fillColorArray: ['#e7e7e7'],
                 shader: {
                     enabled: true,
                     fixed: true,
@@ -355,11 +363,15 @@ JXG.extend(Options, {
          */
         yPlaneFront: {
             visible: false,
+            type: 'wireframe',
             strokeWidth: 1,
             strokeColor: '#dddddd',
-            fillColor: '#dddddd',
+            fillColor: 'none',
             layer: 0,
-            mesh3d: { layer: 1 },
+            mesh3d: {
+                layer: 1,
+                visible: false
+            },
 
             stepsU: 10,
             stepsV: 10,
@@ -367,6 +379,10 @@ JXG.extend(Options, {
             polyhedron: {
                 visible: 'inherit',
                 strokeWidth: 0.5,
+                strokeOpacity: 0.7,
+                strokeColor: '#cccccc',
+                fillOpacity: 0.30,
+                fillColorArray: ['#e7e7e7'],
                 shader: {
                     enabled: true,
                     fixed: true,
@@ -385,11 +401,15 @@ JXG.extend(Options, {
          */
         zPlaneFront: {
             visible: false,
+            type: 'wireframe',
             strokeWidth: 1,
             strokeColor: '#dddddd',
-            fillColor: '#dddddd',
+            fillColor: 'none',
             layer: 0,
-            mesh3d: { layer: 1 },
+            mesh3d: {
+                layer: 1,
+                visible: false
+            },
 
             stepsU: 10,
             stepsV: 10,
@@ -397,6 +417,10 @@ JXG.extend(Options, {
             polyhedron: {
                 visible: 'inherit',
                 strokeWidth: 0.5,
+                strokeOpacity: 0.7,
+                strokeColor: '#cccccc',
+                fillOpacity: 0.30,
+                fillColorArray: ['#e7e7e7'],
                 shader: {
                     enabled: true,
                     fixed: true,
@@ -438,7 +462,7 @@ JXG.extend(Options, {
          * @name View3D#xPlaneFrontYAxis
          */
         xPlaneFrontYAxis: {
-            visible: 'inherit',
+            visible: false,
             strokeColor: "#888888",
             strokeWidth: 1.2,
             layer: 12
@@ -449,7 +473,7 @@ JXG.extend(Options, {
          * @name View3D#xPlaneFrontZAxis
          */
         xPlaneFrontZAxis: {
-            visible: 'inherit',
+            visible: false,
             strokeColor: "#888888",
             strokeWidth: 1.2,
             layer: 12
@@ -482,7 +506,7 @@ JXG.extend(Options, {
          * @name View3D#yPlaneFrontXAxis
          */
         yPlaneFrontXAxis: {
-            visible: 'inherit',
+            visible: false,
             strokeColor: "#888888",
             strokeWidth: 1.2,
             layer: 12
@@ -493,7 +517,7 @@ JXG.extend(Options, {
          * @name View3D#yPlaneFrontZAxis
          */
         yPlaneFrontZAxis: {
-            visible: 'inherit',
+            visible: false,
             strokeColor: "#888888",
             strokeWidth: 1.2,
             layer: 12
@@ -527,7 +551,7 @@ JXG.extend(Options, {
          * @name View3D#zPlaneFrontXAxis
          */
         zPlaneFrontXAxis: {
-            visible: 'inherit',
+            visible: false,
             strokeColor: "#888888",
             strokeWidth: 1.2,
             layer: 12
@@ -538,7 +562,7 @@ JXG.extend(Options, {
          * @name View3D#zPlaneFrontYAxis
          */
         zPlaneFrontYAxis: {
-            visible: 'inherit',
+            visible: false,
             strokeColor: "#888888",
             strokeWidth: 1.2,
             layer: 12
@@ -631,7 +655,7 @@ JXG.extend(Options, {
          *       az: -45, // TODO use radians, ignored for type==1
          *       el: 20,  // TODO use radians, ignored for type==1
          *       bank: 0, // TODO use radians, ignored for type==1, type==3
-         *       dir: -1  // -1, 0 (use abs), 1: Default: -1
+         *       dir: -1  // -1 (reverse), 0 (use abs), 1. Default: -1
          *   }
          * }</pre>
          *
@@ -781,7 +805,7 @@ JXG.extend(Options, {
                 az: -45, // TODO use radians, ignored for type==1
                 el: 20,  // TODO use radians, ignored for type==1
                 bank: 0, // TODO use radians, ignored for type==1, type==3
-                dir: -1  // -1, 0 (use abs), 1: Default: -1
+                dir: -1  // -1 (reverse), 0 (use abs), 1. Default: -1
             }
         }
 

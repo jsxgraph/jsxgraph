@@ -1049,7 +1049,7 @@ JXG.extend(
          * @see JXG.GeonextParser.geonext2JS
          */
         generateTerm: function (varname, xterm, yterm, mi, ma) {
-            var fx, fy, mat;
+            var fx, fy, mat, i;
 
             // Generate the methods X() and Y()
             if (Type.isArray(xterm)) {
@@ -1079,8 +1079,10 @@ JXG.extend(
                 // Discrete data as an array of coordinate pairs,
                 // i.e. transposed input
                 mat = Mat.transpose(xterm);
-                this.dataX = mat[0];
-                this.dataY = mat[1];
+                // Ignore first cooordinate if given as [z, x, y]
+                i = (mat.length > 2) ? 1 : 0;
+                this.dataX = mat[i];
+                this.dataY = mat[i + 1];
                 this.numberPoints = this.dataX.length;
                 this.Y = this.interpolationFunctionFromArray.apply(this, ["Y"]);
             } else {
@@ -1481,43 +1483,31 @@ JXG.extend(
                 }
             }
             return [isTransformed, curve_org];
+        },
+
+        /**
+         * Return the points of the curve as array of length-three-arrays [z, x, y], i.e.
+         * return an array of homogeneous coordinates.
+         * The returned coordinates are in user coordinates. Finite homogeneous coordinates have the first value set to 1,
+         * i.e. it can be ignored.
+         * <p>
+         * The points of the curve are either the elements of the properties dataX and dataY or
+         * the result of the plotting algorithm. In any case, the points are stored in the private
+         * property "points".
+         * @returns {Array}
+         */
+        getCoords: function() {
+            var len, i,
+                arr = [];
+
+            len = this.numberPoints;
+            for (i = 0; i < len; i++) {
+                arr.push(this.points[i].usrCoords.slice());
+            }
+            return arr;
         }
 
-        // See JXG.Math.Geometry.pnpoly
-        // pnpoly: function (x_in, y_in, coord_type) {
-        //     var i,
-        //         j,
-        //         len,
-        //         x,
-        //         y,
-        //         crds,
-        //         v = this.points,
-        //         isIn = false;
 
-        //     if (coord_type === Const.COORDS_BY_USER) {
-        //         crds = new Coords(Const.COORDS_BY_USER, [x_in, y_in], this.board);
-        //         x = crds.scrCoords[1];
-        //         y = crds.scrCoords[2];
-        //     } else {
-        //         x = x_in;
-        //         y = y_in;
-        //     }
-
-        //     len = this.points.length;
-        //     for (i = 0, j = len - 2; i < len - 1; j = i++) {
-        //         if (
-        //             v[i].scrCoords[2] > y !== v[j].scrCoords[2] > y &&
-        //             x <
-        //                 ((v[j].scrCoords[1] - v[i].scrCoords[1]) * (y - v[i].scrCoords[2])) /
-        //                     (v[j].scrCoords[2] - v[i].scrCoords[2]) +
-        //                     v[i].scrCoords[1]
-        //         ) {
-        //             isIn = !isIn;
-        //         }
-        //     }
-
-        //     return isIn;
-        // }
     }
 );
 

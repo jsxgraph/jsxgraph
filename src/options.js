@@ -662,14 +662,14 @@ JXG.Options = {
          * @default <pre>{
          *   id: 'jxgbox',
          *   outerbox: null,
-         *   style: 'width: 500px;  aspect-ratio: 1/1; overflow: visible',
+         *   cssStyle: 'width: 500px;  aspect-ratio: 1/1; overflow: visible',
          *   cssClass: 'jxgbox'
          * }</pre>
          */
         jxgbox: {
             id: 'jxgbox',
             outerbox: null,
-            style: 'width: 500px;  aspect-ratio: 1/1; overflow: visible',
+            cssStyle: 'width: 500px;  aspect-ratio: 1/1; overflow: visible',
             cssClass: 'jxgbox'
         },
 

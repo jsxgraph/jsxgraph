@@ -554,7 +554,7 @@ jxg.extend(
          * one possibility. The CSS for the inner div, hosting the JSXGraph board, is supplied by the attributes
          *  <pre>
          *   jxgbox: {
-         *       style: 'width:640px;  aspect-ratio:2/1; background-color: white',
+         *       cssStyle: 'width:640px;  aspect-ratio:2/1; background-color: white',
          *       cssClass: '',
          *       id: 'jxgbox'
          *   }
@@ -596,7 +596,7 @@ jxg.extend(
          *        const board = JXG.appBox('container', {
          *            jxgbox: {
          *                // Styling of the inner div
-         *                style: 'width:640px;  aspect-ratio:2/1; background-color: white',
+         *                cssStyle: 'width:640px;  aspect-ratio:2/1; background-color: white',
          *                cssClass: '',
          *                id: 'jxgbox'
          *            },
@@ -639,7 +639,7 @@ jxg.extend(
          *     (function() {
          *        const board = JXG.appBox('JXGd1c7bf6a-a571-4392-a289-e4ef44d57c88', {
          *            jxgbox: {
-         *                style: "width:640px;  aspect-ratio:2/1; background-color: white",
+         *                cssStyle: "width:640px;  aspect-ratio:2/1; background-color: white",
          *                cssClass: "",
          *                id: 'xxx'
          *            },
@@ -669,7 +669,7 @@ jxg.extend(
          */
         appBox: function (box, attributes) {
             var node, id, jxg_id, innerdiv,
-                obb, bb, w, h,// rect,
+                obb, bb, w, h,
                 attr, board;
 
             if (!JXG.isBrowser) {
@@ -693,7 +693,7 @@ jxg.extend(
             innerdiv.setAttribute('id', jxg_id);
             innerdiv.className += 'jxgbox ';
             innerdiv.className += attr.cssclass;
-            innerdiv.style = attr.style;
+            innerdiv.style = attr.cssstyle;
 
             obb = attr.outerbox;
             if (obb !== null && JXG.isArray(obb)) {
