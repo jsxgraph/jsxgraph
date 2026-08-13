@@ -60,6 +60,43 @@ describe("Test board handling", function() {
         JXG.JSXGraph.freeBoard(board);
     });
 
+    it("removes print media query listeners with the registered callback", function() {
+        var mediaQueries = {}, testBoard,
+            container = document.createElement('div');
+
+        container.id = 'print-listener-board';
+        container.style.width = '100px';
+        container.style.height = '100px';
+        document.body.appendChild(container);
+        spyOn(window, 'matchMedia').and.callFake(function(query) {
+            mediaQueries[query] = {
+                addEventListener: jasmine.createSpy('addEventListener'),
+                removeEventListener: jasmine.createSpy('removeEventListener')
+            };
+            return mediaQueries[query];
+        });
+
+        testBoard = JXG.JSXGraph.initBoard(container.id, {
+            axis: false,
+            grid: false,
+            boundingbox: [-5, 5, 5, -5],
+            showCopyright: false,
+            showNavigation: false
+        });
+        JXG.JSXGraph.freeBoard(testBoard);
+
+        ['print', 'screen'].forEach(function(query) {
+            var mediaQuery = mediaQueries[query],
+                registeredCallback = mediaQuery.addEventListener.calls.mostRecent().args[1];
+
+            expect(mediaQuery.removeEventListener).toHaveBeenCalledWith(
+                'change',
+                registeredCallback,
+                false
+            );
+        });
+        container.remove();
+    });
+
 
 });
-
