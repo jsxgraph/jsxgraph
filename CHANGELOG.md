@@ -1,3 +1,40 @@
+1.13.2
+===
+
+API changes:
+-----------
+
+- surface3d.F and surface3d.evalF return homogeneous coords
+- appBox - jsxgraph: {cssStyle: ... }, rename attribute from style to cssStyle
+
+New features
+-----------
+
+- Curve: new method getCoords
+- Change defaults: display box3d front planes as frames only - if visible
+
+Improvements
+------------
+
+- surface3d, plane3d: allow ranges to contain functions as input for tiling
+- surface3d, plane3d: Enable dynamic colormaps for
+- Synchronize handling von attribute r of view3d for parallel and central projection
+- Refactor handling of camera distance r (in 3D)
+- API docs
+- Type.evaluate: recurse into arrays
+- Enable triangulation of planes
+- board.setAttribute() defaultAxes
+- box3d planes: same attributes for front as for rear planes
+
+Bug fixes
+---------
+
+- Plotting while the HTML div has display:none
+- Fix regression: clipping of curve screen coords (in SVG)
+- Curves with transposed input
+- JXG.GeometryElement3D.setAttribute()
+- Fix media query listener cleanup
+  
 1.13.1
 ===
 
