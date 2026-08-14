@@ -713,14 +713,15 @@ JXG.extend(
      * @see View3D#r
      */
     getCameraDistance: function() {
-        var rs, r, diam;
+        var rs, r, rr, diam;
 
-        if (this.r === null) {
+        rr = Type.evaluate(this.r);
+        if (rr === null || rr === 0) {
             // Use attribute r
             rs = this.evalVisProp('r');
         } else {
             // Use previously set value in this.r
-            rs = this.r;
+            rs = rr;
         }
 
         if (rs === 'auto') {
