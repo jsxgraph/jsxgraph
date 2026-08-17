@@ -18,13 +18,11 @@ Improvements
 
 - surface3d, plane3d: allow ranges to contain functions as input for tiling
 - surface3d, plane3d: Enable dynamic colormaps for
-- Synchronize handling von attribute r of view3d for parallel and central projection
-- Refactor handling of camera distance r (in 3D)
+- Refactor handling of camera distance r (in 3D), synchronize handling von attribute r of view3d for parallel and central projection
+- Enable triangulation of planes
 - API docs
 - Type.evaluate: recurse into arrays
-- Enable triangulation of planes
 - board.setAttribute() defaultAxes
-- box3d planes: same attributes for front as for rear planes
 
 Bug fixes
 ---------
