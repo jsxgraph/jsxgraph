@@ -3452,14 +3452,18 @@ less:function (n) {
     },
 pastInput:function () {
         var past = this.matched.substr(0, this.matched.length - this.match.length);
-        return (past.length > 20 ? '...':'') + past.substr(-20).replace(/\n/g, "");
+        return (past.length > 20 ? '...':'') + past.substr(-20).replace(/\n/g, "").replace(/[&<>]/g, function (c) {
+            return c === '&' ? '&amp;' : (c === '<' ? '&lt;' : '&gt;');
+        });
     },
 upcomingInput:function () {
         var next = this.match;
         if (next.length < 20) {
             next += this._input.substr(0, 20-next.length);
         }
-        return (next.substr(0,20)+(next.length > 20 ? '...':'')).replace(/\n/g, "");
+        return (next.substr(0,20)+(next.length > 20 ? '...':'')).replace(/\n/g, "").replace(/[&<>]/g, function (c) {
+            return c === '&' ? '&amp;' : (c === '<' ? '&lt;' : '&gt;');
+        });
     },
 showPosition:function () {
         var pre = this.pastInput();
