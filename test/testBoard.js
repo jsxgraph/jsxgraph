@@ -98,5 +98,42 @@ describe("Test board handling", function() {
         container.remove();
     });
 
+    it("assigns unique IDs to anonymous board containers", function() {
+        var firstBoard, secondBoard,
+            firstContainer = document.createElement('div'),
+            secondContainer = document.createElement('div'),
+            attributes = {
+                renderer: 'svg',
+                axis: false,
+                grid: false,
+                boundingbox: [-5, 5, 5, -5],
+                resize: {enabled: false},
+                showCopyright: false,
+                showNavigation: false
+            };
+
+        firstContainer.style.width = '100px';
+        firstContainer.style.height = '100px';
+        secondContainer.style.width = '100px';
+        secondContainer.style.height = '100px';
+        document.body.appendChild(firstContainer);
+        document.body.appendChild(secondContainer);
+
+        firstBoard = JXG.JSXGraph.initBoard(firstContainer, attributes);
+        secondBoard = JXG.JSXGraph.initBoard(secondContainer, attributes);
+
+        expect(firstContainer.id).not.toEqual('');
+        expect(secondContainer.id).not.toEqual('');
+        expect(firstContainer.id).not.toEqual(secondContainer.id);
+        expect(firstContainer.querySelector('clipPath').id).not.toEqual(
+            secondContainer.querySelector('clipPath').id
+        );
+
+        JXG.JSXGraph.freeBoard(firstBoard);
+        JXG.JSXGraph.freeBoard(secondBoard);
+        firstContainer.remove();
+        secondContainer.remove();
+    });
+
 
 });
