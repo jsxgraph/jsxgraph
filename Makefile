@@ -14,8 +14,10 @@ PRETTIER=./node_modules/.bin/prettier
 # System tools
 CP=cp
 CAT=cat
+MV=mv
 MKDIR=mkdir
 RM=rm
+SED=sed
 CD=cd
 ZIP=zip
 UNZIP=unzip
@@ -47,16 +49,10 @@ ZIPFLAGS=-r
 VERSION=$(shell grep -o '"version": "[^"]*' package.json | grep -o '[^"]*$$')
 
 # List of all included JavaScript files - required for docs, linters, and to build the readers
-# Double quotes:
-# FILELIST=$(shell cat src/index.js | awk '/import/ {if (match($$0,/"\.(.+)"/,m)) print "src"m[1]".js" }')
-# Single quotes: before endings .js have been added:
-# FILELIST=$(shell cat src/index.js | awk '/import/ {if (match($$0,/\x27\.(.+)\x27/,m)) print "src"m[1]".js" }')
-# Single quotes: after endings .js have been added:
-# Requires gawk!!!
-FILELIST=$(shell cat src/index.js | gawk '/import/ {if (match($$0,/\x27\.(.+)\x27/,m)) print "src"m[1] }')
+FILELIST=$(shell $(SED) -n "s|^import.*'\.\([^']*\)'.*|src\1|p" src/index.js)
 
 # Lintlist - jessiecode.js is developed externally (github:jsxgraph/jessiecode) and won't be linted in here
-LINTLIST=$(shell echo $(FILELIST) | sed 's/src\/parser\/jessiecode\.js//')
+LINTLIST=$(filter-out src/parser/jessiecode.js,$(FILELIST))
 # LINTLIST=$(shell echo $(FILELIST))
 LINTFLAGS=--bitwise true --white true --continue true
 ESLINTFLAGS=
@@ -75,9 +71,11 @@ core:
 	# copy them to the distrib directory.
 	$(WEBPACK) --config config/webpack.config.js
 	# Update version number in line 2 of file COPYRIGHT
-	sed -i '2s/.*/    JSXGraph $(VERSION)/' COPYRIGHT
+	$(SED) '2s/.*/    JSXGraph $(VERSION)/' COPYRIGHT > COPYRIGHT.tmp
+	$(MV) COPYRIGHT.tmp COPYRIGHT
 	# Update version number in line 2 of file jsxgraph.css
-	sed -i '2s/.*/    JSXGraph $(VERSION)/' $(OUTPUT)/jsxgraph.css
+	$(SED) '2s/.*/    JSXGraph $(VERSION)/' $(OUTPUT)/jsxgraph.css > $(OUTPUT)/jsxgraph.css.tmp
+	$(MV) $(OUTPUT)/jsxgraph.css.tmp $(OUTPUT)/jsxgraph.css
 	# Prepend file to the jsxgraphcore.* files
 	cat COPYRIGHT $(OUTPUT)/jsxgraphcore.js >$(OUTPUT)/tmp.file; mv $(OUTPUT)/tmp.file $(OUTPUT)/jsxgraphcore.js
 	cat COPYRIGHT $(OUTPUT)/jsxgraphcore.mjs >$(OUTPUT)/tmp.file; mv $(OUTPUT)/tmp.file $(OUTPUT)/jsxgraphcore.mjs
@@ -110,7 +108,8 @@ beta: docs
 	rm -fr $(BETA)/docs
 	cp -r $(OUTPUT)/docs/ $(BETA)/docs
 	# Update version number in line 2 of file COPYRIGHT
-	sed -i '2s/.*/    JSXGraph $(VERSION)/' COPYRIGHT
+	$(SED) '2s/.*/    JSXGraph $(VERSION)/' COPYRIGHT > COPYRIGHT.tmp
+	$(MV) COPYRIGHT.tmp COPYRIGHT
 	# Prepend file to the jsxgraphcore.* files
 	cat COPYRIGHT $(BETA)/jsxgraphcore.js >$(BETA)/tmp.file; mv $(BETA)/tmp.file $(BETA)/jsxgraphcore.js
 	cat COPYRIGHT $(BETA)/jsxgraphcore.mjs >$(BETA)/tmp.file; mv $(BETA)/tmp.file $(BETA)/jsxgraphcore.mjs
@@ -128,7 +127,8 @@ docsonly:
 	$(CP) $(OUTPUT)/jsxgraph.css      $(JSDOC2TPLSTAT)/jsxgraph.css
 
 	# Update version number in line 2 of file doc/jsdoc-tk/template/static/header.html
-	sed -i '2s/.*/<h1>JSXGraph $(VERSION) Reference<\/h1>/' doc/jsdoc-tk/template/static/header.html
+	$(SED) '2s/.*/<h1>JSXGraph $(VERSION) Reference<\/h1>/' doc/jsdoc-tk/template/static/header.html > doc/jsdoc-tk/template/static/header.html.tmp
+	$(MV) doc/jsdoc-tk/template/static/header.html.tmp doc/jsdoc-tk/template/static/header.html
 
 	# Patch run.js
 	$(CP) $(JSDOC2PTCH)/*.js ./node_modules/jsdoc2/app
@@ -177,18 +177,7 @@ eslint:
 	$(ESLINT) $(ESLINTFLAGS) $(LINTLIST)
 
 test: core
-ifeq ($(shell which google-chrome | wc -l), 1)
-	@echo "Use google chrome"
 	$(KARMA) start karma/karma.conf.js
-else
-ifeq ($(shell which chromium | wc -l), 1)
-	@echo "Use chromium"
-	export CHROME_BIN=/usr/bin/chromium; $(KARMA) start karma/karma.conf.js
-else
-	@echo "No suitable browser (chrome or chromium) installed"
-endif
-endif
 
 testchromium: core
 	export CHROME_BIN=/usr/bin/chromium; $(KARMA) start karma/karma.conf.js
-
