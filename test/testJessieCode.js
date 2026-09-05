@@ -141,4 +141,18 @@ describe("Test JessieCode", function () {
         expect(parsed).toEqual(f);
     });
 
+    it("Jessiecode parse function 3", function() {
+        var f = 'function (x) { if ((x < 0)){ return (-1); } else { return 1; } }';
+        var parsed = board.jc.parse(f + ';');
+        parsed = parsed.toString().replaceAll('\n', '').trim();
+        expect(parsed).toEqual(f);
+    });
+
+    it("Jessiecode parse function 4", function() {
+        var f = 'function (x) { if (((x < 0) && (2 > 1))){ return (-1); } else { return 1; } }';
+        var parsed = board.jc.parse(f + ';');
+        parsed = parsed.toString().replaceAll('\n', '').trim();
+        expect(parsed).toEqual(f);
+    });
+
 });
