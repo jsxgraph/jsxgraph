@@ -107,6 +107,12 @@ class FFT(JXGServerModule):
     def makeAudio(self, resp, type, samplerate, data):
         fname = '/tmp/'+str(uuid.uuid4())
         fogg = fname + '.ogg'
+        # Validate that the generated paths are confined to the expected
+        # temp directory before they are passed to the external oggenc
+        # binary, guarding against path/argument manipulation.
+        tmp_dir = os.path.abspath('/tmp') + os.sep
+        if not os.path.abspath(fname).startswith(tmp_dir) or not os.path.abspath(fogg).startswith(tmp_dir):
+            raise ValueError('Invalid audio file path')
         w = wave.open(fname, 'w')
         w.setnchannels(1)
         w.setsampwidth(2)
