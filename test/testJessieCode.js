@@ -155,4 +155,29 @@ describe("Test JessieCode", function () {
         expect(parsed).toEqual(f);
     });
 
+    it("Jessiecode op_block 1", function() {
+        var $jc$ = board.jc;
+        var txt = "for (i = 0; i < 1; i = i + 1) { point(map (x) -> 1, map (x) -> 2); } ";
+
+        var ast = board.jc.getAST(txt);
+        var out = board.jc.compile(ast, true);
+        eval(out);
+
+        var p = board.objectsList[board.objectsList.length - 2]; // -2: ignore label
+
+        expect(p.X()).toEqual(1);
+        expect(p.Y()).toEqual(2);
+    });
+
+    it("Jessiecode op_block 2", function() {
+        var $jc$ = board.jc;
+        var txt = "for (i = 0; i < 5; i = i + 1) { point(map (x) -> 1, map (x) -> 2); } ";
+        board.jc.parse(txt);
+
+        var p = board.objectsList[board.objectsList.length - 2]; // -2: ignore label
+
+        expect(p.X()).toEqual(1);
+        expect(p.Y()).toEqual(2);
+    });
+
 });
