@@ -125,7 +125,7 @@ JXG.JSXGraph = {
      * @private
      */
     initRenderer: function (box, dim, doc, attrRenderer) {
-        var boxid, renderer;
+        var boxid, renderer, containerId;
 
         // Former version:
         // doc = doc || document
@@ -135,6 +135,17 @@ JXG.JSXGraph = {
 
         if (typeof doc === "object" && box !== null) {
             boxid = (Type.isString(box)) ? doc.getElementById(box) : box;
+
+            // SVG renderer resource names use the container ID as their prefix. Generate one
+            // before constructing the renderer so anonymous element references cannot create
+            // duplicate clip paths, filters, or navigation IDs.
+            if (boxid && !boxid.id) {
+                containerId = 1;
+                while (doc.getElementById("jxgbox" + containerId)) {
+                    containerId += 1;
+                }
+                boxid.id = "jxgbox" + containerId;
+            }
 
             // Remove everything from the container before initializing the renderer and the board
             while (boxid.firstChild) {
