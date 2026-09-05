@@ -56,7 +56,7 @@ JXG.Polygon = function (board, vertices, attributes) {
     this.constructor(board, attributes, Const.OBJECT_TYPE_POLYGON, Const.OBJECT_CLASS_AREA);
 
     var i, l, len, j, p,
-        attr_line = Type.copyAttributes(attributes, board.options, "polygon", 'borders');
+        attr_line = Type.copyAttributes(attributes, board.options, 'polygon', 'borders');
 
     this.withLines = attributes.withlines;
     this.attr_line = attr_line;
@@ -102,10 +102,11 @@ JXG.Polygon = function (board, vertices, attributes) {
             i = (j + 1) % len;
             attr_line.id = attr_line.ids && attr_line.ids[i];
             attr_line.name = attr_line.names && attr_line.names[i];
-            attr_line.strokecolor =
-                (Type.isArray(attr_line.colors) &&
-                    attr_line.colors[i % attr_line.colors.length]) ||
-                attr_line.strokecolor;
+
+            if (Type.isArray(attr_line.colors) && attr_line.colors.length > 0) {
+                attr_line.strokecolor = attr_line.colors[i % attr_line.colors.length];
+            }
+
             attr_line.visible = Type.exists(attributes.borders.visible)
                 ? attributes.borders.visible
                 : attributes.visible;

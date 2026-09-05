@@ -30,7 +30,7 @@ Links
 - Stackoverflow: https://stackoverflow.com/search?tab=newest&q=jsxgraph
 - jsFiddle template: [https://jsfiddle.net/8kep9syd/](https://jsfiddle.net/my0fkdb6/1/)
 - YouTube channel: [https://www.youtube.com/@jsxgraph4224](https://www.youtube.com/@jsxgraph4224)
-- Moodle filter: https://moodle.org/plugins/filter_jsxgraph and https://github.com/jsxgraph/moodle-filter_jsxgraph
+- Moodle filter: <https://marketplace.moodle.com/plugins/1762> and <https://github.com/jsxgraph/moodle-filter_jsxgraph>
 - (outdated: SourceForge project site: https://sf.net/projects/jsxgraph)
 - (outdated: Google Group `https://groups.google.com/group/jsxgraph`)
 - CDNs: Embed JSXGraph via
