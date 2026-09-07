@@ -15,7 +15,7 @@ module.exports = function (config) {
     plugins: [
       require('karma-jasmine'),
       require('karma-chrome-launcher'),
-      require('karma-detect-browsers') // Include the plugin
+      require('karma-detect-browsers')
     ],
 
     // list of files / patterns to load in the browser
@@ -24,11 +24,9 @@ module.exports = function (config) {
       { pattern: 'test/test*.js', watched: true }
     ],
 
-
     // list of files / patterns to exclude
     exclude: [
     ],
-
 
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://www.npmjs.com/search?q=keywords:karma-preprocessor
@@ -66,8 +64,10 @@ module.exports = function (config) {
 
       // Post-detection filter: strictly keep Chrome or Chromium variants
       postDetection: function(availableBrowsers) {
-        const targets = ['ChromeHeadless', 'ChromiumHeadless', 'Chrome', 'Chromium'];
-        return availableBrowsers.filter(browser => targets.includes(browser));
+        const targets = ['ChromeHeadless', 'ChromiumHeadless', 'Chrome', 'Chromium']
+        // Add slice(0, 1) to test only the first available browser.
+        // For github, this should be ChromeHeadless
+        return availableBrowsers.filter(browser => targets.includes(browser)).slice(0, 1);
       }
     },
 
