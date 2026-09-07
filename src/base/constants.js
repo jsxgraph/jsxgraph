@@ -134,6 +134,8 @@ constants =
     OBJECT_TYPE_POLYHEDRON3D: 45,
     OBJECT_TYPE_POLYGON3D: 46,
 
+    OBJECT_TYPE_COORDINATE_SYSTEM: 47,
+
     // IMPORTANT:
     // ----------
     // For being able to differentiate between the (sketchometry specific) SPECIAL_OBJECT_TYPEs and
