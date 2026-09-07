@@ -1,8 +1,7 @@
 JSXGraph
 ========
 
-<img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: MIT">
-<img src="https://img.shields.io/badge/License-LGPL-blue.svg" alt="License: LGPL">
+<img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: MIT"> <img src="https://img.shields.io/badge/License-LGPL-blue.svg" alt="License: LGPL"> <img src="https://img.shields.io/github/v/release/jsxgraph/jsxgraph" alt="GitHub Release"> <img src="https://img.shields.io/github/release-date/jsxgraph/jsxgraph" alt="GitHub Release Date">
 
 JavaScript library for interactive math visualizations in the web browser.
 
