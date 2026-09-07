@@ -1,7 +1,7 @@
 // Karma configuration
 // Generated on Tue Nov 02 2021 15:28:33 GMT+0100 (Mitteleuropäische Normalzeit)
 
-module.exports = function(config) {
+module.exports = function (config) {
   config.set({
 
     // base path that will be used to resolve all patterns (eg. files, exclude)
@@ -16,7 +16,7 @@ module.exports = function(config) {
     // list of files / patterns to load in the browser
     files: [
       'distrib/jsxgraphsrc.js',
-      {pattern: 'test/test*.js', watched: true}
+      { pattern: 'test/test*.js', watched: true }
     ],
 
 
@@ -50,10 +50,9 @@ module.exports = function(config) {
 
     // start these browsers
     // available browser launchers: https://www.npmjs.com/search?q=keywords:karma-launcher
-    browsers: ['ChromeHeadless'],
-    // browsers: ['ChromiumHeadless','ChromeHeadless'],
+    // browsers: ['ChromeHeadless'],
     // browsers: ['Firefox'],
-
+    browsers: ['ChromiumHeadless', 'ChromeHeadless'],
 
     // Continuous Integration mode
     // if true, Karma captures browsers, runs the tests and exits
