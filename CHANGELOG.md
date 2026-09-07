@@ -1,17 +1,18 @@
 1.13.3
 ===
 
-New features
------------
-
-
 Improvements
 ------------
 
+- Add missing 3D TypeScript declarations
+- Update a few npm dev packages
 
 Bug fixes
 ---------
 
+- Fix regression: missing strokeColor of polygon
+- Fix resource ID collisions for anonymous containers
+- Fix two security issues
   
 1.13.2
 ===
