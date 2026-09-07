@@ -10,8 +10,13 @@ module.exports = function (config) {
 
     // frameworks to use
     // available frameworks: https://www.npmjs.com/search?q=keywords:karma-adapter
-    frameworks: ['jasmine'],
+    frameworks: ['jasmine', 'detectBrowsers'],
 
+    plugins: [
+      require('karma-jasmine'),
+      require('karma-chrome-launcher'),
+      require('karma-detect-browsers') // Include the plugin
+    ],
 
     // list of files / patterns to load in the browser
     files: [
@@ -52,7 +57,19 @@ module.exports = function (config) {
     // available browser launchers: https://www.npmjs.com/search?q=keywords:karma-launcher
     // browsers: ['ChromeHeadless'],
     // browsers: ['Firefox'],
-    browsers: ['ChromeHeadless','ChromiumHeadless'],
+    // browsers: ['ChromeHeadless'],
+    // browsers: ['ChromiumHeadless'],
+
+    detectBrowsers: {
+      // Enable headless mode if you prefer UI-less execution (e.g., CI pipelines)
+      preferHeadless: true, 
+
+      // Post-detection filter: strictly keep Chrome or Chromium variants
+      postDetection: function(availableBrowsers) {
+        const targets = ['ChromeHeadless', 'ChromiumHeadless', 'Chrome', 'Chromium'];
+        return availableBrowsers.filter(browser => targets.includes(browser));
+      }
+    },
 
     // Continuous Integration mode
     // if true, Karma captures browsers, runs the tests and exits
