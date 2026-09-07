@@ -444,6 +444,7 @@ JXG.extend(
                 return f[k]();
             };
             func.deps = deps;
+            func.n = n;
 
             return func;
         },
