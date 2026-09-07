@@ -3656,6 +3656,12 @@ declare namespace JXG {
 
     export interface Circle3DAttributes extends GeometryElementAttributes {}
 
+    export interface Circle3D extends GeometryElement {
+        center: Point3D;
+        Radius(value?: number): number;
+        setRadius(radius: string | number | (() => number)): this;
+    }
+
     export interface Curve3DAttributes extends CurveAttributes {}
 
     export interface Curve3D extends Curve {}
@@ -3680,7 +3686,23 @@ declare namespace JXG {
         Z(): number;
     }
 
+    export interface Polygon3DAttributes extends GeometryElementAttributes {}
+
+    export interface Polygon3D extends GeometryElement {
+        vertices: Point3D[];
+    }
+
     export interface Sphere3DAttributes extends GeometryElementAttributes {}
+
+    export interface Sphere3D extends GeometryElement {
+        center: Point3D;
+        point2: Point3D | null;
+        Radius(value?: number): number;
+        setRadius(radius: string | number | (() => number)): this;
+        X(u: number, v: number): number;
+        Y(u: number, v: number): number;
+        Z(u: number, v: number): number;
+    }
 
     export interface View3DAttributes extends GeometryElementAttributes {
         axesPosition?: "center";
