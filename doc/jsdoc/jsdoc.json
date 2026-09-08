@@ -1,0 +1,15 @@
+{
+  "source": {
+    "include": []
+  },
+  "plugins": [
+    "./doc/jsdoc/plugins/jsdoc-newsignature-plugin/index.js",
+    "./doc/jsdoc/plugins/jsxgraph-pseudo-class-plugin/index.js",
+    "plugins/markdown",
+    "plugins/summarize"
+  ],
+  "opts": {
+    "template": "./doc/jsdoc/templates/docdash-custom",
+    "destination": "./output_docs"
+  }
+}
