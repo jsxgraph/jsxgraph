@@ -69,13 +69,13 @@ JXG.createLine = function (board, parents, attributes) { };
 //     margin: 0
 // };
 
-/**
- * @summary Some dummy property
- * @description long explanation of a dummy property
- * @name Line#xxx
- * @type number
- * @default 1001
- */
+// /**
+//  * @summary Some dummy property
+//  * @description long explanation of a dummy property
+//  * @name Line#xxx
+//  * @type number
+//  * @default 1001
+//  */
 
 /**
  * @class A (line) segment defined by two points.
