@@ -9,7 +9,7 @@
     "plugins/summarize"
   ],
   "opts": {
-    "template": "./doc/jsdoc/templates/docdash-custom",
+    "template": "./doc/jsdoc/templates/docdash-jsxgraph",
     "destination": "./output_docs"
   },
   "tags": {

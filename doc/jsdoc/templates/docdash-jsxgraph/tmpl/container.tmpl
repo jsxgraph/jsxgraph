@@ -152,7 +152,17 @@
         }
         if (attributes && attributes.length && attributes.forEach) {
     ?>
-        <h3 class="subsection-title">Attributes</h3>
+        <h3 class="subsection-title">Attributes summary</h3>
+
+        <dl>
+        <?js attributes
+               .filter((self) => !self.inherits)
+               .forEach(function(p) { ?>
+            <?js= self.partial('members_short.tmpl', p) ?>
+        <?js }); ?>
+        </dl>
+
+        <h3 class="subsection-title">Attributes details</h3>
 
         <?js attributes
                .filter((self) => !self.inherits)
@@ -182,7 +192,15 @@
         }
         if (members && members.length && members.forEach) {
     ?>
-        <h3 class="subsection-title">Members</h3>
+        <h3 class="subsection-title">Members summary</h3>
+
+        <?js members
+               .filter((self) => !self.inherited)
+               .forEach(function(p) { ?>
+            <?js= self.partial('members_short.tmpl', p) ?>
+        <?js }); ?>
+
+        <h3 class="subsection-title">Members details</h3>
 
         <?js members
                .filter((self) => !self.inherited)
@@ -204,7 +222,15 @@
         var methods = self.find({kind: 'function', memberof: isGlobalPage ? {isUndefined: true} : doc.longname});
         if (methods && methods.length && methods.forEach) {
     ?>
-        <h3 class="subsection-title">Methods</h3>
+        <h3 class="subsection-title">Methods summary</h3>
+
+        <?js methods
+               .filter((self) => !self.inherited)
+               .forEach(function(m) { ?>
+            <?js= self.partial('members_short.tmpl', m) ?>
+        <?js }); ?>
+
+        <h3 class="subsection-title">Methods details</h3>
 
         <?js methods
                .filter((self) => !self.inherited)

@@ -1,0 +1,14 @@
+<?js
+var data = obj;
+var self = this;
+self.toAnchor = (str, linktext) => '<a href="#' + str + '">' + linktext + '</a>';
+?>
+<dt id="<?js= id + '_short'?>">
+    <!--<?js= data.attribs + name + (data.signature ? data.signature : '') ?>-->
+    <?js= self.toAnchor(id, name) ?>
+</dt>
+<dd>
+    <?js if (data.summary) { ?>
+        <p class="summary"><?js= summary ?></p>
+    <?js } ?>
+</dd>
