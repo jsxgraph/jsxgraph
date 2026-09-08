@@ -37,7 +37,9 @@ if (data.kind === 'class') {
   <?js= this.partial('signatureblocks.tmpl', data) ?>
 <?js } ?>
 
+<!--
 <?js= this.partial('details.tmpl', data) ?>
+-->
 
 <?js if (data.augments && data.alias && data.alias.indexOf('module:') === 0) { ?>
     <h5 class="h5-extends">Extends:</h5>

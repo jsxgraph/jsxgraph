@@ -18,62 +18,59 @@ if (data.defaultvalue && (data.defaultvaluetype === 'object' || data.defaultvalu
 
 <dl class="details">
     <?js if (data.description) {?>
-    <dt class="tag-description">Description:</dt>
-    <dd class="tag-description"><ul class="dummy"><li><?js= data.description ?></li></ul></dd>
+      <dt class="tag-description">Description:</dt>
+      <dd class="tag-description"><ul class="dummy"><li><?js= data.description ?></li></ul></dd>
     <?js } ?>
 
-    <?js if (data.meta && self.outputSourceFiles) {?>
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <?js= self.linkto(meta.shortpath) ?>, <?js= self.linkto(meta.shortpath, 'line ' + meta.lineno, null, 'line' + meta.lineno) ?>
-    </li></ul></dd>
+    <?js if (data.type && data.type.names) {?>
+        <dt class="tag-description">Type:</dt>
+        <dd class="tag-description"><ul class="dummy"><li><?js= self.partial('type.tmpl', data.type.names) ?></li></ul></dd>
     <?js } ?>
 
     <?js if (data.version) {?>
-    <dt class="tag-version">Version:</dt>
-    <dd class="tag-version"><ul class="dummy"><li><?js= version ?></li></ul></dd>
+      <dt class="tag-version">Version:</dt>
+      <dd class="tag-version"><ul class="dummy"><li><?js= version ?></li></ul></dd>
     <?js } ?>
 
     <?js if (data.since) {?>
-    <dt class="tag-since">Since:</dt>
-    <dd class="tag-since"><ul class="dummy"><li><?js= since ?></li></ul></dd>
+      <dt class="tag-since">Since:</dt>
+      <dd class="tag-since"><ul class="dummy"><li><?js= since ?></li></ul></dd>
     <?js } ?>
 
     <?js if (data.inherited && data.inherits && !data.overrides) { ?>
-    <dt class="inherited-from">Inherited From:</dt>
-    <dd class="inherited-from"><ul class="dummy"><li>
-        <?js= this.linkto(data.inherits, this.htmlsafe(data.inherits)) ?>
-    </li></ul></dd>
+      <dt class="inherited-from">Inherited From:</dt>
+      <dd class="inherited-from"><ul class="dummy"><li>
+          <?js= this.linkto(data.inherits, this.htmlsafe(data.inherits)) ?>
+      </li></ul></dd>
     <?js } ?>
 
     <?js if (data.overrides) { ?>
-    <dt class="tag-overrides">Overrides:</dt>
-    <dd class="tag-overrides"><ul class="dummy"><li>
-        <?js= this.linkto(data.overrides, this.htmlsafe(data.overrides)) ?>
-    </li></ul></dd>
+      <dt class="tag-overrides">Overrides:</dt>
+      <dd class="tag-overrides"><ul class="dummy"><li>
+          <?js= this.linkto(data.overrides, this.htmlsafe(data.overrides)) ?>
+      </li></ul></dd>
     <?js } ?>
 
     <?js if (data.implementations && data.implementations.length) { ?>
-    <dt class="implementations">Implementations:</dt>
-    <dd class="implementations"><ul>
-        <?js data.implementations.forEach(function(impl) { ?>
-            <li><?js= self.linkto(impl, self.htmlsafe(impl)) ?></li>
-        <?js }); ?>
-    </ul></dd>
+      <dt class="implementations">Implementations:</dt>
+      <dd class="implementations"><ul>
+          <?js data.implementations.forEach(function(impl) { ?>
+              <li><?js= self.linkto(impl, self.htmlsafe(impl)) ?></li>
+          <?js }); ?>
+      </ul></dd>
     <?js } ?>
 
     <?js if (data.implements && data.implements.length) { ?>
-    <dt class="implements">Implements:</dt>
-    <dd class="implements"><ul>
-        <?js data.implements.forEach(function(impl) { ?>
-            <li><?js= self.linkto(impl, self.htmlsafe(impl)) ?></li>
-        <?js }); ?>
-    </ul></dd>
+      <dt class="implements">Implements:</dt>
+      <dd class="implements"><ul>
+          <?js data.implements.forEach(function(impl) { ?>
+                <li><?js= self.linkto(impl, self.htmlsafe(impl)) ?></li>
+          <?js }); ?>
+      </ul></dd>
     <?js } ?>
 
     <?js if (data.mixes && data.mixes.length) { ?>
         <dt class="mixes">Mixes In:</dt>
-
         <dd class="mixes"><ul>
         <?js data.mixes.forEach(function(a) { ?>
             <li><?js= self.linkto(a, a) ?></li>
@@ -130,6 +127,22 @@ if (data.defaultvalue && (data.defaultvaluetype === 'object' || data.defaultvalu
             <li><?js= self.linkto(s) ?></li>
         <?js }); ?></ul>
     </dd>
+    <?js } ?>
+
+<?js if (data.examples && examples.length) { ?>
+    <dt class="tag-description">Example<?js= examples.length > 1? 's':'' ?>:</dt>
+    <dd class="tag-description"><ul class="dummy">
+        <?js= this.partial('examples.tmpl', examples) ?>
+    </ul>
+    </dd>
+<?js } ?>
+
+
+    <?js if (data.meta && self.outputSourceFiles) {?>
+    <dt class="tag-source">Source:</dt>
+      <dd class="tag-source"><ul class="dummy"><li>
+          <?js= self.linkto(meta.shortpath) ?>, <?js= self.linkto(meta.shortpath, 'line ' + meta.lineno, null, 'line' + meta.lineno) ?>
+      </li></ul></dd>
     <?js } ?>
 
     <?js if (data.todo && todo.length) {?>

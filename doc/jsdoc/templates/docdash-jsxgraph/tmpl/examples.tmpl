@@ -3,8 +3,11 @@
     var self = this;
 
     data.forEach(function(example) {
-        if (example.caption) {
 ?>
+        <li>
+    <?js
+        if (example.caption) {
+    ?>
             <p class="code-caption"><?js= example.caption ?></p>
     <?js } ?>
 
@@ -13,6 +16,7 @@
             .replace("</script><pre></code></pre>", "</script>")
     ?>
 
+        </li>
     <?js
         });
     ?>
