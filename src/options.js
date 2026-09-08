@@ -7210,7 +7210,7 @@ JXG.Options = {
          * intersection with the canvas border.
          *
          * The attribute lastArrow can be a Boolean or an object with the following sub-attributes:
-         * <pre>
+         * ```
          * {
          *      type: 1, // possible values are 1, 2, ..., 7. Default value is 1.
          *      size: 6, // size of the arrow head. Default value is 6.
@@ -7218,9 +7218,9 @@ JXG.Options = {
          *               // Exception: for type=7 size is ignored
          *      highlightSize: 6, // size of the arrow head in case the element is highlighted. Default value is 6.
          * }
-         * </pre>
+         * ```
          * type=7 is the default for curves if lastArrow: true
-         * <p>
+         *
          * An arrow head can be turned off with line.setAttribute({lastArrow: false}).
          *
          * @example
