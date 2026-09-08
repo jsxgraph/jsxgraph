@@ -14,5 +14,10 @@
   },
   "tags": {
     "allowUnknownTags": false
+  },
+  "templates": {
+    "default": {
+      "useLongnameInNav": true
+    }
   }
 }

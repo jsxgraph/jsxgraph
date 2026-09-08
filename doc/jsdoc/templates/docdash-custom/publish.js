@@ -358,7 +358,8 @@ function buildMemberNav(items, itemHeading, itemsSeen, linktoFn) {
                     displayName = item.name;
                 }
                 itemsNav += linktoFn(item.longname, displayName.replace(/\b(module|event):/g, ''));
-
+// Show class name only
+/*
                 if (docdash.static && members.find(function (m) { return m.scope === 'static'; } )) {
                     itemsNav += "<ul class='members'>";
 
@@ -397,7 +398,7 @@ function buildMemberNav(items, itemHeading, itemsSeen, linktoFn) {
 
                     itemsNav += "</ul>";
                 }
-
+*/
                 itemsSeen[item.longname] = true;
             }
             itemsNav += '</li>';
@@ -778,7 +779,7 @@ exports.publish = function(taffyData, opts, tutorials) {
 
         var myClasses = helper.find(classes, {longname: longname});
         if (myClasses.length) {
-            generate('Class', myClasses[0].name, myClasses, helper.longnameToUrl[longname]);
+            generate('Class', myClasses[0].longname, myClasses, helper.longnameToUrl[longname]);
         }
 
         var myNamespaces = helper.find(namespaces, {longname: longname});

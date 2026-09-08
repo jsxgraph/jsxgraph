@@ -28,8 +28,7 @@
         <?js if (doc.kind === 'namespace') { ?>
             Namespace
         <?js } else { ?>
-            <?js= doc.longname ?>
-            <?js= doc.name ?> - <?js= doc.kind ?>
+            <?js= doc.longname ?> (<?js= doc.kind ?>)
         <?js } ?>
         <?js if (doc.variation) { ?>
             <sup class="variation"><?js= doc.variation ?></sup>
@@ -38,7 +37,6 @@
             <div class="class-description usertext"><?js= doc.classdesc ?></div>
         <?js } ?>
     <?js } else if (doc.kind === 'module' && doc.modules) { ?>
-       ######
         <?js doc.modules.forEach(function(module) { ?>
             <?js if (module.classdesc) { ?>
                 <div class="class-description"><?js= module.classdesc ?></div>
