@@ -22,6 +22,7 @@ JXG.extend(Options, {
          *
          * @type String
          * @name View3D#axesPosition
+         * @attribute
          * @default 'center'
          */
         axesPosition: "center", // Possible values: 'center', 'border', 'none'
@@ -33,6 +34,7 @@ JXG.extend(Options, {
          *
          * @type Line3D
          * @name View3D#xAxis
+         * @attribute
          * @see View3D#axesPosition
          */
         xAxis: {
@@ -50,6 +52,7 @@ JXG.extend(Options, {
          *
          * @type Line3D
          * @name View3D#yAxis
+         * @attribute
          * @see View3D#axesPosition
          */
         yAxis: {
@@ -67,6 +70,7 @@ JXG.extend(Options, {
          *
          * @type Line3D
          * @name View3D#zAxis
+         * @attribute
          * @see View3D#axesPosition
          */
         zAxis: {
@@ -83,6 +87,7 @@ JXG.extend(Options, {
          *
          * @type Line3D
          * @name View3D#xAxisBorder
+         * @attribute
          * @see View3D#axesPosition
          * @default <pre>{
          *   name: 'x',
@@ -129,6 +134,7 @@ JXG.extend(Options, {
          *
          * @type Line3D
          * @name View3D#yAxisBorder
+         * @attribute
          * @see View3D#axesPosition
          * @default <pre>{
          *   name: 'x',
@@ -172,6 +178,7 @@ JXG.extend(Options, {
          *
          * @type Line3D
          * @name View3D#zAxisBorder
+         * @attribute
          * @see View3D#axesPosition
          * @default <pre>{
          *   name: 'z',
@@ -217,6 +224,7 @@ JXG.extend(Options, {
          * Attributes of the 3D plane orthogonal to the x-axis at the "rear" of the cube.
          * @type Plane3D
          * @name View3D#xPlaneRear
+         * @attribute
          */
         xPlaneRear: {
             visible: true,
@@ -252,6 +260,7 @@ JXG.extend(Options, {
          * Attributes of the 3D plane orthogonal to the y-axis at the "rear" of the cube.
          * @type Plane3D
          * @name View3D#yPlaneRear
+         * @attribute
          */
         yPlaneRear: {
             visible: true,
@@ -287,6 +296,7 @@ JXG.extend(Options, {
          * Attributes of the 3D plane orthogonal to the z-axis at the "rear" of the cube.
          * @type Plane3D
          * @name View3D#zPlaneRear
+         * @attribute
          */
         zPlaneRear: {
             visible: true,
@@ -322,6 +332,7 @@ JXG.extend(Options, {
          * Attributes of the 3D plane orthogonal to the x-axis at the "front" of the cube.
          * @type Plane3D
          * @name View3D#xPlaneFront
+         * @attribute
          */
         xPlaneFront: {
             visible: false,
@@ -360,6 +371,7 @@ JXG.extend(Options, {
          * Attributes of the 3D plane orthogonal to the y-axis at the "front" of the cube.
          * @type Plane3D
          * @name View3D#yPlaneFront
+         * @attribute
          */
         yPlaneFront: {
             visible: false,
@@ -398,6 +410,7 @@ JXG.extend(Options, {
          * Attributes of the 3D plane orthogonal to the z-axis at the "front" of the cube.
          * @type Plane3D
          * @name View3D#zPlaneFront
+         * @attribute
          */
         zPlaneFront: {
             visible: false,
@@ -438,6 +451,7 @@ JXG.extend(Options, {
          * Attributes of the 3D y-axis on the 3D plane orthogonal to the x-axis at the "rear" of the cube.
          * @type Plane3D
          * @name View3D#xPlaneRearYAxis
+         * @attribute
          */
         xPlaneRearYAxis: {
             visible: 'inherit',
@@ -449,6 +463,7 @@ JXG.extend(Options, {
          * Attributes of the 3D z-axis on the 3D plane orthogonal to the x-axis at the "rear" of the cube.
          * @type Plane3D
          * @name View3D#xPlaneRearZAxis
+         * @attribute
          */
         xPlaneRearZAxis: {
             visible: 'inherit',
@@ -460,6 +475,7 @@ JXG.extend(Options, {
          * Attributes of the 3D y-axis on the 3D plane orthogonal to the x-axis at the "front" of the cube.
          * @type Plane3D
          * @name View3D#xPlaneFrontYAxis
+         * @attribute
          */
         xPlaneFrontYAxis: {
             visible: false,
@@ -471,6 +487,7 @@ JXG.extend(Options, {
          * Attributes of the 3D z-axis on the 3D plane orthogonal to the x-axis at the "front" of the cube.
          * @type Plane3D
          * @name View3D#xPlaneFrontZAxis
+         * @attribute
          */
         xPlaneFrontZAxis: {
             visible: false,
@@ -482,6 +499,7 @@ JXG.extend(Options, {
          * Attributes of the 3D x-axis on the 3D plane orthogonal to the y-axis at the "rear" of the cube.
          * @type Plane3D
          * @name View3D#yPlaneRearXAxis
+         * @attribute
          */
         yPlaneRearXAxis: {
             visible: 'inherit',
@@ -493,6 +511,7 @@ JXG.extend(Options, {
          * Attributes of the 3D z-axis on the 3D plane orthogonal to the y-axis at the "rear" of the cube.
          * @type Plane3D
          * @name View3D#yPlaneRearZAxis
+         * @attribute
          */
         yPlaneRearZAxis: {
             visible: 'inherit',
@@ -504,6 +523,7 @@ JXG.extend(Options, {
          * Attributes of the 3D x-axis on the 3D plane orthogonal to the y-axis at the "front" of the cube.
          * @type Plane3D
          * @name View3D#yPlaneFrontXAxis
+         * @attribute
          */
         yPlaneFrontXAxis: {
             visible: false,
@@ -515,6 +535,7 @@ JXG.extend(Options, {
          * Attributes of the 3D z-axis on the 3D plane orthogonal to the y-axis at the "front" of the cube.
          * @type Plane3D
          * @name View3D#yPlaneFrontZAxis
+         * @attribute
          */
         yPlaneFrontZAxis: {
             visible: false,
@@ -527,6 +548,7 @@ JXG.extend(Options, {
          * Attributes of the 3D x-axis on the 3D plane orthogonal to the z-axis at the "rear" of the cube.
          * @type Plane3D
          * @name View3D#zPlaneRearXAxis
+         * @attribute
          */
         zPlaneRearXAxis: {
             visible: 'inherit',
@@ -538,6 +560,7 @@ JXG.extend(Options, {
          * Attributes of the 3D y-axis on the 3D plane orthogonal to the z-axis at the "rear" of the cube.
          * @type Plane3D
          * @name View3D#zPlaneRearYAxis
+         * @attribute
          */
         zPlaneRearYAxis: {
             visible: 'inherit',
@@ -549,6 +572,7 @@ JXG.extend(Options, {
          * Attributes of the 3D x-axis on the 3D plane orthogonal to the z-axis at the "front" of the cube.
          * @type Plane3D
          * @name View3D#zPlaneFrontXAxis
+         * @attribute
          */
         zPlaneFrontXAxis: {
             visible: false,
@@ -560,6 +584,7 @@ JXG.extend(Options, {
          * Attributes of the 3D y-axis on the 3D plane orthogonal to the z-axis at the "front" of the cube.
          * @type Plane3D
          * @name View3D#zPlaneFrontYAxis
+         * @attribute
          */
         zPlaneFrontYAxis: {
             visible: false,
@@ -638,6 +663,7 @@ JXG.extend(Options, {
          *
          * @type Object
          * @name Face3D#shader
+         * @attribute
          * @see View3D#depthOrder
          * @default <pre>shader: {
          *   enabled: false,
@@ -835,6 +861,7 @@ JXG.extend(Options, {
          * Attributes of the defining point in case the line is defined by [point, vector, [range]]
          * @type Point3D
          * @name Line3D#point
+         * @attribute
          * @default <pre>visible: false, name: ""</pre>
          */
         point: { visible: false, name: "" }, // Used in cases of point/direction/range
@@ -843,6 +870,7 @@ JXG.extend(Options, {
          * Attributes of the first point in case the line is defined by [point, point].
          * @type Point3D
          * @name Line3D#point1
+         * @attribute
          * @default <pre>visible: false, name: ""</pre>
          */
         point1: { visible: false, name: "" }, // Used in point/point
@@ -851,6 +879,7 @@ JXG.extend(Options, {
          * Attributes of the second point in case the line is defined by [point, point].
          * @type Point3D
          * @name Line3D#point2
+         * @attribute
          * @default <pre>visible: false, name: ""</pre>
          */
         point2: { visible: false, name: "" },
@@ -861,6 +890,7 @@ JXG.extend(Options, {
          * Otherwise it ends at point1.
          *
          * @name Line3D#straightFirst
+         * @attribute
          * @see Line3D#straightLast
          * @type Boolean
          * @default false
@@ -874,6 +904,7 @@ JXG.extend(Options, {
          * Otherwise it ends at point2.
          *
          * @name Line3D#straightLast
+         * @attribute
          * @see Line3D#straightFirst
          * @type Boolean
          * @default false
@@ -900,6 +931,7 @@ JXG.extend(Options, {
          * Step width of the mesh in the direction of the first spanning vector.
          * @type {Number}
          * @name Mesh3D#stepWidthU
+         * @attribute
          * @default 1
          *
          */
@@ -910,6 +942,7 @@ JXG.extend(Options, {
          *
          * @type {Number}
          * @name Mesh3D#stepWidthV
+         * @attribute
          * @default 1
          *
          */
@@ -947,6 +980,7 @@ JXG.extend(Options, {
          *
          * @type Mesh3D
          * @name Plane3D#mesh3d
+         * @attribute
          * @default see {@link Mesh3D}
          */
         mesh3d: {
@@ -990,6 +1024,7 @@ JXG.extend(Options, {
          * the plane is defined by three points.
          *
          * @name Plane3D#threePoints
+         * @attribute
          * @type Boolean
          * @default false
          */
@@ -999,6 +1034,7 @@ JXG.extend(Options, {
          * Attributes of the defining point in case the plane is defined by [point, direction1, direction2, [range1, [range2]]].
          * @type Point3D
          * @name Plane3D#point
+         * @attribute
          * @default <pre>visible: false, name: "", fixed: true</pre>
          */
         point: { visible: false, name: "", fixed: true },
@@ -1007,6 +1043,7 @@ JXG.extend(Options, {
          * Attributes of the first point in case the plane is defined by [point, point, point].
          * @type Point3D
          * @name Plane3D#point1
+         * @attribute
          * @default <pre>visible: false, name: ""</pre>
          */
         point1: { visible: false, name: "" }, // Used in point/point/point
@@ -1015,6 +1052,7 @@ JXG.extend(Options, {
          * Attributes of the second point in case the plane is defined by [point, point, point].
          * @type Point3D
          * @name Plane3D#point2
+         * @attribute
          * @default <pre>visible: false, name: ""</pre>
          */
         point2: { visible: false, name: "" }, // Used in point/point/point
@@ -1023,6 +1061,7 @@ JXG.extend(Options, {
          * Attributes of the third point in case the plane is defined by [point, point, point].
          * @type Point3D
          * @name Plane3D#point3
+         * @attribute
          * @default <pre>visible: false, name: ""</pre>
          */
         point3: { visible: false, name: "" } // Used in point/point/point
@@ -1049,6 +1088,7 @@ JXG.extend(Options, {
          * For this, set cyclic to true.
          * @type Boolean
          * @name Point3D#cyclic
+         * @attribute
          * @default false
          */
         cyclic: false
@@ -1081,6 +1121,7 @@ JXG.extend(Options, {
          *
          * @type Array
          * @name Polyhedron3D#fillColorArray
+         * @attribute
          * @default ['white', 'black']
          */
         fillColorArray: ['white', 'black'],
@@ -1137,6 +1178,7 @@ JXG.extend(Options, {
          *
          * @type String
          * @name ParametricSurface3D#tiling
+         * @attribute
          * @default 'wireframe'
          * @see ParametricSurface3D#polyhedron
          *
@@ -1333,6 +1375,7 @@ JXG.extend(Options, {
          *
          * @type {object}
          * @name ParametricSurface3D#colormap
+         * @attribute
          * @default <pre>{
          *   min: [-5, 190],
          *   max: [5, 0],
@@ -1356,6 +1399,7 @@ JXG.extend(Options, {
          * </ul>
          * @type {object}
          * @name ParametricSurface3D#polyhedron
+         * @attribute
          * @default <pre>{strokewidth: 0, fillColorArray: ['white', 'black'] }</pre>
          * @see ParametricSurface3D#style
          *
@@ -1504,6 +1548,7 @@ JXG.extend(Options, {
          * If stepsU = 0 and type is 'wireframe' a 3D wireframe plot in one direction is created.
          * @type Number
          * @name ParametricSurface3D#stepsU
+         * @attribute
          */
         stepsU: 30,
 
@@ -1512,6 +1557,7 @@ JXG.extend(Options, {
          * If stepsV = 0 and type is 'wireframe' a 3D wireframe plot in one direction is created.
          * @type Number
          * @name ParametricSurface3D#stepsV
+         * @attribute
          */
         stepsV: 30,
 
@@ -1561,6 +1607,7 @@ JXG.extend(Options, {
         /**
          * Scaling factor of the vectors. This in contrast to slope fields, where this attribute sets the vector to the given length.
          * @name scale
+         * @attribute
          * @memberOf Vectorfield3D.prototype
          * @type {Number|Function}
          * @see Slopefield.scale
@@ -1577,6 +1624,7 @@ JXG.extend(Options, {
          *  <li> angle: angle of the arrow head legs In radians.
          * </ul>
          * @name arrowhead
+         * @attribute
          * @memberOf Vectorfield3D.prototype
          * @type {Object}
          * @default <tt>{enabled: true, size: 5, angle: Math.PI * 0.125}</tt>
@@ -1611,6 +1659,7 @@ JXG.extend(Options, {
          *      </ul>
          *
          * @name View3D#depthOrder
+         * @attribute
          * @type Object
          * @default <pre>{
          *   enabled: false,
@@ -1632,6 +1681,7 @@ JXG.extend(Options, {
          *
          *
          * @name View3D#projection
+         * @attribute
          * @type String
          * @default 'parallel'
          * @example
@@ -1699,6 +1749,7 @@ JXG.extend(Options, {
          * Possible values for attribute <i>key</i>: 'shift' or 'ctrl'.
          *
          * @name View3D#verticalDrag
+         * @attribute
          * @type Object
          * @default <tt>{enabled: true, key: 'shift'}</tt>
          */
@@ -1737,6 +1788,7 @@ JXG.extend(Options, {
          * </ul>
          *
          * @name View3D#az
+         * @attribute
          * @type Object
          * @default <pre>{
          *      pointer: {enabled: true, speed: 1, outside: true, button: -1, key: 'none'},
@@ -1853,6 +1905,7 @@ JXG.extend(Options, {
          * </ul>
          *
          * @name View3D#el
+         * @attribute
          * @type Object
          * @default <pre>{
          *      pointer: {enabled: true, speed: 1, outside: true, button: -1, key: 'none'},
@@ -1968,6 +2021,7 @@ JXG.extend(Options, {
          * </ul>
          *
          * @name View3D#bank
+         * @attribute
          * @type Object
          * @default <pre>{
          *      pointer: {enabled: true, speed: 1, outside: true, button: -1, key: 'none'},
@@ -2086,6 +2140,7 @@ JXG.extend(Options, {
          *      </ul>
          *
          * @name View3D#trackball
+         * @attribute
          * @type Object
          * @default <pre>{
          *   enabled: false,
@@ -2115,6 +2170,7 @@ JXG.extend(Options, {
          * Array of the form: [[el0, az0, r0], [el1, az1, r1, ...[eln, azn, rn]]
          *
          * @name View3D#values
+         * @attribute
          * @type Array
          * @default <tt>{[[0, 1.57], [0.78, 0.62], [0, 0], [5.49, 0.62], [4.71, 0], [3.93, 0.62], [3.14, 0], [2.36, 0.62], [1.57, 1.57]]}<tt>
          */
