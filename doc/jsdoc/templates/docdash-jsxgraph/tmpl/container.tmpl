@@ -247,7 +247,7 @@
 
     <?js } ?>
 
-<!--  -->
+<!-- typedef -->
     <?js
         var typedefs = self.find({kind: 'typedef', memberof: isGlobalPage ? {isUndefined: true} : doc.longname});
         if (typedefs && typedefs.length && typedefs.forEach) {
@@ -268,15 +268,27 @@
             }); ?>
     <?js } ?>
 
+<!-- Events -->
     <?js
         var events = self.find({kind: 'event', memberof: isGlobalPage ? {isUndefined: true} : doc.longname});
         if (events && events.length && events.forEach) {
     ?>
-        <h3 class="subsection-title">Events</h3>
+        <h3 class="subsection-title">Events summary</h3>
 
-        <?js events.forEach(function(e) { ?>
+        <?js events
+            .filter((self) => !self.inherited)
+            .forEach(function(e) { ?>
+            <?js= self.partial('members_short.tmpl', e) ?>
+        <?js }); ?>
+
+        <h3 class="subsection-title">Events details</h3>
+
+        <?js events
+            .filter((self) => self.inherited)
+            .forEach(function(e) { ?>
             <?js= self.partial('method.tmpl', e) ?>
         <?js }); ?>
+
     <?js } ?>
 </article>
 

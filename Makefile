@@ -151,7 +151,7 @@ docsonly:
 d:
 	@#node_modules/.bin/jsdoc -a all  --verbose -c ./doc/jsdoc/jsdoc.json -$(FILELIST)
 	@# node_modules/.bin/jsdoc -X -a all --verbose -c ./doc/jsdoc/jsdoc.json ./doc/jsdoc/tests/lineshort.js ./doc/jsdoc/tests/pseudo.js ./doc/jsdoc/tests/test.js >x.json
-	node_modules/.bin/jsdoc -a all    --verbose -c ./doc/jsdoc/jsdoc.json ./doc/jsdoc/tests/lineshort.js ./doc/jsdoc/tests/pseudo.js ./doc/jsdoc/tests/test.js src/options.js
+	node_modules/.bin/jsdoc -a all    --verbose -c ./doc/jsdoc/jsdoc.json src/base/board.js ./doc/jsdoc/tests/lineshort.js src/base/element.js ./doc/jsdoc/tests/pseudo.js ./doc/jsdoc/tests/test.js src/options.js
 # 	./doc/jsdoc/tests/test.js ./doc/jsdoc/tests/pseudo.js
 
 # prettier:
