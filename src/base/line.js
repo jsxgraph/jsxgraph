@@ -1520,7 +1520,7 @@ JXG.registerElement("line", JXG.createLine);
 /**
  * @class A (line) segment defined by two points.
  * It's strictly spoken just a wrapper for element {@link Line} with {@link Line#straightFirst}
- * and {@link Line#straightLast} properties set to false. If there is a third variable then the
+ * and {@link Line#straightLast} attributes set to false. If there is a third variable then the
  * segment has a fixed length (which may be a function, too) determined by the absolute value of
  * that number.
  * @pseudo

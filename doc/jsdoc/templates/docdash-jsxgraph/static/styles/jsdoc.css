@@ -24,10 +24,12 @@ a,
 a:active {
   color: #606;
   text-decoration: none;
+  border-bottom: 1px solid #ddd;
 }
 
 a:hover {
   text-decoration: none;
+  border-bottom: 1px solid #ddd;
 }
 
 article a {
