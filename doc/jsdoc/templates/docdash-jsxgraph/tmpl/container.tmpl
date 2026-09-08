@@ -144,9 +144,15 @@
   max-width: 90%;
 /*  margin: 0 auto;*/
   overflow: hidden;
-  column-width: 5em;
+  column-width: 8em;
   column-gap: 4em;
   column-rule: 1px solid #ccc;
+}
+.columntext {
+    text-overflow: "...";
+    overflow: hidden;
+    width: 10em;
+    margin: 0;
 }
 </style>
 
@@ -170,7 +176,7 @@
             <?js attributes
                    .filter((self) => !self.inherits)
                    .forEach(function(p) { ?>
-                <?js= self.partial('members_short.tmpl', p) ?><br>
+                <p class="columntext"><?js= self.partial('members_short.tmpl', p) ?></p>
             <?js }); ?>
         </div>
 
@@ -187,7 +193,7 @@
         <?js attributes
                .filter((self) => self.inherits)
                .forEach(function(p) { ?>
-            <?js= self.linkto(p.inherits, p.name) ?><br>
+            <p class="columntext"><?js= self.linkto(p.inherits, p.name) ?></p>
         <?js }); ?>
         </div>
     <?js } ?>
@@ -212,7 +218,7 @@
         <?js members
                .filter((self) => !self.inherited)
                .forEach(function(p) { ?>
-            <?js= self.partial('members_short.tmpl', p) ?>
+            <p class="columntext"><?js= self.partial('members_short.tmpl', p) ?></p>
         <?js }); ?>
         </div>
 
@@ -229,7 +235,7 @@
         <?js members
                .filter((self) => self.inherited)
                .forEach(function(p) { ?>
-            <?js= self.linkto(p.inherits, p.name) ?><br>
+            <p class="columntext"><?js= self.linkto(p.inherits, p.name) ?></p>
         <?js }); ?>
         </div>
 
@@ -246,7 +252,7 @@
         <?js methods
                .filter((self) => !self.inherited)
                .forEach(function(m) { ?>
-            <?js= self.partial('members_short.tmpl', m) ?>
+            <p class="columntext"><?js= self.partial('members_short.tmpl', m) ?></p>
         <?js }); ?>
         </div>
 
@@ -263,7 +269,7 @@
         <?js methods
                .filter((self) => self.inherited)
                .forEach(function(p) { ?>
-            <?js= self.linkto(p.inherits, p.name) ?><br>
+            <p class="columntext"><?js= self.linkto(p.inherits, p.name) ?></p>
         <?js }); ?>
         </div>
 
@@ -301,17 +307,26 @@
         <?js events
             .filter((self) => !self.inherited)
             .forEach(function(e) { ?>
-            <?js= self.partial('members_short.tmpl', e) ?>
+            <p class="columntext"><?js= self.partial('members_short.tmpl', e) ?></p>
         <?js }); ?>
         </div>
 
         <h4 class="subsection-title">Events details</h4>
 
         <?js events
-            .filter((self) => self.inherited)
+            .filter((self) => !self.inherited)
             .forEach(function(e) { ?>
             <?js= self.partial('method.tmpl', e) ?>
         <?js }); ?>
+
+        <h4 class="subsection-title">Inherited events</h4>
+        <div class="list_container">
+        <?js events
+            .filter((self) => self.inherited)
+            .forEach(function(e) { ?>
+            <p class="columntext"><?js= self.linkto(e.inherits, e.name) ?></p>
+        <?js }); ?>
+        </div>
 
     <?js } ?>
 </article>

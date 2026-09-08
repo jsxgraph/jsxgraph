@@ -485,6 +485,7 @@ function buildNav(members) {
     }
     var defaultOrder = [
         'Classes', 'Modules', 'Externals', 'Events', 'Namespaces', 'Mixins', 'Tutorials', 'Interfaces', 'Global'
+        // 'Classes', 'Modules', 'Externals', 'Namespaces', 'Mixins', 'Tutorials', 'Interfaces', 'Global'
     ];
     var order = docdash.sectionOrder || defaultOrder;
     var sections = {
