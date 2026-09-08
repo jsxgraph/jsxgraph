@@ -11,5 +11,8 @@
   "opts": {
     "template": "./doc/jsdoc/templates/docdash-custom",
     "destination": "./output_docs"
+  },
+  "tags": {
+    "allowUnknownTags": false
   }
 }

@@ -30,7 +30,7 @@
 JXG.createLine = function (board, parents, attributes) { };
 
 line = {
-    /**#@+
+    /**
      * @visprop
      */
 
@@ -38,9 +38,10 @@ line = {
      * Attributes for first defining point of the line.
      *
      * @type Object
-     * @name Line#point1a
+     * @name Line#point1
+     * @attribute
      */
-    point1a: {
+    point1: {
         fillColor: 'red',
     },
 
@@ -48,9 +49,10 @@ line = {
      * Attributes for second defining point of the line.
      *
      * @type Object
-     * @name Line#point2a
+     * @name Line#point2
+     * @attribute
      */
-    point2a: {
+    point2: {
         fillColor: 'red',
     },
 
@@ -62,10 +64,9 @@ line = {
      * @name Line#margin
      * @type Number
      * @default 0
+     * @attribute
      */
     margin: 0
-
-    /**#@-*/
 };
 
 /**

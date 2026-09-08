@@ -20,12 +20,15 @@ JXG.Line = function (board, p1, p2, attributes) {
      * update system so your construction won't be updated properly.
      * @type JXG.Point
      * @private
+     * @variation 2
      */
     this.point1 = this.board.select(p1);
 
     /**
      * End point of the line. Just like {@link JXG.Line.point1} you shouldn't write this field directly.
      * @type JXG.Point
+     * @private
+     * @variation 2
      */
     this.point2 = this.board.select(p2);
 

@@ -1,4 +1,4 @@
-//Removes leading JSDoc stars (*) and trims whitespace
+// Removes leading JSDoc stars (*) and trims whitespace
 function cleanLine(line) {
   return String(line || "")
     .replace(/^\s*\*\s?/, "")
@@ -56,6 +56,8 @@ function parseSignatureBlocks(comment) {
       });
     }
 
+    // After the first tag different from @signature and @param
+    // stop the signature block
     if (line.match(/^@(?!signature|param)\w+(?=\s|$)/)) {
       break;
     }
@@ -86,8 +88,6 @@ exports.handlers = {
   // Called as soon as a doclet has been created
   newDoclet(e) {
     const d = e.doclet;
-  
-// console.log("\n\n============= doclet ===============\n", d)
 
     // Extract signature blocks from the comment
     const blocks = parseSignatureBlocks(d.comment || "");

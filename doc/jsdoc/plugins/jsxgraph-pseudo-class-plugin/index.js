@@ -1,7 +1,7 @@
 
-const STATE = {
-    isAttribute: false
-};
+// const STATE = {
+//     isAttribute: false
+// };
 
 // Registers the @signature tag in JSDoc
 exports.defineTags = function (dictionary) {
@@ -15,41 +15,29 @@ exports.defineTags = function (dictionary) {
     dictionary.defineTag("visprop", {
         mustNotHaveValue: true,
         onTagged: function (doclet, tag) {
-            STATE.isAttribute = true;
+            // STATE.isAttribute = true;
+            // console.log(doclet, tag)
         }
     });
-
+    dictionary.defineTag("attribute", {
+        mustNoteHaveValue: true,
+        onTagged: function (doclet, tag) {
+            // STATE.isAttribute = true;
+            // doclet.isAttribute = true;
+            doclet.kind = "attribute";
+            // console.log(doclet)
+        }
+    });
 };
 
 // Plugin Hooks for JSDoc
 exports.handlers = {
     newDoclet: function (e) {
-        e.doclet.isAttribute = STATE.isAttribute;
-
-        // let s = e.doclet;
-        // if (/*!e.doclet.inherited || */ 'JXG.' + e.doclet.longname === e.doclet.inherits) {
-        //     e.doclet.isPseudoMember = true;
-        // }
-        // if (e.doclet.inherited) {
-        //     e.doclet.isPseudoMember = false;
-        // } else {
-        //     e.doclet.isPseudoMember = true;
-        // }
+        // e.doclet.isAttribute = STATE.isAttribute;
     },
 
     symbolFound(e) {
-        // var txt = JSON.stringify(e);
-        // if (txt.indexOf('visprop') !== -1) {
-        //     console.log(txt)
-        // }
-        // console.log('-----------')
-
-        // e.isPseudo = false;
-        // if (e.comment.toString().indexOf("visprop") != -1) {
-        //    console.log(e)
-        //     e.isPseudo = true;
-        //     console.log(e.name, e.isPseudo)
-        // }
+        // console.log('>', e)
     },
 
     // Called after all doclets have been created
@@ -66,6 +54,7 @@ exports.handlers = {
         }
     }
 };
+
 /*
 JSDOC.PluginManager.registerPlugin(
     "JSDOC.jsxPseudoClass",

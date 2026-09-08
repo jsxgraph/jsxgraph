@@ -11,6 +11,7 @@
         isGlobalPage = (doc.kind === 'globalobj');
     }
 ?>
+
 <?js if (doc.kind === 'mainpage' || (doc.kind === 'package')) { ?>
     <?js= self.partial('mainpage.tmpl', doc) ?>
 <?js } else if (doc.kind === 'source') { ?>
@@ -27,7 +28,8 @@
         <?js if (doc.kind === 'namespace') { ?>
             Namespace
         <?js } else { ?>
-            <?js= doc.name ?>
+            <?js= doc.longname ?>
+            <?js= doc.name ?> - <?js= doc.kind ?>
         <?js } ?>
         <?js if (doc.variation) { ?>
             <sup class="variation"><?js= doc.variation ?></sup>
@@ -36,6 +38,7 @@
             <div class="class-description usertext"><?js= doc.classdesc ?></div>
         <?js } ?>
     <?js } else if (doc.kind === 'module' && doc.modules) { ?>
+       ######
         <?js doc.modules.forEach(function(module) { ?>
             <?js if (module.classdesc) { ?>
                 <div class="class-description"><?js= module.classdesc ?></div>
@@ -136,6 +139,38 @@
         <?js }); ?></dl>
     <?js } ?>
 
+
+<!-- Attributes -->
+    <?js
+        var attributes = self.find({kind: 'attribute',
+                memberof: isGlobalPage ? {isUndefined: true} : doc.longname
+            });
+
+        // symbols that are assigned to module.exports are not globals, even though they're not a memberof anything
+        if (isGlobalPage && attributes && attributes.length && attributes.forEach) {
+            attributes = attributes.filter(function(m) {
+                return m.longname && m.longname.indexOf('module:') !== 0;
+            });
+        }
+        if (attributes && attributes.length && attributes.forEach) {
+    ?>
+        <h3 class="subsection-title">Attributes</h3>
+
+        <?js attributes
+               .filter((self) => !self.inherits)
+               .forEach(function(p) { ?>
+            <?js= self.partial('members.tmpl', p) ?>
+        <?js }); ?>
+
+        <h4 class="subsection-title">Inherited attributes</h4>
+        <?js attributes
+               .filter((self) => self.inherits)
+               .forEach(function(p) { ?>
+            <?js= self.linkto(p.inherits, p.name) ?>
+        <?js }); ?>
+    <?js } ?>
+
+<!-- Members -->
     <?js
         var members = self.find({kind: 'member', 
                 memberof: isGlobalPage ? {isUndefined: true} : doc.longname
@@ -149,35 +184,17 @@
         }
         if (members && members.length && members.forEach) {
     ?>
-
-<!-- Attributes -->
-        <h3 class="subsection-title">Attributes</h3>
-
-        <?js members
-               .filter((self) => self.isAttribute && !self.inherits)
-               .forEach(function(p) { ?>
-            <?js= self.partial('members.tmpl', p) ?>
-        <?js }); ?>
-
-        <h4 class="subsection-title">Inherited attributes</h4>
-        <?js members
-               .filter((self) => self.isAttribute && self.inherits)
-               .forEach(function(p) { ?>
-            <?js= self.linkto(p.inherits, p.name) ?>
-        <?js }); ?>
-
-<!-- Members -->
         <h3 class="subsection-title">Members</h3>
 
         <?js members
-               .filter((self) => !self.isAttribute && !self.inherited)
+               .filter((self) => !self.inherited)
                .forEach(function(p) { ?>
             <?js= self.partial('members.tmpl', p) ?>
         <?js }); ?>
 
         <h4 class="subsection-title">Inherited members</h4>
         <?js members
-               .filter((self) => !self.isAttribute && self.inherited)
+               .filter((self) => self.inherited)
                .forEach(function(p) { ?>
             <?js= self.linkto(p.inherits, p.name) ?>
         <?js }); ?>
