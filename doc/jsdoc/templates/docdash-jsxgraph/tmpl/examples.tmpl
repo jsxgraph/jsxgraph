@@ -7,10 +7,14 @@
     ?>
         <p class="code-caption"><?js= example.caption ?></p>
     <?js } ?>
-    <pre class="prettyprint"><code><?js= example.code ?></code></pre>
 
-    <!-- old -->
-    <!--<pre class="prettyprint"><code><?js= self.htmlsafe(example.code) ?></code></pre>-->
+    <?js= ('<pre class="prettyprint"><code>' + example.code + '</code></pre>')
+            .replace("</pre><div ", "</code></pre><div ")
+            .replace("</script><pre></code></pre>", "</script>")
+    ?>
+
+    <!-- old, replace "<" by &lt; -->
+    <!--<pre class="prettyprint"><code><?js= /*self.htmlsafe(example.code)*/ ?></code></pre>-->
 <?js
     });
 ?>
