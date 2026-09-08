@@ -67,6 +67,7 @@ JXG.Options = {
          * {@link JXG.CoordsElement#visit}.
          *
          * @name JXG.Board#animationDelay
+         * @attribute
          * @type Number
          * @default 35
          * @see JXG.CoordsElement#moveAlong
@@ -84,6 +85,7 @@ JXG.Options = {
          * Value can be Boolean or an object containing axis attributes.
          *
          * @name JXG.Board#axis
+         * @attribute
          * @type Boolean
          * @default false
          */
@@ -98,6 +100,7 @@ JXG.Options = {
          * to the lower right corner (x<sub>2</sub>, y<sub>2</sub>).
          *
          * @name JXG.Board#boundingBox
+         * @attribute
          * @type Array
          * @see JXG.Board#maxBoundingBox
          * @see JXG.Board#keepAspectRatio
@@ -122,6 +125,7 @@ JXG.Options = {
          * </ul>
          *
          * @name JXG.Board#browserPan
+         * @attribute
          * @see JXG.Board#pan
          * @type Boolean
          * @default false
@@ -188,6 +192,7 @@ JXG.Options = {
          * otherwise stay with the default 600.
          *
          * @name JXG.Board#clickDelay
+         * @attribute
          * @type Number
          * @default 600
          * @see JXG.Board#dblClickSuppressClick
@@ -198,6 +203,7 @@ JXG.Options = {
          * CSS attributes for the JSXGraph div element.
          *
          * @name JXG.Board#cssStyle
+         * @attribute
          * @type String
          * @default ''
          */
@@ -212,6 +218,7 @@ JXG.Options = {
          * {@link JXG.Board#clickDelay}.
          *
          * @name JXG.Board#dblClickSuppressClick
+         * @attribute
          * @type Boolean
          * @default false
          * @see JXG.Board#clickDelay
@@ -224,6 +231,7 @@ JXG.Options = {
          * axis:true in {@link JXG.JSXGraph#initBoard}.
          *
          * @name JXG.Board#defaultAxes
+         * @attribute
          * @type Object
          * @default <tt>{x: {name:'x'}, y: {name: 'y'}}</tt>
          *
@@ -387,6 +395,7 @@ JXG.Options = {
          * Supply the document object. Defaults to window.document
          *
          * @name JXG.Board#document
+         * @attribute
          * @type Object
          * @description DOM object
          * @default false (meaning window.document)
@@ -404,6 +413,7 @@ JXG.Options = {
          * </pre>
          *
          * @name JXG.Board#drag
+         * @attribute
          * @type Object
          * @default <tt>{enabled: true}</tt>
          */
@@ -453,6 +463,7 @@ JXG.Options = {
          * </script><pre>
          *
          * @name JXG.Board#fullscreen
+         * @attribute
          * @default svg code
          * @see JXG.Board#showFullscreen
          * @see JXG.AbstractRenderer#drawNavigationBar
@@ -475,6 +486,7 @@ JXG.Options = {
          * <p>
          * Meanwhile, this feature might be irrelevant.
          * @name JXG.Board#ignoreLabels
+         * @attribute
          * @type Booelan
          * @default true
          */
@@ -500,6 +512,7 @@ JXG.Options = {
          * If no locale is set, the default language of the browser is used.
          *
          * @name JXG.Board#intl
+         * @attribute
          * @type Object
          * @default <tt>{enabled: false}</tt>
          * @see Integral#label
@@ -659,6 +672,7 @@ JXG.Options = {
          * the board has been constructed by `JXG.initAppBox`
          * @type {Object}
          * @name JXG.Board#jxgbox
+         * @attribute
          * @default <pre>{
          *   id: 'jxgbox',
          *   outerbox: null,
@@ -687,6 +701,7 @@ JXG.Options = {
          * might be the better choice.
          *
          * @name JXG.Board#keepAspectRatio
+         * @attribute
          * @see JXG.Board#boundingBox
          * @see JXG.Board#maxBoundingBox
          * @see JXG.Board#setBoundingBox
@@ -744,6 +759,7 @@ JXG.Options = {
          * @see JXG.Board#keyFocusOutListener
          *
          * @name JXG.Board#keyboard
+         * @attribute
          * @type Object
          * @default <tt>{enabled: true, dx: 10, dy:10, panShift: true, panCtrl: false}</tt>
          */
@@ -759,6 +775,7 @@ JXG.Options = {
          * If enabled, user activities are logged in array "board.userLog".
          *
          * @name JXG.Board#logging
+         * @attribute
          * @type Object
          * @default <tt>{enabled: false}</tt>
          *
@@ -830,6 +847,7 @@ JXG.Options = {
          *
          *
          * @name JXG.Board#minimizeReflow
+         * @attribute
          * @type String
          * @default 'none'
          */
@@ -844,6 +862,7 @@ JXG.Options = {
          * bounding box.
          *
          * @name JXG.Board#maxBoundingBox
+         * @attribute
          * @type Array
          * @see JXG.Board#boundingBox
          * @default [-Infinity, Infinity, Infinity, -Infinity]
@@ -879,6 +898,7 @@ JXG.Options = {
          * triggered by move events.
          *
          * @name JXG.Board#maxFrameRate
+         * @attribute
          * @type Number
          * @default 40
          */
@@ -890,6 +910,7 @@ JXG.Options = {
          * If set to 2, point labels end at "ZZ".
          *
          * @name JXG.Board#maxNameLength
+         * @attribute
          * @see JXG.Board#generateName
          * @type Number
          * @default 1
@@ -932,6 +953,7 @@ JXG.Options = {
          * board.addEventHandlers();
          *
          * @name JXG.Board#moveTarget
+         * @attribute
          * @type Object
          * @description HTML node or document
          * @default null
@@ -965,6 +987,7 @@ JXG.Options = {
          * calculations in {@link JXG.Board#getCoordsTopLeftCorner}.
          *
          * @name JXG.Board#offsetX
+         * @attribute
          * @see JXG.Board#offsetY
          * @type Number
          * @default 0
@@ -976,6 +999,7 @@ JXG.Options = {
          * calculations in {@link JXG.Board#getCoordsTopLeftCorner}.
          *
          * @name JXG.Board#offsetY
+         * @attribute
          * @see JXG.Board#offsetX
          * @type Number
          * @default 0
@@ -995,6 +1019,7 @@ JXG.Options = {
          * </pre>
          *
          * @name JXG.Board#pan
+         * @attribute
          * @see JXG.Board#browserPan
          *
          * @type Object
@@ -1029,6 +1054,7 @@ JXG.Options = {
          * {@link JXG.Board#removeEventHandlers()} directly.
          *
          * @name JXG.Board.registerEvents
+         * @attribute
          * @see JXG.Board#keyboard
          * @see JXG.Board.registerResizeEvent
          * @see JXG.Board.registerFullscreenEvent
@@ -1045,6 +1071,7 @@ JXG.Options = {
         //  * {@link JXG.Board#removeEventHandlers()} directly.
         //  *
         //  * @name JXG.Board#registerFullscreenEvent
+        //  * @attribute
         //  * @see JXG.Board#registerEvents
         //  * @see JXG.Board#registerResizeEvent
         //  * @type Boolean
@@ -1064,6 +1091,7 @@ JXG.Options = {
         //  * to size changed is controlled with {@link JXG.Board#resize}.
         //  *
         //  * @name JXG.Board#registerResizeEvent
+        //  * @attribute
         //  * @see JXG.Board#resize
         //  * @see JXG.Board#registerEvents
         //  * @see JXG.Board#registerFullscreenEvent
@@ -1084,6 +1112,7 @@ JXG.Options = {
          * This attribute is immutable.
          *
          * @name JXG.Board#renderer
+         * @attribute
          * @type String
          * @default 'auto'
          */
@@ -1103,6 +1132,7 @@ JXG.Options = {
          * @see JXG.Board#resizeListener
          *
          * @name JXG.Board#resize
+         * @attribute
          * @type Object
          * @default <tt>{enabled: true, throttle: 10}</tt>
          *
@@ -1149,6 +1179,7 @@ JXG.Options = {
          * containing SVG again.
          *
          * @name JXG.Board#screenshot
+         * @attribute
          * @type Object
          */
         screenshot: {
@@ -1194,6 +1225,7 @@ JXG.Options = {
          * });
          *
          * @name JXG.Board#selection
+         * @attribute
          *
          * @see JXG.Board#startSelectionMode
          * @see JXG.Board#stopSelectionMode
@@ -1219,6 +1251,7 @@ JXG.Options = {
         /**
          * Control the sketchcurves for pointer device or first and second finger.
          * @name JXG.Board#sketches
+         * @attribute
          * @type Object
          * @default <pre>{
          *   enabled: false,
@@ -1242,6 +1275,7 @@ JXG.Options = {
          * <tt>JXG_navigation_button_cleartraces"</tt>.
          *
          * @name JXG.Board#showClearTraces
+         * @attribute
          * @type Boolean
          * @default false
          * @see JXG.AbstractRenderer#drawNavigationBar
@@ -1252,6 +1286,7 @@ JXG.Options = {
          * Show copyright string and logo in the top left corner of the board.
          *
          * @name JXG.Board#showCopyright
+         * @attribute
          * @see JXG.Board#showLogo
          * @type Boolean
          * @default true
@@ -1266,6 +1301,7 @@ JXG.Options = {
          * <tt>JXG_navigation_button_fullscreen"</tt>.
          *
          * @name JXG.Board#showFullscreen
+         * @attribute
          * @type Boolean
          * @see JXG.Board#fullscreen
          * @default false
@@ -1281,6 +1317,7 @@ JXG.Options = {
          * that value will have priority over this value.
          *
          * @name JXG.Board#showInfobox
+         * @attribute
          * @see Point#showInfobox
          * @type Boolean
          * @default true
@@ -1295,6 +1332,7 @@ JXG.Options = {
          * by setting showLogo to true.
          *
          * @name JXG.Board#showLogo
+         * @attribute
          * @type Boolean
          * @default false
          * @see JXG.Board#showCopyright
@@ -1316,6 +1354,7 @@ JXG.Options = {
          * <tt>fullscreen</tt>, <tt>screenshot</tt>, <tt>cleartraces</tt>, <tt>reload</tt>.
          *
          * @name JXG.Board#showNavigation
+         * @attribute
          * @type Boolean
          * @default true
          * @see JXG.AbstractRenderer#drawNavigationBar
@@ -1331,6 +1370,7 @@ JXG.Options = {
          * <tt>JXG_navigation_button_reload"</tt>.
          *
          * @name JXG.Board#showReload
+         * @attribute
          * @type Boolean
          * @default false
          * @see JXG.AbstractRenderer#drawNavigationBar
@@ -1345,6 +1385,7 @@ JXG.Options = {
          * <tt>JXG_navigation_button_screenshot"</tt>.
          *
          * @name JXG.Board#showScreenshot
+         * @attribute
          * @type Boolean
          * @default false
          * @see JXG.AbstractRenderer#drawNavigationBar
@@ -1362,6 +1403,7 @@ JXG.Options = {
          * is <tt>in</tt>, <tt>100</tt>, or <tt>out</tt>.
          *
          * @name JXG.Board#showZoom
+         * @attribute
          * @type Boolean
          * @default true
          * @see JXG.AbstractRenderer#drawNavigationBar
@@ -1372,18 +1414,20 @@ JXG.Options = {
          * If true the first element of the set JXG.board.objects having hasPoint==true is taken as drag element.
          *
          * @name JXG.Board#takeFirst
+         * @attribute
          * @type Boolean
          * @default false
          */
         takeFirst: false,
 
         /**
-        * If true, when read from a file or string - the size of the div can be changed by the construction text.
-        *
-        * @name JXG.Board#takeSizeFromFile
-        * @type Boolean
-        * @default false
-        */
+         * If true, when read from a file or string - the size of the div can be changed by the construction text.
+         *
+         * @name JXG.Board#takeSizeFromFile
+         * @attribute
+         * @type Boolean
+         * @default false
+         */
         takeSizeFromFile: false,
 
         /**
@@ -1395,6 +1439,7 @@ JXG.Options = {
          * </ul>
          *
          * @name JXG.Board#theme
+         * @attribute
          * @type String
          * @default 'default'
          * @example
@@ -1451,6 +1496,7 @@ JXG.Options = {
          * <b>aria:{enable:true,label:"Your Title"}</b>
          *
          * @name JXG.Board#title
+         * @attribute
          * @type String
          * @default ''
          *
@@ -1485,6 +1531,7 @@ JXG.Options = {
          * Deprecated: zoom.eps which is superseded by zoom.min
          *
          * @name JXG.Board#zoom
+         * @attribute
          * @type Object
          * @default See above
          * @see JXG.Board#showZoom
@@ -1509,6 +1556,7 @@ JXG.Options = {
         //  * Additional zoom factor multiplied to {@link JXG.Board#zoomX} and {@link JXG.Board#zoomY}.
         //  *
         //  * @name JXG.Board#zoomFactor
+        //  * @attribute
         //  * @type Number
         //  * @default 1.0
         //  */
@@ -1518,6 +1566,7 @@ JXG.Options = {
          * Zoom factor in horizontal direction.
          *
          * @name JXG.Board#zoomX
+         * @attribute
          * @see JXG.Board#zoomY
          * @type Number
          * @default 1.0
@@ -1528,6 +1577,7 @@ JXG.Options = {
          * Zoom factor in vertical direction.
          *
          * @name JXG.Board#zoomY
+         * @attribute
          * @see JXG.Board#zoomX
          * @type Number
          * @default 1.0
@@ -1559,6 +1609,7 @@ JXG.Options = {
      * @deprecated
      * @type Object
      * @name JXG.Options#navbar
+         * @attribute
      *
      */
     navbar: {
@@ -1594,6 +1645,7 @@ JXG.Options = {
          * HTML attribute 'aria-label' (ignoring 'aria.enabled').
          *
          * @name aria
+         * @attribute
          * @memberOf JXG.GeometryElement.prototype
          * @type Object
          * @default <pre>{
@@ -1612,6 +1664,7 @@ JXG.Options = {
          * If set to false, the JSXGraph element can be dragged out of the JSXGraph board. Used in {@link JXG#appBox}.
          *
          * @name clip
+         * @attribute
          * @memberOf JXG.GeometryElement.prototype
          * @type Boolean
          * @default true
@@ -1651,6 +1704,7 @@ JXG.Options = {
          *
          *
          * @name cssClass
+         * @attribute
          * @memberOf JXG.GeometryElement.prototype
          * @type String
          * @default ''
@@ -1666,6 +1720,7 @@ JXG.Options = {
          * For non-text and non-image elements, this feature is available for the SVG renderer, only.
          *
          * @name highlightCssClass
+         * @attribute
          * @memberOf JXG.GeometryElement.prototype
          * @type String
          * @default ''
@@ -1690,6 +1745,7 @@ JXG.Options = {
          *
          * @type Number
          * @name JXG.GeometryElement#dash
+         * @attribute
          * @default 0
          *
          * @see JXG.GeometryElement#lineCap
@@ -1700,6 +1756,7 @@ JXG.Options = {
         /**
          * If true, the dash pattern is multiplied by strokeWidth / 2.
          * @name JXG.GeometryElement#dashScale
+         * @attribute
          * @type Boolean
          * @default false
          *
@@ -1713,6 +1770,7 @@ JXG.Options = {
          * to visualize that it's only a draft.
          *
          * @name JXG.GeometryElement#draft
+         * @attribute
          * @type Object
          * @default <tt>{@link JXG.Options.elements.draft#draft}</tt>
          */
@@ -1748,6 +1806,7 @@ JXG.Options = {
          * @type Boolean
          * @default false
          * @name JXG.GeometryElement#dragToTopOfLayer
+         * @attribute
          */
         dragToTopOfLayer: false,
 
@@ -1755,6 +1814,7 @@ JXG.Options = {
          * Links to the defining 3D element of a 2D element. Otherwise it is null.
          *
          * @name JXG.GeometryElement#element3D
+         * @attribute
          * @default null
          * @private
          */
@@ -1764,6 +1824,7 @@ JXG.Options = {
          * The fill color of this geometry element.
          * @type String
          * @name JXG.GeometryElement#fillColor
+         * @attribute
          * @see JXG.GeometryElement#highlightFillColor
          * @see JXG.GeometryElement#fillOpacity
          * @see JXG.GeometryElement#highlightFillOpacity
@@ -1775,6 +1836,7 @@ JXG.Options = {
          * Opacity for fill color.
          * @type Number
          * @name JXG.GeometryElement#fillOpacity
+         * @attribute
          * @see JXG.GeometryElement#fillColor
          * @see JXG.GeometryElement#highlightFillColor
          * @see JXG.GeometryElement#highlightFillOpacity
@@ -1788,6 +1850,7 @@ JXG.Options = {
          * @type Boolean
          * @default false
          * @name JXG.GeometryElement#fixed
+         * @attribute
          */
         fixed: false,
 
@@ -1799,6 +1862,7 @@ JXG.Options = {
          * @type Boolean
          * @default false
          * @name JXG.GeometryElement#frozen
+         * @attribute
          *
          * @example
          * var txt = board.create('text', [1, 2, 'Hello'], {frozen: true, fontSize: 24});
@@ -1927,6 +1991,7 @@ JXG.Options = {
          *
          * @type String
          * @name JXG.GeometryElement#gradient
+         * @attribute
          * @see JXG.GeometryElement#gradientSecondColor
          * @see JXG.GeometryElement#gradientSecondOpacity
          * @default null
@@ -1940,6 +2005,7 @@ JXG.Options = {
          * bottom.
          * @type Number
          * @name JXG.GeometryElement#gradientAngle
+         * @attribute
          * @see JXG.GeometryElement#gradient
          * @default 0
          */
@@ -1952,6 +2018,7 @@ JXG.Options = {
          * Takes a value between 0 and 1.
          * @type Number
          * @name JXG.GeometryElement#gradientCX
+         * @attribute
          * @see JXG.GeometryElement#gradient
          * @see JXG.GeometryElement#gradientCY
          * @see JXG.GeometryElement#gradientR
@@ -1966,6 +2033,7 @@ JXG.Options = {
          * Takes a value between 0 and 1.
          * @type Number
          * @name JXG.GeometryElement#gradientCY
+         * @attribute
          * @see JXG.GeometryElement#gradient
          * @see JXG.GeometryElement#gradientCX
          * @see JXG.GeometryElement#gradientR
@@ -1980,6 +2048,7 @@ JXG.Options = {
          * For radial gradients, it represents a percentage distance from (fx,fy) to the edge of the outermost/largest circle.
          * @type Number
          * @name JXG.GeometryElement#gradientEndOffset
+         * @attribute
          * @see JXG.GeometryElement#gradient
          * @see JXG.GeometryElement#gradientStartOffset
          * @default 1.0
@@ -1993,6 +2062,7 @@ JXG.Options = {
          * Takes a value between 0 and 1.
          * @type Number
          * @name JXG.GeometryElement#gradientFX
+         * @attribute
          * @see JXG.GeometryElement#gradient
          * @see JXG.GeometryElement#gradientFY
          * @see JXG.GeometryElement#gradientFR
@@ -2006,6 +2076,7 @@ JXG.Options = {
          * Takes a value between 0 and 1.
          * @type Number
          * @name JXG.GeometryElement#gradientFY
+         * @attribute
          * @see JXG.GeometryElement#gradient
          * @see JXG.GeometryElement#gradientFX
          * @see JXG.GeometryElement#gradientFR
@@ -2020,6 +2091,7 @@ JXG.Options = {
          * Takes a value between 0 and 1.
          * @type Number
          * @name JXG.GeometryElement#gradientFR
+         * @attribute
          * @see JXG.GeometryElement#gradient
          * @see JXG.GeometryElement#gradientFX
          * @see JXG.GeometryElement#gradientFY
@@ -2034,6 +2106,7 @@ JXG.Options = {
          * Takes a value between 0 and 1.
          * @type Number
          * @name JXG.GeometryElement#gradientR
+         * @attribute
          * @see JXG.GeometryElement#gradient
          * @see JXG.GeometryElement#gradientCX
          * @see JXG.GeometryElement#gradientCY
@@ -2045,6 +2118,7 @@ JXG.Options = {
          * Second color for gradient.
          * @type String
          * @name JXG.GeometryElement#gradientSecondColor
+         * @attribute
          * @see JXG.GeometryElement#gradient
          * @see JXG.GeometryElement#gradientSecondOpacity
          * @default '#ffffff'
@@ -2055,6 +2129,7 @@ JXG.Options = {
          * Opacity of second gradient color. Takes a value between 0 and 1.
          * @type Number
          * @name JXG.GeometryElement#gradientSecondOpacity
+         * @attribute
          * @see JXG.GeometryElement#gradient
          * @see JXG.GeometryElement#gradientSecondColor
          * @default 1
@@ -2068,6 +2143,7 @@ JXG.Options = {
          * For radial gradients, it represents a percentage distance from (fx,fy) to the edge of the outermost/largest circle.
          * @type Number
          * @name JXG.GeometryElement#gradientStartOffset
+         * @attribute
          * @see JXG.GeometryElement#gradient
          * @see JXG.GeometryElement#gradientEndOffset
          * @default 0.0
@@ -2078,6 +2154,7 @@ JXG.Options = {
          * @type Boolean
          * @default true
          * @name JXG.GeometryElement#highlight
+         * @attribute
          */
         highlight: true,
 
@@ -2085,6 +2162,7 @@ JXG.Options = {
          * The fill color of the given geometry element when the mouse is pointed over it.
          * @type String
          * @name JXG.GeometryElement#highlightFillColor
+         * @attribute
          * @see JXG.GeometryElement#fillColor
          * @see JXG.GeometryElement#fillOpacity
          * @see JXG.GeometryElement#highlightFillOpacity
@@ -2096,6 +2174,7 @@ JXG.Options = {
          * Opacity for fill color when the object is highlighted.
          * @type Number
          * @name JXG.GeometryElement#highlightFillOpacity
+         * @attribute
          * @see JXG.GeometryElement#fillColor
          * @see JXG.GeometryElement#highlightFillColor
          * @see JXG.GeometryElement#fillOpacity
@@ -2107,6 +2186,7 @@ JXG.Options = {
          * The stroke color of the given geometry element when the user moves the mouse over it.
          * @type String
          * @name JXG.GeometryElement#highlightStrokeColor
+         * @attribute
          * @see JXG.GeometryElement#strokeColor
          * @see JXG.GeometryElement#strokeWidth
          * @see JXG.GeometryElement#strokeOpacity
@@ -2119,6 +2199,7 @@ JXG.Options = {
          * Opacity for stroke color when the object is highlighted.
          * @type Number
          * @name JXG.GeometryElement#highlightStrokeOpacity
+         * @attribute
          * @see JXG.GeometryElement#strokeColor
          * @see JXG.GeometryElement#highlightStrokeColor
          * @see JXG.GeometryElement#strokeWidth
@@ -2131,6 +2212,7 @@ JXG.Options = {
          * Width of the element's stroke when the mouse is pointed over it.
          * @type Number
          * @name JXG.GeometryElement#highlightStrokeWidth
+         * @attribute
          * @see JXG.GeometryElement#strokeColor
          * @see JXG.GeometryElement#highlightStrokeColor
          * @see JXG.GeometryElement#strokeOpacity
@@ -2142,6 +2224,7 @@ JXG.Options = {
 
         /**
          * @name JXG.GeometryElement#isLabel
+         * @attribute
          * @default false
          * @private
         */
@@ -2151,6 +2234,7 @@ JXG.Options = {
         /**
          * Display layer which will contain the element.
          * @name JXG.GeometryElement#layer
+         * @attribute
          * @see JXG.Options#layer
          * @default See {@link JXG.Options#layer}
          */
@@ -2167,6 +2251,7 @@ JXG.Options = {
          * Not available for VML renderer.
          *
          * @name JXG.GeometryElement#lineCap
+         * @attribute
          * @type String
          * @default 'butt'
          */
@@ -2181,6 +2266,7 @@ JXG.Options = {
          * @default true
          * @see JXG.GeometryElement#needsRegularUpdate
          * @name JXG.GeometryElement#needsRegularUpdate
+         * @attribute
          */
         needsRegularUpdate: true,
 
@@ -2193,6 +2279,7 @@ JXG.Options = {
          * @type Boolean
          * @default false
          * @name JXG.GeometryElement#nonnegativeOnly
+         * @attribute
          * @example
          * var slider = board.create('slider', [[4, -3], [4, 3], [-4, 1, 4]], { name: 'a'});
          * var circle = board.create('circle', [[-1, 0], 1], {
@@ -2244,6 +2331,7 @@ JXG.Options = {
          *
          * @type {String|Object}
          * @name JXG.GeometryElement#precision
+         * @attribute
          * @see JXG.Options#precision
          * @default 'inherit'
          */
@@ -2253,6 +2341,7 @@ JXG.Options = {
          * A private element will be inaccessible in certain environments, e.g. a graphical user interface.
          *
          * @name JXG.GeometryElement#priv
+         * @attribute
          * @type Boolean
          * @default false
          */
@@ -2274,6 +2363,7 @@ JXG.Options = {
          * @type Boolean
          * @default true
          * @name JXG.GeometryElement#rotatable
+         * @attribute
          * @see JXG.GeometryElement#scalable
          */
         rotatable: true,
@@ -2299,6 +2389,7 @@ JXG.Options = {
          * @type Boolean
          * @default true
          * @name JXG.GeometryElement#scalable
+         * @attribute
          * @see JXG.Ticks#fixed
          * @see JXG.GeometryElement#rotatable
          */
@@ -2321,6 +2412,7 @@ JXG.Options = {
          *
          * @type Object
          * @name JXG.GeometryElement#shadow
+         * @attribute
          * @default shadow: {
          *   enabled: false,
          *   color: [0, 0, 0],
@@ -2407,6 +2499,7 @@ JXG.Options = {
          * @type Boolean
          * @default false
          * @name JXG.GeometryElement#snapToGrid
+         * @attribute
          */
         snapToGrid: false,
 
@@ -2414,6 +2507,7 @@ JXG.Options = {
          * The stroke color of the given geometry element.
          * @type String
          * @name JXG.GeometryElement#strokeColor
+         * @attribute
          * @see JXG.GeometryElement#highlightStrokeColor
          * @see JXG.GeometryElement#strokeWidth
          * @see JXG.GeometryElement#strokeOpacity
@@ -2426,6 +2520,7 @@ JXG.Options = {
          * Opacity for element's stroke color.
          * @type Number
          * @name JXG.GeometryElement#strokeOpacity
+         * @attribute
          * @see JXG.GeometryElement#strokeColor
          * @see JXG.GeometryElement#highlightStrokeColor
          * @see JXG.GeometryElement#strokeWidth
@@ -2438,6 +2533,7 @@ JXG.Options = {
          * Width of the element's stroke.
          * @type Number
          * @name JXG.GeometryElement#strokeWidth
+         * @attribute
          * @see JXG.GeometryElement#strokeColor
          * @see JXG.GeometryElement#highlightStrokeColor
          * @see JXG.GeometryElement#strokeOpacity
@@ -2455,6 +2551,7 @@ JXG.Options = {
          * if the element is not visible.
          *
          * @name JXG.GeometryElement#tabindex
+         * @attribute
          * @type Number
          * @default -1
          * @see JXG.Board#keyboard
@@ -2481,6 +2578,7 @@ JXG.Options = {
          * @type Boolean|String
          * @default false
          * @name JXG.GeometryElement#trace
+         * @attribute
          */
         trace: false,
 
@@ -2489,6 +2587,7 @@ JXG.Options = {
          * @type Object
          * @see JXG.GeometryElement#trace
          * @name JXG.GeometryElement#traceAttributes
+         * @attribute
          * @default <tt>{}</tt>
          *
          * @example
@@ -2541,6 +2640,7 @@ JXG.Options = {
          * Works in SVG renderer, only.
          * @type Number
          * @name JXG.GeometryElement#transitionDuration
+         * @attribute
          * @see JXG.GeometryElement#transitionProperties
          * @see JXG.GeometryElement#strokeColor
          * @see JXG.GeometryElement#highlightStrokeColor
@@ -2563,6 +2663,7 @@ JXG.Options = {
          *
          * @type Array
          * @name JXG.GeometryElement#transitionProperties
+         * @attribute
          * @see JXG.GeometryElement#transitionDuration
          *
          *
@@ -2599,6 +2700,7 @@ JXG.Options = {
          * If false the element won't be visible on the board, otherwise it is shown.
          * @type Boolean
          * @name JXG.GeometryElement#visible
+         * @attribute
          * @see JXG.GeometryElement#hideElement
          * @see JXG.GeometryElement#showElement
          * @default true
@@ -2610,6 +2712,7 @@ JXG.Options = {
          * Using this to suppress labels is more efficient than visible:false.
          *
          * @name JXG.GeometryElement#withLabel
+         * @attribute
          * @type Boolean
          * @default false
          */
@@ -2619,6 +2722,7 @@ JXG.Options = {
          * Decides if the element should be ignored when using auto positioning
          * for some label.
          * @name JXG.GeometryElement#ignoreForLabelAutoposition
+         * @attribute
          * @type boolean
          * @default false
          * @see Label#autoPosition
@@ -2645,6 +2749,7 @@ JXG.Options = {
          *
          * @type function
          * @name Ticks#generateLabelText
+         * @attribute
          *
          * @example
          * const board = JXG.JSXGraph.initBoard('jxgbox', { boundingBox: [-10, 10, 10, -10], axis: true,
@@ -2772,6 +2877,7 @@ JXG.Options = {
          * @deprecated Use {@link JGX.Options@generateLabelText}
          * @type function
          * @name Ticks#generateLabelValue
+         * @attribute
          */
         generateLabelValue: null,
 
@@ -2780,6 +2886,7 @@ JXG.Options = {
          *
          * @type Boolean
          * @name Ticks#drawLabels
+         * @attribute
          * @default false
          */
         drawLabels: false,
@@ -2788,6 +2895,7 @@ JXG.Options = {
          * Attributes for the ticks labels.
          *
          * @name Ticks#label
+         * @attribute
          * @type Object
          * @default <pre>{
          *   tabindex: null,
@@ -2804,60 +2912,61 @@ JXG.Options = {
         },
 
         /**
-        * Format tick labels that were going to have scientific notation
-        * like 5.00e+6 to look like 5•10⁶.
-        *
-        * @example
-        * var board = JXG.JSXGraph.initBoard("jxgbox", {
-        *     boundingbox: [-500000, 500000, 500000, -500000],
-        *     axis: true,
-        *     defaultAxes: {
-        *         x: {
-        *             scalable: true,
-        *             ticks: {
-        *                 beautifulScientificTickLabels: true
-        *           },
-        *         },
-        *         y: {
-        *             scalable: true,
-        *             ticks: {
-        *                 beautifulScientificTickLabels: true
-        *           },
-        *         }
-        *     },
-        * });
-        *
-        * </pre><div id="JXGc1e46cd1-e025-4002-80aa-b450869fdaa2" class="jxgbox" style="width: 300px; height: 300px;"></div>
-        * <script type="text/javascript">
-        *     (function() {
-        *     var board = JXG.JSXGraph.initBoard('JXGc1e46cd1-e025-4002-80aa-b450869fdaa2', {
-        *         boundingbox: [-500000, 500000, 500000, -500000],
-        *         showcopyright: false, shownavigation: false,
-        *         axis: true,
-        *         defaultAxes: {
-        *             x: {
-        *                 scalable: true,
-        *                 ticks: {
-        *                     beautifulScientificTickLabels: true
-        *               },
-        *             },
-        *             y: {
-        *                 scalable: true,
-        *                 ticks: {
-        *                     beautifulScientificTickLabels: true
-        *               },
-        *             }
-        *         },
-        *     });
-        *
-        *     })();
-        *
-        * </script><pre>
-        *
-        * @name Ticks#beautifulScientificTickLabels
-        * @type Boolean
-        * @default false
-        */
+         * Format tick labels that were going to have scientific notation
+         * like 5.00e+6 to look like 5•10⁶.
+         *
+         * @example
+         * var board = JXG.JSXGraph.initBoard("jxgbox", {
+         *     boundingbox: [-500000, 500000, 500000, -500000],
+         *     axis: true,
+         *     defaultAxes: {
+         *         x: {
+         *             scalable: true,
+         *             ticks: {
+         *                 beautifulScientificTickLabels: true
+         *           },
+         *         },
+         *         y: {
+         *             scalable: true,
+         *             ticks: {
+         *                 beautifulScientificTickLabels: true
+         *           },
+         *         }
+         *     },
+         * });
+         *
+         * </pre><div id="JXGc1e46cd1-e025-4002-80aa-b450869fdaa2" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *     var board = JXG.JSXGraph.initBoard('JXGc1e46cd1-e025-4002-80aa-b450869fdaa2', {
+         *         boundingbox: [-500000, 500000, 500000, -500000],
+         *         showcopyright: false, shownavigation: false,
+         *         axis: true,
+         *         defaultAxes: {
+         *             x: {
+         *                 scalable: true,
+         *                 ticks: {
+         *                     beautifulScientificTickLabels: true
+         *               },
+         *             },
+         *             y: {
+         *                 scalable: true,
+         *                 ticks: {
+         *                     beautifulScientificTickLabels: true
+         *               },
+         *             }
+         *         },
+         *     });
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
+         * @name Ticks#beautifulScientificTickLabels
+         * @attribute
+         * @type Boolean
+         * @default false
+         */
         beautifulScientificTickLabels: false,
 
         /**
@@ -2866,6 +2975,7 @@ JXG.Options = {
          *
          * @type Boolean
          * @name Ticks#useUnicodeMinus
+         * @attribute
          * @default true
          */
         useUnicodeMinus: true,
@@ -2877,6 +2987,7 @@ JXG.Options = {
          *
          * @type String
          * @name Ticks#anchor
+         * @attribute
          * @default 'left'
          *
          * @example
@@ -2961,6 +3072,7 @@ JXG.Options = {
          *
          * @type Boolean
          * @name Ticks#drawZero
+         * @attribute
          * @default false
          *
          * @example
@@ -3036,6 +3148,7 @@ JXG.Options = {
          *
          * @type Boolean
          * @name Ticks#insertTicks
+         * @attribute
          * @see Ticks#ticksDistance
          * @see Ticks#minTicksDistance
          * @default false
@@ -3069,6 +3182,7 @@ JXG.Options = {
         /**
          * Minimum distance in pixel of equidistant ticks in case insertTicks==true.
          * @name Ticks#minTicksDistance
+         * @attribute
          * @type Number
          * @default 10
          * @see Ticks#insertTicks
@@ -3080,6 +3194,7 @@ JXG.Options = {
          *
          * @type Number
          * @name Ticks#minorHeight
+         * @attribute
          * @default 4
          */
         minorHeight: 4,
@@ -3089,6 +3204,7 @@ JXG.Options = {
          *
          * @type Number
          * @name Ticks#majorHeight
+         * @attribute
          * @default 10
          */
         majorHeight: 10,
@@ -3102,6 +3218,7 @@ JXG.Options = {
          *
          * @type Array
          * @name Ticks#tickEndings
+         * @attribute
          * @see Ticks#majorTickEndings
          * @default [1, 1]
          */
@@ -3169,6 +3286,7 @@ JXG.Options = {
         *
         * @type Array
          * @name Ticks#majorTickEndings
+         * @attribute
          * @see Ticks#tickEndings
          * @see Ticks#ignoreInfiniteTickEndings
          * @default [1, 1]
@@ -3181,6 +3299,7 @@ JXG.Options = {
          *
          * @type Boolean
          * @name Ticks#ignoreInfiniteTickEndings
+         * @attribute
          * @see Ticks#tickEndings
          * @see Ticks#majorTickEndings
          * @default true
@@ -3191,6 +3310,7 @@ JXG.Options = {
          * The number of minor ticks between two major ticks.
          * @type Number
          * @name Ticks#minorTicks
+         * @attribute
          * @default 4
          */
         minorTicks: 4,
@@ -3202,6 +3322,7 @@ JXG.Options = {
          *
          * @type {Number|Boolean}
          * @name Ticks#ticksPerLabel
+         * @attribute
          * @default false
          *
          * @example
@@ -3261,6 +3382,7 @@ JXG.Options = {
          * @type Number
          * @default 1
          * @name Ticks#scale
+         * @attribute
          * @see Ticks#scaleSymbol
          *
          * @example
@@ -3316,6 +3438,7 @@ JXG.Options = {
          * @type String
          * @default ''
          * @name Ticks#scaleSymbol
+         * @attribute
          * @see Ticks#scale
          */
         scaleSymbol: '',
@@ -3327,6 +3450,7 @@ JXG.Options = {
          *
          * @type Array
          * @name Ticks#labels
+         * @attribute
          * @default []
          */
         labels: [],
@@ -3336,6 +3460,7 @@ JXG.Options = {
          *
          * @type Number
          * @name Ticks#maxLabelLength
+         * @attribute
          * @see Ticks#digits
          * @default 5
          */
@@ -3347,6 +3472,7 @@ JXG.Options = {
          *
          * @type Number
          * @name Ticks#precision
+         * @attribute
          * @see Ticks#maxLabelLength
          * @see Ticks#digits
          * @deprecated
@@ -3359,6 +3485,7 @@ JXG.Options = {
          *
          * @type Number
          * @name Ticks#digits
+         * @attribute
          * @see Ticks#maxLabelLength
          * @deprecated
          * @default 3
@@ -3372,6 +3499,7 @@ JXG.Options = {
          *
          * @type Number
          * @name Ticks#ticksDistance
+         * @attribute
          * @see Ticks#insertTicks
          * @default 1
          */
@@ -3383,6 +3511,7 @@ JXG.Options = {
          * {@link JXG.Hatch} for hatch marking parallel lines.
          * @type String
          * @name Ticks#face
+         * @attribute
          * @see hatch
          * @default '|'
          * @example
@@ -3424,6 +3553,7 @@ JXG.Options = {
          *
          * @type Boolean
          * @name Ticks#includeBoundaries
+         * @attribute
          * @default false
          *
          * @example
@@ -3501,6 +3631,7 @@ JXG.Options = {
          *
          * @type String
          * @name Ticks#type
+         * @attribute
          * @default 'linear'
          *
          * @example
@@ -3539,6 +3670,7 @@ JXG.Options = {
         /**
          * Internationalization support for ticks labels.
          * @name intl
+         * @attribute
          * @memberOf Ticks.prototype
          * @default <pre>{
          *    enabled: 'inherit',
@@ -3673,6 +3805,7 @@ JXG.Options = {
          *
          * @type Number
          * @name Hatch#ticksDistance
+         * @attribute
          * @default 0.2
          */
         ticksDistance: 0.2
@@ -3786,6 +3919,7 @@ JXG.Options = {
          *
          * @type {Number|String}
          * @name Angle#radius
+         * @attribute
          * @default 'auto'
          * @visprop
          */
@@ -3803,6 +3937,7 @@ JXG.Options = {
          *
          * @type {String}
          * @name Angle#orientation
+         * @attribute
          * @default 'counterclockwise'
          * @visprop
          * @example
@@ -3859,6 +3994,7 @@ JXG.Options = {
          * @type String
          * @default 'sector'
          * @name Angle#type
+         * @attribute
          * @visprop
          */
         type: 'sector',
@@ -3870,6 +4006,7 @@ JXG.Options = {
          * @type String
          * @default square
          * @name Angle#orthoType
+         * @attribute
          * @see Angle#orthoSensitivity
          * @visprop
          */
@@ -3883,6 +4020,7 @@ JXG.Options = {
          * @type Number
          * @default 1.0
          * @name Angle#orthoSensitivity
+         * @attribute
          * @see Angle#orthoType
          * @visprop
          */
@@ -3900,6 +4038,7 @@ JXG.Options = {
 
         /**
          * @name Angle#radiuspoint
+         * @attribute
          * @type Object
          * @deprecated
          */
@@ -3911,6 +4050,7 @@ JXG.Options = {
 
         /**
          * @name Angle#pointsquare
+         * @attribute
          * @type Object
          * @deprecated
          */
@@ -3923,6 +4063,7 @@ JXG.Options = {
         /**
          * Attributes of the dot point marking right angles.
          * @name Angle#dot
+         * @attribute
          * @type Object
          * @default <tt>{face: 'o', size: 2}</tt>
          */
@@ -3948,6 +4089,7 @@ JXG.Options = {
          *
          * @type Arc
          * @name Angle#arc
+         * @attribute
          * @default '{visible:false}'
          */
         arc: {
@@ -3970,6 +4112,7 @@ JXG.Options = {
          *
          * @type String
          * @name Arc#selection
+         * @attribute
          * @default 'auto'
          */
         selection: 'auto',
@@ -3982,6 +4125,7 @@ JXG.Options = {
          *
          * @type {String}
          * @name Arc#orientation
+         * @attribute
          * @default 'counterclockwise'
          *
          * @example
@@ -4030,6 +4174,7 @@ JXG.Options = {
          *
          * @see JXG.GeometryElement#hasPoint
          * @name Arc#hasInnerPoints
+         * @attribute
          * @type Boolean
          * @default false
          */
@@ -4057,6 +4202,7 @@ JXG.Options = {
          *
          * @type Boolean
          * @name Arc#useDirection
+         * @attribute
          * @default false
          * @private
          */
@@ -4067,6 +4213,7 @@ JXG.Options = {
          *
          * @type Point
          * @name Arc#center
+         * @attribute
          * @default {}
          */
         center: {
@@ -4077,6 +4224,7 @@ JXG.Options = {
          *
          * @type Point
          * @name Arc#radiusPoint
+         * @attribute
          * @default {}
          */
         radiusPoint: {
@@ -4087,6 +4235,7 @@ JXG.Options = {
          *
          * @type Point
          * @name Arc#anglePoint
+         * @attribute
          * @default {}
          */
         anglePoint: {
@@ -4159,6 +4308,7 @@ JXG.Options = {
          *
          * @type {String}
          * @name Axis#position
+         * @attribute
          * @default 'static'
          * @see Axis#anchor
          * @see Axis#anchorDist
@@ -4246,6 +4396,7 @@ JXG.Options = {
          *
          * @type {String}
          * @name Axis#anchor
+         * @attribute
          * @default ''
          * @example
          *  board.create('axis', [[0,0],[0,1]],{
@@ -4338,6 +4489,7 @@ JXG.Options = {
          *
          * @type {Number|String}
          * @name Axis#anchorDist
+         * @attribute
          * @default '10%'
          */
         anchorDist: '10%',
@@ -4349,6 +4501,7 @@ JXG.Options = {
          *
          * @type {Boolean}
          * @name Axis#ticksAutoPos
+         * @attribute
          * @default false
          * @example
          * // Navigate to see an effect.
@@ -4403,6 +4556,7 @@ JXG.Options = {
          *
          * @type {Number|String}
          * @name Axis#ticksAutoPosThreshold
+         * @attribute
          * @default '5%'
          */
         ticksAutoPosThreshold: '5%',
@@ -4414,6 +4568,7 @@ JXG.Options = {
          *
          * @type Boolean
          * @name Axis#withTicks
+         * @attribute
          * @default true
          * @deprecated
          */
@@ -4429,6 +4584,7 @@ JXG.Options = {
          *
          * @type Ticks
          * @name Axis#ticks
+         * @attribute
          */
         ticks: {
             label: {
@@ -4462,6 +4618,7 @@ JXG.Options = {
          *
          * @type Point
          * @name Axis#point1
+         * @attribute
          */
         point1: {                  // Default values for point1 if created by line
             needsRegularUpdate: false,
@@ -4473,6 +4630,7 @@ JXG.Options = {
          *
          * @type Point
          * @name Axis#point2
+         * @attribute
          */
         point2: {                  // Default values for point2 if created by line
             needsRegularUpdate: false,
@@ -4486,6 +4644,7 @@ JXG.Options = {
          *
          * @type Label
          * @name Axis#label
+         * @attribute
          */
         label: {
             position: 'lft',
@@ -4510,6 +4669,7 @@ JXG.Options = {
          *
          * @type Point
          * @name Bisector#point
+         * @attribute
          */
         point: {               // Bisector point
             visible: false,
@@ -4532,6 +4692,7 @@ JXG.Options = {
          *
          * @type Line
          * @name Bisectorlines#line1
+         * @attribute
          */
         line1: {               //
             strokeColor: '#000000'
@@ -4542,6 +4703,7 @@ JXG.Options = {
          *
          * @type Line
          * @name Bisectorlines#line2
+         * @attribute
          */
         line2: {               //
             strokeColor: '#000000'
@@ -4561,6 +4723,7 @@ JXG.Options = {
          *
          * @type String
          * @name Boxplot#dir
+         * @attribute
          * @default 'vertical'
          */
         dir: 'vertical',
@@ -4570,6 +4733,7 @@ JXG.Options = {
          *
          * @type Number
          * @name Boxplot#smallWidth
+         * @attribute
          * @default 0.5
          */
         smallWidth: 0.5,
@@ -4581,6 +4745,7 @@ JXG.Options = {
          *
          * @type Object
          * @name Boxplot#outlier
+         * @attribute
          * @default <pre>{
          *   size: 3,
          *   face: 'o'
@@ -4613,6 +4778,7 @@ JXG.Options = {
          * Control the attribute "disabled" of the HTML button.
          *
          * @name disabled
+         * @attribute
          * @memberOf Button.prototype
          *
          * @type Boolean
@@ -4636,6 +4802,7 @@ JXG.Options = {
          * arrays should be converted into {@link JXG.Points}.
          *
          * @name createPoints
+         * @attribute
          * @memberOf Cardinalspline.prototype
          *
          * @see Cardinalspline#points
@@ -4653,6 +4820,7 @@ JXG.Options = {
          * [[x_o x_1, ..., x_n], [y_0, y_1, ..., y_n]]
          *
          * @name isArrayOfCoordinates
+         * @attribute
          * @memberOf Cardinalspline.prototype
          * @type Boolean
          * @default true
@@ -4664,6 +4832,7 @@ JXG.Options = {
          * {@link createPoints} is set to true
          *
          * @name points
+         * @attribute
          * @memberOf Cardinalspline.prototype
          *
          * @see Cardinalspline#createPoints
@@ -4713,6 +4882,7 @@ JXG.Options = {
          * Control the attribute "disabled" of the HTML checkbox.
          *
          * @name disabled
+         * @attribute
          * @memberOf Checkbox.prototype
          *
          * @type Boolean
@@ -4724,6 +4894,7 @@ JXG.Options = {
          * Control the attribute "checked" of the HTML checkbox.
          *
          * @name checked
+         * @attribute
          * @memberOf Checkbox.prototype
          *
          * @type Boolean
@@ -4747,6 +4918,7 @@ JXG.Options = {
          *
          * @see JXG.GeometryElement#hasPoint
          * @name Circle#hasInnerPoints
+         * @attribute
          * @type Boolean
          * @default false
          */
@@ -4762,6 +4934,7 @@ JXG.Options = {
          *
          * @type Point
          * @name Circle#center
+         * @attribute
          */
         center: {
             visible: false,
@@ -4782,6 +4955,7 @@ JXG.Options = {
          *
          * @type Point
          * @name Circle#point2
+         * @attribute
          */
         point2: {
             fillColor: Color.palette.red,
@@ -4801,6 +4975,7 @@ JXG.Options = {
          *
          * @type Label
          * @name Circle#label
+         * @attribute
          */
         label: {
             position: 'urt'
@@ -4825,6 +5000,7 @@ JXG.Options = {
          *
          * @type Point
          * @name Circumcircle#center
+         * @attribute
          */
         center: {               // center point
             visible: false,
@@ -4855,6 +5031,7 @@ JXG.Options = {
          *
          * @type Point
          * @name CircumcircleArc#center
+         * @attribute
          */
         center: {
             visible: false,
@@ -4884,6 +5061,7 @@ JXG.Options = {
          *
          * @type Point
          * @name Circle#point
+         * @attribute
          */
         point: {
             visible: false,
@@ -4905,6 +5083,7 @@ JXG.Options = {
          *
          * @type Number
          * @name Comb#frequency
+         * @attribute
          * @default 0.2
          */
         frequency: 0.2,
@@ -4914,6 +5093,7 @@ JXG.Options = {
          *
          * @type Number
          * @name Comb#width
+         * @attribute
          * @default 0.4
          */
         width: 0.4,
@@ -4923,6 +5103,7 @@ JXG.Options = {
          *
          * @type Number
          * @name Comb#angle
+         * @attribute
          * @default Math.PI / 3 (i.e. &pi; /3  or 60^° degrees)
          */
         angle: Math.PI / 3,
@@ -4932,6 +5113,7 @@ JXG.Options = {
          *
          * @type Boolean
          * @name Comb#reverse
+         * @attribute
          * @default false
          */
         reverse: false,
@@ -4941,6 +5123,7 @@ JXG.Options = {
          *
          * @type Point
          * @name Comb#point1
+         * @attribute
          */
         point1: {
             visible: false,
@@ -4954,6 +5137,7 @@ JXG.Options = {
          *
          * @type Point
          * @name Comb#point2
+         * @attribute
          */
         point2: {
             visible: false,
@@ -4967,6 +5151,7 @@ JXG.Options = {
         //  *
         //  * @type Curve
         //  * @name Comb#curve
+        //  * @attribute
         //  */
         // curve: {
         //     strokeWidth: 1,
@@ -4994,6 +5179,7 @@ JXG.Options = {
          *
          * @type Point
          * @name Conic#foci
+         * @attribute
          */
         foci: {
             // points
@@ -5008,6 +5194,7 @@ JXG.Options = {
          *
          * @type Point
          * @name Conic#center
+         * @attribute
          */
         center: {
             visible: false,
@@ -5020,6 +5207,7 @@ JXG.Options = {
          *
          * @type Point
          * @name Conic#point
+         * @attribute
          */
         point: {
             withLabel: false,
@@ -5032,6 +5220,7 @@ JXG.Options = {
          *
          * @type Line
          * @name Conic#line
+         * @attribute
          */
         line: {
             visible: false
@@ -5062,6 +5251,7 @@ JXG.Options = {
          * <li>'implicit' (not yet)</li></ul>
          * Only parameter and plot are set directly. Polar is set with {@link JXG.GeometryElement#setAttribute} only.
          * @name Curve#curveType
+         * @attribute
          * @type String
          * @default null
          */
@@ -5073,6 +5263,7 @@ JXG.Options = {
          * and singularities.
          *
          * @name Curve#doAdvancedPlot
+         * @attribute
          * @type Boolean
          * @default true
          */
@@ -5082,6 +5273,7 @@ JXG.Options = {
          * If true use the algorithm by Gillam and Hohenwarter, which was default until version 0.98.
          *
          * @name Curve#doAdvancedPlotOld
+         * @attribute
          * @see Curve#doAdvancedPlot
          * @type Boolean
          * @default false
@@ -5094,6 +5286,7 @@ JXG.Options = {
          * Recommended arrow head type is 7.
          *
          * @name Curve#firstArrow
+         * @attribute
          * @type Boolean | Object
          * @default false
          * @see Line#firstArrow for options
@@ -5103,6 +5296,7 @@ JXG.Options = {
         /**
          * The data points of the curve are not connected with straight lines but with bezier curves.
          * @name Curve#handDrawing
+         * @attribute
          * @type Boolean
          * @default false
          */
@@ -5113,6 +5307,7 @@ JXG.Options = {
          *
          * @type Label
          * @name Curve#label
+         * @attribute
          */
         label: {
             position: 'rt'
@@ -5123,6 +5318,7 @@ JXG.Options = {
          * Recommended arrow head type is 7.
          *
          * @name Curve#lastArrow
+         * @attribute
          * @see Line#lastArrow for options
          * @type Boolean | Object
          * @default false
@@ -5139,6 +5335,7 @@ JXG.Options = {
          * </ul>
          *
          * @name JXG.Curve#lineCap
+         * @attribute
          * @type String
          * @default 'round'
          */
@@ -5150,6 +5347,7 @@ JXG.Options = {
          * {@link Curve#doAdvancedPlot} is false.
          *
          * @name Curve#numberPointsHigh
+         * @attribute
          * @see Curve#doAdvancedPlot
          * @type Number
          * @default 1600
@@ -5162,6 +5360,7 @@ JXG.Options = {
          * {@link Curve#doAdvancedPlot} is false.
          *
          * @name Curve#numberPointsLow
+         * @attribute
          * @see Curve#doAdvancedPlot
          * @type Number
          * @default 400
@@ -5182,6 +5381,7 @@ JXG.Options = {
          *   var c = board.create('functiongraph', ["log(x)"]);
          *
          * @name Curve#plotVersion
+         * @attribute
          * @type Number
          * @default 2
          */
@@ -5200,6 +5400,7 @@ JXG.Options = {
          * Implements the Ramer-Douglas-Peucker algorithm.
          *
          * @name Curve#RDPsmoothing
+         * @attribute
          * @type Boolean
          * @default false
          * @see Curve#RDPthreshold
@@ -5214,6 +5415,7 @@ JXG.Options = {
          * are roughly equal (For the latter, the geometric mean is taken).
          *
          * @name Curve#RDPthreshold
+         * @attribute
          * @type Number
          * @default 0.2
          * @see Curve#RDPsmoothing
@@ -5225,6 +5427,7 @@ JXG.Options = {
          * Recommended arrow head type is 7.
          *
          * @name Curve#recursionDepthHigh
+         * @attribute
          * @see Curve#doAdvancedPlot
          * @type Number
          * @default 17
@@ -5237,6 +5440,7 @@ JXG.Options = {
          * {@link Curve#doAdvancedPlot} is true.
          *
          * @name Curve#recursionDepthLow
+         * @attribute
          * @see Curve#doAdvancedPlot
          * @type Number
          * @default 13
@@ -5261,6 +5465,7 @@ JXG.Options = {
          * attractorDistance the foreignobject is made to glider of this element.
          *
          * @name ForeignObject#attractors
+         * @attribute
          *
          * @type Array
          * @default empty
@@ -5272,6 +5477,7 @@ JXG.Options = {
          * This is necessary if you want to have a board within a foreignObject of another board.
          *
          * @name ForeignObject#evaluateOnlyOnce
+         * @attribute
          *
          * @type Boolean
          * @default false
@@ -5292,6 +5498,7 @@ JXG.Options = {
          *
          * @type Label
          * @name Functiongraph#label
+         * @attribute
          */
         label: {
             position: 'rt'
@@ -5306,6 +5513,7 @@ JXG.Options = {
          * Implements the Ramer-Douglas-Peucker algorithm.
          *
          * @name Functiongraph#RDPsmoothing
+         * @attribute
          * @type Boolean
          * @default true
          * @see Curve#RDPsmoothing
@@ -5342,6 +5550,7 @@ JXG.Options = {
          * @deprecated
          * @type {Number|String}
          * @name Grid#gridX
+         * @attribute
          * @default null
          */
         gridX: null,
@@ -5352,6 +5561,7 @@ JXG.Options = {
          * @deprecated
          * @type {Number|String}
          * @name Grid#gridY
+         * @attribute
          * @default null
          */
         gridY: null,
@@ -5369,6 +5579,7 @@ JXG.Options = {
          *
          * @type {Number|String|Array}
          * @name Grid#majorStep
+         * @attribute
          * @default 'auto'
          * @see JXG.Ticks#getDistanceMajorTicks
          */
@@ -5385,6 +5596,7 @@ JXG.Options = {
          *
          * @type {Number|String|Array}
          * @name Grid#minorElements
+         * @attribute
          * @default 0
          */
         minorElements: 0,
@@ -5396,6 +5608,7 @@ JXG.Options = {
          *
          * @type {Boolean|String}
          * @name Grid#forceSquare
+         * @attribute
          * @default false
          */
         forceSquare: false,
@@ -5405,6 +5618,7 @@ JXG.Options = {
          *
          * @type {Boolean}
          * @name Grid#includeBoundaries
+         * @attribute
          * @default false
          */
         includeBoundaries: false,
@@ -5425,6 +5639,7 @@ JXG.Options = {
          *
          * @type {Number|String|Array}
          * @name Grid#size
+         * @attribute
          */
         // This attribute only exists for documentation purposes. It has no effect and is overwritten with actual values in major and minor.
         size: undefined,
@@ -5458,6 +5673,7 @@ JXG.Options = {
          *
          * @type {String}
          * @name Grid#face
+         * @attribute
          */
          // This attribute only exists for documentation purposes. It has no effect and is overwritten with actual values in major and minor.
         face: undefined,
@@ -5472,6 +5688,7 @@ JXG.Options = {
          * For default values have a look there.</p>
          *
          * @name Grid#margin
+         * @attribute
          * @type {Number}
          */
         // This attribute only exists for documentation purposes. It has no effect and is overwritten with actual values in major and minor.
@@ -5494,6 +5711,7 @@ JXG.Options = {
          *
          * @type {Boolean|Object}
          * @name Grid#drawZero
+         * @attribute
          */
         // This attribute only exists for documentation purposes. It has no effect and is overwritten with actual values in major and minor.
         drawZero: undefined,
@@ -5507,6 +5725,7 @@ JXG.Options = {
          *
          * @type {Number}
          * @name Grid#polygonVertices
+         * @attribute
          */
         // This attribute only exists for documentation purposes. It has no effect and is overwritten with actual values in major and minor.
         polygonVertices: undefined,
@@ -5531,6 +5750,7 @@ JXG.Options = {
          *  }</pre>
          *
          * @name Grid#major
+         * @attribute
          * @type {Object}
          */
         major: {
@@ -5591,6 +5811,7 @@ JXG.Options = {
          *  }</pre>
          *
          * @name Grid#minor
+         * @attribute
          * @type {Object}
          */
         minor: {
@@ -5665,6 +5886,7 @@ JXG.Options = {
          *
          * @type {Array}
          * @name Grid#themes
+         * @attribute
          * @private
          *
          * @example
@@ -5906,6 +6128,7 @@ JXG.Options = {
          * The default CSS class is defined in jsxgraph.css.
          *
          * @name Image#cssClass
+         * @attribute
          *
          * @see Image#highlightCssClass
          * @type String
@@ -5923,6 +6146,7 @@ JXG.Options = {
          * The default CSS class is defined in jsxgraph.css.
          *
          * @name Image#highlightCssClass
+         * @attribute
          *
          * @see Image#cssClass
          * @type String
@@ -5937,6 +6161,7 @@ JXG.Options = {
          * Image rotation in degrees.
          *
          * @name Image#rotate
+         * @attribute
          * @type Number
          * @default 0
          */
@@ -5950,6 +6175,7 @@ JXG.Options = {
          * of the default ticks of the default x axes of the board.
          *
          * @name Image#snapSizeX
+         * @attribute
          *
          * @see Point#snapToGrid
          * @see Image#snapSizeY
@@ -5966,6 +6192,7 @@ JXG.Options = {
          * of the default ticks of the default y axes of the board.
          *
          * @name Image#snapSizeY
+         * @attribute
          *
          * @see Point#snapToGrid
          * @see Image#snapSizeX
@@ -5980,6 +6207,7 @@ JXG.Options = {
          * attractorDistance the image is made to glider of this element.
          *
          * @name Image#attractors
+         * @attribute
          *
          * @type Array
          * @default empty
@@ -6000,6 +6228,7 @@ JXG.Options = {
          * implicit curve is plotted.
          *
          * @name ImplicitCurve#margin
+         * @attribute
          * @type {Number|Function}
          * @default 1
          */
@@ -6011,6 +6240,7 @@ JXG.Options = {
          * Minimum value is 0.01.
          *
          * @name ImplicitCurve#resolution_outer
+         * @attribute
          * @type {Number|Function}
          * @default 5
          */
@@ -6022,6 +6252,7 @@ JXG.Options = {
          * Minimum value is 0.01.
          *
          * @name ImplicitCurve#resolution_inner
+         * @attribute
          * @type {Number|Function}
          * @default 5
          */
@@ -6031,6 +6262,7 @@ JXG.Options = {
          * Maximum iterations for one component of the implicit curve.
          *
          * @name ImplicitCurve#max_steps
+         * @attribute
          * @type {Number|Function}
          * @default 1024
          */
@@ -6041,6 +6273,7 @@ JXG.Options = {
          * the curve.
          *
          * @name ImplicitCurve#alpha_0
+         * @attribute
          * @type {Number|Function}
          * @default 0.05
          */
@@ -6050,6 +6283,7 @@ JXG.Options = {
          * Tolerance to find starting points for the tracing phase of a component.
          *
          * @name ImplicitCurve#tol_0
+         * @attribute
          * @type {Number|Function}
          * @default JXG.Math.eps
          */
@@ -6059,6 +6293,7 @@ JXG.Options = {
          * Tolerance for the Newton steps.
          *
          * @name ImplicitCurve#tol_newton
+         * @attribute
          * @type {Number|Function}
          * @default 1.0e-7
          */
@@ -6068,6 +6303,7 @@ JXG.Options = {
          * Tolerance for cusp / bifurcation detection.
          *
          * @name ImplicitCurve#tol_cusp
+         * @attribute
          * @type {Number|Function}
          * @default 0.05
          */
@@ -6078,6 +6314,7 @@ JXG.Options = {
          * component.
          *
          * @name ImplicitCurve#tol_progress
+         * @attribute
          * @type {Number|Function}
          * @default 0.0001
          */
@@ -6087,6 +6324,7 @@ JXG.Options = {
          * Half of the box size (in user units) to search for existing line segments in the quadtree.
          *
          * @name ImplicitCurve#qdt_box
+         * @attribute
          * @type {Number|Function}
          * @default 0.2
          */
@@ -6096,6 +6334,7 @@ JXG.Options = {
          * Inverse of desired number of Newton steps.
          *
          * @name ImplicitCurve#kappa_0
+         * @attribute
          * @type {Number|Function}
          * @default 0.2
          */
@@ -6105,6 +6344,7 @@ JXG.Options = {
          * Allowed distance (in user units) of predictor point to curve.
          *
          * @name ImplicitCurve#delta_0
+         * @attribute
          * @type {Number|Function}
          * @default 0.05
          */
@@ -6114,6 +6354,7 @@ JXG.Options = {
          * Initial step width (in user units).
          *
          * @name ImplicitCurve#h_initial
+         * @attribute
          * @type {Number|Function}
          * @default 0.1
          */
@@ -6124,6 +6365,7 @@ JXG.Options = {
          * of the tracing phase of that component.
          *
          * @name ImplicitCurve#h_critical
+         * @attribute
          * @type {Number|Function}
          * @default 0.001
          */
@@ -6133,6 +6375,7 @@ JXG.Options = {
          * Maximum step width (in user units).
          *
          * @name ImplicitCurve#h_max
+         * @attribute
          * @type {Number|Function}
          * @default 0.5
          */
@@ -6142,6 +6385,7 @@ JXG.Options = {
          * Allowed distance (in user units multiplied by actual step width) to detect loop.
          *
          * @name ImplicitCurve#loop_dist
+         * @attribute
          * @type {Number|Function}
          * @default 0.09
          */
@@ -6151,6 +6395,7 @@ JXG.Options = {
          * Minimum acos of angle to detect loop.
          *
          * @name ImplicitCurve#loop_dir
+         * @attribute
          * @type {Number|Function}
          * @default 0.99
          */
@@ -6160,6 +6405,7 @@ JXG.Options = {
          * Use Gosper's loop detector.
          *
          * @name ImplicitCurve#loop_detection
+         * @attribute
          * @type {Boolean|Function}
          * @default true
          */
@@ -6184,6 +6430,7 @@ JXG.Options = {
          *
          * @type Point
          * @name Incircle#center
+         * @attribute
          */
         center: {               // center point
             visible: false,
@@ -6214,6 +6461,7 @@ JXG.Options = {
          * @type Boolean
          * @default false
          * @name Inequality#inverse
+         * @attribute
          * @visprop
          */
         inverse: false
@@ -6231,6 +6479,7 @@ JXG.Options = {
          * @type Number
          * @default -20
          * @name JXG.Board.infobox#distanceX
+         * @attribute
          * @visprop
          */
         distanceX: -20,
@@ -6241,6 +6490,7 @@ JXG.Options = {
          * @type Number
          * @default 25
          * @name JXG.Board.infobox#distanceY
+         * @attribute
          * @visprop
          */
         distanceY: 25,
@@ -6249,6 +6499,7 @@ JXG.Options = {
          * Internationalization support for infobox text.
          *
          * @name JXG.Board.infobox#intl
+         * @attribute
          * @type object
          * @default <pre>{
          *    enabled: 'inherit',
@@ -6306,6 +6557,7 @@ JXG.Options = {
          *
          * @type Point
          * @name Integral#curveLeft
+         * @attribute
          * @see Integral#baseLeft
          */
         curveLeft: {    // Start point
@@ -6321,6 +6573,7 @@ JXG.Options = {
          *
          * @type Point
          * @name Integral#baseLeft
+         * @attribute
          * @see Integral#curveLeft
          */
         baseLeft: {    // Start point
@@ -6335,6 +6588,7 @@ JXG.Options = {
          *
          * @type Point
          * @name Integral#curveRight
+         * @attribute
          * @see Integral#baseRight
          */
         curveRight: {      // End point
@@ -6350,6 +6604,7 @@ JXG.Options = {
          *
          * @type Point
          * @name Integral#baseRight
+         * @attribute
          * @see Integral#curveRight
          */
         baseRight: {      // End point
@@ -6364,6 +6619,7 @@ JXG.Options = {
          *
          * @type Label
          * @name Integral#label
+         * @attribute
          * @default <pre>{
          *      fontSize: 20,
          *      digits: 4,
@@ -6394,6 +6650,7 @@ JXG.Options = {
          * Control the attribute "disabled" of the HTML input field.
          *
          * @name disabled
+         * @attribute
          * @memberOf Input.prototype
          *
          * @type Boolean
@@ -6405,6 +6662,7 @@ JXG.Options = {
          * Control the attribute "maxlength" of the HTML input field.
          *
          * @name maxlength
+         * @attribute
          * @memberOf Input.prototype
          *
          * @type Number
@@ -6435,6 +6693,7 @@ JXG.Options = {
          * it appears like a segment or an infinite line.
          *
          * @name Intersection.alwaysIntersect
+         * @attribute
          * @type Boolean
          * @default true
          */
@@ -6656,6 +6915,7 @@ JXG.Options = {
          *
          *
          * @name Label#position
+         * @attribute
          * @type String
          * @default 'urt'
          * @see Label#distance
@@ -6668,6 +6928,7 @@ JXG.Options = {
          * The true distance is this value multiplied by 0.5 times the size of the bounding box of the label text.
          * That means, with a value of 1 the label will touch the path element.
          * @name Label#distance
+         * @attribute
          * @type Number
          * @default 1.5
          *
@@ -6681,6 +6942,7 @@ JXG.Options = {
          *  The label anchor is determined by {@link Label#position}
          *
          * @name Label#offset
+         * @attribute
          * @see Label#position
          * @type Array
          * @default [10,10]
@@ -6695,6 +6957,7 @@ JXG.Options = {
          * to the anchor element.
          *
          * @name Label#autoPosition
+         * @attribute
          * @see Label#offset
          * @type Boolean
          * @see GeometryElement#ignoreForLabelAutoposition
@@ -6740,6 +7003,7 @@ JXG.Options = {
          * defined here (in pixel).
          *
          * @name Label#autoPositionMinDistance
+         * @attribute
          * @see Label#autoPosition
          * @see Label#autoPositionMaxDistance
          * @see Label#autoPositionWhitelist
@@ -6756,6 +7020,7 @@ JXG.Options = {
          * defined here (in pixel).
          *
          * @name Label#autoPositionMaxDistance
+         * @attribute
          * @see Label#autoPosition
          * @see Label#autoPositionMinDistance
          * @see Label#autoPositionWhitelist
@@ -6769,6 +7034,7 @@ JXG.Options = {
          * List of object ids which should be ignored on setting automatic position of label text.
          *
          * @name Label#autoPositionWhitelist
+         * @attribute
          * @see Label#autoPosition
          * @see Label#autoPositionMinDistance
          * @see Label#autoPositionMaxDistance
@@ -6789,6 +7055,7 @@ JXG.Options = {
         /**
          * Default style of a legend element. The only possible value is 'vertical'.
          * @name Legend#style
+         * @attribute
          * @type String
          * @default 'vertical'
          */
@@ -6797,6 +7064,7 @@ JXG.Options = {
         /**
          * Label names of a legend element.
          * @name Legend#labels
+         * @attribute
          * @type Array
          * @default "['1', '2', '3', '4', '5', '6', '7', '8']"
          */
@@ -6805,6 +7073,7 @@ JXG.Options = {
         /**
          * (Circular) array of label colors.
          * @name Legend#colors
+         * @attribute
          * @type Array
          * @default "['#B02B2C', '#3F4C6B', '#C79810', '#D15600', '#FFFF88', '#c3d9ff', '#4096EE', '#008C00']"
          */
@@ -6813,6 +7082,7 @@ JXG.Options = {
         /**
          * Length of line in one legend entry
          * @name Legend#lineLength
+         * @attribute
          * @type Number
          * @default 1
          *
@@ -6822,6 +7092,7 @@ JXG.Options = {
         /**
          * (Circular) array of opacity for legend line stroke color for one legend entry.
          * @name Legend#strokeOpacity
+         * @attribute
          * @type Array
          * @default [1]
          *
@@ -6831,6 +7102,7 @@ JXG.Options = {
         /**
          * Height (in px) of one legend entry
          * @name Legend#rowHeight
+         * @attribute
          * @type Number
          * @default 20
          *
@@ -6840,6 +7112,7 @@ JXG.Options = {
         /**
          * Height (in px) of one legend entry
          * @name Legend#strokeWidth
+         * @attribute
          * @type Number
          * @default 5
          *
@@ -6850,6 +7123,7 @@ JXG.Options = {
          * The element can be fixed and may not be dragged around. If true, the legend will even stay at its position on zoom and
          * moveOrigin events.
          * @name Legend#frozen
+         * @attribute
          * @type Boolean
          * @default false
          * @see JXG.GeometryElement#frozen
@@ -6923,6 +7197,7 @@ JXG.Options = {
          * </script><pre>
          *
          * @name Line#firstArrow
+         * @attribute
          * @see Line#lastArrow
          * @see Line#touchFirstPoint
          * @type Boolean | Object
@@ -7019,6 +7294,7 @@ JXG.Options = {
          * </script><pre>
          *
          * @name Line#lastArrow
+         * @attribute
          * @see Line#firstArrow
          * @see Line#touchLastPoint
          * @type Boolean | Object
@@ -7032,6 +7308,7 @@ JXG.Options = {
          * ends outside of the canvas (which is invisible).
          *
          * @name Line#margin
+         * @attribute
          * @type Number
          * @default 0
          */
@@ -7042,6 +7319,7 @@ JXG.Options = {
          * Otherwise it ends at point1.
          *
          * @name Line#straightFirst
+         * @attribute
          * @see Line#straightLast
          * @type Boolean
          * @default true
@@ -7053,6 +7331,7 @@ JXG.Options = {
          * Otherwise it ends at point2.
          *
          * @name Line#straightLast
+         * @attribute
          * @see Line#straightFirst
          * @type Boolean
          * @default true
@@ -7070,6 +7349,7 @@ JXG.Options = {
          *
          * @type Point
          * @name Line#point1
+         * @attribute
          */
         point1: {                  // Default values for point1 if created by line
             fillColor: Color.palette.red,
@@ -7089,6 +7369,7 @@ JXG.Options = {
          *
          * @type Point
          * @name Line#point2
+         * @attribute
          */
         point2: {                  // Default values for point2 if created by line
             fillColor: Color.palette.red,
@@ -7107,6 +7388,7 @@ JXG.Options = {
          * Attributes for ticks of the line.
          *
          * @name Line#ticks
+         * @attribute
          * @type Object
          * @see Ticks
          */
@@ -7131,6 +7413,7 @@ JXG.Options = {
          *
          * @type Object
          * @name Line#label
+         * @attribute
          * @see Label
          */
         label: {
@@ -7145,6 +7428,7 @@ JXG.Options = {
          * @see Point#snapSizeY
          * @type Boolean
          * @name Line#snapToGrid
+         * @attribute
          * @default false
          */
         snapToGrid: false,
@@ -7160,6 +7444,7 @@ JXG.Options = {
          * @see JXG.Board#defaultAxes
          * @type Number
          * @name Line#snapSizeX
+         * @attribute
          * @default 1
          */
         snapSizeX: 1,
@@ -7175,6 +7460,7 @@ JXG.Options = {
          * @see JXG.Board#defaultAxes
          * @type Number
          * @name Line#snapSizeY
+         * @attribute
          * @default 1
          */
         snapSizeY: 1,
@@ -7186,6 +7472,7 @@ JXG.Options = {
          * @see Line#firstArrow
          * @type Boolean
          * @name Line#touchFirstPoint
+         * @attribute
          * @default false
          */
         touchFirstPoint: false,
@@ -7196,6 +7483,7 @@ JXG.Options = {
          * @see Line#firstArrow
          * @type Boolean
          * @name Line#touchLastPoint
+         * @attribute
          * @default false
          */
         touchLastPoint: false,
@@ -7264,6 +7552,7 @@ JXG.Options = {
          *
          * @see Measurement#units
          * @name Measurement#baseUnit
+         * @attribute
          * @type String
          * @default ''
          */
@@ -7323,6 +7612,7 @@ JXG.Options = {
          *
          * @see Measurement#baseUnit
          * @name Measurement#units
+         * @attribute
          * @type Object
          * @default {}
          */
@@ -7333,6 +7623,7 @@ JXG.Options = {
          *
          * @see Measurement#prefix
          * @name Measurement#showPrefix
+         * @attribute
          * @type Boolean
          * @default true
          */
@@ -7343,6 +7634,7 @@ JXG.Options = {
          *
          * @see Measurement#suffix
          * @name Measurement#showSuffix
+         * @attribute
          * @type Boolean
          * @default true
          */
@@ -7353,6 +7645,7 @@ JXG.Options = {
          *
          * @see Measurement#showPrefix
          * @name Measurement#prefix
+         * @attribute
          * @type String
          * @default ''
          */
@@ -7363,6 +7656,7 @@ JXG.Options = {
          *
          * @see Measurement#showSuffix
          * @name Measurement#suffix
+         * @attribute
          * @type String
          * @default ''
          */
@@ -7380,6 +7674,7 @@ JXG.Options = {
          * @see Measurement#formatCoords
          * @see Measurement#formatDirection
          * @name Measurement#dim
+         * @attribute
          * @type Number|'coords'|'direction'
          * @default null
          */
@@ -7422,6 +7717,7 @@ JXG.Options = {
          *
          * @see Measurement#dim
          * @name Measurement#formatCoords
+         * @attribute
          * @type Function
          * @param {Measurement} self Pointer to the measurement object itself
          * @param {Number} x c-coordinate
@@ -7479,6 +7775,7 @@ JXG.Options = {
          * </script><pre>
          *
          * @name Measurement#formatDirection
+         * @attribute
          * @type Function
          * @param {Measurement} self Pointer to the measurement object itself
          * @param {Number} x c-coordinate
@@ -7499,17 +7796,18 @@ JXG.Options = {
          */
 
         /**
-          * Controls if the data points of the cardinal spline when given as
-          * arrays should be converted into {@link JXG.Points}.
-          *
-          * @name createPoints
-          * @memberOf Metapostspline.prototype
-          *
-          * @see Metapostspline#points
-          *
-          * @type Boolean
-          * @default true
-          */
+         * Controls if the data points of the cardinal spline when given as
+         * arrays should be converted into {@link JXG.Points}.
+         *
+         * @name createPoints
+         * @attribute
+         * @memberOf Metapostspline.prototype
+         *
+         * @see Metapostspline#points
+         *
+         * @type Boolean
+         * @default true
+         */
         createPoints: true,
 
         /**
@@ -7520,6 +7818,7 @@ JXG.Options = {
          * [[x_o x_1, ..., x_n], [y_0, y_1, ..., y_n]]
          *
          * @name isArrayOfCoordinates
+         * @attribute
          * @memberOf Metapostspline.prototype
          * @type Boolean
          * @default true
@@ -7531,6 +7830,7 @@ JXG.Options = {
          * {@link createPoints} is set to true
          *
          * @name points
+         * @attribute
          * @memberOf Metapostspline.prototype
          *
          * @see Metapostspline#createPoints
@@ -7562,6 +7862,7 @@ JXG.Options = {
          *
          * @type Point
          * @name mirrorelement#point
+         * @attribute
          */
         point: {},
 
@@ -7571,6 +7872,7 @@ JXG.Options = {
          *
          * @type Point
          * @name mirrorelement#center
+         * @attribute
          */
         center: {},
 
@@ -7582,6 +7884,7 @@ JXG.Options = {
          *
          * @type String
          * @name mirrorelement#type
+         * @attribute
          * @default 'Euclidean'
          */
         type: 'Euclidean'
@@ -7622,6 +7925,7 @@ JXG.Options = {
          *
          * @type Point
          * @name Normal#point
+         * @attribute
          */
         point: {
             visible: false,
@@ -7652,6 +7956,7 @@ JXG.Options = {
          * the intersection point exists if the segment intersects setwise.
          *
          * @name Otherintersection.alwaysIntersect
+         * @attribute
          * @type Boolean
          * @default true
          */
@@ -7663,6 +7968,7 @@ JXG.Options = {
          * increased.
          *
          * @name Otherintersection.precision
+         * @attribute
          * @type Number
          * @default 0.001
          */
@@ -7684,6 +7990,7 @@ JXG.Options = {
          *
          * @type Point
          * @name Parallel#point
+         * @attribute
          */
         point: {
             visible: false,
@@ -7754,6 +8061,7 @@ JXG.Options = {
          * replaced by {@link Point#face} and {@link Point#size}.
          *
          * @name Point#style
+         * @attribute
          *
          * @see Point#face
          * @see Point#size
@@ -7783,6 +8091,7 @@ JXG.Options = {
          * </table>
          *
          * @name Point#face
+         * @attribute
          *
          * @type String
          * @see JXG.Point#setStyle
@@ -7795,6 +8104,7 @@ JXG.Options = {
          * Means radius resp. half the width of a point (depending on the face).
          *
          * @name Point#size
+         * @attribute
          *
          * @see Point#face
          * @see JXG.Point#setStyle
@@ -7809,6 +8119,7 @@ JXG.Options = {
          * Possible values are 'screen' and 'user.
          *
          * @name Point#sizeUnit
+         * @attribute
          *
          * @see Point#size
          * @type String
@@ -7839,6 +8150,7 @@ JXG.Options = {
          *
          * @type Boolean
          * @name Point#zoom
+         * @attribute
          * @default false
          *
          */
@@ -7850,6 +8162,7 @@ JXG.Options = {
          * {@link JXG.Board#showInfobox} is taken.
          *
          * @name Point#showInfobox
+         * @attribute
          * @see JXG.Board#showInfobox
          * @type Boolean|String
          * @description true | false | 'inherit'
@@ -7866,6 +8179,7 @@ JXG.Options = {
          * </ul>
          *
          * @name Point#infoboxDigits
+         * @attribute
          *
          * @type String| Number
          * @default 'auto'
@@ -7881,6 +8195,7 @@ JXG.Options = {
          * attractorDistance the point is made to glider of this element.
          *
          * @name Point#attractors
+         * @attribute
          *
          * @type Array
          * @default empty
@@ -7892,6 +8207,7 @@ JXG.Options = {
          * Possible values are 'screen' and 'user'.
          *
          * @name Point#attractorUnit
+         * @attribute
          *
          * @see Point#attractorDistance
          * @see Point#snatchDistance
@@ -7909,6 +8225,7 @@ JXG.Options = {
          * If set to zero nothing happens.
          *
          * @name Point#attractorDistance
+         * @attribute
          *
          * @type Number
          * @default 0.0
@@ -7922,6 +8239,7 @@ JXG.Options = {
          * If set to zero nothing happens.
          *
          * @name Point#snatchDistance
+         * @attribute
          *
          * @type Number
          * @default 0.0
@@ -7937,6 +8255,7 @@ JXG.Options = {
          * of the major ticks of the boards default axes in case that snapSizeX, snapSizeY are negative.
          *
          * @name Point#snapToGrid
+         * @attribute
          *
          * @see Point#snapSizeX
          * @see Point#snapSizeY
@@ -7954,6 +8273,7 @@ JXG.Options = {
          * of the major ticks of the boards default axes in case that snapSizeX, snapSizeY are negative.
          *
          * @name Point#attractToGrid
+         * @attribute
          *
          * @see Point#attractorDistance
          * @see Point#attractorUnit
@@ -7988,6 +8308,7 @@ JXG.Options = {
          * of the default ticks of the default x axes of the board.
          *
          * @name Point#snapSizeX
+         * @attribute
          *
          * @see Point#snapToGrid
          * @see Point#snapSizeY
@@ -8005,6 +8326,7 @@ JXG.Options = {
          * of the default ticks of the default y axes of the board.
          *
          * @name Point#snapSizeY
+         * @attribute
          *
          * @see Point#snapToGrid
          * @see Point#snapSizeX
@@ -8019,6 +8341,7 @@ JXG.Options = {
          * {@link Point#attractorDistance}.
          *
          * @name Point#snapToPoints
+         * @attribute
          *
          * @see Point#attractorDistance
          * @type Boolean
@@ -8029,6 +8352,7 @@ JXG.Options = {
         /**
          * List of elements which are ignored by snapToPoints.
          * @name Point#ignoredSnapToPoints
+         * @attribute
          *
          * @type Array
          * @default empty
@@ -8049,6 +8373,7 @@ JXG.Options = {
          *
          * @see JXG.GeometryElement#hasPoint
          * @name Polygon#hasInnerPoints
+         * @attribute
          * @type Boolean
          * @default false
          */
@@ -8066,6 +8391,7 @@ JXG.Options = {
          *
          * @type Boolean
          * @name Polygon#withLines
+         * @attribute
          * @default true
          */
         withLines: true,
@@ -8075,6 +8401,7 @@ JXG.Options = {
          *
          * @type Line
          * @name Polygon#borders
+         * @attribute
          */
         borders: {
             withLabel: false,
@@ -8097,6 +8424,7 @@ JXG.Options = {
          *
          * @type Boolean
          * @name Polygon#highlightByStrokeWidth
+         * @attribute
          * @default false
          */
         highlightByStrokeWidth: false,
@@ -8106,6 +8434,7 @@ JXG.Options = {
          *
          * @type Point
          * @name Polygon#vertices
+         * @attribute
          */
         vertices: {
             layer: 9,
@@ -8122,6 +8451,7 @@ JXG.Options = {
          *
          * @type Label
          * @name Polygon#label
+         * @attribute
          */
         label: {
             offset: [0, 0]
@@ -8157,6 +8487,7 @@ JXG.Options = {
          *
          * @type Point
          * @name Prescribedangle#anglePoint
+         * @attribute
          * @ignore
          */
         anglePoint: {
@@ -8182,6 +8513,7 @@ JXG.Options = {
          *
          * @type center
          * @name Reflection#center
+         * @attribute
          */
         center: {},
 
@@ -8193,6 +8525,7 @@ JXG.Options = {
          *
          * @type String
          * @name Reflection#type
+         * @attribute
          * @default 'Euclidean'
          */
         type: 'Euclidean'
@@ -8220,6 +8553,7 @@ JXG.Options = {
          * @see JXG.GeometryElement#hasPoint
          *
          * @name RegularPolygon#hasInnerPoints
+         * @attribute
          * @type Boolean
          * @default false
          */
@@ -8234,6 +8568,7 @@ JXG.Options = {
          *
          * @type Boolean
          * @name RegularPolygon#withLines
+         * @attribute
          * @default true
          */
         withLines: true,
@@ -8243,6 +8578,7 @@ JXG.Options = {
          *
          * @type Line
          * @name RegularPolygon#borders
+         * @attribute
          */
         borders: {
             withLabel: false,
@@ -8260,6 +8596,7 @@ JXG.Options = {
          *
          * @type Point
          * @name RegularPolygon#vertices
+         * @attribute
          */
         vertices: {
             layer: 9,
@@ -8274,6 +8611,7 @@ JXG.Options = {
          *
          * @type Label
          * @name RegularPolygon#label
+         * @attribute
          */
         label: {
             offset: [0, 0]
@@ -8322,6 +8660,7 @@ JXG.Options = {
          *
          * @type Boolean
          * @name Arc#useDirection
+         * @attribute
          * @default false
          * @private
          */
@@ -8332,6 +8671,7 @@ JXG.Options = {
          *
          * @type String
          * @name Sector#selection
+         * @attribute
          * @default 'auto'
          */
         selection: 'auto',
@@ -8344,6 +8684,7 @@ JXG.Options = {
          *
          * @type {String}
          * @name Sector#orientation
+         * @attribute
          * @default 'counterclockwise'
          *
          * @example
@@ -8394,6 +8735,7 @@ JXG.Options = {
          *
          * @type Arc
          * @name Sector#arc
+         * @attribute
          * @default '{visible:false}'
          */
         arc: {
@@ -8428,6 +8770,7 @@ JXG.Options = {
          *
          * @type Point
          * @name Sector#radiusPoint
+         * @attribute
          */
         radiusPoint: {
             visible: false,
@@ -8439,6 +8782,7 @@ JXG.Options = {
          *
          * @type Point
          * @name Sector#center
+         * @attribute
          */
         center: {
             visible: false,
@@ -8450,6 +8794,7 @@ JXG.Options = {
          *
          * @type Point
          * @name Sector#anglePoint
+         * @attribute
          */
         anglePoint: {
             visible: false,
@@ -8461,6 +8806,7 @@ JXG.Options = {
          *
          * @type Label
          * @name Sector#label
+         * @attribute
          */
         label: {
             offset: [0, 0],
@@ -8493,6 +8839,7 @@ JXG.Options = {
          *
          * @type Point
          * @name Semicircle#center
+         * @attribute
          */
         center: {
             visible: false,
@@ -8528,6 +8875,7 @@ JXG.Options = {
          * On up event immediately delete sketch curve
          * @type {number}
          * @name SketchCurve#deleteOnUp
+         * @attribute
          * @default false
          */
         deleteOnUp: false,
@@ -8536,6 +8884,7 @@ JXG.Options = {
          * Set max number of points of a sketch curve. No limit if set to null.
          * @type {number}
          * @name SketchCurve#maxLength
+         * @attribute
          */
         maxLength: null
 
@@ -8554,6 +8903,7 @@ JXG.Options = {
          *
          * @memberOf Slider.prototype
          * @name snapWidth
+         * @attribute
          * @type Number
          */
         snapWidth: -1,      // -1 = deactivated
@@ -8565,6 +8915,7 @@ JXG.Options = {
          *
          * @memberOf Slider.prototype
          * @name snapValues
+         * @attribute
          * @type Array
          * @see Slider#snapValueDistance
          * @default empty
@@ -8616,6 +8967,7 @@ JXG.Options = {
          *
          * @memberOf Slider.prototype
          * @name snapValueDistance
+         * @attribute
          * @type Number
          * @see Slider#snapValues
          * @default 0.0
@@ -8628,6 +8980,7 @@ JXG.Options = {
          *
          * @memberOf Slider.prototype
          * @name precision
+         * @attribute
          * @type Number
          * @deprecated
          * @see Slider#digits
@@ -8640,6 +8993,7 @@ JXG.Options = {
          *
          * @memberOf Slider.prototype
          * @name digits
+         * @attribute
          * @type Number
          * @default 2
          */
@@ -8649,6 +9003,7 @@ JXG.Options = {
          * Internationalization support for slider labels.
          *
          * @name intl
+         * @attribute
          * @memberOf Slider.prototype
          * @type object
          * @default <pre>{
@@ -8706,6 +9061,7 @@ JXG.Options = {
          *
          * @type Boolean
          * @name Slider#withTicks
+         * @attribute
          * @default true
          */
         withTicks: true,
@@ -8715,6 +9071,7 @@ JXG.Options = {
          *
          * @type Boolean
          * @name Slider#withLabel
+         * @attribute
          * @default true
          */
         withLabel: true,
@@ -8724,6 +9081,7 @@ JXG.Options = {
          * Possible types: string, number or function.
          * @type String
          * @name suffixLabel
+         * @attribute
          * @memberOf Slider.prototype
          * @default null
          * @see JXG.Slider#unitLabel
@@ -8736,6 +9094,7 @@ JXG.Options = {
          * Possible types: string, number or function.
          * @type String
          * @name unitLabel
+         * @attribute
          * @memberOf Slider.prototype
          * @default null
          * @see JXG.Slider#suffixLabel
@@ -8748,6 +9107,7 @@ JXG.Options = {
          * Possible types: string, number or function.
          * @type String
          * @name postLabel
+         * @attribute
          * @memberOf Slider.prototype
          * @default null
          * @see JXG.Slider#suffixLabel
@@ -8769,6 +9129,7 @@ JXG.Options = {
          *
          * @type Number
          * @name Slider#size
+         * @attribute
          * @default 6
          * @see Point#size
          */
@@ -8779,6 +9140,7 @@ JXG.Options = {
          *
          * @type Point
          * @name Slider#point1
+         * @attribute
          */
         point1: {
             needsRegularUpdate: false,
@@ -8795,6 +9157,7 @@ JXG.Options = {
          *
          * @type Point
          * @name Slider#point2
+         * @attribute
          */
         point2: {
             needsRegularUpdate: false,
@@ -8811,6 +9174,7 @@ JXG.Options = {
          *
          * @type Line
          * @name Slider#baseline
+         * @attribute
          */
         baseline: {
             needsRegularUpdate: false,
@@ -8830,6 +9194,7 @@ JXG.Options = {
          *
          * @type Ticks
          * @name Slider#ticks
+         * @attribute
          */
         ticks: {
             needsRegularUpdate: false,
@@ -8865,6 +9230,7 @@ JXG.Options = {
          *
          * @type Line
          * @name Slider#highline
+         * @attribute
          */
         highline: {
             strokeWidth: 3,
@@ -8882,6 +9248,7 @@ JXG.Options = {
          *
          * @type Label
          * @name Slider#label
+         * @attribute
          */
         label: {
             visible: 'inherit',
@@ -8894,6 +9261,7 @@ JXG.Options = {
          *
          * @type Boolean
          * @name Slider#moveOnUp
+         * @attribute
          * @default true
          */
         moveOnUp: true
@@ -8915,6 +9283,7 @@ JXG.Options = {
         /**
          * Set length of the vectors in user coordinates. This in contrast to vector fields, where this attribute just scales the vector.
          * @name scale
+         * @attribute
          * @memberOf Slopefield.prototype
          * @type {Number|Function}
          * @see Vectorfield.scale
@@ -8931,6 +9300,7 @@ JXG.Options = {
          *  <li> angle: angle of the arrow head legs In radians.
          * </ul>
          * @name arrowhead
+         * @attribute
          * @memberOf Slopefield.prototype
          * @type {Object}
          * @default <tt>{enabled: false, size: 5, angle: Math.PI * 0.125}</tt>
@@ -8967,6 +9337,7 @@ JXG.Options = {
          *
          * @type Point
          * @name Slopetriangle#glider
+         * @attribute
          */
         glider: {
             fixed: true,
@@ -8979,6 +9350,7 @@ JXG.Options = {
          *
          * @type Line
          * @name Slopetriangle#baseline
+         * @attribute
          */
         baseline: {
             visible: false,
@@ -8991,6 +9363,7 @@ JXG.Options = {
          *
          * @type Point
          * @name Slopetriangle#basepoint
+         * @attribute
          */
         basepoint: {
             visible: false,
@@ -9005,6 +9378,7 @@ JXG.Options = {
          *
          * @type Line
          * @name Slopetriangle#tangent
+         * @attribute
          */
         tangent: {
             visible: false,
@@ -9017,6 +9391,7 @@ JXG.Options = {
          *
          * @type Point
          * @name Slopetriangle#toppoint
+         * @attribute
          */
         toppoint: {
             visible: false,
@@ -9029,6 +9404,7 @@ JXG.Options = {
          *
          * @type Label
          * @name Slopetriangle#label
+         * @attribute
          */
         label: {
             visible: true,
@@ -9056,6 +9432,7 @@ JXG.Options = {
          *
          * @memberOf Slopetriangle.prototype
          * @name digits
+         * @attribute
          * @type Number
          * @default 2
          */
@@ -9066,6 +9443,7 @@ JXG.Options = {
          *
          * @see Slopetriangle#prefix
          * @name Slopetriangle#showPrefix
+         * @attribute
          * @type Boolean
          * @default false
          */
@@ -9076,6 +9454,7 @@ JXG.Options = {
          *
          * @see Slopetriangle#suffix
          * @name Slopetriangle#showSuffix
+         * @attribute
          * @type Boolean
          * @default false
          */
@@ -9086,6 +9465,7 @@ JXG.Options = {
          *
          * @see Slopetriangle#showPrefix
          * @name Slopetriangle#prefix
+         * @attribute
          * @type String
          * @default ''
          */
@@ -9096,6 +9476,7 @@ JXG.Options = {
          *
          * @see Slopetriangle#showSuffix
          * @name Slopetriangle#suffix
+         * @attribute
          * @type String
          * @default ''
          */
@@ -9106,6 +9487,7 @@ JXG.Options = {
          * If set to null, no formatting will happen.
          *
          * @name Slopetriangle#formatValue
+         * @attribute
          * @type Function
          * @param {Slopetriangle} self Pointer to the slopetriangle object itself
          * @param {Number} val value
@@ -9140,6 +9522,7 @@ JXG.Options = {
          *
          * @type String
          * @name Smartlabel#cssClass
+         * @attribute
          * @see Smartlabel#highlightCssClass
          * @default <ul>
          *  <li> 'smart-label-solid smart-label-circle' for circles</li>
@@ -9154,6 +9537,7 @@ JXG.Options = {
          *
          * @type String
          * @name Smartlabel#highlightCssClass
+         * @attribute
          * @see Smartlabel#cssClass
          * @default <ul>
          *  <li> 'smart-label-solid smart-label-circle' for circles</li>
@@ -9169,6 +9553,7 @@ JXG.Options = {
          *
          * @type {String|Function}
          * @name Smartlabel#unit
+         * @attribute
          * @default ''
          * @see Smartlabel#baseUnit
          * @see Smartlabel#units
@@ -9183,6 +9568,7 @@ JXG.Options = {
          *
          * @see Smartlabel#units
          * @name Smartlabel#baseUnit
+         * @attribute
          * @type String
          * @default ''
          */
@@ -9195,6 +9581,7 @@ JXG.Options = {
          *
          * @see Smartlabel#baseUnit
          * @name Smartlabel#units
+         * @attribute
          * @type Object
          * @default {}
          */
@@ -9205,6 +9592,7 @@ JXG.Options = {
          *
          * @see Smartlabel#prefix
          * @name Smartlabel#showPrefix
+         * @attribute
          * @type Boolean
          * @default true
          */
@@ -9215,6 +9603,7 @@ JXG.Options = {
          *
          * @see Smartlabel#suffix
          * @name Smartlabel#showSuffix
+         * @attribute
          * @type Boolean
          * @default true
          */
@@ -9224,6 +9613,7 @@ JXG.Options = {
          *
          * @type {String|Function}
          * @name Smartlabel#prefix
+         * @attribute
          * @default ''
          */
         prefix: '',
@@ -9233,6 +9623,7 @@ JXG.Options = {
          *
          * @type {String|Function}
          * @name Smartlabel#suffix
+         * @attribute
          * @default ''
          */
         suffix: '',
@@ -9242,6 +9633,7 @@ JXG.Options = {
          * If set to null, no formatting will happen.
          *
          * @name Smartlabel#formatValue
+         * @attribute
          * @type Function
          * @param {Smartlabel} self Pointer to the smartlabel object itself
          * @param {Number|Array} val value (array, if coords)
@@ -9264,6 +9656,7 @@ JXG.Options = {
          *
          * @type String
          * @name Smartlabel#measure
+         * @attribute
          * @default <ul>
          *   <li> 'radius' for circles</li>
          *   <li> 'length' for lines</li>
@@ -9323,6 +9716,7 @@ JXG.Options = {
          *
          * @type String
          * @name Smartlabel#orientation
+         * @attribute
          * @default 'parallel'
          */
         orientation: 'parallel',
@@ -9334,6 +9728,7 @@ JXG.Options = {
          *
          * @type String
          * @name Smartlabel#visibleThreshold
+         * @attribute
          * @default <ul>
          *     <li>0.7 for lines</li>
          *     <li>0.6 for angles</li>
@@ -9361,6 +9756,7 @@ JXG.Options = {
          * Available values are 'row' or 'column'.
          * @type String
          * @name Smartlabel#dir
+         * @attribute
          * @default 'row'
          */
         dir: 'row'
@@ -9400,6 +9796,7 @@ JXG.Options = {
          * Attributes for the polar line of the tangentto construction.
          *
          * @name polar
+         * @attribute
          * @memberOf TangentTo.prototype
          * @type JXG.Line
          */
@@ -9413,6 +9810,7 @@ JXG.Options = {
          * Attributes for the intersection point of the conic/circle with the polar line of the tangentto construction.
          *
          * @name point
+         * @attribute
          * @memberOf TangentTo.prototype
          * @type JXG.Point
          */
@@ -9438,6 +9836,7 @@ JXG.Options = {
          *
          * @type Boolean
          * @name Tapemeasure#withTicks
+         * @attribute
          * @default true
          */
         withTicks: true,
@@ -9447,6 +9846,7 @@ JXG.Options = {
          *
          * @type Boolean
          * @name Tapemeasure#withLabel
+         * @attribute
          * @default true
          */
         withLabel: true,
@@ -9455,6 +9855,7 @@ JXG.Options = {
          * Text rotation in degrees.
          *
          * @name Tapemeasure#rotate
+         * @attribute
          * @type Number
          * @default 0
          */
@@ -9466,6 +9867,7 @@ JXG.Options = {
          *
          * @memberOf Tapemeasure.prototype
          * @name precision
+         * @attribute
          * @type Number
          * @deprecated
          * @see Tapemeasure#digits
@@ -9477,6 +9879,7 @@ JXG.Options = {
          * The precision of the tape measure value displayed in the optional text.
          * @memberOf Tapemeasure.prototype
          * @name digits
+         * @attribute
          * @type Number
          * @default 2
          */
@@ -9487,6 +9890,7 @@ JXG.Options = {
          *
          * @type Point
          * @name Tapemeasure#point1
+         * @attribute
          */
         point1: {
             visible: true,
@@ -9508,6 +9912,7 @@ JXG.Options = {
          *
          * @type Point
          * @name Tapemeasure#point2
+         * @attribute
          */
         point2: {
             visible: true,
@@ -9529,6 +9934,7 @@ JXG.Options = {
          *
          * @type Ticks
          * @name Tapemeasure#ticks
+         * @attribute
          */
         ticks: {
             drawLabels: false,
@@ -9556,6 +9962,7 @@ JXG.Options = {
          *
          * @type Label
          * @name Tapemeasure#label
+         * @attribute
          */
         label: {
             position: 'top'
@@ -9573,6 +9980,7 @@ JXG.Options = {
          * The font size in pixels.
          *
          * @name fontSize
+         * @attribute
          * @memberOf Text.prototype
          * @default 12
          * @type Number
@@ -9585,6 +9993,7 @@ JXG.Options = {
          * for responsive application, also 'vw', 'vh', vmax', 'vmin' or 'rem' might be useful.
          *
          * @name fontUnit
+         * @attribute
          * @memberOf Text.prototype
          * @default 'px'
          * @type String
@@ -9617,6 +10026,7 @@ JXG.Options = {
          * Otherwise, display the raw number.
          *
          * @name formatNumber
+         * @attribute
          * @memberOf Text.prototype
          * @default false
          * @type Boolean
@@ -9629,6 +10039,7 @@ JXG.Options = {
          * Used to round texts consisting solely of a number. Needs the attribute formatNumber:true.
          *
          * @name digits
+         * @attribute
          * @memberOf Text.prototype
          * @default 2
          * @type Number
@@ -9650,6 +10061,7 @@ JXG.Options = {
          * See below for an example where the text is composed from a string and a locale formatted number.
          *
          * @name intl
+         * @attribute
          * @memberOf Text.prototype
          * @type object
          * @default <pre>{
@@ -9777,6 +10189,7 @@ JXG.Options = {
          * JessieCode expression.
          *
          * @name parse
+         * @attribute
          * @memberOf Text.prototype
          * @default true
          * @type Boolean
@@ -9788,6 +10201,7 @@ JXG.Options = {
          * will be used to sanitize text output.
          *
          * @name useCaja
+         * @attribute
          * @memberOf Text.prototype
          * @default false
          * @type Boolean
@@ -9798,6 +10212,7 @@ JXG.Options = {
          * If enabled, the text will be handled as label. Intended for internal use.
          *
          * @name isLabel
+         * @attribute
          * @memberOf Text.prototype
          * @default false
          * @type Boolean
@@ -9839,6 +10254,7 @@ JXG.Options = {
          * should be called.
          *
          * @name cssDefaultStyle
+         * @attribute
          * @memberOf Text.prototype
          * @default  'font-family: Arial, Helvetica, Geneva, sans-serif;'
          * @type String
@@ -9864,6 +10280,7 @@ JXG.Options = {
          * should be called.
          *
          * @name highlightCssDefaultStyle
+         * @attribute
          * @memberOf Text.prototype
          * @default  'font-family: Arial, Helvetica, Geneva, sans-serif;'
          * @type String
@@ -9881,6 +10298,7 @@ JXG.Options = {
          * CSS class.
          *
          * @name cssStyle
+         * @attribute
          * @memberOf Text.prototype
          * @default  ''
          * @type String
@@ -9898,6 +10316,7 @@ JXG.Options = {
          * CSS class.
          *
          * @name highlightCssStyle
+         * @attribute
          * @memberOf Text.prototype
          * @default  ''
          * @type String
@@ -9913,6 +10332,7 @@ JXG.Options = {
          * If true, the input will be given to ASCIIMathML before rendering.
          *
          * @name useASCIIMathML
+         * @attribute
          * @memberOf Text.prototype
          * @default false
          * @type Boolean
@@ -9927,6 +10347,7 @@ JXG.Options = {
          * instead of two (e.g. &bsol;&bsol;alpha).
          *
          * @name useMathJax
+         * @attribute
          * @memberOf Text.prototype
          * @default false
          * @type Boolean
@@ -10190,6 +10611,7 @@ JXG.Options = {
          * </p>
          *
          * @name useKatex
+         * @attribute
          * @memberOf Text.prototype
          * @default false
          * @type Boolean
@@ -10241,6 +10663,7 @@ JXG.Options = {
          * Object or function returning an object that contains macros for KaTeX.
          *
          * @name katexMacros
+         * @attribute
          * @memberOf Text.prototype
          * @default <tt>{}</tt>
          * @type Object
@@ -10262,6 +10685,7 @@ JXG.Options = {
          * Display number as integer + nominator / denominator. Needs also the setting formatNumber: true
          * Works together with MathJax, KaTex or as plain text.
          * @name toFraction
+         * @attribute
          * @memberOf Text.prototype
          * @type Boolean
          * @default false
@@ -10291,6 +10715,7 @@ JXG.Options = {
          * include <tt>'html'</tt> and <tt>'internal'</tt>.
          *
          * @name display
+         * @attribute
          * @memberOf Text.prototype
          * @default 'html'
          * @type String
@@ -10304,6 +10729,7 @@ JXG.Options = {
          * functions are not supported.
          *
          * @name anchor
+         * @attribute
          * @memberOf Text.prototype
          * @default null
          * @type Object
@@ -10332,6 +10758,7 @@ JXG.Options = {
          * <tt>'middle'</tt>, and <tt>'right'</tt>.
          *
          * @name anchorX
+         * @attribute
          * @memberOf Text.prototype
          * @default 'left'
          * @type String
@@ -10344,6 +10771,7 @@ JXG.Options = {
          * For MathJax or KaTeX, 'top' is recommended.
          *
          * @name anchorY
+         * @attribute
          * @memberOf Text.prototype
          * @default 'middle'
          * @type String
@@ -10355,6 +10783,7 @@ JXG.Options = {
          * CSS classes separated by blanks.
          *
          * @name cssClass
+         * @attribute
          * @memberOf Text.prototype
          * @type String
          * @default 'JXGtext'
@@ -10369,6 +10798,7 @@ JXG.Options = {
          * CSS classes separated by blanks.
          *
          * @name highlightCssClass
+         * @attribute
          * @memberOf Text.prototype
          * @type String
          * @default 'JXGtext'
@@ -10385,6 +10815,7 @@ JXG.Options = {
          * This may be extended to left, right, ... in the future.
          *
          * @name Text#dragArea
+         * @attribute
          * @type String
          * @default 'all'
          */
@@ -10397,6 +10828,7 @@ JXG.Options = {
          * Works for non-zero values only in combination with display=='internal'.
          *
          * @name Text#rotate
+         * @attribute
          * @type Number
          * @default 0
          */
@@ -10404,6 +10836,7 @@ JXG.Options = {
 
         /**
          * @name Text#visible
+         * @attribute
          * @type Boolean
          * @default true
          */
@@ -10416,6 +10849,7 @@ JXG.Options = {
          * of the default ticks of the default x axes of the board.
          *
          * @name snapSizeX
+         * @attribute
          * @memberOf Text.prototype
          *
          * @see Point#snapToGrid
@@ -10433,6 +10867,7 @@ JXG.Options = {
          * of the default ticks of the default y axes of the board.
          *
          * @name snapSizeY
+         * @attribute
          * @memberOf Text.prototype
          *
          * @see Point#snapToGrid
@@ -10448,6 +10883,7 @@ JXG.Options = {
          * attractorDistance the text is made to glider of this element.
          *
          * @name attractors
+         * @attribute
          * @memberOf Text.prototype
          * @type Array
          * @default empty
@@ -10470,6 +10906,7 @@ JXG.Options = {
          * @memberOf Tracecurve.prototype
          * @default 100
          * @name numberPoints
+         * @attribute
          * @type Number
          */
         numberPoints: 100
@@ -10492,6 +10929,7 @@ JXG.Options = {
          *
          * @type Curve
          * @name Turtle#arrow
+         * @attribute
          */
         arrow: {
             strokeWidth: 2,
@@ -10516,6 +10954,7 @@ JXG.Options = {
         /**
          * Scaling factor of the vectors. This in contrast to slope fields, where this attribute sets the vector to the given length.
          * @name scale
+         * @attribute
          * @memberOf Vectorfield.prototype
          * @type {Number|Function}
          * @see Slopefield.scale
@@ -10532,6 +10971,7 @@ JXG.Options = {
          *  <li> angle: angle of the arrow head legs In radians.
          * </ul>
          * @name arrowhead
+         * @attribute
          * @memberOf Vectorfield.prototype
          * @type {Object}
          * @default <tt>{enabled: true, size: 5, angle: Math.PI * 0.125}</tt>

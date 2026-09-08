@@ -29,45 +29,45 @@
  */
 JXG.createLine = function (board, parents, attributes) { };
 
-line = {
-    /**
-     * @visprop
-     */
+// line = {
+//     /**
+//      * @visprop
+//      */
 
-    /**
-     * Attributes for first defining point of the line.
-     *
-     * @type Object
-     * @name Line#point1
-     * @attribute
-     */
-    point1: {
-        fillColor: 'red',
-    },
+//     /**
+//      * Attributes for first defining point of the line.
+//      *
+//      * @type Object
+//      * @name Line#point1
+//      * @attribute
+//      */
+//     point1: {
+//         fillColor: 'red',
+//     },
 
-    /**
-     * Attributes for second defining point of the line.
-     *
-     * @type Object
-     * @name Line#point2
-     * @attribute
-     */
-    point2: {
-        fillColor: 'red',
-    },
+//     /**
+//      * Attributes for second defining point of the line.
+//      *
+//      * @type Object
+//      * @name Line#point2
+//      * @attribute
+//      */
+//     point2: {
+//         fillColor: 'red',
+//     },
 
-    /**
-     * This number (pixel value) controls where infinite lines end at the canvas border. If zero, the line
-     * ends exactly at the border, if negative there is a margin to the inside, if positive the line
-     * ends outside of the canvas (which is invisible).
-     *
-     * @name Line#margin
-     * @type Number
-     * @default 0
-     * @attribute
-     */
-    margin: 0
-};
+//     /**
+//      * This number (pixel value) controls where infinite lines end at the canvas border. If zero, the line
+//      * ends exactly at the border, if negative there is a margin to the inside, if positive the line
+//      * ends outside of the canvas (which is invisible).
+//      *
+//      * @name Line#margin
+//      * @type Number
+//      * @default 0
+//      * @attribute
+//      */
+//     margin: 0
+// };
 
 /**
  * @summary Some dummy property

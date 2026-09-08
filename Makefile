@@ -149,12 +149,9 @@ docsonly:
 
 # jsdoc v4
 d:
-	@#node_modules/.bin/jsdoc --verbose -d output_docs_4 -X src/base/linenewrdy.js
-	@#node_modules/.bin/jsdoc --verbose -d output_docs_4 src/base/linenewrdy.js
-	@#node_modules/.bin/jsdoc --verbose -t doc/jsdoc4tpl -d output_docs_4 $(FILELIST)
-	node_modules/.bin/jsdoc -X -a all --verbose -c ./doc/jsdoc/jsdoc.json ./doc/jsdoc/tests/lineshort.js ./doc/jsdoc/tests/pseudo.js ./doc/jsdoc/tests/test.js >x.json
-	node_modules/.bin/jsdoc -a all    --verbose -c ./doc/jsdoc/jsdoc.json ./doc/jsdoc/tests/lineshort.js ./doc/jsdoc/tests/pseudo.js ./doc/jsdoc/tests/test.js 
-	#src/options.js
+	@#node_modules/.bin/jsdoc -a all  --verbose -c ./doc/jsdoc/jsdoc.json -$(FILELIST)
+	@# node_modules/.bin/jsdoc -X -a all --verbose -c ./doc/jsdoc/jsdoc.json ./doc/jsdoc/tests/lineshort.js ./doc/jsdoc/tests/pseudo.js ./doc/jsdoc/tests/test.js >x.json
+	node_modules/.bin/jsdoc -a all    --verbose -c ./doc/jsdoc/jsdoc.json ./doc/jsdoc/tests/lineshort.js ./doc/jsdoc/tests/pseudo.js ./doc/jsdoc/tests/test.js src/options.js
 # 	./doc/jsdoc/tests/test.js ./doc/jsdoc/tests/pseudo.js
 
 # prettier:
