@@ -23,7 +23,10 @@ var self = this;
     ?><?js= (data.signature || '') ?></h4>
 
     <?js if (data.summary) { ?>
-    <p class="summary usertext"><?js= summary ?></p>
+        <p class="summary usertext"><?js= summary
+            .trim()
+            .replace(/^<p>/, "")
+            .replace(/<\/p>$/, "") ?></p>
     <?js } ?>
 <?js } ?>
 

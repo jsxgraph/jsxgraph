@@ -4,9 +4,12 @@ var self = this;
 ?>
 <h4 class="name" id="<?js= id ?>"><?js= data.attribs + name + (data.signature ? data.signature : '') ?></h4>
 
-<?js if (data.summary) { ?>
-<p class="summary"><?js= summary ?></p>
-<?js } ?>
+    <?js if (data.summary) { ?>
+        <p class="summary"><?js= summary
+            .trim()
+            .replace(/^<p>/, "")
+            .replace(/<\/p>$/, "") ?></p>
+    <?js } ?>
 
 <?js= this.partial('details.tmpl', data) ?>
 

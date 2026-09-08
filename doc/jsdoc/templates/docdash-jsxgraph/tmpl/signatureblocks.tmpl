@@ -19,10 +19,12 @@ if (doclet.signatureBlocks && doclet.signatureBlocks.length) {
       <pre class="prettyprint"><code><?js= b.signature ?></code></pre>
 
       <?js
-      // optional Discription of an Overloads
-      if (b.description) {
-      ?>
-        <p class="summary usertext"><?js= b.description ?></p>
+        // optional Discription of an Overloads
+        if (b.description) { ?>
+          <p class="summary usertext"><?js= b.description
+              .trim()
+              .replace(/^<p>/, "")
+              .replace(/<\/p>$/, "") ?></p>
       <?js } ?>
 
       <?js

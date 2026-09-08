@@ -4,11 +4,13 @@ var self = this;
 self.toAnchor = (str, linktext) => '<a href="#' + str + '">' + linktext + '</a>';
 ?>
 <dt id="<?js= id + '_short'?>">
-    <?js= /* data.attribs + name + (data.signature ? data.signature : '') */ ?>
     <?js= self.toAnchor(id, name) ?>
 </dt>
 <dd>
     <?js if (data.summary) { ?>
-        <p class="summary"><?js= summary ?></p>
+        <p class="summary"><?js= summary
+            .trim()
+            .replace(/^<p>/, "")
+            .replace(/<\/p>$/, "") ?></p>
     <?js } ?>
 </dd>
