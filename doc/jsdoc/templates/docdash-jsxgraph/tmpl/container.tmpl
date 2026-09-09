@@ -152,8 +152,10 @@
         }
         if (attributes && attributes.length && attributes.forEach) {
     ?>
-        <h3 class="subsection-title collapsible">Attributes</h3>
-        <div class="collapse_content">
+        <details>
+            <summary class="subsection-title collapsible">Attributes</summary>
+
+            <h4 class="subsection-title">Own:</h4>
             <div class="list_container">
                 <?js attributes
                        .filter((self) => !self.inherits)
@@ -162,7 +164,7 @@
                 <?js }); ?>
             </div>
 
-            <h4 class="subsection-title">Attributes details</h4>
+            <!--<h4 class="subsection-title">Attributes details</h4>-->
 
             <?js attributes
                    .filter((self) => !self.inherits)
@@ -170,15 +172,14 @@
                 <?js= self.partial('members.tmpl', p) ?>
             <?js }); ?>
 
-            <h4 class="subsection-title">Inherited attributes</h4>
+            <h4 class="subsection-title">Inherited:</h4>
             <div class="list_container">
             <?js attributes
                    .filter((self) => self.inherits)
                    .forEach(function(p) { ?>
                 <p class="columntext"><?js= self.linkto(p.inherits, p.name) ?></p>
             <?js }); ?>
-            </div>
-        </div>
+        </details>
     <?js } ?>
 
 <!-- Members -->
@@ -195,8 +196,10 @@
         }
         if (members && members.length && members.forEach) {
     ?>
-        <h3 class="subsection-title collapsible">Members</h3>
-        <div class="collapse_content">
+        <details>
+            <summary class="subsection-title collapsible">Members</summary>
+            
+        <h4 class="subsection-title">Own:</h4>
         <div class="list_container">
         <?js members
                .filter((self) => !self.inherited)
@@ -205,7 +208,7 @@
         <?js }); ?>
         </div>
 
-        <h4 class="subsection-title">Members details</h4>
+        <!--<h4 class="subsection-title">Details:</h4>-->
 
         <?js members
                .filter((self) => !self.inherited)
@@ -213,7 +216,7 @@
             <?js= self.partial('members.tmpl', p) ?>
         <?js }); ?>
 
-        <h4 class="subsection-title">Inherited members</h4>
+        <h4 class="subsection-title">Inherited:</h4>
         <div class="list_container">
         <?js members
                .filter((self) => self.inherited)
@@ -221,7 +224,7 @@
             <p class="columntext"><?js= self.linkto(p.inherits, p.name) ?></p>
         <?js }); ?>
         </div>
-        </div>
+        </details>
     <?js } ?>
 
 <!-- Methods -->
@@ -229,9 +232,10 @@
         var methods = self.find({kind: 'function', memberof: isGlobalPage ? {isUndefined: true} : doc.longname});
         if (methods && methods.length && methods.forEach) {
     ?>
-        <h3 class="subsection-title collapsible">Methods</h3>
-        <div class="collapse_content">
+        <details>
+            <summary class="subsection-title collapsible">Methods</summary>
 
+        <h4 class="subsection-title">Own:</h4>
         <div class="list_container">
         <?js methods
                .filter((self) => !self.inherited)
@@ -240,7 +244,7 @@
         <?js }); ?>
         </div>
 
-        <h4 class="subsection-title">Methods details</h4>
+        <!--<h4 class="subsection-title">Details:</h4>-->
 
         <?js methods
                .filter((self) => !self.inherited)
@@ -248,7 +252,7 @@
             <?js= self.partial('method.tmpl', m) ?>
         <?js }); ?>
 
-        <h4 class="subsection-title">Inherited methods</h4>
+        <h4 class="subsection-title">Inherited:</h4>
         <div class="list_container">
         <?js methods
                .filter((self) => self.inherited)
@@ -256,7 +260,7 @@
             <p class="columntext"><?js= self.linkto(p.inherits, p.name) ?></p>
         <?js }); ?>
         </div>
-        </div>
+        </details>
     <?js } ?>
 
 <!-- typedef -->
@@ -285,9 +289,10 @@
         var events = self.find({kind: 'event', memberof: isGlobalPage ? {isUndefined: true} : doc.longname});
         if (events && events.length && events.forEach) {
     ?>
-        <h3 class="subsection-title collapsible">Events</h3>
-        <div class="collapse_content">
+        <details>
+            <summary class="subsection-title collapsible">Events</summary>
 
+        <h4 class="subsection-title">Own:</h4>
         <div class="list_container">
         <?js events
             .filter((self) => !self.inherited)
@@ -296,7 +301,7 @@
         <?js }); ?>
         </div>
 
-        <h4 class="subsection-title">Events details</h4>
+        <!--<h4 class="subsection-title">Details:</h4>-->
 
         <?js events
             .filter((self) => !self.inherited)
@@ -304,7 +309,7 @@
             <?js= self.partial('method.tmpl', e) ?>
         <?js }); ?>
 
-        <h4 class="subsection-title">Inherited events</h4>
+        <h4 class="subsection-title">Inherited:</h4>
         <div class="list_container">
         <?js events
             .filter((self) => self.inherited)
@@ -312,29 +317,12 @@
             <p class="columntext"><?js= self.linkto(e.inherits, e.name) ?></p>
         <?js }); ?>
         </div>
-        </div>
+        </details>
 
     <?js } ?>
 </article>
 
 </section>
-
-<script>
-// Collapse attributes, members, ...
-let colls = document.getElementsByClassName("collapsible");
-
-for (let i = 0; i < colls.length; i++) {  
-    colls[i].addEventListener("click", function() {
-        this.classList.toggle("active");
-        var content = this.nextElementSibling;
-        if (content.style.maxHeight){
-          content.style.maxHeight = null;
-        } else {
-          content.style.maxHeight = content.scrollHeight + "px";
-    }
-  });
-}
-</script>
 
 <?js } ?>
 

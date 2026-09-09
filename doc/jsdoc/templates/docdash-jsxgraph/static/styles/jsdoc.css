@@ -794,37 +794,22 @@ html[data-search-mode] .level-hide {
 }
 
 /* Collapsing CSS */
-.collapsible {
+summary {
   background-color: #eee;
   cursor: pointer;
-  width: 7em;
-  /*
-  text-align: left;
-  font-size: 15px;
-  color: #444;
-  padding: 18px;
-  border: none;
-  outline: none;
-  */
+  padding: 8px;
+  margin-bottom: 8px;
 }
 
-.collapsible:before {
-  content: "\02795 \00A0 "; /* Unicode character for "plus" sign (+) */
-  /*font-size: 13px;*/
-  /* color: white;*/
-  /* float: left; */
-  /* margin-left: 5px; */
+summary {
+  font-family: 'Montserrat', sans-serif;
+  color: #000;
+  font-weight: 400;
+  margin: 0;
+  font-size: 24px;
+  margin: 1.2em 0 .3em;
 }
 
-.active:before {
-  content: "\2796 \00A0 "; /* Unicode character for "minus" sign (-) */
-}
-
-.collapse_content {
-  padding: 0 18px;
-  background-color: white;
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.2s ease-out;
+details {
 }
 
