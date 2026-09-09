@@ -6,4 +6,8 @@
   - Another link: {@link JXG.Board#animationDelay}
 - Create a line like in {@link Line}
   - just a test: {@link JXG.Line#getSlope}
+  - Test 1: $\int_{-1}^1$
+  - Test 2: \\(\\int_{-1}^1\\)
+
+  
   
