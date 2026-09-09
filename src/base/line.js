@@ -1546,8 +1546,7 @@ JXG.registerElement("line", JXG.createLine);
  * @param {number | function} length The points are adapted - if possible - such that their distance is equal to the absolute value of this number.
  *
  * @see Line
- * @example
- * // Create a segment providing two points.
+ * @example  <caption>Create segment providing two points</caption>
  * var p1 = board.create('point', [4.5, 2.0]);
  * var p2 = board.create('point', [1.0, 1.0]);
  * var l1 = board.create('segment', [p1, p2]);
@@ -1561,8 +1560,7 @@ JXG.registerElement("line", JXG.createLine);
  * })();
  * </script><pre>
  *
- * @example
- * // Create a segment providing two points.
+ * @example <caption>Create segment with fixed length</caption>
  * var p1 = board.create('point', [4.0, 1.0]);
  * var p2 = board.create('point', [1.0, 1.0]);
  * // AB
@@ -3092,7 +3090,7 @@ JXG.createPolarLine = function (board, parents, attributes) {
  * @type JXG.Line
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
  *
- * @signature board.create('tangent', [conic, point, number]);
+ * @signature board.create('tangentto', [conic, point, number]);
  * The result will be the tangent line through the point with respect to the conic or circle.
  * @param {JXG.Conic | JXG.Circle} conic
  * @param {JXG.Point} point
