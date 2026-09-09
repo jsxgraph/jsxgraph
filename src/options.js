@@ -2371,20 +2371,20 @@ JXG.Options = {
         /**
          * Determines whether two-finger manipulation of this object may change its size.
          * If set to false, the object is only rotated and translated.
-         * <p>
-         * In case the element is a horizontal or vertical line having ticks, "scalable:true"
+         *
+         * In case the element is a horizontal or vertical line having ticks, `scalable:true`
          * enables zooming of the board by dragging ticks lines. This feature is enabled,
-         * for the ticks element of the line element the attribute "fixed" has to be false
+         * for the ticks element of the line element the attribute `fixed` has to be false
          * and the line element's scalable attribute has to be true.
-         * <p>
-         * In case the element is a polygon or line and it has the attribute "scalable:false",
+         *
+         * In case the element is a polygon or line and it has the attribute `scalable:false`,
          * moving the element with two fingers results in a rotation or translation.
-         * <p>
+         *
          * If an element is set to be neither scalable nor rotatable, it can only be translated.
-         * <p>
-         * In case of a polygon, scaling is only possible if <i>no</i> vertex has snapToGrid or snapToPoints
+         *
+         * In case of a polygon, scaling is only possible if __no__ vertex has `snapToGrid` or `snapToPoints`
          * enabled and no vertex is fixed by some other constraint. Also, the polygon itself has to have
-         * snapToGrid disabled.
+         * `snapToGrid` disabled.
          *
          * @type Boolean
          * @default true
@@ -2397,17 +2397,17 @@ JXG.Options = {
 
         /**
          * If enabled:true the (stroke) element will get a customized shadow.
-         * <p>
-         * Customize <i>color</i> and <i>opacity</i>:
-         * If the object's RGB stroke color is <tt>[r,g,b]</tt> and its opacity is <tt>op</i>, and
-         * the shadow parameters <i>color</i> is given as <tt>[r', g', b']</tt> and <i>opacity</i> as <tt>op'</tt>
+         *
+         * Customize color and opacity:
+         * If the object's RGB stroke color is `[r,g,b]` and its opacity is `op`, and
+         * the shadow parameters `color` is given as `[r', g', b']` and `opacity` as `op'`
          * the shadow will receive the RGB color
-         * <center>
-         * <tt>[blend*r + r', blend*g + g', blend*b + b'] </tt>
-         * </center>
-         * and its opacity will be equal to <tt>op * op'</tt>.
-         * Further, the parameters <i>blur</i> and <i>offset</i> can be adjusted.
-         * <p>
+         *
+         * `[blend*r + r', blend*g + g', blend*b + b']`
+         *
+         * and its opacity will be equal to `op * op'`.
+         * Further, the parameters `blur` and `offset` can be adjusted.
+         *
          * This attribute is only available with SVG, not with canvas.
          *
          * @type Object

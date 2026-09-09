@@ -48,8 +48,8 @@ import Type from "../utils/type.js";
  * @constructor
  * @param {JXG.Board} board Reference to the board the element is constructed on.
  * @param {Object} attributes Hash of attributes and their values.
- * @param {Number} type Element type (a <tt>JXG.OBJECT_TYPE_</tt> value).
- * @param {Number} oclass The element's class (a <tt>JXG.OBJECT_CLASS_</tt> value).
+ * @param {Number} type Element type (a `JXG.OBJECT_TYPE_...` value).
+ * @param {Number} oclass The element's class (a `JXG.OBJECT_CLASS_` value).
  * @borrows JXG.EventEmitter#on as this.on
  * @borrows JXG.EventEmitter#off as this.off
  * @borrows JXG.EventEmitter#triggerEventHandlers as this.triggerEventHandlers
@@ -200,7 +200,7 @@ JXG.GeometryElement = function (board, attributes, type, oclass) {
     this.elType = "";
 
     /**
-     * The element is saved with an explicit entry in the file (<tt>true</tt>) or implicitly
+     * The element is saved with an explicit entry in the file (`true`) or implicitly
      * via a composition.
      * @type Boolean
      * @default true
@@ -666,7 +666,7 @@ JXG.extend(
         },
 
         /**
-         * Translates the object by <tt>(x, y)</tt>. In case the element is defined by points, the defining points are
+         * Translates the object by `(x, y)`. In case the element is defined by points, the defining points are
          * translated, e.g. a circle constructed by a center point and a point on the circle line.
          * @param {Number} method The type of coordinates used here.
          * Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
@@ -1134,7 +1134,7 @@ JXG.extend(
         },
 
         /**
-         * Sets the value of attribute <tt>key</tt> to <tt>value</tt>.
+         * Sets the value of attribute `key` to `value`.
          * Here, mainly hex strings for rga(a) colors are parsed and values of type object get a special treatment.
          * Other values are just set to the key.
          *
@@ -1182,8 +1182,8 @@ JXG.extend(
         },
 
         /**
-         * Resolves attribute shortcuts like <tt>color</tt> and expands them, e.g. <tt>strokeColor</tt> and <tt>fillColor</tt>.
-         * Writes the expanded attributes back to the given <tt>attributes</tt>.
+         * Resolves attribute shortcuts like `color` and expands them, e.g. `strokeColor` and `fillColor`.
+         * Writes the expanded attributes back to the given `attributes`.
          * @param {Object} attributes object
          * @returns {Object} The given attributes object with shortcuts expanded.
          * @private
@@ -1588,7 +1588,7 @@ JXG.extend(
         },
 
         /**
-         * Get the value of the property <tt>key</tt>.
+         * Get the value of the property `key`.
          * @param {String} key The name of the property you are looking for
          * @returns The value of the property
          */
@@ -2865,8 +2865,8 @@ JXG.extend(
         /**
          * @event
          * @description This is a generic event handler. It exists for every possible attribute that can be set for
-         * any element, e.g. if you want to be notified everytime an element's strokecolor is changed, is the event
-         * <tt>attribute:strokecolor</tt>.
+         * any element, e.g. if you want to be notified everytime an element's strokecolor is changed, is
+         * the event `attribute:strokecolor`.
          * @name JXG.GeometryElement#attribute:key
          * @param val The old value.
          * @param nval The new value
