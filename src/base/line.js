@@ -1191,8 +1191,12 @@ JXG.extend(
  *
  * @signature board.create('line', [a, b, c])
  * Create a line from homogeneous coordinates.
- * A line can also be created providing three numbers. The line is then described by
- * the set of solutions of the equation <tt>a*z+b*x+c*y = 0</tt>. For all finite points, z is normalized to the value 1.
+ * A line can also be created providing three numbers.
+ * The line is defined as
+ * the set of solutions of the equation $a\cdot z+b \cdot x+c\cdot y = 0$, i.e. a point $(z,x, y)$ is on the line $(a,b,c)$
+ * if and only if $a\cdot z+b \cdot x+c\cdot y = 0$.
+ * In JSXGraph, for all finite points, z is normalized to the value 1.
+ *
  * It is possible to provide three functions returning numbers, too.
  * @param {number | function():number} a
  * @param {number | function():number} b
@@ -1671,8 +1675,12 @@ JXG.registerElement("segment", JXG.createSegment);
  * @param {JXG.Point | number[] | function():JXG.Point | function():number[]} point2 Second point
  * @signature board.create('arrow', [a, b, c])
  * Create an arrow from homogeneous coordinates.
- * An arrow can also be created providing three numbers. The arrow is then described by
- * the set of solutions of the equation <tt>a*z+b*x+c*y = 0</tt>. For all finite points, z is normalized to the value 1.
+ * An arrow can also be created providing three numbers.
+ * The arrow is then described by
+ * the set of solutions of the equation $a\cdot z+b \cdot x+c\cdot y = 0$, i.e. a point $(z,x, y)$ is on the line $(a,b,c)$
+ * if and only if $a\cdot z+b \cdot x+c\cdot y = 0$.
+ * In JSXGraph, for all finite points, z is normalized to the value 1.
+ *
  * It is possible to provide three functions returning numbers, too.
  * @param {number | function():number} a
  * @param {number | function():number} b
@@ -1729,8 +1737,11 @@ JXG.registerElement("arrow", JXG.createArrow);
  * @param {JXG.Point | number[] | function():JXG.Point | function():number[]} point1 First point
  * @param {JXG.Point | number[] | function():JXG.Point | function():number[]} point2 Second point
  * @signature board.create('axis', [a, b, c]);
- * An axis can also be created providing three numbers. The axis line is then described by the set of solutions
- * of the equation <tt>a*x+b*y+c*z = 0</tt>.
+ * An axis can also be created providing three numbers.
+ * The line is defined as
+ * the set of solutions of the equation $a\cdot z+b \cdot x+c\cdot y = 0$, i.e. a point $(z,x, y)$ is on the axis line $(a,b,c)$
+ * if and only if $a\cdot z+b \cdot x+c\cdot y = 0$.
+ * In JSXGraph, for all finite points, z is normalized to the value 1.
  * @param {number | function():number} a
  * @param {number | function():number} b
  * @param {number | function():number} c
@@ -2548,7 +2559,7 @@ JXG.createNormal = function (board, parents, attributes) {
 
         /**
          * A helper point used to create a normal to a {@link JXG.Line} object. For normals to circles or curves this
-         * element is <tt>undefined</tt>.
+         * element is `undefined`.
          * @type JXG.Point
          * @name point
          * @memberOf Normal.prototype
