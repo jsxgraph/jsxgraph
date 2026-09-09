@@ -139,24 +139,6 @@
 
 
 <!-- Attributes -->
-<style>
-.list_container {
-  max-width: 90%;
-/*  margin: 0 auto;*/
-  overflow: hidden;
-  column-width: 8em;
-  column-gap: 4em;
-  column-rule: 1px solid #ccc;
-}
-.columntext {
-    text-overflow: "...";
-    overflow: hidden;
-    width: 10em;
-    margin: 0;
-}
-</style>
-
-
     <?js
         var attributes = self.find({kind: 'attribute',
                 memberof: isGlobalPage ? {isUndefined: true} : doc.longname
@@ -170,31 +152,32 @@
         }
         if (attributes && attributes.length && attributes.forEach) {
     ?>
-        <h3 class="subsection-title">Attributes</h3>
+        <h3 class="subsection-title collapsible">Attributes</h3>
+        <div class="collapse_content">
+            <div class="list_container">
+                <?js attributes
+                       .filter((self) => !self.inherits)
+                       .forEach(function(p) { ?>
+                    <p class="columntext"><?js= self.partial('members_short.tmpl', p) ?></p>
+                <?js }); ?>
+            </div>
 
-        <div class="list_container">
+            <h4 class="subsection-title">Attributes details</h4>
+
             <?js attributes
                    .filter((self) => !self.inherits)
                    .forEach(function(p) { ?>
-                <p class="columntext"><?js= self.partial('members_short.tmpl', p) ?></p>
+                <?js= self.partial('members.tmpl', p) ?>
             <?js }); ?>
-        </div>
 
-        <h4 class="subsection-title">Attributes details</h4>
-
-        <?js attributes
-               .filter((self) => !self.inherits)
-               .forEach(function(p) { ?>
-            <?js= self.partial('members.tmpl', p) ?>
-        <?js }); ?>
-
-        <h4 class="subsection-title">Inherited attributes</h4>
-        <div class="list_container">
-        <?js attributes
-               .filter((self) => self.inherits)
-               .forEach(function(p) { ?>
-            <p class="columntext"><?js= self.linkto(p.inherits, p.name) ?></p>
-        <?js }); ?>
+            <h4 class="subsection-title">Inherited attributes</h4>
+            <div class="list_container">
+            <?js attributes
+                   .filter((self) => self.inherits)
+                   .forEach(function(p) { ?>
+                <p class="columntext"><?js= self.linkto(p.inherits, p.name) ?></p>
+            <?js }); ?>
+            </div>
         </div>
     <?js } ?>
 
@@ -212,8 +195,8 @@
         }
         if (members && members.length && members.forEach) {
     ?>
-        <h3 class="subsection-title">Members</h3>
-
+        <h3 class="subsection-title collapsible">Members</h3>
+        <div class="collapse_content">
         <div class="list_container">
         <?js members
                .filter((self) => !self.inherited)
@@ -238,7 +221,7 @@
             <p class="columntext"><?js= self.linkto(p.inherits, p.name) ?></p>
         <?js }); ?>
         </div>
-
+        </div>
     <?js } ?>
 
 <!-- Methods -->
@@ -246,7 +229,8 @@
         var methods = self.find({kind: 'function', memberof: isGlobalPage ? {isUndefined: true} : doc.longname});
         if (methods && methods.length && methods.forEach) {
     ?>
-        <h3 class="subsection-title">Methods</h3>
+        <h3 class="subsection-title collapsible">Methods</h3>
+        <div class="collapse_content">
 
         <div class="list_container">
         <?js methods
@@ -272,7 +256,7 @@
             <p class="columntext"><?js= self.linkto(p.inherits, p.name) ?></p>
         <?js }); ?>
         </div>
-
+        </div>
     <?js } ?>
 
 <!-- typedef -->
@@ -301,7 +285,8 @@
         var events = self.find({kind: 'event', memberof: isGlobalPage ? {isUndefined: true} : doc.longname});
         if (events && events.length && events.forEach) {
     ?>
-        <h3 class="subsection-title">Events</h3>
+        <h3 class="subsection-title collapsible">Events</h3>
+        <div class="collapse_content">
 
         <div class="list_container">
         <?js events
@@ -327,11 +312,30 @@
             <p class="columntext"><?js= self.linkto(e.inherits, e.name) ?></p>
         <?js }); ?>
         </div>
+        </div>
 
     <?js } ?>
 </article>
 
 </section>
+
+<script>
+// Collapse attributes, members, ...
+let colls = document.getElementsByClassName("collapsible");
+
+for (let i = 0; i < colls.length; i++) {  
+    colls[i].addEventListener("click", function() {
+        this.classList.toggle("active");
+        var content = this.nextElementSibling;
+        if (content.style.maxHeight){
+          content.style.maxHeight = null;
+        } else {
+          content.style.maxHeight = content.scrollHeight + "px";
+    }
+  });
+}
+</script>
+
 <?js } ?>
 
 <?js }); ?>
