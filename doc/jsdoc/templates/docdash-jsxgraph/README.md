@@ -128,6 +128,7 @@ Docdash supports the following options:
         "scopeInOutputPath": [false|true], // Add scope from package file (if present) to the output path, true by default.
         "nameInOutputPath": [false|true], // Add name from package file to the output path, true by default.
         "versionInOutputPath": [false|true] // Add package version to the output path, true by default. 
+        "jsxgraphStyle": [false|true]
     }
 }
 ```

@@ -334,10 +334,24 @@ function buildMemberNav(items, itemHeading, itemsSeen, linktoFn) {
 
         items.forEach(function(item) {
             var displayName;
-            var methods = find({kind:'function', memberof: item.longname});
-            var members = find({kind:'member', memberof: item.longname});
+            var methods = { find: () => null };
+            var members = { find: () => null };
             var conf = env && env.conf || {};
             var classes = '';
+
+            if (docdash.jsxgraphStyle) {
+                // Distinguish between elements and classes
+                if (itemHeading === 'Elements' && !item.isPseudo) { // undefined or false
+                    return;
+                } else if (itemHeading === 'Classes' && item.isPseudo === true) {
+                    return;
+                }
+            }
+            if (!docdash.jsxgraphStyle) {
+                // Ignore members and methods in navigation for JSXGraph
+                methods = find({kind:'function', memberof: item.longname});
+                members = find({kind:'member', memberof: item.longname});
+            }
 
             // show private class?
             if (docdash.private === false && item.access === 'private') return;
@@ -358,8 +372,7 @@ function buildMemberNav(items, itemHeading, itemsSeen, linktoFn) {
                     displayName = item.name;
                 }
                 itemsNav += linktoFn(item.longname, displayName.replace(/\b(module|event):/g, ''));
-// Show class name only
-/*
+
                 if (docdash.static && members.find(function (m) { return m.scope === 'static'; } )) {
                     itemsNav += "<ul class='members'>";
 
@@ -398,7 +411,7 @@ function buildMemberNav(items, itemHeading, itemsSeen, linktoFn) {
 
                     itemsNav += "</ul>";
                 }
-*/
+
                 itemsSeen[item.longname] = true;
             }
             itemsNav += '</li>';
@@ -483,22 +496,43 @@ function buildNav(members) {
         }
         return ret;
     }
-    var defaultOrder = [
-        'Classes', 'Modules', 'Externals', 'Events', 'Namespaces', 'Mixins', 'Tutorials', 'Interfaces', 'Global'
-        // 'Classes', 'Modules', 'Externals', 'Namespaces', 'Mixins', 'Tutorials', 'Interfaces', 'Global'
-    ];
+    var defaultOrder, sections;
+    if (docdash.jsxgraphStyle) {
+        defaultOrder = [
+            'Elements', 'Classes', 'Modules', 'Externals', 'Namespaces', 'Mixins', 'Tutorials', 'Interfaces', 'Global'
+        ];
+    } else {
+        defaultOrder = [
+            'Classes', 'Modules', 'Externals', 'Events', 'Namespaces', 'Mixins', 'Tutorials', 'Interfaces', 'Global'
+        ];
+    }
     var order = docdash.sectionOrder || defaultOrder;
-    var sections = {
-        Classes: buildMemberNav(members.classes, 'Classes', seen, linkto),
-        Modules: buildMemberNav(members.modules, 'Modules', {}, linkto),
-        Externals: buildMemberNav(members.externals, 'Externals', seen, linktoExternal),
-        Events: buildMemberNav(members.events, 'Events', seen, linkto),
-        Namespaces: buildMemberNav(members.namespaces, 'Namespaces', seen, linkto),
-        Mixins: buildMemberNav(members.mixins, 'Mixins', seen, linkto),
-        Tutorials: buildMemberNav(members.tutorials, 'Tutorials', seenTutorials, linktoTutorial),
-        Interfaces: buildMemberNav(members.interfaces, 'Interfaces', seen, linkto),
-        Global: buildMemberNavGlobal()
-    };
+    if (docdash.jsxgraphStyle) {
+        sections = {
+            Elements: buildMemberNav(members.classes, 'Elements', seen, linkto), // JSXGraph style
+            Classes: buildMemberNav(members.classes, 'Classes', {}, linkto),
+            Modules: buildMemberNav(members.modules, 'Modules', {}, linkto),
+            Externals: buildMemberNav(members.externals, 'Externals', seen, linktoExternal),
+            // Events: buildMemberNav(members.events, 'Events', seen, linkto),
+            Namespaces: buildMemberNav(members.namespaces, 'Namespaces', seen, linkto),
+            Mixins: buildMemberNav(members.mixins, 'Mixins', seen, linkto),
+            Tutorials: buildMemberNav(members.tutorials, 'Tutorials', seenTutorials, linktoTutorial),
+            Interfaces: buildMemberNav(members.interfaces, 'Interfaces', seen, linkto),
+            Global: buildMemberNavGlobal()
+        };
+    } else {
+        sections = {
+            Classes: buildMemberNav(members.classes, 'Classes', seen, linkto),
+            Modules: buildMemberNav(members.modules, 'Modules', {}, linkto),
+            Externals: buildMemberNav(members.externals, 'Externals', seen, linktoExternal),
+            Events: buildMemberNav(members.events, 'Events', seen, linkto),
+            Namespaces: buildMemberNav(members.namespaces, 'Namespaces', seen, linkto),
+            Mixins: buildMemberNav(members.mixins, 'Mixins', seen, linkto),
+            Tutorials: buildMemberNav(members.tutorials, 'Tutorials', seenTutorials, linktoTutorial),
+            Interfaces: buildMemberNav(members.interfaces, 'Interfaces', seen, linkto),
+            Global: buildMemberNavGlobal()
+        };
+    }
     order.forEach(member => nav += sections[member]);
 
     return nav;

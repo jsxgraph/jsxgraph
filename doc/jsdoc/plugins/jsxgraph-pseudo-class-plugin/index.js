@@ -1,8 +1,4 @@
 
-// const STATE = {
-//     isAttribute: false
-// };
-
 // Registers the @signature tag in JSDoc
 exports.defineTags = function (dictionary) {
     dictionary.defineTag("pseudo", {
@@ -15,17 +11,13 @@ exports.defineTags = function (dictionary) {
     dictionary.defineTag("visprop", {
         mustNotHaveValue: true,
         onTagged: function (doclet, tag) {
-            // STATE.isAttribute = true;
             // console.log(doclet, tag)
         }
     });
     dictionary.defineTag("attribute", {
         mustNoteHaveValue: true,
         onTagged: function (doclet, tag) {
-            // STATE.isAttribute = true;
-            // doclet.isAttribute = true;
             doclet.kind = "attribute";
-            // console.log(doclet)
         }
     });
 };
@@ -33,7 +25,6 @@ exports.defineTags = function (dictionary) {
 // Plugin Hooks for JSDoc
 exports.handlers = {
     newDoclet: function (e) {
-        // e.doclet.isAttribute = STATE.isAttribute;
     },
 
     symbolFound(e) {

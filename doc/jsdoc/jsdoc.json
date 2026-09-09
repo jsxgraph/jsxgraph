@@ -10,7 +10,10 @@
   ],
   "opts": {
     "template": "./doc/jsdoc/templates/docdash-jsxgraph",
-    "destination": "./output_docs"
+    "destination": "./output_docs",
+    "recurse": true,
+    "verbose": true,
+    "encoding": "utf8"
   },
   "tags": {
     "allowUnknownTags": false
@@ -19,5 +22,26 @@
     "default": {
       "useLongnameInNav": true
     }
+  },
+  "docdash": {
+    "jsxgraphStyle": true,
+    "commonNav": false,
+    "search": true,
+    "collapse": true,
+    "private": true,
+    "menu": {
+        "JSXGraph": {
+            "href":"https://jsxgraph.org/",
+            "target":"_blank",
+            "class":"menu-item",
+            "id":"website_link"
+        },
+        "Forum": {
+            "href":"https://forum.jsxgraph.org/",
+            "target":"_blank",
+            "class":"menu-item",
+            "id":"forum_link"
+        }
+    }    
   }
 }
