@@ -129,14 +129,13 @@ if (data.defaultvalue && (data.defaultvaluetype === 'object' || data.defaultvalu
     </dd>
     <?js } ?>
 
-<?js if (data.examples && examples.length) { ?>
-    <dt class="tag-description">Example<?js= examples.length > 1? 's':'' ?>:</dt>
-    <dd class="tag-description"><ul class="dummy">
-        <?js= this.partial('examples.tmpl', examples) ?>
-    </ul>
-    </dd>
-<?js } ?>
-
+    <?js if (data.examples && examples.length) { ?>
+        <dt class="tag-description">Example<?js= examples.length > 1? 's':'' ?>:</dt>
+        <dd class="tag-description"><ul class="dummy">
+            <?js= this.partial('examples_in_details.tmpl', examples) ?>
+        </ul>
+        </dd>
+    <?js } ?>
 
     <?js if (data.meta && self.outputSourceFiles) {?>
     <dt class="tag-source">Source:</dt>

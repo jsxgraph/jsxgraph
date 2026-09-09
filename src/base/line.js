@@ -1203,8 +1203,8 @@ JXG.extend(
  * Additionally, a line can be created by providing a line and a transformation (or an array of transformations).
  * Then, the result is a line which is the transformation of the supplied line.
  *
- * @example
- * // Create a line using point and coordinates/
+ * @example <caption>Two points</caption>
+ * // Create a line using point and coordinates
  * // The second point will be fixed and invisible.
  * var p1 = board.create('point', [4.5, 2.0]);
  * var l1 = board.create('line', [p1, [1.0, 1.0]]);
@@ -1214,7 +1214,7 @@ JXG.extend(
  *   var glex1_p1 = glex1_board.create('point', [4.5, 2.0]);
  *   var glex1_l1 = glex1_board.create('line', [glex1_p1, [1.0, 1.0]]);
  * </script><pre>
- * @example
+ * @example <caption>Three coordinates</caption>
  * // Create a line using three coordinates
  * var l1 = board.create('line', [1.0, -2.0, 3.0]);
  * </pre><div class="jxgbox" id="JXGcf45e462-f964-4ba4-be3a-c9db94e2593f" style="width: 300px; height: 300px;"></div>
@@ -1222,14 +1222,32 @@ JXG.extend(
  *   var glex2_board = JXG.JSXGraph.initBoard('JXGcf45e462-f964-4ba4-be3a-c9db94e2593f', {boundingbox: [-1, 7, 7, -1], axis: true, showcopyright: false, shownavigation: false});
  *   var glex2_l1 = glex2_board.create('line', [1.0, -2.0, 3.0]);
  * </script><pre>
- * @example
- *         // Create a line (l2) as reflection of another line (l1)
- *         // reflection line
- *         var li = board.create('line', [1,1,1], {strokeColor: '#aaaaaa'});
- *         var reflect = board.create('transform', [li], {type: 'reflect'});
  *
- *         var l1 = board.create('line', [1,-5,1]);
- *         var l2 = board.create('line', [l1, reflect]);
+ * @example  <caption>New line (red) from line (blue) and transformation</caption>
+ * var t = board.create('transform', [2, 1.5], {type: 'scale'});
+ * var l1 = board.create('line', [4, -2, 1], {strokeColor: 'blue'});
+ * var l2 = board.create('line', [l1, t], {strokeColor: 'red'});
+ *
+ * </pre><div id="d16d5b58-6338-11e8-9fb9-901b0e1b8723" class="jxgbox" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *     (function() {
+ *         var board = JXG.JSXGraph.initBoard('d16d5b58-6338-11e8-9fb9-901b0e1b8723',
+ *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+ *     var t = board.create('transform', [2, 1.5], {type: 'scale'});
+ *     var l1 = board.create('line', [4, -2, 1], {strokeColor: 'blue'});
+ *     var l2 = board.create('line', [l1, t], {strokeColor: 'red'});
+ *
+ *     })();
+ *
+ * </script><pre>
+ *
+ * @example <caption>Reflect line</caption>
+ * // Create line l2 as reflection of another line l1
+ * var li = board.create('line', [1,1,1], {strokeColor: '#aaaaaa'});
+ * var reflectionline = board.create('transform', [li], {type: 'reflect'});
+ *
+ * var l1 = board.create('line', [1,-5,1], {strokeColor: 'blue'});      // Source
+ * var l2 = board.create('line', [l1, reflectionline], {strokeColor: 'red'}); // Image
  *
  * </pre><div id="JXGJXGa00d7dd6-d38c-11e7-93b3-901b0e1b8723" class="jxgbox" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
@@ -1238,34 +1256,15 @@ JXG.extend(
  *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
  *             // reflection line
  *             var li = board.create('line', [1,1,1], {strokeColor: '#aaaaaa'});
- *             var reflect = board.create('transform', [li], {type: 'reflect'});
+ *             var reflectionline = board.create('transform', [li], {type: 'reflect'});
  *
- *             var l1 = board.create('line', [1,-5,1]);
- *             var l2 = board.create('line', [l1, reflect]);
+ *             var l1 = board.create('line', [1,-5,1], {strokeColor: 'blue'});
+ *             var l2 = board.create('line', [l1, reflectionline], {strokeColor: 'red'});
  *     })();
  *
  * </script><pre>
  *
- * @example
- * var t = board.create('transform', [2, 1.5], {type: 'scale'});
- * var l1 = board.create('line', [1, -5, 1]);
- * var l2 = board.create('line', [l1, t]);
- *
- * </pre><div id="d16d5b58-6338-11e8-9fb9-901b0e1b8723" class="jxgbox" style="width: 300px; height: 300px;"></div>
- * <script type="text/javascript">
- *     (function() {
- *         var board = JXG.JSXGraph.initBoard('d16d5b58-6338-11e8-9fb9-901b0e1b8723',
- *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
- *     var t = board.create('transform', [2, 1.5], {type: 'scale'});
- *     var l1 = board.create('line', [1, -5, 1]);
- *     var l2 = board.create('line', [l1, t]);
- *
- *     })();
- *
- * </script><pre>
- *
- * @example
- * //create line between two points
+ * @example <caption>Line displayed as segment</caption>
  * var p1 = board.create('point', [0,0]);
  * var p2 = board.create('point', [2,2]);
  * var l1 = board.create('line', [p1,p2], {straightFirst:false, straightLast:false});

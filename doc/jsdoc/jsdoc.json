@@ -25,7 +25,7 @@
   },
   "docdash": {
     "jsxgraphStyle": true,
-    "commonNav": false,
+    "commonNav": true,
     "search": true,
     "collapse": true,
     "private": true,
