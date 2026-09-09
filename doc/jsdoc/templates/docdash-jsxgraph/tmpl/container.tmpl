@@ -100,17 +100,17 @@
             <dd><?js if (c.summary) { ?><?js= c.summary ?><?js } ?></dd>
         <?js }); ?></dl>
     <?js } ?>
-    
+
     <?js
-        var interfaces = self.find({kind: 'interface', memberof: doc.longname});		
-        if (!isGlobalPage && interfaces && interfaces.length) {		
-    ?>		
-	    <h3 class="subsection-title">Interfaces</h3>		
-	
-	    <dl><?js interfaces.forEach(function(i) { ?>		
-	        <dt><?js= self.linkto(i.longname, i.name) ?></dt>		
-	        <dd><?js if (i.summary) { ?><?js= i.summary ?><?js } ?></dd>		
-	    <?js }); ?></dl>		
+        var interfaces = self.find({kind: 'interface', memberof: doc.longname});
+        if (!isGlobalPage && interfaces && interfaces.length) {
+    ?>
+	    <h3 class="subsection-title">Interfaces</h3>
+
+	    <dl><?js interfaces.forEach(function(i) { ?>
+	        <dt><?js= self.linkto(i.longname, i.name) ?></dt>
+	        <dd><?js if (i.summary) { ?><?js= i.summary ?><?js } ?></dd>
+	    <?js }); ?></dl>
 	<?js } ?>
 
      <?js
@@ -137,9 +137,9 @@
         <?js }); ?></dl>
     <?js } ?>
 
-
-<!-- Attributes -->
     <?js
+        //------------ Attributes
+
         var attributes = self.find({kind: 'attribute',
                 memberof: isGlobalPage ? {isUndefined: true} : doc.longname
             });
@@ -153,7 +153,7 @@
         if (attributes && attributes.length && attributes.forEach) {
     ?>
         <details>
-            <summary class="subsection-title collapsible">Attributes</summary>
+            <summary class="subsection-title collapsible" id="attributes">Attributes</summary>
 
             <h4 class="subsection-title">Own:</h4>
             <div class="list_container">
@@ -182,9 +182,10 @@
         </details>
     <?js } ?>
 
-<!-- Members -->
+
     <?js
-        var members = self.find({kind: 'member', 
+        //--------------- Members
+        var members = self.find({kind: 'member',
                 memberof: isGlobalPage ? {isUndefined: true} : doc.longname
             });
 
@@ -197,8 +198,8 @@
         if (members && members.length && members.forEach) {
     ?>
         <details>
-            <summary class="subsection-title collapsible">Members</summary>
-            
+            <summary class="subsection-title collapsible" id="members">Members</summary>
+
         <h4 class="subsection-title">Own:</h4>
         <div class="list_container">
         <?js members
@@ -227,13 +228,14 @@
         </details>
     <?js } ?>
 
-<!-- Methods -->
+
     <?js
+        //----------------------- Methods
         var methods = self.find({kind: 'function', memberof: isGlobalPage ? {isUndefined: true} : doc.longname});
         if (methods && methods.length && methods.forEach) {
     ?>
         <details>
-            <summary class="subsection-title collapsible">Methods</summary>
+            <summary class="subsection-title collapsible" id="methods">Methods</summary>
 
         <h4 class="subsection-title">Own:</h4>
         <div class="list_container">
@@ -263,8 +265,8 @@
         </details>
     <?js } ?>
 
-<!-- typedef -->
     <?js
+        // -------------- typedef
         var typedefs = self.find({kind: 'typedef', memberof: isGlobalPage ? {isUndefined: true} : doc.longname});
         if (typedefs && typedefs.length && typedefs.forEach) {
     ?>
@@ -284,13 +286,13 @@
             }); ?>
     <?js } ?>
 
-<!-- Events -->
     <?js
+        // -------------- Events
         var events = self.find({kind: 'event', memberof: isGlobalPage ? {isUndefined: true} : doc.longname});
         if (events && events.length && events.forEach) {
     ?>
         <details>
-            <summary class="subsection-title collapsible">Events</summary>
+            <summary class="subsection-title collapsible" id="events">Events</summary>
 
         <h4 class="subsection-title">Own:</h4>
         <div class="list_container">

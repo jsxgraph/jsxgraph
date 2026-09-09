@@ -13,6 +13,7 @@
     "destination": "./output_docs",
     "recurse": true,
     "verbose": true,
+    "tutorials": "tutorials/",
     "encoding": "utf8"
   },
   "sourceType": "module",

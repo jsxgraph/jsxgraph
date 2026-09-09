@@ -67,11 +67,11 @@ try {
 // We need the following two methods "extend" and "shortcut" to create the JXG object via JXG.extend.
 
 /**
- * Copy all properties of the <tt>extension</tt> object to <tt>object</tt>.
+ * Copy all properties of the `extension` object to `object`.
  * @param {Object} object
  * @param {Object} extension
  * @param {Boolean} [onlyOwn=false] Only consider properties that belong to extension itself, not any inherited properties.
- * @param {Boolean} [toLower=false] If true the keys are convert to lower case. This is needed for visProp, see JXG#copyAttributes
+ * @param {Boolean} [toLower=false] If true the keys are convert to lower case. This is needed for visProp, see  {@link JXG#copyAttributes}
  */
 jxg.extend = function (object, extension, onlyOwn, toLower) {
     var e, e2;
@@ -95,7 +95,7 @@ jxg.extend = function (object, extension, onlyOwn, toLower) {
 };
 
 /**
- * Set a constant <tt>name</tt> in <tt>object</tt> to <tt>value</tt>. The value can't be changed after declaration.
+ * Set a constant `name` in `object` to `value`. The value can't be changed after declaration.
  * @param {Object} object
  * @param {String} name
  * @param {Number|String|Boolean} value
@@ -117,7 +117,7 @@ jxg.defineConstant = function (object, name, value, ignoreRedefine) {
 };
 
 /**
- * Copy all properties of the <tt>constants</tt> object in <tt>object</tt> as a constant.
+ * Copy all properties of the `constants` object in `object` as a constant.
  * @param {Object} object
  * @param {Object} constants
  * @param {Boolean} [onlyOwn=false] Only consider properties that belong to extension itself, not any inherited properties.
@@ -173,7 +173,7 @@ jxg.extend(
          * will be overwritten.
          * @param {Function} creator A reference to a function taking three parameters: First the board, the element is
          * to be created on, a parent element array, and an attributes object. See {@link JXG.createPoint} or any other
-         * <tt>JXG.create...</tt> function for an example.
+         * `JXG.create...` function for an example.
          */
         registerElement: function (element, creator) {
             element = element.toLowerCase();
@@ -182,8 +182,8 @@ jxg.extend(
 
         /**
          * Register a file reader.
-         * @param {function} reader A file reader. This object has to provide two methods: <tt>prepareString()</tt>
-         * and <tt>read()</tt>.
+         * @param {function} reader A file reader. This object has to provide two methods: `prepareString()`
+         * and `read()`.
          * @param {Array} ext
          */
         registerReader: function (reader, ext) {
