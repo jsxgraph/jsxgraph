@@ -15,6 +15,7 @@
     "verbose": true,
     "encoding": "utf8"
   },
+  "sourceType": "module",
   "tags": {
     "allowUnknownTags": false
   },
