@@ -7159,19 +7159,19 @@ JXG.Options = {
          * An arrow head can be turned off with `line.setAttribute({firstArrow: false})`.
          *
          * @example
-         *     board.options.line.lastArrow = false;
-         *     board.options.line.firstArrow = {size: 10, highlightSize: 10};
-         *     board.options.line.point1 = {visible: false, withLabel: true, label: {visible: true, anchorX: 'right'}};
-         *     board.options.line.strokeWidth = 4;
-         *     board.options.line.highlightStrokeWidth = 4;
+         * board.options.line.lastArrow = false;
+         * board.options.line.firstArrow = {size: 10, highlightSize: 10};
+         * board.options.line.point1 = {visible: false, withLabel: true, label: {visible: true, anchorX: 'right'}};
+         * board.options.line.strokeWidth = 4;
+         * board.options.line.highlightStrokeWidth = 4;
          *
-         *     board.create('segment', [[-5,4], [3,4]], {firstArrow: {type: 1}, point1: {name: 'type:1'}});
-         *     board.create('segment', [[-5,3], [3,3]], {firstArrow: {type: 2}, point1: {name: 'type:2'}});
-         *     board.create('segment', [[-5,2], [3,2]], {firstArrow: {type: 3}, point1: {name: 'type:3'}});
-         *     board.create('segment', [[-5,1], [3,1]], {firstArrow: {type: 4}, point1: {name: 'type:4'}});
-         *     board.create('segment', [[-5,0], [3,0]], {firstArrow: {type: 5}, point1: {name: 'type:5'}});
-         *     board.create('segment', [[-5,-1], [3,-1]], {firstArrow: {type: 6}, point1: {name: 'type:6'}});
-         *     board.create('segment', [[-5,-2], [3,-2]], {firstArrow: {type: 7}, point1: {name: 'type:7'}});
+         * board.create('segment', [[-5,4], [3,4]], {firstArrow: {type: 1}, point1: {name: 'type:1'}});
+         * board.create('segment', [[-5,3], [3,3]], {firstArrow: {type: 2}, point1: {name: 'type:2'}});
+         * board.create('segment', [[-5,2], [3,2]], {firstArrow: {type: 3}, point1: {name: 'type:3'}});
+         * board.create('segment', [[-5,1], [3,1]], {firstArrow: {type: 4}, point1: {name: 'type:4'}});
+         * board.create('segment', [[-5,0], [3,0]], {firstArrow: {type: 5}, point1: {name: 'type:5'}});
+         * board.create('segment', [[-5,-1], [3,-1]], {firstArrow: {type: 6}, point1: {name: 'type:6'}});
+         * board.create('segment', [[-5,-2], [3,-2]], {firstArrow: {type: 7}, point1: {name: 'type:7'}});
          *
          * </pre><div id="JXGc94a93da-c942-4204-8bb6-b39726cbb09b" class="jxgbox" style="width: 300px; height: 300px;"></div>
          * <script type="text/javascript">
@@ -7224,17 +7224,17 @@ JXG.Options = {
          * An arrow head can be turned off with line.setAttribute({lastArrow: false}).
          *
          * @example
-         *     var p1 = board.create('point', [-5, 2], {size:1});
-         *     var p2 = board.create('point', [5, 2], {size:10});
-         *     var li = board.create('segment', ['A','B'],
-         *         {name:'seg',
-         *          strokeColor:'#000000',
-         *          strokeWidth:1,
-         *          highlightStrokeWidth: 5,
-         *          lastArrow: {type: 2, size: 8, highlightSize: 6},
-         *          touchLastPoint: true,
-         *          firstArrow: {type: 3, size: 8}
-         *         });
+         * var p1 = board.create('point', [-5, 2], {size:1});
+         * var p2 = board.create('point', [5, 2], {size:10});
+         * var li = board.create('segment', ['A','B'], {
+         *     name:'seg',
+         *     strokeColor:'#000000',
+         *     strokeWidth:1,
+         *     highlightStrokeWidth: 5,
+         *     lastArrow: {type: 2, size: 8, highlightSize: 6},
+         *     touchLastPoint: true,
+         *     firstArrow: {type: 3, size: 8}
+         * });
          *
          * </pre><div id="JXG184e915c-c2ef-11e8-bece-04d3b0c2aad3" class="jxgbox" style="width: 300px; height: 300px;"></div>
          * <script type="text/javascript">
@@ -7257,19 +7257,19 @@ JXG.Options = {
          * </script>
          *
          * @example
-         *     board.options.line.strokeWidth = 4;
-         *     board.options.line.highlightStrokeWidth = 4;
-         *     board.options.line.firstArrow = false;
-         *     board.options.line.lastArrow = {size: 10, highlightSize: 10};
-         *     board.options.line.point2 = {visible: false, withLabel: true, label: {visible: true}};
+         * board.options.line.strokeWidth = 4;
+         * board.options.line.highlightStrokeWidth = 4;
+         * board.options.line.firstArrow = false;
+         * board.options.line.lastArrow = {size: 10, highlightSize: 10};
+         * board.options.line.point2 = {visible: false, withLabel: true, label: {visible: true}};
          *
-         *     board.create('segment', [[-5,4], [3,4]], {lastArrow: {type: 1}, point2: {name: 'type:1'}});
-         *     board.create('segment', [[-5,3], [3,3]], {lastArrow: {type: 2}, point2: {name: 'type:2'}});
-         *     board.create('segment', [[-5,2], [3,2]], {lastArrow: {type: 3}, point2: {name: 'type:3'}});
-         *     board.create('segment', [[-5,1], [3,1]], {lastArrow: {type: 4}, point2: {name: 'type:4'}});
-         *     board.create('segment', [[-5,0], [3,0]], {lastArrow: {type: 5}, point2: {name: 'type:5'}});
-         *     board.create('segment', [[-5,-1], [3,-1]], {lastArrow: {type: 6}, point2: {name: 'type:6'}});
-         *     board.create('segment', [[-5,-2], [3,-2]], {lastArrow: {type: 7}, point2: {name: 'type:7'}});
+         * board.create('segment', [[-5,4], [3,4]], {lastArrow: {type: 1}, point2: {name: 'type:1'}});
+         * board.create('segment', [[-5,3], [3,3]], {lastArrow: {type: 2}, point2: {name: 'type:2'}});
+         * board.create('segment', [[-5,2], [3,2]], {lastArrow: {type: 3}, point2: {name: 'type:3'}});
+         * board.create('segment', [[-5,1], [3,1]], {lastArrow: {type: 4}, point2: {name: 'type:4'}});
+         * board.create('segment', [[-5,0], [3,0]], {lastArrow: {type: 5}, point2: {name: 'type:5'}});
+         * board.create('segment', [[-5,-1], [3,-1]], {lastArrow: {type: 6}, point2: {name: 'type:6'}});
+         * board.create('segment', [[-5,-2], [3,-2]], {lastArrow: {type: 7}, point2: {name: 'type:7'}});
          *
          * </pre><div id="JXGca206b1c-e319-4899-8b90-778f53fd926d" class="jxgbox" style="width: 300px; height: 300px;"></div>
          * <script type="text/javascript">
