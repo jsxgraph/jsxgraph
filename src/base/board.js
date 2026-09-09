@@ -5854,7 +5854,7 @@ JXG.extend(
 
         /**
          * Sets for all objects the needsUpdate flag to 'true'.
-         * 
+         *
          * In case the parameter `drag` has `elType: view3d_slider`, no elements are recomputated,
          * only 3D elements are projected to the new view
          * @param {JXG.GeometryElement} [drag=undefined] Optional element that is dragged.

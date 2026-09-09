@@ -7155,8 +7155,8 @@ JXG.Options = {
          * }
          * ```
          * type=7 is the default for curves if firstArrow: true
-         * <p>
-         * An arrow head can be turned off with line.setAttribute({firstArrow: false}).
+         *
+         * An arrow head can be turned off with `line.setAttribute({firstArrow: false})`.
          *
          * @example
          *     board.options.line.lastArrow = false;
@@ -7347,7 +7347,7 @@ JXG.Options = {
         /**
          * Attributes for first defining point of the line.
          *
-         * @type Point
+         * @type Object
          * @name Line#point1
          * @attribute
          */
@@ -7367,7 +7367,7 @@ JXG.Options = {
         /**
          * Attributes for second defining point of the line.
          *
-         * @type Point
+         * @type Object
          * @name Line#point2
          * @attribute
          */
