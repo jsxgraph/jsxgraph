@@ -4660,7 +4660,6 @@ JXG.extend(
              * This is simply a JXG.Text element. Access through board.infobox.
              * Uses CSS class .JXGinfobox.
              *
-             * @namespace
              * @name JXG.Board.infobox
              * @type JXG.Text
              *
