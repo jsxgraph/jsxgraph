@@ -94,9 +94,11 @@ jxg.extend = function (object, extension, onlyOwn, toLower) {
     }
 };
 
+// ----------------------------------------------------------------------
 //
 // typedef declarations for jsdoc
 //
+
 /**
  * Function returning a point like object.
  * 
@@ -107,7 +109,9 @@ jxg.extend = function (object, extension, onlyOwn, toLower) {
  * In this case, `z` is 0 for infinite points, non-zero otherwise.
  *   
  * @callback PointFunction
+ * @returns PointLike
  */
+
 /**
  * An array of length 2 or 3.
  * 
@@ -118,17 +122,21 @@ jxg.extend = function (object, extension, onlyOwn, toLower) {
  *
  * @typedef {array} Coordinates2D
  */
+
 /**
  * A point, coordinates, or functions returning point or coordinates.
  *
  * @typedef {(Point | Coordinates2D | PointFunction)} PointLike
  */
+
 /**
- * A dummy line type.
+ * A dummy line type. Just for experimenting
  *
  * @typedef {(Line|number[]|JXG.Line)} LineType
+ * @memberof Line
  */
 
+// ----------------------------------------------------------------------
 
 /**
  * Set a constant `name` in `object` to `value`. The value can't be changed after declaration.

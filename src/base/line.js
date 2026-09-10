@@ -1182,18 +1182,10 @@ JXG.extend(
  * @type JXG.Line
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
  *
- * @signature board.create('line', [point1, point2])
- * Create a line from two points, coordinate arrays or functions.
- * In the latter two cases the point will be constructed automatically as a fixed invisible point.
- * It is possible to provide a function returning an array or a point, instead of providing an array or a point.
- * @param {JXG.Point | number[] | function():JXG.Point | function():number[]} point1 First point
- * @param {JXG.Point | number[] | function():JXG.Point | function():number[]} point2 Second point
- *
  */
+
 /**
- * @memberof Line
- * @instance
- * @jsxgraphsignature
+ * @jsxgraphsignature Line
  * Create a line from two points, coordinate arrays or functions.
  *
  * In the latter two cases the point will be constructed automatically as a fixed invisible point.
@@ -1230,10 +1222,9 @@ JXG.extend(
  *
  * </script><pre>
  */
+
 /**
- * @memberof Line
- * @instance
- * @jsxgraphsignature
+ * @jsxgraphsignature Line
  * Create a line from homogeneous coordinates.
  *
  * A line can also be created providing three numbers.
@@ -1260,17 +1251,14 @@ JXG.extend(
  *
  */
 /**
- *@memberof Line
- * @instance
- * @jsxgraphsignature
+ * @jsxgraphsignature Line
  * Line by one function
  * @param {function} f This function must return an array containing three numbers forming the line's homogeneous coordinates.
  *
  */
+
 /**
- * @memberof Line
- * @instance
- * @jsxgraphsignature
+ * @jsxgraphsignature Line
  * Create a line providing a line and a transformation (or an array of transformations).
  * Then, the result is a line which is the transformation of the supplied line.
  *
@@ -1568,14 +1556,18 @@ JXG.registerElement("line", JXG.createLine);
  * @type JXG.Line
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
  *
- * @signature board.create('segment', [point1, point2])
+ */
+/**
+ * @jsxgraphsignature Segment
  * Create a segment from two points, coordinate arrays or functions.
  * In the latter two cases the point will be constructed automatically as a fixed invisible point.
  * It is possible to provide a function returning an array or a point, instead of providing an array or a point.
  * @param {JXG.Point | number[] | function():JXG.Point | function():number[]} point1 First point
  * @param {JXG.Point | number[] | function():JXG.Point | function():number[]} point2 Second point
  *
- * @signature board.create('segment', [point1, point2, length])
+ */
+/**
+ * @jsxgraphsignature Segment
  * @param {JXG.Point | number[] | function():JXG.Point | function():number[]} point1 First point
  * @param {JXG.Point | number[] | function():JXG.Point | function():number[]} point2 Second point
  * @param {number | function} length The points are adapted - if possible - such that their distance is equal to the absolute value of this number.
@@ -1697,29 +1689,15 @@ JXG.registerElement("segment", JXG.createSegment);
  * @constructor
  * @type JXG.Line
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
- *
- * @signature board.create('arrow', [point1, point2])
+ * @see Line
+ */
+/**
+ * @jsxgraphsignature Arrow
  * Create an arrow from two points, coordinate arrays or functions.
  * In the latter two cases the point will be constructed automatically as a fixed invisible point.
  * It is possible to provide a function returning an array or a point, instead of providing an array or a point.
  * @param {JXG.Point | number[] | function():JXG.Point | function():number[]} point1 First point
  * @param {JXG.Point | number[] | function():JXG.Point | function():number[]} point2 Second point
- * @signature board.create('arrow', [a, b, c])
- * Create an arrow from homogeneous coordinates.
- * An arrow can also be created providing three numbers.
- * The arrow is then described by
- * the set of solutions of the equation $a\cdot z+b \cdot x+c\cdot y = 0$, i.e. a point $(z,x, y)$ is on the line $(a,b,c)$
- * if and only if $a\cdot z+b \cdot x+c\cdot y = 0$.
- * In JSXGraph, for all finite points, z is normalized to the value 1.
- *
- * It is possible to provide three functions returning numbers, too.
- * @param {number | function():number} a
- * @param {number | function():number} b
- * @param {number | function():number} c
- * @signature board.create('arrow', [f])
- * @param {function} f This function must return an array containing three numbers forming the arrow's homogeneous coordinates.
- *
- * @see Line
  * @example
  * // Create an arrow providing two points.
  * var p1 = board.create('point', [4.5, 2.0]);
@@ -1734,6 +1712,25 @@ JXG.registerElement("segment", JXG.createSegment);
  * var l1 = board.create('arrow', [p1, p2]);
  * })();
  * </script><pre>
+*/
+/**
+ * @jsxgraphsignature Arrow
+ * Create an arrow from homogeneous coordinates.
+ * An arrow can also be created providing three numbers.
+ * The arrow is then described by
+ * the set of solutions of the equation $a\cdot z+b \cdot x+c\cdot y = 0$, i.e. a point $(z,x, y)$ is on the line $(a,b,c)$
+ * if and only if $a\cdot z+b \cdot x+c\cdot y = 0$.
+ * In JSXGraph, for all finite points, z is normalized to the value 1.
+ *
+ * It is possible to provide three functions returning numbers, too.
+ * @param {number | function():number} a
+ * @param {number | function():number} b
+ * @param {number | function():number} c
+ */
+/**
+ * @jsxgraphsignature Arrow
+ * @param {function} f This function must return an array containing three numbers forming the arrow's homogeneous coordinates.
+ *
  */
 JXG.createArrow = function (board, parents, attributes) {
     var el, attr;
@@ -1762,12 +1759,16 @@ JXG.registerElement("arrow", JXG.createArrow);
  * @type JXG.Line
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
  *
- * @signature board.create('axis', [point1, point2]);
+ */
+/**
+ * @jsxgraphsignature Axis
  * Parent elements can be two elements either of type {@link JXG.Point} or array of numbers describing the
  * coordinates of a point. In the latter case, the point will be constructed automatically as a fixed invisible point.
  * @param {JXG.Point | number[] | function():JXG.Point | function():number[]} point1 First point
  * @param {JXG.Point | number[] | function():JXG.Point | function():number[]} point2 Second point
- * @signature board.create('axis', [a, b, c]);
+ */
+/**
+ * @jsxgraphsignature Axis
  * An axis can also be created providing three numbers.
  * The line is defined as
  * the set of solutions of the equation $a\cdot z+b \cdot x+c\cdot y = 0$, i.e. a point $(z,x, y)$ is on the axis line $(a,b,c)$
@@ -2145,7 +2146,9 @@ JXG.registerElement("axis", JXG.createAxis);
  * @type JXG.Line
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
  *
- * @signature board.create('tangent', [glider, c]);
+ */
+/**
+ * @jsxgraphsignature Tangent
  * @param {Glider} g A glider on a line, circle, or curve.
  * @param {JXG.GeometryElement} [c] Optional element for which the tangent is constructed
  *
@@ -2498,15 +2501,13 @@ JXG.createTangent = function (board, parents, attributes) {
  *
  * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
  *
- * @signature board.create('normal', [object, point]);
+ */
+/**
+ * @jsxgraphsignature Normal
  * The constructed line contains p which lies on the object o and is orthogonal
  * to the tangent to the object in the given point.
  * @param {JXG.Line | JXG.Circle | JXG.Curve | JXG.Turtle} o
  * @param {JXG.Point} p
- * @signature board.create('normal', [glider]);
- * Works like above, however the object is given by {@link JXG.CoordsElement#slideObject}, i.e. the element
- * to which the glider is bound to.
- * @param {Glider} p
  *
  * @example
  * // Create a normal to a circle.
@@ -2525,6 +2526,31 @@ JXG.createTangent = function (board, parents, attributes) {
  *
  *   // var p3 = board.create('point', [1.0, 2.0]);
  *   var norm1 = board.create('normal', [c1, p2]);
+ * })();
+ * </script><pre>
+ */
+/**
+ * @jsxgraphsignature Normal
+ * Works like above, however the object is given by {@link JXG.CoordsElement#slideObject}, i.e. the element
+ * to which the glider is bound to.
+ * @param {Glider} p
+ *
+ * @example
+ * // Create a normal to a circle.
+ * var p1 = board.create('point', [2.0, 2.0]);
+ * var c1 = board.create('circle', [p1, 2]);
+ * var gl = board.create('glider', [4, 4, c1]);
+ *
+ * var norm1 = board.create('normal', [gl]);
+ * </pre><div class="jxgbox" id="JXGcdda7b92-2a5d-409f-972a-83fa34605efd" style="width: 400px; height: 400px;"></div>
+ * <script type="text/javascript">
+ * (function() {
+ *   var board = JXG.JSXGraph.initBoard('JXGcdda7b92-2a5d-409f-972a-83fa34605efd', {boundingbox: [-1, 9, 9, -1], axis: true, showcopyright: false, shownavigation: false});
+ *   var p1 = board.create('point', [2.0, 2.0]);
+ *   var c1 = board.create('circle', [p1, 2]);
+ *   var gl = board.create('glider', [4, 4, c1]);
+ *
+ *   var norm1 = board.create('normal', [gl]);
  * })();
  * </script><pre>
  */
@@ -2923,7 +2949,9 @@ JXG.createNormal = function (board, parents, attributes) {
  * @type JXG.Line
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
  *
- * @signature  board.create('radicalaxis', [c1, c2]);
+ */
+/**
+ * @jsxgraphsignature  RadicalAxis
  * @param {JXG.Circle} circle one of the two respective circles.
  * @param {JXG.Circle} circle the other of the two respective circles.
  *
@@ -3013,7 +3041,9 @@ JXG.createRadicalAxis = function (board, parents, attributes) {
  * @type JXG.Line
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
  *
- * @signature board.create('tangent', [conic, point]);
+ */
+/**
+ * @jsxgraphsignature PolarLine
  * The result will be the polar line of the point with respect to the conic or the circle. The order of the parameters does not matter.
  * @param {JXG.Conic | JXG.Circle} conic
  * @param {JXG.Point} point
@@ -3132,7 +3162,9 @@ JXG.createPolarLine = function (board, parents, attributes) {
  * @type JXG.Line
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
  *
- * @signature board.create('tangentto', [conic, point, number]);
+ */
+/**
+ * @jsxgraphsignature TangentTo
  * The result will be the tangent line through the point with respect to the conic or circle.
  * @param {JXG.Conic | JXG.Circle} conic
  * @param {JXG.Point} point

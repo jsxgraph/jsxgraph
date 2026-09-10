@@ -4,6 +4,15 @@
 
 ## Signatures
 
+Now:
+
+- Each signature is in a separate jsdoc block
+- Use type {@link PointLike} from file `jxg.js`
+- `@jsxgraphsignature Element` are mandatory
+- The description __must__ follow directly after `@jsxgraphsignature`
+
+Old:
+
 - Use type {@link PointLike} from file `jxg.js`
 - `@memberof`, `@instance` and `@jsxgraphsignature` are mandatory
 - The description __must__ follow directly after `@jsxgraphsignature`
@@ -12,9 +21,7 @@ __Example__
 
 ```
 /**
- * @memberof Line
- * @instance
- * @jsxgraphsignature
+ * @jsxgraphsignature Line
  * Create a line from homogeneous coordinates.
  *
  * A line can also be created providing three numbers.

@@ -58,44 +58,32 @@ exports.defineTags = function (dictionary) {
 
 // Plugin Hooks for JSDoc
 exports.handlers = {
-    newDoclet: function (e) {
-        // var d = e.doclet;
-        // // console.log(d)
-        // if (d.kind === 'class') {
-        //     // console.log(d)
-        // }
-    },
+    // newDoclet: function (e) {
+    //     // var d = e.doclet;
+    //     // // console.log(d)
+    //     // if (d.kind === 'class') {
+    //     //     // console.log(d)
+    //     // }
+    // },
 
-    symbolFound(e) {
-        // console.log('>', e)
-    },
+    // symbolFound(e) {
+    //     // console.log('>', e)
+    // },
 
-    // Called after all doclets have been created
-    processingComplete(e) {
-        const doclets = e.doclets || [];
+    // // Called after all doclets have been created
+    // processingComplete(e) {
+    //     const doclets = e.doclets || [];
 
-        for (let i = 0; i < doclets.length; i++) {
-            if (!doclets[i].isAttribute && doclets[i].memberof && doclets[i].inherits === undefined
-                // && doclets[i].memberof.indexOf('Line') >= 0
-            ) {
-                // console.log(doclets[i].memberof, '\t', doclets[i].name, '\t', doclets[i].isAttribute, doclets[i].inherits)
-                //doclets[i].longname, doclets[i].isAttribute)
-            }
-        }
-    }
+    //     for (let i = 0; i < doclets.length; i++) {
+    //         if (!doclets[i].isAttribute && doclets[i].memberof && doclets[i].inherits === undefined
+    //             // && doclets[i].memberof.indexOf('Line') >= 0
+    //         ) {
+    //             // console.log(doclets[i].memberof, '\t', doclets[i].name, '\t', doclets[i].isAttribute, doclets[i].inherits)
+    //             //doclets[i].longname, doclets[i].isAttribute)
+    //         }
+    //     }
+    // }
 };
-
-/*
-exports.astNodeVisitor = {
-    visitNode: function(node, e, parser, currentSourceName) {
-        // do all sorts of crazy things here
-        console.log("-----------------------")
-        // console.log("node\n", node)
-        console.log("e\n", e)
-        // console.log("Parser\n", parser)
-    }
-};
-*/
 
 /*
 JSDOC.PluginManager.registerPlugin(
