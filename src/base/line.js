@@ -1555,6 +1555,7 @@ JXG.registerElement("line", JXG.createLine);
  * @constructor
  * @type JXG.Line
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
+ * @see Line
  *
  */
 /**
@@ -1565,14 +1566,6 @@ JXG.registerElement("line", JXG.createLine);
  * @param {JXG.Point | number[] | function():JXG.Point | function():number[]} point1 First point
  * @param {JXG.Point | number[] | function():JXG.Point | function():number[]} point2 Second point
  *
- */
-/**
- * @jsxgraphsignature Segment
- * @param {JXG.Point | number[] | function():JXG.Point | function():number[]} point1 First point
- * @param {JXG.Point | number[] | function():JXG.Point | function():number[]} point2 Second point
- * @param {number | function} length The points are adapted - if possible - such that their distance is equal to the absolute value of this number.
- *
- * @see Line
  * @example  <caption>Create segment providing two points</caption>
  * var p1 = board.create('point', [4.5, 2.0]);
  * var p2 = board.create('point', [1.0, 1.0]);
@@ -1586,6 +1579,12 @@ JXG.registerElement("line", JXG.createLine);
  * var l1 = board.create('segment', [p1, p2]);
  * })();
  * </script><pre>
+ */
+/**
+ * @jsxgraphsignature Segment
+ * @param {JXG.Point | number[] | function():JXG.Point | function():number[]} point1 First point
+ * @param {JXG.Point | number[] | function():JXG.Point | function():number[]} point2 Second point
+ * @param {number | function} length The points are adapted - if possible - such that their distance is equal to the absolute value of this number.
  *
  * @example <caption>Create segment with fixed length</caption>
  * var p1 = board.create('point', [4.0, 1.0]);
