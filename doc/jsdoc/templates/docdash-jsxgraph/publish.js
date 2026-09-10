@@ -70,7 +70,7 @@ function needsSignature(doclet) {
     var needsSig = false;
 
     // function and class definitions always get a signature
-    if (doclet.kind === 'function' || doclet.kind === 'class' && !doclet.hideconstructor) {
+    if (doclet.kind === 'function' || doclet.kind === 'jsxgraphsignature' || doclet.kind === 'class' && !doclet.hideconstructor) {
         needsSig = true;
     }
     // typedefs that contain functions get a signature, too

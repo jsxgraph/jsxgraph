@@ -1174,7 +1174,7 @@ JXG.extend(
 
 /**
  * @class A general line is given by two points or three coordinates.
- * By setting additional properties a line can be used as an arrow and/or axis.
+ * By setting attributes a line can be used as an arrow and/or axis.
  * @pseudo
  * @name Line
  * @augments JXG.Line
@@ -1189,32 +1189,17 @@ JXG.extend(
  * @param {JXG.Point | number[] | function():JXG.Point | function():number[]} point1 First point
  * @param {JXG.Point | number[] | function():JXG.Point | function():number[]} point2 Second point
  *
- * @signature board.create('line', [point1, point2])
+ */
+/**
+ * @jsxgraphsignature
  * Create a line from two points, coordinate arrays or functions.
+ *
  * In the latter two cases the point will be constructed automatically as a fixed invisible point.
- * It is possible to provide a function returning an array or a point, instead of providing an array or a point,
- * see {@link PointLike}.
+ * It is possible to provide a function returning an array or a point, instead of providing an array or a point.
+ * @memberof Line
+ * @instance
  * @param {PointLike} point1 First point
  * @param {PointLike} point2 Second point
- *
- * @signature board.create('line', [a, b, c])
- * Create a line from homogeneous coordinates.
- * A line can also be created providing three numbers.
- * The line is defined as
- * the set of solutions of the equation $a\cdot z+b \cdot x+c\cdot y = 0$, i.e. a point $(z,x, y)$ is on the line $(a,b,c)$
- * if and only if $a\cdot z+b \cdot x+c\cdot y = 0$.
- * In JSXGraph, for all finite points, z is normalized to the value 1.
- *
- * It is possible to provide three functions returning numbers, too.
- * @param {number | function():number} a
- * @param {number | function():number} b
- * @param {number | function():number} c
- * @signature board.create('line', [f])
- * @param {function} f This function must return an array containing three numbers forming the line's homogeneous coordinates.
- *
- * Additionally, a line can be created by providing a line and a transformation (or an array of transformations).
- * Then, the result is a line which is the transformation of the supplied line.
- *
  * @example <caption>Two points</caption>
  * // Create a line using point and coordinates
  * // The second point will be fixed and invisible.
@@ -1228,6 +1213,40 @@ JXG.extend(
  *   var l1 = board.create('line', [p1, [1.0, 1.0]]);
  * })();
  * </script><pre>
+ *
+ * @example <caption>Line displayed as segment</caption>
+ * var p1 = board.create('point', [0,0]);
+ * var p2 = board.create('point', [2,2]);
+ * var l1 = board.create('line', [p1,p2], {straightFirst:false, straightLast:false});
+ * </pre><div id="d21d5b58-6338-11e8-9fb9-901b0e1b8723" class="jxgbox" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *     (function() {
+ *         var board = JXG.JSXGraph.initBoard('d21d5b58-6338-11e8-9fb9-901b0e1b8723',
+ *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+ *             var p1 = board.create('point', [0,0]);
+ *             var p2 = board.create('point', [2,2]);
+ *             var l1 = board.create('line', [p1,p2], {straightFirst:false, straightLast:false});
+ *     })();
+ *
+ * </script><pre>
+ */
+/**
+ * @memberof Line
+ * @instance
+ * @jsxgraphsignature
+ * Create a line from homogeneous coordinates.
+ *
+ * A line can also be created providing three numbers.
+ * The line is defined as
+ * the set of solutions of the equation $a\cdot z+b \cdot x+c\cdot y = 0$, i.e. a point $(z,x, y)$ is on the line $(a,b,c)$
+ * if and only if $a\cdot z+b \cdot x+c\cdot y = 0$.
+ * In JSXGraph, for all finite points, z is normalized to the value 1.
+ *
+ * It is possible to provide three functions returning numbers, too.
+ * @param {number | function():number} a
+ * @param {number | function():number} b
+ * @param {number | function():number} c
+ *
  * @example <caption>Three coordinates</caption>
  * // Create a line using three coordinates
  * var l1 = board.create('line', [1.0, -2.0, 3.0]);
@@ -1238,6 +1257,25 @@ JXG.extend(
  *   var l1 = board.create('line', [1.0, -2.0, 3.0]);
  * })();
  * </script><pre>
+ *
+ */
+/**
+ *@memberof Line
+ * @instance
+ * @jsxgraphsignature
+ * Line by one function
+ * @param {function} f This function must return an array containing three numbers forming the line's homogeneous coordinates.
+ *
+ */
+/**
+ * @memberof Line
+ * @instance
+ * @jsxgraphsignature
+ * Create a line providing a line and a transformation (or an array of transformations).
+ * Then, the result is a line which is the transformation of the supplied line.
+ *
+ * @param {Line} l1
+ * @param {Transformation} t
  *
  * @example  <caption>New line (red) from line (blue) and transformation</caption>
  * var t = board.create('transform', [2, 1.5], {type: 'scale'});
@@ -1280,21 +1318,6 @@ JXG.extend(
  *
  * </script><pre>
  *
- * @example <caption>Line displayed as segment</caption>
- * var p1 = board.create('point', [0,0]);
- * var p2 = board.create('point', [2,2]);
- * var l1 = board.create('line', [p1,p2], {straightFirst:false, straightLast:false});
- * </pre><div id="d21d5b58-6338-11e8-9fb9-901b0e1b8723" class="jxgbox" style="width: 300px; height: 300px;"></div>
- * <script type="text/javascript">
- *     (function() {
- *         var board = JXG.JSXGraph.initBoard('d21d5b58-6338-11e8-9fb9-901b0e1b8723',
- *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
- *             var p1 = board.create('point', [0,0]);
- *             var p2 = board.create('point', [2,2]);
- *             var l1 = board.create('line', [p1,p2], {straightFirst:false, straightLast:false});
- *     })();
- *
- * </script><pre>
  */
 JXG.createLine = function (board, parents, attributes) {
     var ps, el, p1, p2, i, attr,

@@ -1,15 +1,18 @@
+
+
 <?js
 var data = obj;
 var self = this;
 ?>
-
 <?js if (data.kind !== 'module' && !data.hideconstructor && data.kind !== 'class') { ?>
 
-    <?js if (data.kind === 'class' && data.classdesc) { ?>
-    <h2>Constructor</h2>
-    <?js } ?>
+<?js 
+    // Start signature expression
+    name_str = `board.create('${memberof.toLowerCase()}', ` 
+?>
+<details>
 
-    <h4 class="name" id="<?js= id ?>"><?js= data.attribs ?><?js
+    <summary class="name" id="<?js= id ?>"><?js= data.attribs ?><?js
       if(kind === 'class' && name.indexOf('module:') === 0) {
         print('new (require("' + name.slice(7) + '"))');
       } else if(kind === 'class') {
@@ -17,28 +20,28 @@ var self = this;
       } else if(kind === 'event' && data.alias) {
         print(data.alias);
       } else {
-        print(name);
+        // print(name);
+        print(name_str);
       }
-    ?><?js= (data.signature || '') ?></h4>
+    ?><?js= (data.signature.replace(/\(/, "[").replace(/\)/, "]") + ")" || '') ?></summary>
 
+<!--
     <?js if (data.summary) { ?>
         <p class="summary usertext"><?js= summary
             .trim()
             .replace(/^<p>/, "")
-            .replace(/<\/p>$/, "") ?></p>
+            .replace(/<\/p>$/, "")
+        ?></p>
     <?js } ?>
-<?js } ?>
-
-<?js
-// only shows singature in class (not in constructor-doclet)
-if (data.kind === 'class') {
-?>
-  <?js= this.partial('signatureblocks.tmpl', data) ?>
-<?js } ?>
-
-<!--
-<?js= this.partial('details.tmpl', data) ?>
 -->
+
+<?js } ?>
+
+<?js if (data.description) { ?>
+<div class="description usertext">
+    <?js= data.description ?>
+</div>
+<?js } ?>
 
 <?js if (data.augments && data.alias && data.alias.indexOf('module:') === 0) { ?>
     <h5 class="h5-extends">Extends:</h5>
@@ -59,26 +62,20 @@ if (data.kind === 'class') {
     <ul><li><?js= this.linkto(data['this'], data['this']) ?></li></ul>
 <?js } ?>
 
-<?js if (data.examples && examples.length) { ?>
-    <h5 class="h5-examples">Example<?js= examples.length > 1? 's':'' ?></h5>
-    <?js= this.partial('examples.tmpl', examples) ?>
-<?js } ?>
-
-
 <?js
-// not show standard-parameter, when own signature blocks
 if (
-  !data.isPseudo &&
   data.params &&
-  params.length 
-  // &&
-  // !(data.signatureBlocks && data.signatureBlocks.length)
+  params.length
 ) {
 ?>
   <h5 class="h5-parameters">Parameters:</h5>
   <?js= this.partial('params.tmpl', params) ?>
 <?js } ?>
 
+<?js if (data.examples && examples.length) { ?>
+    <h5 class="h5-examples">Example<?js= examples.length > 1? 's':'' ?></h5>
+    <?js= this.partial('examples.tmpl', examples) ?>
+<?js } ?>
 
 <?js if (data.kind !== 'module' && data.requires && data.requires.length) { ?>
 <h5 class="h5-requires">Requires:</h5>
@@ -155,3 +152,4 @@ if (
         <?js= self.partial('returns.tmpl', r) ?>		
     <?js });		
 } } ?>
+</details>

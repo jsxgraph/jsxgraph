@@ -1,3 +1,5 @@
+var signatur_counter = 0;
+
 // Removes leading JSDoc stars (*) and trims whitespace
 function cleanLine(line) {
   return String(line || "")
@@ -77,9 +79,24 @@ function sameFile(a, b) {
   );
 }
 
-// Registers the @signature tag in JSDoc
+// Registers the @jsxgraphsignature tag in JSDoc
 exports.defineTags = function (dictionary) {
-  dictionary.defineTag("signature", { mustHaveValue: true });
+  // dictionary.defineTag("signature", { mustHaveValue: true });
+  dictionary.defineTag("jsxgraphsignature", { 
+    // mustHaveValue: true,
+    // mustNotHaveValue: true,
+    onTagged: function (doclet, tag) {
+      doclet.kind = "jsxgraphsignature";
+      doclet.description = tag.text;
+
+      // Make signature names unique 
+      doclet.name += "_" + signatur_counter++;
+
+      // doclet.name = tag.text;
+      // console.log(doclet)
+      // console.log(tag)
+    }
+  });
 };
 
 // Plugin Hooks for JSDoc
@@ -88,7 +105,7 @@ exports.handlers = {
   // Called as soon as a doclet has been created
   newDoclet(e) {
     const d = e.doclet;
-
+/*
     // Extract signature blocks from the comment
     const blocks = parseSignatureBlocks(d.comment || "");
 
@@ -96,8 +113,10 @@ exports.handlers = {
     if (blocks.length) {
       d.signatureBlocks = blocks;
     }
+*/      
   },
 
+/*  
   // Called after all doclets have been created
   processingComplete(e) {
     const doclets = e.doclets || [];
@@ -125,4 +144,5 @@ exports.handlers = {
       }
     });
   }
+*/    
 };

@@ -46,6 +46,33 @@
 </header>
 
 <article>
+<!-- ------------- -->
+    <?js
+        //------------ Signatures
+
+        var signatures = self.find({
+                kind: 'jsxgraphsignature',
+                memberof: isGlobalPage ? {isUndefined: true} : doc.longname
+            });
+
+        // symbols that are assigned to module.exports are not globals, even though they're not a memberof anything
+        if (isGlobalPage && signatures && signatures.length && signatures.forEach) {
+            signatures = signatures.filter(function(m) {
+                return m.longname && m.longname.indexOf('module:') !== 0;
+            });
+        }
+        if (signatures && signatures.length && signatures.forEach) {
+    ?>
+        <details open>
+            <summary class="subsection-title collapsible" id="attributes">Usage (signatures)</summary>
+
+            <?js signatures.forEach(function(s) { ?>
+                <?js= self.partial('signature.tmpl', s) ?>
+            <?js }); ?>
+        </details>
+    <?js } ?>
+<!-- ------------- -->
+
     <?js if (!doc.hideconstructor) { ?>
         <div class="container-overview">
         <?js if (doc.kind === 'module' && doc.modules) { ?>

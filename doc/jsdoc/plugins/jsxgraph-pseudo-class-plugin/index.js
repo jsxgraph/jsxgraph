@@ -1,3 +1,8 @@
+// var mode = {
+//     status: false,
+//     params: [],
+//     end: true
+// };
 
 // Registers the @attribute and @pseudo tag in JSDoc
 exports.defineTags = function (dictionary) {
@@ -21,17 +26,44 @@ exports.defineTags = function (dictionary) {
             doclet.kind = "attribute";
         }
     });
+
+    // // Test parsing of signatures
     // dictionary.defineTag("signature", {
-    //     mustNoteHaveValue: true,
+    //     mustHaveValue: true,
     //     onTagged: function (doclet, tag) {
-    //         console.log("Signature toggled", doclet, tag)
+    //         mode.status = !mode.status;
+
+    //     //     doclet.comment = '';
+    //     //     if (mode.status === true) {
+    //     //     } else if (mode.status === false) {
+    //     //         // console.log("\nSignature toggled:", mode, "\n")
+    //     //         mode.params.push(doclet.params.slice());
+    //     //     }
+    //         console.log("\nSignature toggled:", tag)
     //     }
     // });
+
+    // dictionary.defineTag("endsignature", {
+    //     onTagged: function (doclet, tag) {
+    //         mode.end = !mode.end;
+    //         // if (mode.end) {
+    //         //     mode.status = false;
+    //         //     mode.params.push(doclet.params.slice());
+    //         // }
+    //         console.log("endsignatures", doclet)
+    //     }
+    // });
+
 };
 
 // Plugin Hooks for JSDoc
 exports.handlers = {
     newDoclet: function (e) {
+        // var d = e.doclet;
+        // // console.log(d)
+        // if (d.kind === 'class') {
+        //     // console.log(d)
+        // }
     },
 
     symbolFound(e) {
@@ -52,6 +84,18 @@ exports.handlers = {
         }
     }
 };
+
+/*
+exports.astNodeVisitor = {
+    visitNode: function(node, e, parser, currentSourceName) {
+        // do all sorts of crazy things here
+        console.log("-----------------------")
+        // console.log("node\n", node)
+        console.log("e\n", e)
+        // console.log("Parser\n", parser)
+    }
+};
+*/
 
 /*
 JSDOC.PluginManager.registerPlugin(
