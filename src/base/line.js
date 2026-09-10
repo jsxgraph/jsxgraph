@@ -1193,9 +1193,9 @@ JXG.extend(
  * Create a line from two points, coordinate arrays or functions.
  * In the latter two cases the point will be constructed automatically as a fixed invisible point.
  * It is possible to provide a function returning an array or a point, instead of providing an array or a point,
- * see {@link PointType}.
- * @param {PointType} point1 First point
- * @param {PointType} point2 Second point
+ * see {@link PointLike}.
+ * @param {PointLike} point1 First point
+ * @param {PointLike} point2 Second point
  *
  * @signature board.create('line', [a, b, c])
  * Create a line from homogeneous coordinates.

@@ -121,7 +121,7 @@ jxg.extend = function (object, extension, onlyOwn, toLower) {
 /**
  * A point, coordinates, or functions returning point or coordinates.
  *
- * @typedef {(Point | Coordinates2D | PointFunction)} PointType
+ * @typedef {(Point | Coordinates2D | PointFunction)} PointLike
  */
 /**
  * A dummy line type.
