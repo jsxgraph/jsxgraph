@@ -1,5 +1,5 @@
 
-// Registers the @signature tag in JSDoc
+// Registers the @attribute and @pseudo tag in JSDoc
 exports.defineTags = function (dictionary) {
     dictionary.defineTag("pseudo", {
         mustNotHaveValue: true,
@@ -8,18 +8,25 @@ exports.defineTags = function (dictionary) {
         }
     });
 
-    dictionary.defineTag("visprop", {
-        mustNotHaveValue: true,
-        onTagged: function (doclet, tag) {
-            // console.log(doclet, tag)
-        }
-    });
+    // dictionary.defineTag("visprop", {
+    //     mustNotHaveValue: true,
+    //     onTagged: function (doclet, tag) {
+    //         // console.log(doclet, tag)
+    //     }
+    // });
+
     dictionary.defineTag("attribute", {
         mustNoteHaveValue: true,
         onTagged: function (doclet, tag) {
             doclet.kind = "attribute";
         }
     });
+    // dictionary.defineTag("signature", {
+    //     mustNoteHaveValue: true,
+    //     onTagged: function (doclet, tag) {
+    //         console.log("Signature toggled", doclet, tag)
+    //     }
+    // });
 };
 
 // Plugin Hooks for JSDoc

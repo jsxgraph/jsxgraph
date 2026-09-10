@@ -270,7 +270,8 @@
         var typedefs = self.find({kind: 'typedef', memberof: isGlobalPage ? {isUndefined: true} : doc.longname});
         if (typedefs && typedefs.length && typedefs.forEach) {
     ?>
-        <h3 class="subsection-title">Type Definitions</h3>
+        <details>
+            <summary class="subsection-title collapsible" id="events">Type Definitions</summary>
 
         <?js typedefs.forEach(function(e) {
                 if (false && e.signature) {
@@ -284,6 +285,7 @@
             <?js
                 }
             }); ?>
+        </details>
     <?js } ?>
 
     <?js

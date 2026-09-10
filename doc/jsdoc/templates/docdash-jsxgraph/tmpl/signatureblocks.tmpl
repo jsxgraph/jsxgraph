@@ -1,22 +1,27 @@
 <?js
 // Docdash gives current Doclet as an "obj"
 var doclet = obj;
+var self = this;
 ?>
 
 <?js
 // only render when Plugin generated signatureBlocks
 if (doclet.signatureBlocks && doclet.signatureBlocks.length) {
 ?>
-  <h5 class="h5-signatures">Signatures:</h5>
-
+  <details open>
+  <summary>Usage (Signatures):</summary>
+    
   <?js
   // every signatureBlock corresponds an Overload (@signature)
   doclet.signatureBlocks.forEach(function(b) {
   ?>
-    <div class="signature">
+    <!--<div class="signature">-->
+    <details class="signature">
 
       <!-- Anzeige der eigentlichen Signatur -->
-      <pre class="prettyprint"><code><?js= b.signature ?></code></pre>
+      <!--<pre class="prettyprint"><code><?js= b.signature ?></code></pre>-->
+      <!--<summary><pre class="prettyprint"><code><?js= b.signature ?></code></pre></summary>-->
+      <summary><code class="prettyprint"><?js= b.signature ?></code></summary>
 
       <?js
         // optional Discription of an Overloads
@@ -48,6 +53,13 @@ if (doclet.signatureBlocks && doclet.signatureBlocks.length) {
           <?js }); ?>
         </ul>
       <?js } ?>
+<?js
+if (b.params && b.params.length) {
+?>
+  <h5 class="h5-parameters">Parameters:</h5>
+  <?js= self.partial('params.tmpl', b.params) ?>
+<?js } ?>
+
 
       <?js
       // returnvalue for an Overload
@@ -70,6 +82,8 @@ if (doclet.signatureBlocks && doclet.signatureBlocks.length) {
         </ul>
       <?js } ?>
 
-    </div>
+    <!--</div>-->
+    </details>
   <?js }); ?>
+  </details>
 <?js } ?>

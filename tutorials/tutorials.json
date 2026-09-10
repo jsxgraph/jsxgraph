@@ -1,5 +1,8 @@
 {
     "first_steps": {
         "title": "First Steps"
+    },
+    "api": {
+        "title": "API documentation HOWTO"
     }
 }

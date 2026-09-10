@@ -94,6 +94,42 @@ jxg.extend = function (object, extension, onlyOwn, toLower) {
     }
 };
 
+//
+// typedef declarations for jsdoc
+//
+/**
+ * Function returning a point like object.
+ * 
+ * This could be
+ * - a {@link point}
+ * - coordinate array `[x, y]`
+ * - coordinate array `[z, x, y]` with homogeneous coordinates.
+ * In this case, `z` is 0 for infinite points, non-zero otherwise.
+ *   
+ * @callback PointFunction
+ */
+/**
+ * An array of length 2 or 3.
+ * 
+ * - coordinate array `[x, y]`: *affine coordinates*
+ * - coordinate array `[z, x, y]`: *homogeneous coordinates*.
+ * 
+ * In most cases, both types (affine or homogeneous) coordinates can be used.
+ *
+ * @typedef {array} Coordinates2D
+ */
+/**
+ * A point, coordinates, or functions returning point or coordinates.
+ *
+ * @typedef {(Point | Coordinates2D | PointFunction)} PointType
+ */
+/**
+ * A dummy line type.
+ *
+ * @typedef {(Line|number[]|JXG.Line)} LineType
+ */
+
+
 /**
  * Set a constant `name` in `object` to `value`. The value can't be changed after declaration.
  * @param {Object} object

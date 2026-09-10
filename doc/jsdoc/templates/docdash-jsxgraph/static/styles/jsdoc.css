@@ -381,6 +381,10 @@ footer {
    list-style-type: none
 }
 
+.details li li {
+   list-style-type: disc
+}
+
 .details pre.prettyprint {
    margin: 0
 }

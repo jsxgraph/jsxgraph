@@ -12,7 +12,7 @@
  */
 class TestLine {
   /**
-   * @signature new TestLine(point1, point2)
+   * @nax new TestLine(point1, point2)
    * Create a line from two points, coordinate arrays or functions.
    *
    * @param {JXG.Point | number[] | function():JXG.Point | function():number[]} point1 First point
@@ -27,7 +27,7 @@ class TestLine {
    * @param {number | function():number} b
    * @param {number | function():number} c
    *
-   * @signature new TestLine(f)
+   * @nox new TestLine(f)
    * Create a line from a function returning homogeneous coordinates.
    *
    * @param {function():number[]} f

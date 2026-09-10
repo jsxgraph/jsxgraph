@@ -18,7 +18,7 @@
   },
   "sourceType": "module",
   "tags": {
-    "allowUnknownTags": false
+    "allowUnknownTags": true
   },
   "templates": {
     "default": {

@@ -1173,35 +1173,6 @@ JXG.extend(
 );
 
 /**
- * Function returning a point like object.
- * 
- * This could be
- * - a {@link point}
- * - coordinate array `[x, y]`
- * - coordinate array `[z, x, y]` with homogeneous coordinates.
- * In this case, `z` is 0 for infinite points, non-zero otherwise.
- *   
- * @callback PointFunction
- */
-/**
- * An array of length 2 or 3.
- * - coordinate array `[x, y]`, so called affine coordinates
- * - coordinate array `[z, x, y]` with homogeneous coordinates.
- *
- * @typedef {array} Coordinates2D
- */
-/**
- * A point, coordinates, or functions returning point or coordinates.
- *
- * @typedef {(Point | Coordinates2D | PointFunction)} PointType
- */
-/**
- * A line type.
- *
- * @typedef {(Line|number[]|JXG.Line)} LineType
- */
-
-/**
  * @class A general line is given by two points or three coordinates.
  * By setting additional properties a line can be used as an arrow and/or axis.
  * @pseudo
@@ -1217,7 +1188,14 @@ JXG.extend(
  * It is possible to provide a function returning an array or a point, instead of providing an array or a point.
  * @param {JXG.Point | number[] | function():JXG.Point | function():number[]} point1 First point
  * @param {JXG.Point | number[] | function():JXG.Point | function():number[]} point2 Second point
- * @param {PointLike} point1 First {@link PointType} object
+ *
+ * @signature board.create('line', [point1, point2])
+ * Create a line from two points, coordinate arrays or functions.
+ * In the latter two cases the point will be constructed automatically as a fixed invisible point.
+ * It is possible to provide a function returning an array or a point, instead of providing an array or a point,
+ * see {@link PointType}.
+ * @param {PointType} point1 First point
+ * @param {PointType} point2 Second point
  *
  * @signature board.create('line', [a, b, c])
  * Create a line from homogeneous coordinates.
