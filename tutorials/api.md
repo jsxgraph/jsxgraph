@@ -4,7 +4,7 @@
 
 ## Signatures
 
-- Use type `PointLike` from file `jxg.js`
+- Use type {@link PointLike} from file `jxg.js`
 - `@memberof`, `@instance` and `@jsxgraphsignature` are mandatory
 - The description __must__ follow directly after `@jsxgraphsignature`
  
