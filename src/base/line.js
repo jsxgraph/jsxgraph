@@ -1684,7 +1684,7 @@ JXG.registerElement("segment", JXG.createSegment);
  * and {@link Line#straightLast} properties set to false and {@link Line#lastArrow} set to true.
  * @pseudo
  * @name Arrow
- * @augments JXG.Line
+ * @augments Line
  * @constructor
  * @type JXG.Line
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
@@ -1753,7 +1753,7 @@ JXG.registerElement("arrow", JXG.createArrow);
  * and {@link Line#straightLast} properties set to true. Additionally {@link Line#lastArrow} is set to true and default {@link Ticks} will be created.
  * @pseudo
  * @name Axis
- * @augments JXG.Line
+ * @augments Line
  * @constructor
  * @type JXG.Line
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
@@ -2140,7 +2140,7 @@ JXG.registerElement("axis", JXG.createAxis);
  * in the orthogonal projection of the point to the object will be constructed.
  * @pseudo
  * @name Tangent
- * @augments JXG.Line
+ * @augments Line
  * @constructor
  * @type JXG.Line
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
@@ -2496,7 +2496,7 @@ JXG.createTangent = function (board, parents, attributes) {
  * @constructor
  * @name Normal
  * @type JXG.Line
- * @augments JXG.Line
+ * @augments Line
  *
  * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
  *
@@ -2943,7 +2943,7 @@ JXG.createNormal = function (board, parents, attributes) {
  * When a circle about the midpoint of circle centers, passing through the circle centers, intersects the circles, the polar lines pass through those intersection points.
  * @pseudo
  * @name RadicalAxis
- * @augments JXG.Line
+ * @augments Line
  * @constructor
  * @type JXG.Line
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
@@ -3035,7 +3035,7 @@ JXG.createRadicalAxis = function (board, parents, attributes) {
  * conic as the tangent line to that conic at that point.
  * See {@link https://en.wikipedia.org/wiki/Pole_and_polar} for more information on pole and polar.
  * @name PolarLine
- * @augments JXG.Line
+ * @augments Line
  * @constructor
  * @type JXG.Line
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
@@ -3156,7 +3156,7 @@ JXG.createPolarLine = function (board, parents, attributes) {
  * Attention: from a technical point of view, the point from which the tangent to the conic/circle is constructed is not an element of
  * the tangent line.
  * @name TangentTo
- * @augments JXG.Line
+ * @augments Line
  * @constructor
  * @type JXG.Line
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.

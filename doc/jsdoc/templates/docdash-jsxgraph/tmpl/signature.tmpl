@@ -15,10 +15,11 @@ var self = this;
       } else {
         // print(name);
 
-        // Start signature expression
+        // Build up string like "board.create('element' [a, b, c])"
         let name_str = `board.create('${memberof.toLowerCase()}', `;
         print(name_str);
       }
+      // Extract params from data.signature:
     ?><?js= (data.signature.replace(/\(/, "[").replace(/\)/, "]") + ")" || '') ?></summary>
 
 <!--

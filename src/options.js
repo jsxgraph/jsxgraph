@@ -40,8 +40,9 @@ import Type from "./utils/type.js";
 
 /**
  * Options Namespace
- * @description These are the default options of the board and of all geometry elements.
+ * @description This namespace contains all default options of the board and all geometry elements.
  * @namespace
+ * @private
  * @name JXG.Options
  */
 JXG.Options = {
@@ -1609,7 +1610,7 @@ JXG.Options = {
      * @deprecated
      * @type Object
      * @name JXG.Options#navbar
-         * @attribute
+     * @attribute
      *
      */
     navbar: {
@@ -3832,6 +3833,7 @@ JXG.Options = {
      * @type Object
      * @name JXG.Options#precision
      * @see JXG.GeometryElement#precision
+     * @attribute
      */
     precision: {
         touch: 30,
@@ -3871,6 +3873,7 @@ JXG.Options = {
      * </pre>
      * @type Object
      * @name JXG.Options#layer
+     * @attribute
      */
     layer: {
         numlayers: 20, // only important in SVG

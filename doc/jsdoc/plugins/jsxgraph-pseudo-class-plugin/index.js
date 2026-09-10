@@ -21,7 +21,7 @@ exports.defineTags = function (dictionary) {
     // });
 
     dictionary.defineTag("attribute", {
-        mustNoteHaveValue: true,
+        mustNotHaveValue: true,
         onTagged: function (doclet, tag) {
             doclet.kind = "attribute";
         }

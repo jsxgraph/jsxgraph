@@ -28,7 +28,12 @@
         <?js if (doc.kind === 'namespace') { ?>
             Namespace
         <?js } else { ?>
-            <?js= doc.name ?>
+            <?js
+            if (doc.isPseudo) {
+                print("Element ");
+            }
+            print(doc.name);
+            ?>
         <?js } ?>
         <?js if (doc.variation) { ?>
             <sup class="variation"><?js= doc.variation ?></sup>
