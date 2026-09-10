@@ -82,14 +82,18 @@ function sameFile(a, b) {
 // Registers the @jsxgraphsignature tag in JSDoc
 exports.defineTags = function (dictionary) {
   // dictionary.defineTag("signature", { mustHaveValue: true });
-  dictionary.defineTag("jsxgraphsignature", { 
+  dictionary.defineTag("jsxgraphsignature", {
     // mustHaveValue: true,
     // mustNotHaveValue: true,
     onTagged: function (doclet, tag) {
       doclet.kind = "jsxgraphsignature";
-      doclet.description = tag.text;
 
-      // Make signature names unique 
+      doclet.description = tag.text;
+      // let lines = tag.text.split("\n");   // split all lines into array
+      // doclet.memberof = lines.shift();
+      // doclet.description = lines.join("\n");
+
+      // Make signature names unique
       doclet.name += "_" + signatur_counter++;
 
       // doclet.name = tag.text;
@@ -113,10 +117,10 @@ exports.handlers = {
     if (blocks.length) {
       d.signatureBlocks = blocks;
     }
-*/      
+*/
   },
 
-/*  
+/*
   // Called after all doclets have been created
   processingComplete(e) {
     const doclets = e.doclets || [];
@@ -144,5 +148,5 @@ exports.handlers = {
       }
     });
   }
-*/    
+*/
 };

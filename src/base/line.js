@@ -1191,13 +1191,13 @@ JXG.extend(
  *
  */
 /**
+ * @memberof Line
+ * @instance
  * @jsxgraphsignature
  * Create a line from two points, coordinate arrays or functions.
  *
  * In the latter two cases the point will be constructed automatically as a fixed invisible point.
  * It is possible to provide a function returning an array or a point, instead of providing an array or a point.
- * @memberof Line
- * @instance
  * @param {PointLike} point1 First point
  * @param {PointLike} point2 Second point
  * @example <caption>Two points</caption>

@@ -58,10 +58,8 @@
  * });
  */
   /**
+   * @jsxgraphsignature TestLine
    * variant 1 
-   * @memberof TestLine
-   * @instance 
-   * @jsxgraphsignature
    * 
    * @param {JXG.Point | number[] | function():JXG.Point | function():number[]} point1 First point
    * @param {JXG.Point | number[] | function():JXG.Point | function():number[]} point2 Second point
@@ -71,11 +69,9 @@
    * // Local example 1 b
    */
    /**
+   * @jsxgraphsignature TestLine
    * variant 2
    * Create a line from homogeneous coordinates.
-   * @memberof TestLine
-   * @instance 
-   * @jsxgraphsignature
    * 
    * @param {number | function():number} a
    * @param {number | function():number} b
