@@ -542,6 +542,10 @@ thead tr, thead tr {
    font-family: "Source Sans Pro";
 }
 
+.params td.description {
+   font-family: "Source Sans Pro";
+}
+
 span.param-type, .params td .param-type, .param-type dd {
   color: #606;
   font-family: Consolas, Monaco, 'Andale Mono', monospace

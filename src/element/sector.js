@@ -1784,13 +1784,13 @@ JXG.createAngle = function (board, parents, attributes) {
      * @name Value
      * @function
      * @param {String} [unit='length'] Unit of the returned values. Possible units are
-     * <ul>
-     * <li> 'radians' (default): angle value in radians
-     * <li> 'degrees': angle value in degrees
-     * <li> 'semicircle': angle value in radians as a multiple of &pi;, e.g. if the angle is 1.5&pi;, 1.5 will be returned.
-     * <li> 'circle': angle value in radians as a multiple of 2&pi;
-     * <li> 'length': length of the arc line of the angle
-     * </ul>
+     *
+     * - `'radians'` (default): angle value in radians
+     * - `'degrees'`: angle value in degrees
+     * - `'semicircle'`: angle value in radians as a multiple of &pi;, e.g. if the angle is 1.5&pi;, 1.5 will be returned.
+     * - `'circle'`: angle value in radians as a multiple of 2&pi;
+     * - `'length'`: length of the arc line of the angle
+     * 
      * It is sufficient to supply the first three characters of the unit, e.g. 'len'.
      * @returns {Number} angle value in various units.
      * @see Sector#L
