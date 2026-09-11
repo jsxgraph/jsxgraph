@@ -1564,8 +1564,14 @@ JXG.registerElement("line", JXG.createLine);
  * Create a segment from two points, coordinate arrays or functions.
  * In the latter two cases the point will be constructed automatically as a fixed invisible point.
  * It is possible to provide a function returning an array or a point, instead of providing an array or a point.
+ *
+ * If the third variable is supplied then the
+ * segment has a fixed length (which may be a function, too)
+ * determined by the absolute value of that number.
  * @param {PointLike} point1 First point
  * @param {PointLike} point2 Second point
+ * @param {number | function} [length] The points are adapted - if possible - such that their distance is equal
+ * to the absolute value of this number.
  *
  * @example  <caption>Create segment providing two points</caption>
  * var p1 = board.create('point', [4.5, 2.0]);
@@ -1580,14 +1586,8 @@ JXG.registerElement("line", JXG.createLine);
  * var l1 = board.create('segment', [p1, p2]);
  * })();
  * </script><pre>
- */
-/**
- * @jsxgraphsignature Segment
- * @param {PointLike} point1 First point
- * @param {PointLike} point2 Second point
- * @param {number | function} length The points are adapted - if possible - such that their distance is equal to the absolute value of this number.
  *
- * @example <caption>Create segment with fixed length</caption>
+ * @example <caption>Create segments with fixed length</caption>
  * var p1 = board.create('point', [4.0, 1.0]);
  * var p2 = board.create('point', [1.0, 1.0]);
  * // AB
