@@ -130,6 +130,12 @@ jxg.extend = function (object, extension, onlyOwn, toLower) {
  */
 
 /**
+ * A number or a function returning a number.
+ *
+ * @typedef {(Number | Function)} NumberLike
+ */
+
+/**
  * A dummy line type. Just for experimenting
  *
  * @typedef {(Line|number[]|JXG.Line)} LineType

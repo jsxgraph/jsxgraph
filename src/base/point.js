@@ -438,53 +438,80 @@ JXG.extend(
 );
 
 /**
- * @class Construct a free or a fixed point. A free point is created if the given parent elements are all numbers
- * and the property fixed is not set or set to false. If one or more parent elements is not a number but a string containing a GEONE<sub>x</sub>T
- * constraint or a function the point will be considered as constrained). That means that the user won't be able to change the point's
+ * @class Construct a free or a fixed point.
+ *
+ * A free point is created if the given parent elements are all numbers and the attribute fixed is not set or set to false (default).
+ * If one or more parent elements are not a number but a function or a GEONExT string with a constraint,
+ * the point will be considered as constrained. That means that the user won't be able to change the point's
  * position directly.
- * @see Glider for a non-free point that is attached to another geometric element.
+ * @see Glider
  * @pseudo
  * @name Point
  * @augments JXG.Point
  * @constructor
  * @type JXG.Point
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {Number,string,function_Number,string,function_Number,string,function} z_,x,y Parent elements can be two or three elements of type number, a string containing a GEONE<sub>x</sub>T
- * constraint, or a function which takes no parameter and returns a number. Every parent element determines one coordinate. If a coordinate is
- * given by a number, the number determines the initial position of a free point. If given by a string or a function that coordinate will be constrained
- * that means the user won't be able to change the point's position directly by mouse because it will be calculated automatically depending on the string
- * or the function's return value. If two parent elements are given the coordinates will be interpreted as 2D affine Euclidean coordinates, if three such
- * parent elements are given they will be interpreted as homogeneous coordinates.
- * @param {JXG.Point_JXG.Transformation_Array} Point,Transformation A point can also be created providing a transformation or an array of transformations.
- * The resulting point is a clone of the base point transformed by the given Transformation. {@see JXG.Transformation}.
+ */
+/**
+ * @jsxgraphsignature Point
+ * Parent elements can be two or three elements of type number, a function which takes no parameter and returns a number, or
+ * a string containing a GEONExT constraint.
  *
- * @example
- * // Create a free point using affine Euclidean coordinates
- * var p1 = board.create('point', [3.5, 2.0]);
- * </pre><div class="jxgbox" id="JXG672f1764-7dfa-4abc-a2c6-81fbbf83e44b" style="width: 200px; height: 200px;"></div>
+ * Every parent element determines one coordinate. If a coordinate is given by a number, the number determines
+ * the initial position of a free point. If given by a string or a function that coordinate will be constrained
+ * that means the user won't be able to change the point's position directly by mouse because it will be calculated
+ * automatically depending on the string or the function's return value.
+ *
+ * If two parent elements are given the coordinates will be interpreted as 2D *affine Euclidean coordinates*, if three such
+ * parent elements are given they will be interpreted as *homogeneous coordinates*.
+ * @param {NumberLike} [z]
+ * @param {NumberLike} x
+ * @param {NumberLike} y
+ *
+ * @example <caption>Create a free point using (affine) Euclidean coordinates</caption>
+ * var p = board.create('point', [3.5, 2.0]);
+ * </pre><div class="jxgbox" id="JXG672f1764-7dfa-4abc-a2c6-81fbbf83e44b" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
+ * (function() {
  *   var board = JXG.JSXGraph.initBoard('JXG672f1764-7dfa-4abc-a2c6-81fbbf83e44b', {boundingbox: [-1, 5, 5, -1], axis: true, showcopyright: false, shownavigation: false});
- *   var p1 = board.create('point', [3.5, 2.0]);
+ *   var p = board.create('point', [3.5, 2.0]);
+ * })();
  * </script><pre>
- * @example
- * // Create a constrained point using anonymous function
+ *
+ * @example <caption>Create a constrained point using anonymous function</caption>
+ * var p1 = board.create('point', [3.5, 2.0]);
  * var p2 = board.create('point', [3.5, function () { return p1.X(); }]);
- * </pre><div class="jxgbox" id="JXG4fd4410c-3383-4e80-b1bb-961f5eeef224" style="width: 200px; height: 200px;"></div>
+ * </pre><div class="jxgbox" id="JXG4fd4410c-3383-4e80-b1bb-961f5eeef224" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
- *   var fpex1_board = JXG.JSXGraph.initBoard('JXG4fd4410c-3383-4e80-b1bb-961f5eeef224', {boundingbox: [-1, 5, 5, -1], axis: true, showcopyright: false, shownavigation: false});
- *   var fpex1_p1 = fpex1_board.create('point', [3.5, 2.0]);
- *   var fpex1_p2 = fpex1_board.create('point', [3.5, function () { return fpex1_p1.X(); }]);
+ * (function() {
+ *   var board = JXG.JSXGraph.initBoard('JXG4fd4410c-3383-4e80-b1bb-961f5eeef224', {boundingbox: [-1, 5, 5, -1], axis: true, showcopyright: false, shownavigation: false});
+ *   var p1 = board.create('point', [3.5, 2.0]);
+ *   var p2 = board.create('point', [3.5, function () { return p1.X(); }]);
+ * })();
  * </script><pre>
+ *
+ */
+/**
+ * @jsxgraphsignature Point
+ * A point can also be created providing a transformation or an array of transformations.
+ * The resulting point is a clone of the base point transformed by the given {@link Transformation}.
+ *
+ * @param {Point} p Point
+ * @param {Transformation|Array} t Transformation or array of transformations
+ *
  * @example
  * // Create a point using transformations
  * var trans = board.create('transform', [2, 0.5], {type:'scale'});
- * var p3 = board.create('point', [p2, trans]);
+ * var p1 = board.create('point', [3.5, 2.0]);
+ * var p2 = board.create('point', [p1, trans]);
  * </pre><div class="jxgbox" id="JXG630afdf3-0a64-46e0-8a44-f51bd197bb8d" style="width: 400px; height: 400px;"></div>
  * <script type="text/javascript">
- *   var fpex2_board = JXG.JSXGraph.initBoard('JXG630afdf3-0a64-46e0-8a44-f51bd197bb8d', {boundingbox: [-1, 9, 9, -1], axis: true, showcopyright: false, shownavigation: false});
- *   var fpex2_trans = fpex2_board.create('transform', [2, 0.5], {type:'scale'});
- *   var fpex2_p2 = fpex2_board.create('point', [3.5, 2.0]);
- *   var fpex2_p3 = fpex2_board.create('point', [fpex2_p2, fpex2_trans]);
+ * (function() {
+ *   var board = JXG.JSXGraph.initBoard('JXG630afdf3-0a64-46e0-8a44-f51bd197bb8d', {boundingbox: [-1, 9, 9, -1], axis: true, showcopyright: false, shownavigation: false});
+ *   var trans = board.create('transform', [2, 0.5], {type:'scale'});
+ *   var p1 = board.create('point', [3.5, 2.0]);
+ *   var p2 = board.create('point', [p1, trans]);
+ * })();
  * </script><pre>
  */
 JXG.createPoint = function (board, parents, attributes) {
@@ -515,49 +542,65 @@ JXG.createPoint = function (board, parents, attributes) {
  * @constructor
  * @type JXG.Point
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {Number_Number_Number_JXG.GeometryElement} z_,x_,y_,GlideObject Parent elements can be two or three elements of type number and the object the glider lives on.
- * The coordinates are completely optional. If not given the origin is used. If you provide two numbers for coordinates they will be interpreted as affine Euclidean
- * coordinates, otherwise they will be interpreted as homogeneous coordinates. In any case the point will be projected on the glide object.
- * @example
- * // Create a glider with user defined coordinates. If the coordinates are not on
- * // the circle (like in this case) the point will be projected onto the circle.
+ */
+/**
+ * @jsxgraphsignature Glider
+ * Parent elements can be two or three elements of type number and the object the glider lives on.
+ *
+ * The coordinates are completely optional. If not given the origin is used.
+ * If you provide two numbers for coordinates they will be interpreted as affine Euclidean
+ * coordinates, otherwise they will be interpreted as homogeneous coordinates.
+ * In any case the point will be projected on the glide object.
+ * @param {NumberLike} [z]
+ * @param {NumberLike} [x]
+ * @param {NumberLike} [y]
+ * @param {JXG.GeometryElement} GlideObject
+ *
+ * @example <caption>Create a glider with user defined coordinates on a circle</caption>
+ * // The point will be projected onto the circle.
  * var p1 = board.create('point', [2.0, 2.0]);
  * var c1 = board.create('circle', [p1, 2.0]);
  * var p2 = board.create('glider', [2.0, 1.5, c1]);
  * </pre><div class="jxgbox" id="JXG4f65f32f-e50a-4b50-9b7c-f6ec41652930" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
- *   var gpex1_board = JXG.JSXGraph.initBoard('JXG4f65f32f-e50a-4b50-9b7c-f6ec41652930', {boundingbox: [-1, 5, 5, -1], axis: true, showcopyright: false, shownavigation: false});
- *   var gpex1_p1 = gpex1_board.create('point', [2.0, 2.0]);
- *   var gpex1_c1 = gpex1_board.create('circle', [gpex1_p1, 2.0]);
- *   var gpex1_p2 = gpex1_board.create('glider', [2.0, 1.5, gpex1_c1]);
+ * (function() {
+ *   var board = JXG.JSXGraph.initBoard('JXG4f65f32f-e50a-4b50-9b7c-f6ec41652930', {boundingbox: [-1, 5, 5, -1], axis: true, showcopyright: false, shownavigation: false});
+ *   var p1 = board.create('point', [2.0, 2.0]);
+ *   var c1 = board.create('circle', [p1, 2.0]);
+ *   var p2 = board.create('glider', [2.0, 1.5, c1]);
+ * })();
  * </script><pre>
- * @example
- * // Create a glider with default coordinates (1,0,0). Same premises as above.
+ *
+ * @example <caption>Create a glider with default coordinates (0,0)</caption>
  * var p1 = board.create('point', [2.0, 2.0]);
  * var c1 = board.create('circle', [p1, 2.0]);
  * var p2 = board.create('glider', [c1]);
- * </pre><div class="jxgbox" id="JXG4de7f181-631a-44b1-a12f-bc4d995609e8" style="width: 200px; height: 200px;"></div>
+ * </pre><div class="jxgbox" id="JXG4de7f181-631a-44b1-a12f-bc4d995609e8" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
- *   var gpex2_board = JXG.JSXGraph.initBoard('JXG4de7f181-631a-44b1-a12f-bc4d995609e8', {boundingbox: [-1, 5, 5, -1], axis: true, showcopyright: false, shownavigation: false});
- *   var gpex2_p1 = gpex2_board.create('point', [2.0, 2.0]);
- *   var gpex2_c1 = gpex2_board.create('circle', [gpex2_p1, 2.0]);
- *   var gpex2_p2 = gpex2_board.create('glider', [gpex2_c1]);
+ * (function() {
+ *   var board = JXG.JSXGraph.initBoard('JXG4de7f181-631a-44b1-a12f-bc4d995609e8', {boundingbox: [-1, 5, 5, -1], axis: true, showcopyright: false, shownavigation: false});
+ *   var p1 = board.create('point', [2.0, 2.0]);
+ *   var c1 = board.create('circle', [p1, 2.0]);
+ *   var p2 = board.create('glider', [c1]);
+ * })();
  * </script><pre>
- *@example
- * //animate example 2
+ *
+ *@example <caption>Animate glider</caption>
  * var p1 = board.create('point', [2.0, 2.0]);
  * var c1 = board.create('circle', [p1, 2.0]);
- * var p2 = board.create('glider', [c1]);
- * var button1 = board.create('button', [1, 7, 'start animation',function(){p2.startAnimation(1,4)}]);
- * var button2 = board.create('button', [1, 5, 'stop animation',function(){p2.stopAnimation()}]);
- * </pre><div class="jxgbox" id="JXG4de7f181-631a-44b1-a12f-bc4d133709e8" style="width: 200px; height: 200px;"></div>
+ * var p2 = board.create('glider', [4, 2, c1]);
+ * var button1 = board.create('button', [1, 7, 'start animation', function(){ p2.startAnimation(1, 8); }]);
+ * var button2 = board.create('button', [1, 5, 'stop animation', function(){ p2.stopAnimation(); }]);
+ * </pre><div class="jxgbox" id="JXG4de7f181-631a-44b1-a12f-bc4d133709e8" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
- *   var gpex3_board = JXG.JSXGraph.initBoard('JXG4de7f181-631a-44b1-a12f-bc4d133709e8', {boundingbox: [-1, 10, 10, -1], axis: true, showcopyright: false, shownavigation: false});
- *   var gpex3_p1 = gpex3_board.create('point', [2.0, 2.0]);
- *   var gpex3_c1 = gpex3_board.create('circle', [gpex3_p1, 2.0]);
- *   var gpex3_p2 = gpex3_board.create('glider', [gpex3_c1]);
- *   gpex3_board.create('button', [1, 7, 'start animation',function(){gpex3_p2.startAnimation(1,4)}]);
- *   gpex3_board.create('button', [1, 5, 'stop animation',function(){gpex3_p2.stopAnimation()}]);
+ * (function() {
+ *   var board = JXG.JSXGraph.initBoard('JXG4de7f181-631a-44b1-a12f-bc4d133709e8', {boundingbox: [-1, 10, 10, -1], axis: true, showcopyright: false, shownavigation: false});
+ *   var p1 = board.create('point', [2.0, 2.0]);
+ *   var c1 = board.create('circle', [p1, 2.0]);
+ *   var p2 = board.create('glider', [4, 2, c1]);
+ *   board.create('button', [1, 7, 'start animation',function() { p2.startAnimation(1, 8); }]);
+ *   board.create('button', [1, 5, 'stop animation',function() { p2.stopAnimation(); }]);
+ * })();
  * </script><pre>
  */
 JXG.createGlider = function (board, parents, attributes) {
