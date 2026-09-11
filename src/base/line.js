@@ -2940,7 +2940,7 @@ JXG.createNormal = function (board, parents, attributes) {
 };
 
 /**
- * @class The radical axis is the line connecting the two interstion points of two circles with distinct centers.
+ * @class The radical axis is the line connecting the two intersection points of two circles with distinct centers.
  * The angular bisector of the polar lines of the circle centers with respect to the other circle is always the radical axis.
  * The radical axis passes through the intersection points when the circles intersect.
  * When a circle about the midpoint of circle centers, passing through the circle centers, intersects the circles, the polar lines pass through those intersection points.
