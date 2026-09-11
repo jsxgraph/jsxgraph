@@ -7,8 +7,8 @@
 Now:
 
 - Each signature is in a separate jsdoc block
+- Starting the block with `@jsxgraphsignature Element` is mandatory
 - Use type {@link PointLike} from file `jxg.js`
-- IStaring with `@jsxgraphsignature Element` is mandatory
 - The description __must__ follow directly after `@jsxgraphsignature`
 
 __Example__
