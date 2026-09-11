@@ -124,7 +124,7 @@ JXG.AbstractRenderer = function () {
     this.vOffsetText = 0;
 
     /**
-     * If this property is set to <tt>true</tt> the visual properties of the elements are updated
+     * If this property is set to <tt>true</tt> the visual properties (attributes) of the elements are updated
      * on every update. Visual properties means: All the stuff stored in the
      * {@link JXG.GeometryElement#visProp} property won't be set if enhancedRendering is <tt>false</tt>
      * @type Boolean
@@ -1917,7 +1917,7 @@ JXG.extend(
          * properties "enabled", "label", and "live". Additionally, all available properties from
          * {@link https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA} may be set.
          * <p>
-         * In JSXGraph, the available properties are used without the leading 'aria-'.
+         * In JSXGraph, the available attributes are used without the leading 'aria-'.
          * For example, the value of the JSXGraph attribute 'aria.label' will be set to the
          * HTML attribute 'aria-label'.
          *

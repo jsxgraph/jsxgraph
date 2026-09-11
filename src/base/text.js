@@ -81,7 +81,7 @@ var priv = {
  * @augments JXG.CoordsElement
  * @param {string|JXG.Board} board The board the new text is drawn on.
  * @param {Array} coordinates An array with the user coordinates of the text.
- * @param {Object} attributes An object containing visual properties and optional a name and a id.
+ * @param {Object} attributes An object containing attributes and optional a name and a id.
  * @param {string|function} content A string or a function returning a string.
  *
  */

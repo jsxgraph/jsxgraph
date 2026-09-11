@@ -4,8 +4,8 @@ var self = this;
 ?>
 <?js if (data.kind !== 'module' && !data.hideconstructor && data.kind === 'jsxgraphsignature') { ?>
 
-<details>
-    <summary class="name" id="<?js= id ?>"><?js= data.attribs ?><?js
+<details class="signature">
+    <summary class="signature" id="<?js= id ?>"><?js= data.attribs ?><?js
       if(kind === 'class' && name.indexOf('module:') === 0) {
         print('new (require("' + name.slice(7) + '"))');
       } else if(kind === 'class') {
@@ -16,11 +16,11 @@ var self = this;
         // print(name);
 
         // Build up string like "board.create('element' [a, b, c])"
-        let name_str = `board.create('${memberof.toLowerCase()}', `;
+        let name_str = `<span class="signature">board.create('${memberof.toLowerCase()}', `;
         print(name_str);
       }
       // Extract params from data.signature:
-    ?><?js= (data.signature.replace(/\(/, "[").replace(/\)/, "]") + ")" || '') ?></summary>
+    ?><?js= (data.signature.replace(/\(/, "[").replace(/\)/, "]") + ")</span>" || '') ?></summary>
 
 <!--
     <?js if (data.summary) { ?>

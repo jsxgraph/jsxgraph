@@ -781,7 +781,7 @@ JXG.extend(
  * @type JXG.Group
  * @param {JXG.Board} board The board the points are on.
  * @param {Array} parents Array of points to group.
- * @param {Object} attributes Visual properties (unused).
+ * @param {Object} attributes Attributes (unused).
  * @returns {JXG.Group}
  *
  * @example

@@ -54,7 +54,7 @@ import Type from "../utils/type.js";
  * of ticks on an axis.
  * @param {JXG.Line} line Reference to the axis the ticks are drawn on.
  * @param {Number|Array} ticks Number defining the distance between two major ticks or an array defining static ticks.
- * @param {Object} attributes Properties
+ * @param {Object} attributes Attributes
  * @see JXG.Line#addTicks
  * @constructor
  * @augments JXG.GeometryElement

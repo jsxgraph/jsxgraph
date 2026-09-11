@@ -1641,8 +1641,8 @@ JXG.Options = {
          * ARIA settings for JSXGraph elements.
          * Besides 'label' and 'live', all available properties from
          * <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA">https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA</a> may be set.
-         * In JSXGraph, the available properties are used without the leading 'aria-'.
-         * For example, the value of the JSXGraph attribute 'aria.label' will be set to the
+         * In JSXGraph, the available attributes are used without the leading 'aria-'.
+         * For example, the value of the JSXGraph attribute `aria.label` will be set to the
          * HTML attribute 'aria-label' (ignoring 'aria.enabled').
          *
          * @name aria
@@ -1677,9 +1677,9 @@ JXG.Options = {
         /**
          * Apply CSS classes to an element in non-highlighted view. It is possible to supply one or more
          * CSS classes separated by blanks.
-         * <p>
+         *
          * For non-text and non-image elements, this feature is available for the SVG renderer, only.
-         * <p>
+         *
          * For text and image elements the specificity (priority) of JSXGraph attributes is higher than the CSS class properties, see
          * {@link Text#cssDefaultStyle}
          * For other elements, however, the specificity of a CSS class is higher than the corresponding JSXGraph attribute, see the example below.
@@ -2584,7 +2584,7 @@ JXG.Options = {
         trace: false,
 
         /**
-         * Extra visual properties for traces of an element
+         * Extra visual attributes for traces of an element
          * @type Object
          * @see JXG.GeometryElement#trace
          * @name JXG.GeometryElement#traceAttributes
@@ -2637,7 +2637,7 @@ JXG.Options = {
 
         /**
          * Transition duration (in milliseconds) for certain changes of properties like color and opacity.
-         * The properties can be set in the attribute transitionProperties
+         * The properties can be set in the attribute `transitionProperties`
          * Works in SVG renderer, only.
          * @type Number
          * @name JXG.GeometryElement#transitionDuration
@@ -2656,17 +2656,16 @@ JXG.Options = {
         transitionDuration: 100,
 
         /**
-         * Properties which change smoothly in the time set in transitionDuration.
+         * Attributes which change smoothly in the time set in transitionDuration.
          * Possible values are
-         * ['fill', 'fill-opacity', 'stroke', 'stroke-opacity', 'stroke-width', 'width', 'height', 'rx', 'ry']
+         * `['fill', 'fill-opacity', 'stroke', 'stroke-opacity', 'stroke-width', 'width', 'height', 'rx', 'ry']`
          * (and maybe more) for geometry elements and
-         * ['color', 'opacity', 'all'] for HTML texts.
+         * `['color', 'opacity', 'all']` for HTML texts.
          *
          * @type Array
          * @name JXG.GeometryElement#transitionProperties
          * @attribute
          * @see JXG.GeometryElement#transitionDuration
-         *
          *
          * @example
          * var p1 = board.create("point", [0, 2], {
@@ -10989,7 +10988,7 @@ JXG.Options = {
     },
 
     /**
-     * Abbreviations of attributes. Setting the shortcut means setting abbreviated properties
+     * Abbreviations of attributes. Setting the shortcut means setting abbreviated attributes
      * to the same value.
      * It is used in {@link JXG.GeometryElement#setAttribute} and in
      * the constructor {@link JXG.GeometryElement}.
@@ -11008,7 +11007,7 @@ JXG.Options = {
 };
 
     /**
-     * Holds all possible properties and the according validators for geometry elements.
+     * Holds all possible attributes and the according validators for geometry elements.
      * A validator is either a function
      * which takes one parameter and returns true, if the value is valid for the property,
      * or it is false if no validator is required.
@@ -11122,7 +11121,7 @@ JXG.Options = {
             };
 
         // this seems like a redundant step but it makes sure that
-        // all properties in the validator object have lower case names
+        // all attribute names in the validator object have lower case names
         // and the validator object is easier to read.
         for (i in validators) {
             if (validators.hasOwnProperty(i)) {

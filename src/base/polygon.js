@@ -49,7 +49,7 @@ import GeometryElement from "./element.js";
  * @param {JXG.Board} board Reference to the board the polygon is to be drawn on.
  * @param {Array} vertices Unique identifiers for the points defining the polygon.
  * Last point must be first point. Otherwise, the first point will be added at the list.
- * @param {Object} attributes An object which contains properties as given in {@link JXG.Options.elements}
+ * @param {Object} attributes An object which contains attributes as given in {@link JXG.Options.elements}
  * and {@link JXG.Options.polygon}.
  */
 JXG.Polygon = function (board, vertices, attributes) {

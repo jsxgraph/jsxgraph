@@ -266,14 +266,14 @@ JXG.GeometryElement = function (board, attributes, type, oclass) {
     ];
 
     /**
-     * An associative array containing all visual properties.
+     * An associative array containing all attributes.
      * @type Object
      * @default empty object
      */
     this.visProp = {};
 
     /**
-     * An associative array containing visual properties which are calculated from
+     * An associative array containing attributes which are calculated from
      * the attribute values (i.e. visProp) and from other constraints.
      * An example: if an intersection point does not have real coordinates,
      * visPropCalc.visible is set to false.
@@ -826,9 +826,9 @@ JXG.extend(
         },
 
         /**
-         * Animates properties for that object like stroke or fill color, opacity and maybe
+         * Animates attributes for that object like stroke or fill color, opacity and maybe
          * even more later.
-         * @param {Object} hash Object containing properties with target values for the animation.
+         * @param {Object} hash Object containing attributes with target values for the animation.
          * @param {number} time Number of milliseconds to complete the animation.
          * @param {Object} [options] Optional settings for the animation:<ul><li>callback: A function that is called as soon as the animation is finished.</li></ul>
          * @returns {JXG.GeometryElement} A reference to the object
@@ -1907,7 +1907,7 @@ JXG.extend(
         },
 
         /**
-         * Uses the "normal" properties of the element.
+         * Uses the "normal" attributes of the element.
          * @returns {JXG.Board}
          */
         noHighlight: function () {
@@ -2228,8 +2228,8 @@ JXG.extend(
 
         /**
          * Snaps the element to the grid. Only works for points, lines and circles. Points will snap to the grid
-         * as defined in their properties {@link JXG.Point#snapSizeX} and {@link JXG.Point#snapSizeY}. Lines and circles
-         * will snap their parent points to the grid, if they have {@link JXG.Point#snapToGrid} set to true.
+         * as defined in their attributes {@link Point#snapSizeX} and {@link Point#snapSizeY}. Lines and circles
+         * will snap their parent points to the grid, if they have {@link Point#snapToGrid} set to true.
          * @private
          * @ignore
          * @returns {JXG.GeometryElement} Reference to the element.
@@ -2240,7 +2240,7 @@ JXG.extend(
 
         /**
          * Snaps the element to points. Only works for points. Points will snap to the next point
-         * as defined in their properties {@link JXG.Point#attractorDistance} and {@link JXG.Point#attractorUnit}.
+         * as defined in their attributes {@link Point#attractorDistance} and {@link Point#attractorUnit}.
          * Lines and circles
          * will snap their parent points to points.
          * @private

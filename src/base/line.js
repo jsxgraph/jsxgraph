@@ -1545,15 +1545,16 @@ JXG.registerElement("line", JXG.createLine);
 
 /**
  * @class A (line) segment defined by two points.
- * It's strictly spoken just a wrapper for element {@link Line} with {@link Line#straightFirst}
+ *
+ * Strictly spoken, it's just a wrapper for element {@link Line} with {@link Line#straightFirst}
  * and {@link Line#straightLast} attributes set to false. If there is a third variable then the
  * segment has a fixed length (which may be a function, too) determined by the absolute value of
  * that number.
  * @pseudo
  * @name Segment
  * @augments JXG.Line
- * @constructor
  * @type JXG.Line
+ * @constructor
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
  * @see Line
  *
@@ -1563,8 +1564,8 @@ JXG.registerElement("line", JXG.createLine);
  * Create a segment from two points, coordinate arrays or functions.
  * In the latter two cases the point will be constructed automatically as a fixed invisible point.
  * It is possible to provide a function returning an array or a point, instead of providing an array or a point.
- * @param {JXG.Point | number[] | function():JXG.Point | function():number[]} point1 First point
- * @param {JXG.Point | number[] | function():JXG.Point | function():number[]} point2 Second point
+ * @param {PointLike} point1 First point
+ * @param {PointLike} point2 Second point
  *
  * @example  <caption>Create segment providing two points</caption>
  * var p1 = board.create('point', [4.5, 2.0]);
@@ -1582,8 +1583,8 @@ JXG.registerElement("line", JXG.createLine);
  */
 /**
  * @jsxgraphsignature Segment
- * @param {JXG.Point | number[] | function():JXG.Point | function():number[]} point1 First point
- * @param {JXG.Point | number[] | function():JXG.Point | function():number[]} point2 Second point
+ * @param {PointLike} point1 First point
+ * @param {PointLike} point2 Second point
  * @param {number | function} length The points are adapted - if possible - such that their distance is equal to the absolute value of this number.
  *
  * @example <caption>Create segment with fixed length</caption>
@@ -1684,9 +1685,9 @@ JXG.registerElement("segment", JXG.createSegment);
  * and {@link Line#straightLast} properties set to false and {@link Line#lastArrow} set to true.
  * @pseudo
  * @name Arrow
- * @augments Line
- * @constructor
+ * @augments JXG.Line
  * @type JXG.Line
+ * @constructor
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
  * @see Line
  */
@@ -1695,8 +1696,8 @@ JXG.registerElement("segment", JXG.createSegment);
  * Create an arrow from two points, coordinate arrays or functions.
  * In the latter two cases the point will be constructed automatically as a fixed invisible point.
  * It is possible to provide a function returning an array or a point, instead of providing an array or a point.
- * @param {JXG.Point | number[] | function():JXG.Point | function():number[]} point1 First point
- * @param {JXG.Point | number[] | function():JXG.Point | function():number[]} point2 Second point
+ * @param {PointLike} point1 First point
+ * @param {PointLike} point2 Second point
  * @example
  * // Create an arrow providing two points.
  * var p1 = board.create('point', [4.5, 2.0]);
@@ -1728,6 +1729,7 @@ JXG.registerElement("segment", JXG.createSegment);
  */
 /**
  * @jsxgraphsignature Arrow
+ * Arrow by one function
  * @param {function} f This function must return an array containing three numbers forming the arrow's homogeneous coordinates.
  *
  */
@@ -1749,13 +1751,14 @@ JXG.registerElement("arrow", JXG.createArrow);
 
 /**
  * @class Axis is a line with optional ticks and labels.
- * It's strictly spoken just a wrapper for element {@link Line} with {@link Line#straightFirst}
- * and {@link Line#straightLast} properties set to true. Additionally {@link Line#lastArrow} is set to true and default {@link Ticks} will be created.
+ *
+ * Strictly spoken, it's just a wrapper for element {@link Line} with {@link Line#straightFirst}
+ * and {@link Line#straightLast} attributes set to true. Additionally {@link Line#lastArrow} is set to true and default {@link Ticks} are added.
  * @pseudo
  * @name Axis
- * @augments Line
- * @constructor
+ * @augments JXG.Line
  * @type JXG.Line
+ * @constructor
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
  *
  */
@@ -1763,8 +1766,8 @@ JXG.registerElement("arrow", JXG.createArrow);
  * @jsxgraphsignature Axis
  * Parent elements can be two elements either of type {@link JXG.Point} or array of numbers describing the
  * coordinates of a point. In the latter case, the point will be constructed automatically as a fixed invisible point.
- * @param {JXG.Point | number[] | function():JXG.Point | function():number[]} point1 First point
- * @param {JXG.Point | number[] | function():JXG.Point | function():number[]} point2 Second point
+ * @param {PointLike} point1 First point
+ * @param {PointLike} point2 Second point
  */
 /**
  * @jsxgraphsignature Axis
@@ -1801,7 +1804,7 @@ JXG.registerElement("arrow", JXG.createArrow);
  * });
  *
  * </pre><div id="JXG34174cc4-0050-4ab4-af69-e91365d0666f" class="jxgbox" style="width: 300px; height: 300px;"></div>
- * <script src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" id="MathJax-script"></script>
+ * <!--<script src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" id="MathJax-script"></script>-->
  * <script type="text/javascript">
  *     (function() {
  *         var board = JXG.JSXGraph.initBoard('JXG34174cc4-0050-4ab4-af69-e91365d0666f',
@@ -2140,9 +2143,9 @@ JXG.registerElement("axis", JXG.createAxis);
  * in the orthogonal projection of the point to the object will be constructed.
  * @pseudo
  * @name Tangent
- * @augments Line
- * @constructor
+ * @augments JXG.Line
  * @type JXG.Line
+ * @constructor
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
  *
  */
@@ -2495,8 +2498,8 @@ JXG.createTangent = function (board, parents, attributes) {
  * @description A normal is a line through a given point on an element of type line, circle, curve, or turtle and orthogonal to that object.
  * @constructor
  * @name Normal
+ * @augments JXG.Line
  * @type JXG.Line
- * @augments Line
  *
  * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
  *
@@ -2943,14 +2946,14 @@ JXG.createNormal = function (board, parents, attributes) {
  * When a circle about the midpoint of circle centers, passing through the circle centers, intersects the circles, the polar lines pass through those intersection points.
  * @pseudo
  * @name RadicalAxis
- * @augments Line
  * @constructor
+ * @augments JXG.Line
  * @type JXG.Line
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
  *
  */
 /**
- * @jsxgraphsignature  RadicalAxis
+ * @jsxgraphsignature RadicalAxis
  * @param {JXG.Circle} circle one of the two respective circles.
  * @param {JXG.Circle} circle the other of the two respective circles.
  *
@@ -3035,8 +3038,8 @@ JXG.createRadicalAxis = function (board, parents, attributes) {
  * conic as the tangent line to that conic at that point.
  * See {@link https://en.wikipedia.org/wiki/Pole_and_polar} for more information on pole and polar.
  * @name PolarLine
- * @augments Line
  * @constructor
+ * @augments JXG.Line
  * @type JXG.Line
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
  *
@@ -3156,8 +3159,8 @@ JXG.createPolarLine = function (board, parents, attributes) {
  * Attention: from a technical point of view, the point from which the tangent to the conic/circle is constructed is not an element of
  * the tangent line.
  * @name TangentTo
- * @augments Line
  * @constructor
+ * @augments JXG.Line
  * @type JXG.Line
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
  *

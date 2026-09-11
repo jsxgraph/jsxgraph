@@ -198,8 +198,10 @@ function addSignatureReturns(f) {
         returnTypesString = util.format( ' &rarr; %s{%s}', attribsString, returnTypes.join('|') );
     }
 
-    f.signature = '<span class="signature">' + (f.signature || '') + '</span>' +
+    f.signature = (f.signature || '') +
         '<span class="type-signature">' + returnTypesString + '</span>';
+    // f.signature = '<span class="signature">' + (f.signature || '') + '</span>' +
+    //     '<span class="type-signature">' + returnTypesString + '</span>';
 }
 
 function addSignatureTypes(f) {

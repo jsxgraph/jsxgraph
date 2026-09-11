@@ -564,7 +564,7 @@ JXG.extend(
         },
 
         /**
-         * Sets properties of the turtle, see also {@link JXG.GeometryElement#setAttribute}.
+         * Sets attributes of the turtle, see also {@link JXG.GeometryElement#setAttribute}.
          * Sets the property for all curves of the turtle in the past and in the future.
          * @param {Object} attributes key:value pairs
          * @returns {JXG.Turtle} pointer to the turtle object

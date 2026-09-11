@@ -57,7 +57,7 @@ import CoordsElement from "./coordselement.js";
  * @augments JXG.CoordsElement
  * @param {string|JXG.Board} board The board the new point is drawn on.
  * @param {Array} coordinates An array with the user coordinates of the point.
- * @param {Object} attributes An object containing visual properties like in {@link JXG.Options#point} and
+ * @param {Object} attributes An object containing attributes like in {@link JXG.Options#point} and
  * {@link JXG.Options#elements}, and optional a name and an id.
  * @see JXG.Board#generateName
  */

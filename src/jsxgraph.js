@@ -211,7 +211,7 @@ JXG.JSXGraph = {
     },
 
     /**
-     * Further initialization of the board. Set some properties from attribute values.
+     * Further initialization of the board, e.g. set some attributes.
      *
      * @param {JXG.Board} board
      * @param {Object} attr attributes object
@@ -232,7 +232,7 @@ JXG.JSXGraph = {
     /**
      *
      * @param {String|Object} container id of or reference to the HTML element in which the board is painted.
-     * @param {Object} attr An object that sets some of the board properties.
+     * @param {Object} attr An object that sets some of the board attributes.
      *
      * @private
      */
@@ -293,7 +293,7 @@ JXG.JSXGraph = {
      * Initialize a new board.
      *
      * @param {String|Object} box id of or reference to the HTML element in which the board is painted.
-     * @param {Object} attributes An object that sets some of the board properties.
+     * @param {Object} attributes An object that sets some of the board attributes.
      * See {@link JXG.Board} for a list of available attributes of the board.
      * Most of these attributes can also be set via {@link JXG.Options},
      *

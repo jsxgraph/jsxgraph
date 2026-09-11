@@ -101,23 +101,23 @@ jxg.extend = function (object, extension, onlyOwn, toLower) {
 
 /**
  * Function returning a point like object.
- * 
+ *
  * This could be
  * - a {@link point}
  * - coordinate array `[x, y]`
  * - coordinate array `[z, x, y]` with homogeneous coordinates.
  * In this case, `z` is 0 for infinite points, non-zero otherwise.
- *   
+ *
  * @callback PointFunction
  * @returns PointLike
  */
 
 /**
  * An array of length 2 or 3.
- * 
+ *
  * - coordinate array `[x, y]`: *affine coordinates*
  * - coordinate array `[z, x, y]`: *homogeneous coordinates*.
- * 
+ *
  * In most cases, both types (affine or homogeneous) coordinates can be used.
  *
  * @typedef {array} Coordinates2D
@@ -395,7 +395,7 @@ jxg.extend(
          * Initialize a new board.
          * Alias of {@link JXG.JSXGraph.initBoard}.
          * @param {String|Object} box id of or reference to the HTML element in which the board is painted.
-         * @param {Object} attributes An object that sets some of the board properties.
+         * @param {Object} attributes An object that sets some of the board attributes.
          * See {@link JXG.Board} for a list of available attributes of the board.
          * Most of these attributes can also be set globally via {@link JXG.Options}.
          *
@@ -613,7 +613,7 @@ jxg.extend(
          * However, not all elements will look good if displayed outside of the JSXGraph board - be careful.
          *
          * @param {String|Object} box id of or reference to the HTML element in which the board is painted into a sub-element of type div.
-         * @param {Object} attributes An object that sets some of the board properties and properties of the sub-element containing the board.
+         * @param {Object} attributes An object that sets some of the board attributes and attributes of the sub-element containing the board.
          * See {@link JXG.Board} for a list of available attributes of the board.
          * Most of these attributes can also be set globally via {@link JXG.Options}.
          *

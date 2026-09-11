@@ -346,13 +346,27 @@ footer {
   color: #eee;
 }
 
-.name, .signature {
+.name, span.signature {
   font-family: Consolas, Monaco, 'Andale Mono', monospace
 }
 
-.signature {
+/*
+  signature details
+*/
+details.signature {
+    margin-left: 1em;
+}
+
+/* Font color inside of signature summary */
+summary .signature {
     color: #fc83ff;
 }
+
+summary.signature {
+    background-color: #666666;
+    font-size: 100%;
+}
+
 
 .details {
   margin-top: 6px;
@@ -417,6 +431,7 @@ footer {
   color: #aeaeae;
 }
 
+/* Background for source code in examples */
 .prettyprint code {
   line-height: 18px;
   display: block;
@@ -524,10 +539,11 @@ thead tr, thead tr {
 .params td.description > p:last-child, .props td.description > p:last-child {
    margin-bottom: 0;
    padding-bottom: 0;
+   font-family: "Source Sans Pro";
 }
 
 span.param-type, .params td .param-type, .param-type dd {
-   color: #606;
+  color: #606;
   font-family: Consolas, Monaco, 'Andale Mono', monospace
 }
 
@@ -800,8 +816,7 @@ html[data-search-mode] .level-hide {
 /* Collapsing CSS */
 summary {
   background-color: #eee;
-  cursor: pointer;
-  padding: 8px;
+  padding: 0.5em;
   margin-bottom: 8px;
 }
 
