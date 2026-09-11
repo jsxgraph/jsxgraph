@@ -1,6 +1,6 @@
 ## Attributes
 
-- Add `@attribute` to each attribute comment, especially in `options.js` and `options3d.js`
+- Add `@attribute` to each attribute comment, in particular in `options.js` and `options3d.js`
 
 ## Signatures
 
@@ -8,15 +8,9 @@ Now:
 
 - Each signature is in a separate jsdoc block
 - Use type {@link PointLike} from file `jxg.js`
-- `@jsxgraphsignature Element` are mandatory
+- IStaring with `@jsxgraphsignature Element` is mandatory
 - The description __must__ follow directly after `@jsxgraphsignature`
 
-Old:
-
-- Use type {@link PointLike} from file `jxg.js`
-- `@memberof`, `@instance` and `@jsxgraphsignature` are mandatory
-- The description __must__ follow directly after `@jsxgraphsignature`
- 
 __Example__
 
 ```
@@ -41,3 +35,9 @@ __Example__
  */
 ```
 
+Old:
+
+- Use type {@link PointLike} from file `jxg.js`
+- `@memberof`, `@instance` and `@jsxgraphsignature` are mandatory
+- The description __must__ follow directly after `@jsxgraphsignature`
+ 
