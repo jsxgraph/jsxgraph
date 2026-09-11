@@ -1768,17 +1768,6 @@ JXG.registerElement("arrow", JXG.createArrow);
  * coordinates of a point. In the latter case, the point will be constructed automatically as a fixed invisible point.
  * @param {PointLike} point1 First point
  * @param {PointLike} point2 Second point
- */
-/**
- * @jsxgraphsignature Axis
- * An axis can also be created providing three numbers.
- * The line is defined as
- * the set of solutions of the equation $a\cdot z+b \cdot x+c\cdot y = 0$, i.e. a point $(z,x, y)$ is on the axis line $(a,b,c)$
- * if and only if $a\cdot z+b \cdot x+c\cdot y = 0$.
- * In JSXGraph, for all finite points, z is normalized to the value 1.
- * @param {number | function():number} a
- * @param {number | function():number} b
- * @param {number | function():number} c
  * @example
  * // Create an axis providing two coordinate pairs.
  * var l1 = board.create('axis', [[0.0, 1.0], [1.0, 1.3]]);
@@ -1825,6 +1814,17 @@ JXG.registerElement("arrow", JXG.createArrow);
  *     })();
  *
  * </script><pre>
+ */
+/**
+ * @jsxgraphsignature Axis
+ * An axis can also be created providing three numbers.
+ * The line is defined as
+ * the set of solutions of the equation $a\cdot z+b \cdot x+c\cdot y = 0$, i.e. a point $(z,x, y)$ is on the axis line $(a,b,c)$
+ * if and only if $a\cdot z+b \cdot x+c\cdot y = 0$.
+ * In JSXGraph, for all finite points, z is normalized to the value 1.
+ * @param {number | function():number} a
+ * @param {number | function():number} b
+ * @param {number | function():number} c
  *
  */
 JXG.createAxis = function (board, parents, attributes) {
