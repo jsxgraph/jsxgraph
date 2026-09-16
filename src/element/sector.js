@@ -1790,7 +1790,7 @@ JXG.createAngle = function (board, parents, attributes) {
      * - `'semicircle'`: angle value in radians as a multiple of &pi;, e.g. if the angle is 1.5&pi;, 1.5 will be returned.
      * - `'circle'`: angle value in radians as a multiple of 2&pi;
      * - `'length'`: length of the arc line of the angle
-     * 
+     *
      * It is sufficient to supply the first three characters of the unit, e.g. 'len'.
      * @returns {Number} angle value in various units.
      * @see Sector#L

@@ -865,34 +865,13 @@ JXG.extend(
  * @constructor
  * @type JXG.Circle
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {JXG.Point_number,JXG.Point,JXG.Line,JXG.Circle} center,radius The center must be given as a {@link JXG.Point},
- * see {@link JXG.providePoints}, but the radius can be given
- * as a number (which will create a circle with a fixed radius),
- * another {@link JXG.Point}, a {@link JXG.Line} (the distance of start and end point of the
- * line will determine the radius), or another {@link JXG.Circle}.
- * <p>
- * If the radius is supplied as number or output of a function, its absolute value is taken.
+ */
+/**
+ * @jsxgraphsignature Circle
  *
- * @example
- * // Create a circle providing two points
- * var p1 = board.create('point', [2.0, 2.0]),
- *     p2 = board.create('point', [2.0, 0.0]),
- *     c1 = board.create('circle', [p1, p2]);
+ * @param {PointLike} center
+ * @param {NumberLike} radius The absolute value of this number is taken as radius
  *
- * // Create another circle using the above circle
- * var p3 = board.create('point', [3.0, 2.0]),
- *     c2 = board.create('circle', [p3, c1]);
- * </pre><div class="jxgbox" id="JXG5f304d31-ef20-4a8e-9c0e-ea1a2b6c79e0" style="width: 400px; height: 400px;"></div>
- * <script type="text/javascript">
- * (function() {
- *   var cex1_board = JXG.JSXGraph.initBoard('JXG5f304d31-ef20-4a8e-9c0e-ea1a2b6c79e0', {boundingbox: [-1, 9, 9, -1], axis: true, showcopyright: false, shownavigation: false});
- *       cex1_p1 = cex1_board.create('point', [2.0, 2.0]),
- *       cex1_p2 = cex1_board.create('point', [2.0, 0.0]),
- *       cex1_c1 = cex1_board.create('circle', [cex1_p1, cex1_p2]),
- *       cex1_p3 = cex1_board.create('point', [3.0, 2.0]),
- *       cex1_c2 = cex1_board.create('circle', [cex1_p3, cex1_c1]);
- * })();
- * </script><pre>
  * @example
  * // Create a circle providing two points
  * var p1 = board.create('point', [2.0, 2.0]),
@@ -911,6 +890,99 @@ JXG.extend(
  * var c2 = board.create('circle', [function() { return [p1.X(), p1.Y() + 1];}, function() { return c1.Radius(); }]);
  * })();
  * </script><pre>
+ */
+/**
+ * @jsxgraphsignature Circle
+ * @param {PointLike} center
+ * @param {PointLike} point Point on circle, defining the radius
+ * @example
+ * // Create a circle providing two points
+ * var p1 = board.create('point', [2.0, 2.0]),
+ *     p2 = board.create('point', [2.0, 0.0]),
+ *     c1 = board.create('circle', [p1, p2]);
+ *
+ * </pre><div class="jxgbox" id="JXG6af4d25a-b1ea-11f1-8eba-4c5f7014354d" style="width: 400px; height: 400px;"></div>
+ * <script type="text/javascript">
+ * (function() {
+ *   var board = JXG.JSXGraph.initBoard('JXG6af4d25a-b1ea-11f1-8eba-4c5f7014354d', {boundingbox: [-1, 9, 9, -1], axis: true, showcopyright: false, shownavigation: false});
+ *       p1 = board.create('point', [2.0, 2.0]),
+ *       p2 = board.create('point', [2.0, 0.0]),
+ *       c1 = board.create('circle', [p1, p2]);
+ * })();
+ * </script><pre>
+ */
+/**
+ * @jsxgraphsignature Circle
+ * @param {PointLike} center
+ * @param {Line} line Line, the distance of its start and end point of the determines the radius
+ *
+ * // Create a line providing two points
+ * var p1 = board.create('point', [2.0, 2.0]),
+ *     p2 = board.create('point', [2.0, 0.0]),
+ *     l1 = board.create('line', [p1, p2]);
+ *
+ * // Create another circle using the above circle
+ * var p3 = board.create('point', [3.0, 2.0]),
+ *     c = board.create('circle', [p3, l1]);
+ * </pre><div class="jxgbox" id="JXGdbb7f6db-b1ea-11f1-a94e-4c5f7014354d" style="width: 400px; height: 400px;"></div>
+ * <script type="text/javascript">
+ * (function() {
+ *   var board = JXG.JSXGraph.initBoard('JXGdbb7f6db-b1ea-11f1-a94e-4c5f7014354d', {boundingbox: [-1, 9, 9, -1], axis: true, showcopyright: false, shownavigation: false});
+ *       p1 = board.create('point', [2.0, 2.0]),
+ *       p2 = board.create('point', [2.0, 0.0]),
+ *       l1 = board.create('line', [p1, p2]),
+ *       p3 = board.create('point', [3.0, 2.0]),
+ *       c = board.create('circle', [p3, l1]);
+ * })();
+ * </script><pre>
+ */
+/**
+ * @jsxgraphsignature Circle
+ * @param {PointLike} center
+ * @param {Circle} circle The circle radius is copied from the radius of that circle
+ *
+ * @example
+ * // Create a circle providing two points
+ * var p1 = board.create('point', [2.0, 2.0]),
+ *     p2 = board.create('point', [2.0, 0.0]),
+ *     c1 = board.create('circle', [p1, p2]);
+ *
+ * // Create another circle using the above circle
+ * var p3 = board.create('point', [3.0, 2.0]),
+ *     c2 = board.create('circle', [p3, c1]);
+ * </pre><div class="jxgbox" id="JXG5f304d31-ef20-4a8e-9c0e-ea1a2b6c79e0" style="width: 400px; height: 400px;"></div>
+ * <script type="text/javascript">
+ * (function() {
+ *   var board = JXG.JSXGraph.initBoard('JXG5f304d31-ef20-4a8e-9c0e-ea1a2b6c79e0', {boundingbox: [-1, 9, 9, -1], axis: true, showcopyright: false, shownavigation: false});
+ *       p1 = board.create('point', [2.0, 2.0]),
+ *       p2 = board.create('point', [2.0, 0.0]),
+ *       c1 = board.create('circle', [p1, p2]),
+ *       p3 = board.create('point', [3.0, 2.0]),
+ *       c2 = board.create('circle', [p3, c1]);
+ * })();
+ * </script><pre>
+ */
+/**
+ * @jsxgraphsignature Circle
+ * @param {Circle} circle
+ * @param {Transfomation} t
+ * @example
+ * var t = board.create('transform', [2, 1.5], {type: 'scale'});
+ * var c1 = board.create('circle', [[1.3, 1.3], [0, 1.3]], {strokeColor: 'black', center: {visible:true}});
+ * var c2 = board.create('circle', [c1, t], {strokeColor: 'black'});
+ *
+ * <div id="JXG0686a222-6339-11e8-9fb9-901b0e1b8723" class="jxgbox" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *     (function() {
+ *         var board = JXG.JSXGraph.initBoard('JXG0686a222-6339-11e8-9fb9-901b0e1b8723',
+ *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+ *     var t = board.create('transform', [2, 1.5], {type: 'scale'});
+ *     var c1 = board.create('circle', [[1.3, 1.3], [0, 1.3]], {strokeColor: 'black', center: {visible:true}});
+ *     var c2 = board.create('circle', [c1, t], {strokeColor: 'black'});
+ *     })();
+ *
+ * </script><pre>
+ *
  * @example
  * var li = board.create('line', [1,1,1], {strokeColor: '#aaaaaa'});
  * var reflect = board.create('transform', [li], {type: 'reflect'});
@@ -927,23 +999,6 @@ JXG.extend(
  *
  *             var c1 = board.create('circle', [[-2,-2], [-2, -1]], {center: {visible:true}});
  *             var c2 = board.create('circle', [c1, reflect]);
- *     })();
- *
- * </script><pre>
- *
- * @example
- * var t = board.create('transform', [2, 1.5], {type: 'scale'});
- * var c1 = board.create('circle', [[1.3, 1.3], [0, 1.3]], {strokeColor: 'black', center: {visible:true}});
- * var c2 = board.create('circle', [c1, t], {strokeColor: 'black'});
- *
- * <div id="JXG0686a222-6339-11e8-9fb9-901b0e1b8723" class="jxgbox" style="width: 300px; height: 300px;"></div>
- * <script type="text/javascript">
- *     (function() {
- *         var board = JXG.JSXGraph.initBoard('JXG0686a222-6339-11e8-9fb9-901b0e1b8723',
- *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
- *     var t = board.create('transform', [2, 1.5], {type: 'scale'});
- *     var c1 = board.create('circle', [[1.3, 1.3], [0, 1.3]], {strokeColor: 'black', center: {visible:true}});
- *     var c2 = board.create('circle', [c1, t], {strokeColor: 'black'});
  *     })();
  *
  * </script><pre>

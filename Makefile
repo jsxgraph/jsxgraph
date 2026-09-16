@@ -149,8 +149,8 @@ docsonly:
 
 # jsdoc v4
 d:
-	@#node_modules/.bin/jsdoc -a all  --verbose -c ./doc/jsdoc/jsdoc.json -$(FILELIST)
-	node_modules/.bin/jsdoc -a all --pedantic -c ./doc/jsdoc/jsdoc.json src/jxg.js src/base/board.js src/base/element.js src/options.js src/base/line.js src/base/point.js
+	@#node_modules/.bin/jsdoc -a all  --verbose -c ./doc/jsdoc/jsdoc.json -$(FILELIST)$
+	node_modules/.bin/jsdoc -a all --pedantic -c ./doc/jsdoc/jsdoc.json src/jxg.js src/base/board.js src/base/element.js src/options.js src/base/line.js src/base/point.js  src/base/circle.js
 	@# ./doc/jsdoc/tests/pseudo.js ./doc/jsdoc/tests/test.js src/options.js
 	@# node_modules/.bin/jsdoc -a all --pedantic -c ./doc/jsdoc/jsdoc.json ./doc/jsdoc/tests/test.js 
 	@# ./doc/jsdoc/tests/pseudo.js ./doc/jsdoc/tests/lineshort.js 

@@ -556,7 +556,7 @@ JXG.extend(
         /**
          * Determines the angle between the positive x axis and the line.
          * @param {String} [unit='radians'] Unit of the returned values. Possible units are
-         * 
+         *
          * - `'radians'` (default): angle value in radians
          * - `'degrees'`: angle value in degrees
          * - `'semicircle'`: angle value in radians as a multiple of &pi;, e.g. if the angle is 1.5&pi;, 1.5 will be returned.
