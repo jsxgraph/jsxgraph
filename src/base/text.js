@@ -1603,40 +1603,48 @@ JXG.extend(
  *
  * The coordinates can either be absolute (i.e. respective to the coordinate system of the board) or be relative to the coordinates of an element
  * given in {@link Text#anchor}.
- * <p>
+ *
  * HTML, MathJaX, KaTeX, ASCIIMathML, and GEONExT syntax can be handled.
- * <p>
- * There are two ways to display texts:
- * <ul>
- * <li> using the text element of the renderer (canvas or svg). In most cases this is the suitable approach if speed matters.
+ *
+ * Internally, there are two ways to display texts:
+ * - using the text element of the renderer (canvas or svg). In most cases this is the suitable approach if speed matters.
  * However, advanced rendering like MathJax, KaTeX or HTML/CSS are not possible.
- * <li> using HTML &lt;div&gt;. This is the most flexible approach. The drawback is that HTML can only be display "above" the geometry elements.
- * If HTML should be displayed in an inbetween layer, conder to use an element of type {@link ForeignObject} (available in svg renderer, only).
- * </ul>
+ * - using HTML &lt;div&gt;. This is the most flexible approach. The drawback is that HTML can only be display "above" the geometry elements.
+ * If HTML should be displayed in an inbetween layer, consider to use an element of type {@link ForeignObject} (available in SVG renderer, only).
+ *
+ * This can be controlled with attribute {@link Text#display} that takes the values 'html' or 'internal'. In case of 'html' an HTML division tag is created to display
+ * the text. In this case it is also possible to use MathJax, KaTeX, or ASCIIMathML. If neither of these is used, basic Math rendering is
+ * applied.
+ *
+ * In case of 'internal', an SVG text element is used to display the text.
+ *
+ *
+ *
  * @pseudo
  * @name Text
  * @augments JXG.Text
  * @constructor
  * @type JXG.Text
+ * @see JXG.Text
  *
- * @param {number,function_number,function_number,function_String,function} z_,x,y,str Parent elements for text elements.
- *                     <p>
- *   Parent elements can be two or three elements of type number, a string containing a GEONE<sub>x</sub>T
+ */
+/**
+ * @jsxgraphsignature Text
+ *   Parent elements can be two or three elements of type number, a string containing a GEONExT
  *   constraint, or a function which takes no parameter and returns a number. Every parent element beside the last determines one coordinate.
  *   If a coordinate is
  *   given by a number, the number determines the initial position of a free text. If given by a string or a function that coordinate will be constrained
  *   that means the user won't be able to change the texts's position directly by mouse because it will be calculated automatically depending on the string
  *   or the function's return value. If two parent elements are given the coordinates will be interpreted as 2D affine Euclidean coordinates, if three such
  *   parent elements are given they will be interpreted as homogeneous coordinates.
- *                     <p>
- *                     The text to display may be given as string or as function returning a string.
  *
- * There is the attribute 'display' which takes the values 'html' or 'internal'. In case of 'html' an HTML division tag is created to display
- * the text. In this case it is also possible to use MathJax, KaTeX, or ASCIIMathML. If neither of these is used, basic Math rendering is
- * applied.
- * <p>
- * In case of 'internal', an SVG text element is used to display the text.
- * @see JXG.Text
+ * The text to display may be given as string or as function returning a string.
+ *
+ * @param {NumberLike} [z=1]
+ * @param {NumberLike} x
+ * @param {NumberLike} y
+ * @param {String|Function} str String to be displayed. Could be the return value of a function, to make the text dynamic.
+ *
  * @example
  * // Create a fixed text at position [0,1].
  *   var t1 = board.create('text',[0,1,"Hello World"]);
@@ -1655,10 +1663,11 @@ JXG.extend(
  *                     );
  * </pre><div class="jxgbox" id="JXG5441da79-a48d-48e8-9e53-75594c384a1c" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
- *   var t2_board = JXG.JSXGraph.initBoard('JXG5441da79-a48d-48e8-9e53-75594c384a1c', {boundingbox: [-3, 6, 5, -3], axis: true, showcopyright: false, shownavigation: false});
- *   var s = t2_board.create('slider',[[0,4],[3,4],[-2,0,2]]);
- *   var t2 = t2_board.create('text',[function(x){ return s.Value();}, 1, function(){return "The value of s is "+JXG.toFixed(s.Value(), 2);}]);
+ *   var board = JXG.JSXGraph.initBoard('JXG5441da79-a48d-48e8-9e53-75594c384a1c', {boundingbox: [-3, 6, 5, -3], axis: true, showcopyright: false, shownavigation: false});
+ *   var s = board.create('slider',[[0,4],[3,4],[-2,0,2]]);
+ *   var t2 = board.create('text',[function(x){ return s.Value();}, 1, function(){return "The value of s is "+JXG.toFixed(s.Value(), 2);}]);
  * </script><pre>
+ *
  * @example
  * // Create a text bound to the point A
  * var p = board.create('point',[0, 1]),
@@ -1673,7 +1682,6 @@ JXG.extend(
  *         t = board.create('text',[0, -1,"Hello World"], {anchor: p});
  *
  *     })();
- *
  * </script><pre>
  *
  */

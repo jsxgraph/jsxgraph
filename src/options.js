@@ -10024,7 +10024,7 @@ JXG.Options = {
          * according to the number of digits
          * given by the attribute 'digits' or converted into a fraction if 'toFraction'
          * is true.
-         * <p>
+         *
          * Otherwise, display the raw number.
          *
          * @name formatNumber
@@ -10404,7 +10404,7 @@ JXG.Options = {
          *   fontSize: 24, useMathJax: true
          * });
          *
-         * </pre>
+         * </pre><div id="JXGe2a04876-5813-4db0-b7e8-e48bf4e220b9" class="jxgbox" style="width: 400px; height: 400px;"></div>
          * <script>
          *     MathJax = {
          *       tex: {
@@ -10415,7 +10415,7 @@ JXG.Options = {
          *     };
          * </script>
          * <script src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-svg.js" id="MathJax-script"></script>
-         * <div id="JXGe2a04876-5813-4db0-b7e8-e48bf4e220b9" class="jxgbox" style="width: 400px; height: 400px;"></div>
+         * 
          * <script type="text/javascript">
          *     (function() {
          *         var board = JXG.JSXGraph.initBoard('JXGe2a04876-5813-4db0-b7e8-e48bf4e220b9',
@@ -10507,8 +10507,7 @@ JXG.Options = {
          *             '}=' + (((B.Y()-A.Y()).toFixed(4))/((B.X()-A.X()).toFixed(4))).toFixed(4) + '\\]';
          *       }],{fontSize: 15, useMathJax: true});
          *
-         * </pre>
-         * <div id="JXG8c2b65e7-4fc4-43f7-b23c-5076a7fa9621" class="jxgbox" style="width: 400px; height: 400px;"></div>
+         * </pre><div id="JXG8c2b65e7-4fc4-43f7-b23c-5076a7fa9621" class="jxgbox" style="width: 400px; height: 400px;"></div>
          * <script type="text/javascript">
          *     (function() {
          *         var board = JXG.JSXGraph.initBoard('JXG8c2b65e7-4fc4-43f7-b23c-5076a7fa9621',
@@ -10607,10 +10606,10 @@ JXG.Options = {
          *
          * If true, KaTeX will be used to render the input string.
          * For this feature, katex.min.js and katex.min.css have to be included.
-         * <p>
+         * 
          * The example below does not work, because there is a conflict with
          * the MathJax library which is used below.
-         * </p>
+         * 
          *
          * @name useKatex
          * @attribute
@@ -10636,10 +10635,10 @@ JXG.Options = {
          *             return 'a(t)= { 1 \\over ' + a.Value().toFixed(3) + '}';
          *         }], {fontSize: 15, fixed:true, strokeColor:'red', anchorY: 'top'});
          *
-         * </pre>
+         * </pre><div id="JXG497f065c-cfc1-44c3-ba21-5fa581668869" class="jxgbox" style="width: 300px; height: 300px;"></div>
          * <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.13.10/dist/katex.min.css" integrity="sha384-0cCFrwW/0bAk1Z/6IMgIyNU3kfTcNirlObr4WjrUU7+hZeD6ravdYJ3kPWSeC31M" crossorigin="anonymous">
          * <!--<script src="https://cdn.jsdelivr.net/npm/katex@0.13.10/dist/katex.min.js" integrity="sha384-dtFDxK2tSkECx/6302Z4VN2ZRqt6Gis+b1IwCjJPrn0kMYFQT9rbtyQWg5NFWAF7" crossorigin="anonymous"></script>-->
-         * <div id="JXG497f065c-cfc1-44c3-ba21-5fa581668869" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * 
          * <script type="text/javascript">
          *     (function() {
          *         var board = JXG.JSXGraph.initBoard('JXG497f065c-cfc1-44c3-ba21-5fa581668869',
@@ -10694,8 +10693,8 @@ JXG.Options = {
          * @see Text#formatNumber
          *
          * @example
-         *  board.create('text', [2, 2, 2 / 7], { anchorY: 'top', fontSize: 24, toFraction: true, formatNumber: true, useMathjax: true });
-         *  board.create('text', [2, -2, 2 / 19], { toFraction: true, formatNumber: true, useMathjax: false });
+         * board.create('text', [2, 2, 2 / 7], { anchorY: 'top', fontSize: 24, toFraction: true, formatNumber: true, useMathjax: true });
+         * board.create('text', [2, -2, 2 / 19], { toFraction: true, formatNumber: true, useMathjax: false });
          *
          * </pre><div id="JXGc10fe0b6-15ac-42b6-890f-2593b427d493" class="jxgbox" style="width: 300px; height: 300px;"></div>
          * <script type="text/javascript">
