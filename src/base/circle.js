@@ -56,16 +56,19 @@ import Type from "../utils/type.js";
  * @augments JXG.GeometryElement
  * @param {JXG.Board} board The board the new circle is drawn on.
  * @param {String} method Can be
- * <ul><li> <b>'twoPoints'</b> which means the circle is defined by its center and a point on the circle.</li>
- * <li><b>'pointRadius'</b> which means the circle is defined by its center and its radius in user units</li>
- * <li><b>'pointLine'</b> which means the circle is defined by its center and its radius given by the distance from the startpoint and the endpoint of the line</li>
- * <li><b>'pointCircle'</b> which means the circle is defined by its center and its radius given by the radius of another circle</li></ul>
+ *
+ * - __'twoPoints'__ which means the circle is defined by its center and a point on the circle.
+ * - __'pointRadius'__ which means the circle is defined by its center and its radius in user units
+ * - __'pointLine'__ which means the circle is defined by its center and its radius given by the distance from the startpoint and the endpoint of the line
+ * - __'pointCircle'__ which means the circle is defined by its center and its radius given by the radius of another circle
+ *
  * The parameters p1, p2 and radius must be set according to this method parameter.
  * @param {JXG.Point} par1 center of the circle.
  * @param {JXG.Point|JXG.Line|JXG.Circle} par2 Can be
- * <ul><li>a point on the circle if method is 'twoPoints'</li>
- * <li>a line if the method is 'pointLine'</li>
- * <li>a circle if the method is 'pointCircle'</li></ul>
+ *
+ * - a point on the circle if method is 'twoPoints'
+ * - a line if the method is 'pointLine'
+ * - a circle if the method is 'pointCircle'
  * @param {Object} attributes
  * @see JXG.Board#generateName
  */
@@ -76,10 +79,10 @@ JXG.Circle = function (board, method, par1, par2, attributes) {
     /**
      * Stores the given method.
      * Can be
-     * <ul><li><b>'twoPoints'</b> which means the circle is defined by its center and a point on the circle.</li>
-     * <li><b>'pointRadius'</b> which means the circle is defined by its center and its radius given in user units or as term.</li>
-     * <li><b>'pointLine'</b> which means the circle is defined by its center and its radius given by the distance from the startpoint and the endpoint of the line.</li>
-     * <li><b>'pointCircle'</b> which means the circle is defined by its center and its radius given by the radius of another circle.</li></ul>
+     * - __'twoPoints'__ which means the circle is defined by its center and a point on the circle.
+     * - __'pointRadius'__ which means the circle is defined by its center and its radius given in user units or as term.
+     * - __'pointLine'__ which means the circle is defined by its center and its radius given by the distance from the startpoint and the endpoint of the line.
+     * - __'pointCircle'__ which means the circle is defined by its center and its radius given by the radius of another circle.
      * @type String
      * @see JXG.Circle#center
      * @see JXG.Circle#point2
@@ -770,7 +773,7 @@ JXG.extend(
         /**
          * Treats the circle as parametric curve and calculates its X coordinate.
          * @param {Number} t Number between 0 and 1.
-         * @returns {Number} <tt>X(t)= radius*cos(t)+centerX</tt>.
+         * @returns {Number} `X(t)= radius*cos(t)+centerX`.
          */
         X: function (t) {
             return this.Radius() * Math.cos(t * 2 * Math.PI) + this.center.coords.usrCoords[1];
@@ -779,7 +782,7 @@ JXG.extend(
         /**
          * Treats the circle as parametric curve and calculates its Y coordinate.
          * @param {Number} t Number between 0 and 1.
-         * @returns {Number} <tt>X(t)= radius*sin(t)+centerY</tt>.
+         * @returns {Number} `X(t)= radius*sin(t)+centerY`.
          */
         Y: function (t) {
             return this.Radius() * Math.sin(t * 2 * Math.PI) + this.center.coords.usrCoords[2];
@@ -916,6 +919,7 @@ JXG.extend(
  * @param {PointLike} center
  * @param {Line} line Line, the distance of its start and end point of the determines the radius
  *
+ * @example
  * // Create a line providing two points
  * var p1 = board.create('point', [2.0, 2.0]),
  *     p2 = board.create('point', [2.0, 0.0]),
@@ -971,7 +975,7 @@ JXG.extend(
  * var c1 = board.create('circle', [[1.3, 1.3], [0, 1.3]], {strokeColor: 'black', center: {visible:true}});
  * var c2 = board.create('circle', [c1, t], {strokeColor: 'black'});
  *
- * <div id="JXG0686a222-6339-11e8-9fb9-901b0e1b8723" class="jxgbox" style="width: 300px; height: 300px;"></div>
+ * </pre><div id="JXG0686a222-6339-11e8-9fb9-901b0e1b8723" class="jxgbox" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
  *     (function() {
  *         var board = JXG.JSXGraph.initBoard('JXG0686a222-6339-11e8-9fb9-901b0e1b8723',
@@ -989,7 +993,7 @@ JXG.extend(
  *
  * var c1 = board.create('circle', [[-2,-2], [-2, -1]], {center: {visible:true}});
  * var c2 = board.create('circle', [c1, reflect]);
- *      * </pre><div id="JXGa2a5a870-5dbb-11e8-9fb9-901b0e1b8723" class="jxgbox" style="width: 300px; height: 300px;"></div>
+ * </pre><div id="JXGa2a5a870-5dbb-11e8-9fb9-901b0e1b8723" class="jxgbox" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
  *     (function() {
  *         var board = JXG.JSXGraph.initBoard('JXGa2a5a870-5dbb-11e8-9fb9-901b0e1b8723',
