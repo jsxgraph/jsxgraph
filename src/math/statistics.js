@@ -1276,7 +1276,7 @@ Mat.Statistics = {
      * @param {Number} good ways to make a good selection
      * @param {Number} bad ways to make a bad selection
      * @param {Number} samples number of items sampled
-     * @returns
+     * @returns Number
      * @memberof JXG.Math.Statistics
      */
     randomHypergeometric: function (good, bad, k) {

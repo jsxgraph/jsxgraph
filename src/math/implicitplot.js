@@ -36,10 +36,10 @@ import Quadtree from "./bqdt.js";
 
 /**
  * Plotting of curves which are given implicitly as the set of points solving an equation
- * <i>f(x,y) = 0</i>.
- * <p>
+ * $f(x,y) = 0$.
+ *
  * The main class initializes a new implicit plot instance.
- * <p>
+ *
  * The algorithm should be able to plot most implicit curves as long as the equations
  * are not too complex. We are aware of the paper by Oliver Labs,
  * <a href="https://link.springer.com/chapter/10.1007/978-1-4419-0999-2_6">A List of Challenges for Real Algebraic Plane Curve Visualization Software</a>

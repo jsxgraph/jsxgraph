@@ -672,7 +672,7 @@ JXG.extend(
          *
          * @param {Array} points An array containing {@link JXG.Point}, {@link JXG.Coords}, and/or arrays.
          *
-         * @returns {Array} List of objects <pre>{i: index, c: coords}</pre> containing the convex hull points
+         * @returns {Array} List of objects `{i: index, c: coords}` containing the convex hull points
          *  in form of the index in the original input array and a coords array.
          *
          * @example
@@ -1852,20 +1852,25 @@ JXG.extend(
             return isIn;
         },
 
-        /****************************************/
-        /****          INTERSECTIONS         ****/
-        /****************************************/
+        /* ***************************************/
+        /* ***          INTERSECTIONS         ****/
+        /* ***************************************/
 
         /**
          * Generate the function which computes the coordinates of the intersection point.
          * Primarily used in {@link JXG.Point.createIntersectionPoint}.
+         * The result will be a intersection point on el1 and el2.
+         * i determines the intersection point if two points are available:
+         *
+         * - `i==0`: use the positive square root,
+         * - `i==1`: use the negative square root.
+         *
          * @param {JXG.Board} board object
-         * @param {JXG.Line,JXG.Circle_JXG.Line,JXG.Circle_Number|Function} el1,el2,i The result will be a intersection point on el1 and el2.
-         * i determines the intersection point if two points are available: <ul>
-         *   <li>i==0: use the positive square root,</li>
-         *   <li>i==1: use the negative square root.</li></ul>
-         * @param {Boolean} alwaysintersect. Flag that determines if segments and arc can have an outer intersection point
-         * on their defining line or circle.
+         * @param {Line|Circle} el1
+         * @param {JXG.Line|Circle} el2
+         * @param {Number|Function} i
+         * @param {Boolean} alwaysintersect. Flag that determines if segments and arc
+         *    can have an outer intersection point on their defining line or circle.
          * @returns {Function} Function returning a {@link JXG.Coords} object that determines
          * the intersection point.
          *
@@ -3837,7 +3842,7 @@ JXG.extend(
                 }
 
                 /**
-                 * @ignore
+                 *
                  * Find t such that the Euclidean distance between
                  * [x, y] and [curve.X(t), curve.Y(t)]
                  * is minimized.
