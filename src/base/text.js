@@ -1720,6 +1720,8 @@ JXG.registerElement("text", JXG.createText);
  * @class Labels are text objects tied to other elements like points, lines and curves.
  * Labels are handled internally by JSXGraph, only. There is __no__ constructor `board.create('label', ...)`.
  *
+ * However, the element label has some specific attributes which can be set by the user.
+ *
  * @description
  * Labels for points are positioned with the attributes {@link Text#anchorX}, {@link Text#anchorX} and {@link Label#offset}.
  *

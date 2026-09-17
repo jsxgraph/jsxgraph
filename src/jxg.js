@@ -428,7 +428,6 @@ jxg.extend(
          *
          * </script><pre>
          *
-         *
          * @example
          * const board = JXG.board('jxgbox', {
          *   boundingbox: [-10, 10, 10, -10],
@@ -508,6 +507,7 @@ jxg.extend(
          *     })();
          *
          * </script><pre>
+         *
          * @example
          * const board = JXG.board('jxgbox', {
          *     boundingbox: [-5, 5, 5, -5],
@@ -602,20 +602,22 @@ jxg.extend(
          * <p>
          * The styling of the supplied div is up to the user, see the style-tag in the example below for
          * one possibility. The CSS for the inner div, hosting the JSXGraph board, is supplied by the attributes
-         *  <pre>
+         *
+         * ```
          *   jxgbox: {
          *       cssStyle: 'width:640px;  aspect-ratio:2/1; background-color: white',
          *       cssClass: '',
          *       id: 'jxgbox'
          *   }
-         * </pre>
+         * ```
+         *
          * i.e. the div's style-attribute and a list of classes (separated by blanks) can be given.
-         * <p>
+         *
          * By setting the attribute "clip" to false for selected
          * elements (like sliders and texts), these elements can be positioned outside of the JSXGraph board. For those elements,
          * the setting of the attributes "frozen:true, fixed:true" is recommended to make their position independent from zooming
          * or panning the board coordinates.
-         * <p>
+         *
          * However, not all elements will look good if displayed outside of the JSXGraph board - be careful.
          *
          * @param {String|Object} box id of or reference to the HTML element in which the board is painted into a sub-element of type div.
@@ -670,7 +672,7 @@ jxg.extend(
          *        var graph = board.create("functiongraph", ['s.Value() * x^3'], { clip: true });
          *
          * &lt;/script&gt;
-         * </pre>
+         * </pre><div id="JXGd1c7bf6a-a571-4392-a289-e4ef44d57c88" class="container"></div>
          * <style>
          * .container {
          *   display: flex;
@@ -684,7 +686,7 @@ jxg.extend(
          *   background-color: #eee;
          * }
          * </style>
-         * <div id="JXGd1c7bf6a-a571-4392-a289-e4ef44d57c88" class="container"></div>
+         *
          * <script type="text/javascript">
          *     (function() {
          *        const board = JXG.appBox('JXGd1c7bf6a-a571-4392-a289-e4ef44d57c88', {
