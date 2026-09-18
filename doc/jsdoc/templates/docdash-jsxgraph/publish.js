@@ -352,7 +352,8 @@ function buildMemberNav(items, itemHeading, itemsSeen, linktoFn) {
                 }
                 if (itemHeading === 'Elements') {
                     elclass = item.elementclass;
-                    if (elclass !== elclass_prev) {
+                    if (elclass === undefined) console.log('Missing elementclass:', item.name);
+                    if (elclass !== undefined && elclass !== elclass_prev) {
                         itemsNav +=  '<li'+ classes +'><i>' + 
                             elclass.charAt(0).toUpperCase() + elclass.slice(1) +
                             '</i></li>';

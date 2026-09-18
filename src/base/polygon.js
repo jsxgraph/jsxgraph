@@ -1128,9 +1128,13 @@ JXG.extend(
  * @pseudo
  * @constructor
  * @name Polygon
+ * @elementclass polygon
  * @type JXG.Polygon
  * @augments JXG.Polygon
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
+ */
+/**
+ * @jsxgraphsignature Polygon
  * @param {Array} vertices The polygon's vertices. If the first and the last vertex don't match the first one will be
  * added to the array by the creator. Here, two points match if they have the same 'id' attribute.
  *
@@ -1276,10 +1280,17 @@ JXG.createPolygon = function (board, parents, attributes) {
  * @description Constructs a regular polygon. It needs two points which define the base line and the number of vertices, or a set of points.
  * @constructor
  * @name RegularPolygon
+ * @elementclass polygon
  * @type Polygon
  * @augments Polygon
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {JXG.Point_JXG.Point_Number} p1,p2,n The constructed regular polygon has n vertices and the base line defined by p1 and p2.
+ */
+/**
+ * @jsxgraphsignature RegularPolygon
+ * The constructed regular polygon has n vertices and the base line defined by p1 and p2.
+ * @param {PointLike} p1
+ * @param {PointLike} p2
+ * @param {NumberLike} n
  * @example
  * var p1 = board.create('point', [0.0, 2.0]);
  * var p2 = board.create('point', [2.0, 1.0]);
@@ -1412,9 +1423,13 @@ JXG.createRegularPolygon = function (board, parents, attributes) {
  * @pseudo
  * @constructor
  * @name PolygonalChain
+ * @elementclass polygon
  * @type Polygon
  * @augments JXG.Polygon
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
+ */
+/**
+ * @jsxgraphsignature PolygonalChain
  * @param {Array} vertices The polygon's vertices.
  *
  * Additionally, a polygonal chain can be created by providing a polygonal chain and a transformation (or an array of transformations).
@@ -1478,11 +1493,19 @@ JXG.createPolygonalChain = function (board, parents, attributes) {
  * @description Constructs a parallelogram. As input, three points or coordinate arrays are expected.
  * @constructor
  * @name Parallelogram
+ * @elementclass polygon
  * @type Polygon
  * @augments Polygon
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {JXG.Point,Array_JXG.Point,Array_JXG.Point,Array} p1,p2,p3 The parallelogram is a polygon through
- * the points [p1, p2, pp, p3], where pp is a parallelpoint, available as sub-object parallelogram.parallelPoint.
+ */
+/**
+ * @jsxgraphsignature Parallelogram
+ * The parallelogram is a polygon through
+ * the points `[p1, p2, pp, p3]`, where pp is a parallelpoint, available as sub-object `parallelogram.parallelPoint`.
+ *
+ * @param {PointLike} p1
+ * @param {PointLike} p2
+ * @param {PointLike} p3
  *
  * @example
  * var p1 = board.create('point', [-3, -4]);
