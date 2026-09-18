@@ -254,21 +254,27 @@ JXG.extend(
 );
 
 /**
- * @namespace Namespace for the complex number arithmetic functions, see also {@link JXG.Complex}.
+ * @namespace JXG.C
+ * 
  * @description
+ * Namespace for the complex number arithmetic functions, see also {@link JXG.Complex}.
+ * 
  * JXG.C is the complex number (name)space. It provides functions to calculate with
  * complex numbers (defined in {@link JXG.Complex}). With this namespace you don't have to modify
  * your existing complex numbers, e.g. to add two complex numbers:
- * <pre class="code">   var z1 = new JXG.Complex(1, 0);
- *    var z2 = new JXG.Complex(0, 1);
- *    z = JXG.C.add(z1, z1);</pre>
+ * ```
+ *   var z1 = new JXG.Complex(1, 0);
+ *   var z2 = new JXG.Complex(0, 1);
+ *   z = JXG.C.add(z1, z1);
+ * ```
  * z1 and z2 here remain unmodified. With the object oriented approach above this
  * section the code would look like:
- * <pre class="code">
- *    var z1 = new JXG.Complex(1, 0);
- *    var z2 = new JXG.Complex(0, 1);
- *    var z = new JXG.Complex(z1);
- *    z.add(z2);</pre>
+ * ```
+ *   var z1 = new JXG.Complex(1, 0);
+ *   var z2 = new JXG.Complex(0, 1);
+ *   var z = new JXG.Complex(z1);
+ *   z.add(z2);
+ * ```
  * @see JXG.Complex
  */
 JXG.C = {};
