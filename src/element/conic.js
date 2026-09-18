@@ -49,6 +49,7 @@ import Type from "../utils/type.js";
  * the length of the major axis.
  * @pseudo
  * @name Ellipse
+ * @elementclass curve
  * @augments JXG.Conic
  * @constructor
  * @type JXG.Curve
@@ -348,6 +349,7 @@ JXG.createEllipse = function (board, parents, attributes) {
  * the length of the major axis.
  * @pseudo
  * @name Hyperbola
+ * @elementclass curve
  * @augments JXG.Conic
  * @constructor
  * @type JXG.Curve
@@ -586,6 +588,7 @@ JXG.createHyperbola = function (board, parents, attributes) {
  * @class A parabola is a special conic section given by one point (the focus) and a line (the directrix).
  * @pseudo
  * @name Parabola
+ * @elementclass curve
  * @augments JXG.Conic
  * @constructor
  * @type Object
@@ -821,6 +824,7 @@ JXG.createParabola = function (board, parents, attributes) {
  * ```
  * @pseudo
  * @name Conic
+ * @elementclass curve
  * @augments JXG.Curve
  * @constructor
  * @type JXG.Conic

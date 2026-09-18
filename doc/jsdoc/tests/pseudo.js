@@ -2,6 +2,7 @@
  * @class A general line is given by two points or three coordinates.
  * By setting __additional properties__ a line can be used as an arrow and/or axis.
  * @pseudo
+ * @elementclass line
  * @name Line
  * @augments JXG.Line
  * @constructor
@@ -84,6 +85,7 @@ JXG.createLine = function (board, parents, attributes) { };
  * segment has a fixed length (which may be a function, too) determined by the absolute value of
  * that number.
  * @pseudo
+ * @elementclass line
  * @name Segment
  * @augments Line
  * @constructor

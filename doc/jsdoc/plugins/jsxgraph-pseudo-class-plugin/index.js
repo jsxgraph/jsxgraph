@@ -27,6 +27,14 @@ exports.defineTags = function (dictionary) {
         }
     });
 
+    dictionary.defineTag("elementclass", {
+        mustHaveValue: true,
+        onTagged: function (doclet, tag) {
+            // console.log(tag)
+            doclet.elementclass = tag.text;
+        }
+    });
+
     // // Test parsing of signatures
     // dictionary.defineTag("signature", {
     //     mustHaveValue: true,
@@ -58,13 +66,13 @@ exports.defineTags = function (dictionary) {
 
 // Plugin Hooks for JSDoc
 exports.handlers = {
-    // newDoclet: function (e) {
-    //     // var d = e.doclet;
-    //     // // console.log(d)
-    //     // if (d.kind === 'class') {
-    //     //     // console.log(d)
-    //     // }
-    // },
+    newDoclet: function (e) {
+        var d = e.doclet;
+        // console.log(d)
+        // if (d.kind === 'class') {
+        //     // console.log(d)
+        // }
+    },
 
     // symbolFound(e) {
     //     // console.log('>', e)

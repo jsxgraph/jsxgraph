@@ -776,6 +776,7 @@ JXG.extend(
  *
  * @pseudo
  * @name Group
+ * @elementclass other
  * @augments JXG.Group
  * @constructor
  * @type JXG.Group

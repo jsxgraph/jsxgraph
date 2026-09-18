@@ -148,6 +148,9 @@ docsonly:
 	$(CD) $(OUTPUT) && $(UNZIP) -o docs.zip
 
 # jsdoc v4
+t:
+	node_modules/.bin/jsdoc -a all --pedantic -c ./doc/jsdoc/jsdoc.json ./doc/jsdoc/tests/pseudo.js ./doc/jsdoc/tests/test.js
+
 d:
 	@#node_modules/.bin/jsdoc -a all  --verbose -c ./doc/jsdoc/jsdoc.json -$(FILELIST)$
 	@#node_modules/.bin/jsdoc -a all --pedantic -c ./doc/jsdoc/jsdoc.json src/jxg.js src/base/board.js src/base/element.js src/options.js src/base/line.js src/base/point.js  src/base/circle.js src/base/text.js

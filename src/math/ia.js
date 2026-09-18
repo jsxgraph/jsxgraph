@@ -290,7 +290,7 @@ JXG.extend(MatInterval.prototype, {
  * @description
  * Interval arithmetic is a technique used to mitigate rounding and measurement errors in mathematical computation
  * by computing function bounds. Instead of representing a value as a single number, interval arithmetic represents each value as a range.
- * 
+ *
  *
  * For example, we wish to calculate the area of a rectangle from direct measurements using a standard meter stick with an uncertainty
  * of 0.0005 m (half the “least count measurement” of 1 mm). We measure one side nominally as L=1,

@@ -447,6 +447,7 @@ JXG.extend(
  * @see Glider
  * @pseudo
  * @name Point
+ * @elementclass point
  * @augments JXG.Point
  * @constructor
  * @type JXG.Point
@@ -538,6 +539,7 @@ JXG.createPoint = function (board, parents, attributes) {
  * @pseudo
  * @description A glider is a point which lives on another geometric element like a line, circle, curve, turtle.
  * @name Glider
+ * @elementclass point
  * @augments JXG.Point
  * @constructor
  * @type JXG.Point
@@ -631,6 +633,7 @@ JXG.createGlider = function (board, parents, attributes) {
  *
  * @pseudo
  * @name Intersection
+ * @elementclass point
  * @augments JXG.Point
  * @constructor
  * @type JXG.Point
@@ -744,6 +747,7 @@ JXG.createIntersectionPoint = function (board, parents, attributes) {
  * or in situtation where the order of the intersection points changes while interacting with the construction.
  *
  * @name OtherIntersection
+ * @elementclass point
  * @augments JXG.Point
  * @constructor
  * @type JXG.Point
@@ -928,6 +932,7 @@ JXG.createOtherIntersectionPoint = function (board, parents, attributes) {
  * A line tangent to a conic has the pole point of that line with respect to that conic as the tangent point.
  * See {@link https://en.wikipedia.org/wiki/Pole_and_polar} for more information on pole and polar.
  * @name PolePoint
+ * @elementclass point
  * @augments JXG.Point
  * @constructor
  * @type JXG.Point

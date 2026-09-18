@@ -325,7 +325,9 @@ function attachModuleSymbols(doclets, modules) {
 }
 
 function buildMemberNav(items, itemHeading, itemsSeen, linktoFn) {
-    var nav = '';
+    var nav = '',
+        elclass,
+        elclass_prev = '';
 
     if (items && items.length) {
         var itemsNav = '';
@@ -347,6 +349,15 @@ function buildMemberNav(items, itemHeading, itemsSeen, linktoFn) {
                     return;
                 } else if (itemHeading === 'Classes' && item.isPseudo === true) {
                     return;
+                }
+                if (itemHeading === 'Elements') {
+                    elclass = item.elementclass;
+                    if (elclass !== elclass_prev) {
+                        itemsNav +=  '<li'+ classes +'><i>' + 
+                            elclass.charAt(0).toUpperCase() + elclass.slice(1) +
+                            '</i></li>';
+                    }
+                    elclass_prev = elclass;
                 }
             }
             if (!docdash.jsxgraphStyle) {
@@ -574,7 +585,7 @@ exports.publish = function(taffyData, opts, tutorials) {
 
     data = helper.prune(data);
 
-    docdash.sort !== false && data.sort('longname, version, since');
+    docdash.sort !== false && data.sort('elementclass, longname, version, since');
     helper.addEventListeners(data);
 
     var sourceFiles = {};

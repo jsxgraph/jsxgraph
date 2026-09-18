@@ -255,10 +255,10 @@ JXG.extend(
 
 /**
  * @namespace JXG.C
- * 
+ *
  * @description
  * Namespace for the complex number arithmetic functions, see also {@link JXG.Complex}.
- * 
+ *
  * JXG.C is the complex number (name)space. It provides functions to calculate with
  * complex numbers (defined in {@link JXG.Complex}). With this namespace you don't have to modify
  * your existing complex numbers, e.g. to add two complex numbers:

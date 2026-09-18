@@ -864,6 +864,7 @@ JXG.extend(
  * A circle can be constructed by providing a center and a point on the circle or a center and a radius (given as a number, function,
  * line, or circle). If the radius is a negative value, its absolute values is taken.
  * @name Circle
+ * @elementclass circle
  * @augments JXG.Circle
  * @constructor
  * @type JXG.Circle
