@@ -42,35 +42,32 @@ import Type from "../utils/type.js";
 
 /**
  * @class A circular sector is a subarea of the area enclosed by a circle. It is enclosed by two radii and an arc.
- * <p>
- * The sector as curve consists of two legs and an arc. The curve length is 6. That means, a point with coordinates
- * [sector.X(t), sector.Y(t)] is on
- * <ul>
- * <li> leg 1 if t is between 0 and 1,
- * <li> the arc if t is between 1 and 5,
- * <li> leg 2 if t is between 5 and 6.
- * </ul>
+ *
+ * As a curve element, a sector consists of two legs and an arc. The curve length is 6. That means, a point with coordinates
+ * `[sector.X(t), sector.Y(t)]` is on
+ *
+ * - leg 1 if t is between 0 and 1,
+ * - the arc if t is between 1 and 5,
+ * - leg 2 if t is between 5 and 6.
+ *
  * @pseudo
  * @name Sector
- * @augments JXG.Curve
+ * @elementclass circle
  * @constructor
  * @type JXG.Curve
  * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
  *
- * First possibility of input parameters are:
- * @param {JXG.Point_JXG.Point_JXG.Point} p1,p2,p3 A sector is defined by three points: The sector's center <tt>p1</tt>,
- * a second point <tt>p2</tt> defining the radius and a third point <tt>p3</tt> defining the angle of the sector. The
- * Sector is always drawn counter clockwise from <tt>p2</tt> to <tt>p3</tt>.
- * <p>
- * In this case, the sector will have an arc as sub-object.
- * <p>
- * Second possibility of input parameters are:
- * @param {JXG.Line_JXG.Line_array,number_array,number_number,function} line, line2, coords1 or direction1, coords2 or direction2, radius The sector is defined by two lines.
- * The two legs which define the sector are given by two coordinates arrays which are projected initially to the two lines or by
- * two directions (+/- 1). If the two lines are parallel, two of the defining points on different lines have to coincide.
- * This will be the center of the sector.
- * The last parameter is the radius of the sector.
- * <p>In this case, the sector will <b>not</b> have an arc as sub-object.
+ */
+/**
+ * @jsxgraphsignature Sector
+ * A sector is defined by three points: The sector's center `center`,
+ * a point `p1`` defining the radius and a further point `p2` defining the angle of the sector. The
+ * Sector is always drawn counter clockwise from `p1` to `p2`.
+ *
+ * The sector has an arc as sub-object.
+ * @param {PointLike} center
+ * @param {PointLike} p1
+ * @param {PointLike} p2
  *
  * @example
  * // Create a sector out of three free points
@@ -90,6 +87,62 @@ import Type from "../utils/type.js";
  *     a = board.create('sector', [p1, p2, p3]);
  * })();
  * </script><pre>
+ *
+ * @example
+ * var A = board.create('point', [3, -2]),
+ *     B = board.create('point', [-2, -2]),
+ *     C = board.create('point', [0, 4]);
+ *
+ * var angle = board.create('sector', [B, A, C], {
+ *         strokeWidth: 0,
+ *         arc: {
+ *         	visible: true,
+ *         	strokeWidth: 3,
+ *           lastArrow: {size: 4},
+ *           firstArrow: {size: 4}
+ *         }
+ *       });
+ * //angle.arc.setAttribute({firstArrow: false});
+ * angle.arc.setAttribute({lastArrow: false});
+ *
+ * </pre><div id="JXGca37b99e-1510-49fa-ac9e-efd60e956104" class="jxgbox" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *     (function() {
+ *         var board = JXG.JSXGraph.initBoard('JXGca37b99e-1510-49fa-ac9e-efd60e956104',
+ *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+ *     var A = board.create('point', [3, -2]),
+ *         B = board.create('point', [-2, -2]),
+ *         C = board.create('point', [0, 4]);
+ *
+ *     var angle = board.create('sector', [B, A, C], {
+ *             strokeWidth: 0,
+ *             arc: {
+ *             	visible: true,
+ *             	strokeWidth: 3,
+ *               lastArrow: {size: 4},
+ *               firstArrow: {size: 4}
+ *             }
+ *           });
+ *     //angle.arc.setAttribute({firstArrow: false});
+ *     angle.arc.setAttribute({lastArrow: false});
+ *
+ *     })();
+ * </script><pre>
+ */
+/**
+ * @jsxgraphsignature Sector
+ * The sector is defined by two lines.
+ * The two legs which define the sector are given by two coordinates arrays which are projected initially to the two lines or by
+ * two directions `+/- 1`. If the two lines are parallel, two of the defining points on different lines have to coincide.
+ * This will be the center of the sector.
+ * The last parameter is the radius of the sector.
+ *
+ * In this case, the sector will __not__ have an arc as sub-object.
+ * @param {Line} line1
+ * @param {Line} line2
+ * @param {Array|Number} c1 Coords1 or direction `+/- 1`
+ * @param {Array|Number} c2 Coords2 or direction `+/- 1`
+ * @param {NumberLike} r radius
  *
  * @example
  * // Create a sector out of two lines, two directions and a radius
@@ -142,50 +195,6 @@ import Type from "../utils/type.js";
  *     })();
  *
  * </script><pre>
- *
- * @example
- * var A = board.create('point', [3, -2]),
- *     B = board.create('point', [-2, -2]),
- *     C = board.create('point', [0, 4]);
- *
- * var angle = board.create('sector', [B, A, C], {
- *         strokeWidth: 0,
- *         arc: {
- *         	visible: true,
- *         	strokeWidth: 3,
- *           lastArrow: {size: 4},
- *           firstArrow: {size: 4}
- *         }
- *       });
- * //angle.arc.setAttribute({firstArrow: false});
- * angle.arc.setAttribute({lastArrow: false});
- *
- * </pre><div id="JXGca37b99e-1510-49fa-ac9e-efd60e956104" class="jxgbox" style="width: 300px; height: 300px;"></div>
- * <script type="text/javascript">
- *     (function() {
- *         var board = JXG.JSXGraph.initBoard('JXGca37b99e-1510-49fa-ac9e-efd60e956104',
- *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
- *     var A = board.create('point', [3, -2]),
- *         B = board.create('point', [-2, -2]),
- *         C = board.create('point', [0, 4]);
- *
- *     var angle = board.create('sector', [B, A, C], {
- *             strokeWidth: 0,
- *             arc: {
- *             	visible: true,
- *             	strokeWidth: 3,
- *               lastArrow: {size: 4},
- *               firstArrow: {size: 4}
- *             }
- *           });
- *     //angle.arc.setAttribute({firstArrow: false});
- *     angle.arc.setAttribute({lastArrow: false});
- *
- *     })();
- *
- * </script><pre>
- *
- *
  */
 JXG.createSector = function (board, parents, attributes) {
     var el,
@@ -963,16 +972,24 @@ JXG.registerElement("sector", JXG.createSector);
  * @class A sector whose arc is a circum circle arc through three points.
  * A circumcircle sector is different from a {@link Sector} mostly in the way the parent elements are interpreted.
  * At first, the circum center is determined from the three given points.
- * Then the sector is drawn from <tt>p1</tt> through
- * <tt>p2</tt> to <tt>p3</tt>.
+ * Then the sector is drawn from `p1` through `p2` to `p3`.
+ * 
  * @pseudo
  * @name CircumcircleSector
- * @augments Sector
+ * @elementclass circle
  * @constructor
  * @type Sector
  * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {JXG.Point_JXG.Point_JXG.Point} p1,p2,p1 A circumcircle sector is defined by the circumcircle which is determined
- * by these three given points. The circumcircle sector is always drawn from <tt>p1</tt> through <tt>p2</tt> to <tt>p3</tt>.
+ *
+ */
+/**
+ * @jsxgraphsignature CircumcircleSector
+ * A circumcircle sector is defined by the circumcircle which is determined
+ * by three given points. The circumcircle sector is always drawn from `p1` through `p2` to `p3`.
+ * @param {PointLike} p1
+ * @param {PointLike} p2
+ * @param {PointLike} p3
+ *
  * @example
  * // Create an arc out of three free points
  * var p1 = board.create('point', [1.5, 5.0]),
@@ -1039,28 +1056,35 @@ JXG.registerElement("circumcirclesector", JXG.createCircumcircleSector);
  * defines the radius, and a third point that defines the angle of the sector.
  * @pseudo
  * @name MinorSector
- * @augments Curve
+ * @elementclass circle
  * @constructor
  * @type JXG.Curve
  * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {JXG.Point_JXG.Point_JXG.Point} p1,p2,p3 . Minor sector is a sector of a circle around p1 having measure less than or equal to
- * 180 degrees (pi radians) and starts at p2. The radius is determined by p2, the angle by p3.
+ *
+ */
+/**
+ * @jsxgraphsignature MinorSector
+ * A minor sector is a sector of a circle around `center` spanning an angle of less than or equal to
+ * 180 degrees (&pi; radians) and starts at `p1`. The radius is determined by `p1`, the angle by `p2`.
+ * @param {PointLike} center
+ * @param {PointLike} p1
+ * @param {PointLike} p2
  * @example
  * // Create sector out of three free points
- * var p1 = board.create('point', [2.0, 2.0]);
- * var p2 = board.create('point', [1.0, 0.5]);
- * var p3 = board.create('point', [3.5, 1.0]);
+ * var center = board.create('point', [2.0, 2.0]);
+ * var p1 = board.create('point', [1.0, 0.5]);
+ * var p2 = board.create('point', [3.5, 1.0]);
  *
- * var a = board.create('minorsector', [p1, p2, p3]);
+ * var a = board.create('minorsector', [center, p1, p2]);
  * </pre><div class="jxgbox" id="JXGaf27ddcc-265f-428f-90dd-d31ace945800" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
  * (function () {
  *   var board = JXG.JSXGraph.initBoard('JXGaf27ddcc-265f-428f-90dd-d31ace945800', {boundingbox: [-1, 7, 7, -1], axis: true, showcopyright: false, shownavigation: false}),
- *       p1 = board.create('point', [2.0, 2.0]),
- *       p2 = board.create('point', [1.0, 0.5]),
- *       p3 = board.create('point', [3.5, 1.0]),
+ *       center = board.create('point', [2.0, 2.0]),
+ *       p1 = board.create('point', [1.0, 0.5]),
+ *       p2 = board.create('point', [3.5, 1.0]),
  *
- *       a = board.create('minorsector', [p1, p2, p3]);
+ *       a = board.create('minorsector', [center, p1, p2]);
  * })();
  * </script><pre>
  *
@@ -1072,15 +1096,14 @@ JXG.registerElement("circumcirclesector", JXG.createCircumcircleSector);
  * var angle = board.create('minorsector', [B, A, C], {
  *         strokeWidth: 0,
  *         arc: {
- *         	visible: true,
- *         	strokeWidth: 3,
+ *         	 visible: true,
+ *         	 strokeWidth: 3,
  *           lastArrow: {size: 4},
  *           firstArrow: {size: 4}
  *         }
  *       });
- * //angle.arc.setAttribute({firstArrow: false});
+ * // angle.arc.setAttribute({firstArrow: false});
  * angle.arc.setAttribute({lastArrow: false});
- *
  *
  * </pre><div id="JXGdddf3c8f-4b0c-4268-8171-8fcd30e71f60" class="jxgbox" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
@@ -1100,7 +1123,7 @@ JXG.registerElement("circumcirclesector", JXG.createCircumcircleSector);
  *               firstArrow: {size: 4}
  *             }
  *           });
- *     //angle.arc.setAttribute({firstArrow: false});
+ *     // angle.arc.setAttribute({firstArrow: false});
  *     angle.arc.setAttribute({lastArrow: false});
  *
  *
@@ -1117,33 +1140,40 @@ JXG.createMinorSector = function (board, parents, attributes) {
 JXG.registerElement("minorsector", JXG.createMinorSector);
 
 /**
- * @class A major sector is a sector of a circle having measure at least
- * 180 degrees (pi radians). It is defined by a center, one point that
- * defines the radius, and a third point that defines the angle of the sector.
+ * @class
+ * A major sector is a sector of a circle around `center` spanning an angle of greater than or equal to
+ * 180 degrees (&pi; radians) and starts at `p1`. The radius is determined by `p1`, the angle by `p2`.
  * @pseudo
  * @name MajorSector
- * @augments Curve
+ * @elementclass circle
  * @constructor
  * @type JXG.Curve
  * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {JXG.Point_JXG.Point_JXG.Point} p1,p2,p3 . Major sector is a sector of a circle around p1 having measure greater than or equal to
- * 180 degrees (pi radians) and starts at p2. The radius is determined by p2, the angle by p3.
+ *
+ */
+/**
+ * @jsxgraphsignature MajorSector
+ * A major sector is a sector of a circle around `center` spanning an angle of greater than or equal to
+ * 180 degrees (&pi; radians) and starts at `p1`. The radius is determined by `p1`, the angle by `p2`.
+ * @param {PointLike} center
+ * @param {PointLike} p1
+ * @param {PointLike} p2
  * @example
  * // Create an arc out of three free points
- * var p1 = board.create('point', [2.0, 2.0]);
- * var p2 = board.create('point', [1.0, 0.5]);
- * var p3 = board.create('point', [3.5, 1.0]);
+ * var center = board.create('point', [2.0, 2.0]);
+ * var p1 = board.create('point', [1.0, 0.5]);
+ * var p2 = board.create('point', [3.5, 1.0]);
  *
- * var a = board.create('majorsector', [p1, p2, p3]);
+ * var a = board.create('majorsector', [center, p1, p2]);
  * </pre><div class="jxgbox" id="JXG83c6561f-7561-4047-b98d-036248a00932" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
  * (function () {
  *   var board = JXG.JSXGraph.initBoard('JXG83c6561f-7561-4047-b98d-036248a00932', {boundingbox: [-1, 7, 7, -1], axis: true, showcopyright: false, shownavigation: false}),
- *       p1 = board.create('point', [2.0, 2.0]),
- *       p2 = board.create('point', [1.0, 0.5]),
- *       p3 = board.create('point', [3.5, 1.0]),
+ *       center = board.create('point', [2.0, 2.0]),
+ *       p1 = board.create('point', [1.0, 0.5]),
+ *       p2 = board.create('point', [3.5, 1.0]),
  *
- *       a = board.create('majorsector', [p1, p2, p3]);
+ *       a = board.create('majorsector', [center, p1, p2]);
  * })();
  * </script><pre>
  */
@@ -1155,34 +1185,41 @@ JXG.createMajorSector = function (board, parents, attributes) {
 JXG.registerElement("majorsector", JXG.createMajorSector);
 
 /**
- * @class Angle sector defined by three points or two lines.
- * Visually it is just a {@link Sector}
- * element with a radius not defined by the parent elements but by an attribute <tt>radius</tt>. As opposed to the sector,
+ * @class
+ * Angle sector defined by three points or two lines.
+ * Visually it is mostly a {@link Sector}, with the difference that
+ *
+ * - the radius is not determined by the parent elements but by the attribute `radius`. As opposed to the sector,
  * an angle has two angle points and no radius point.
- * Sector is displayed if type=="sector".
- * If type=="square", instead of a sector a parallelogram is displayed.
- * In case of type=="auto", a square is displayed if the angle is near orthogonal. The precision
- * to decide if an angle is orthogonal is determined by the attribute
- * {@link Angle#orthoSensitivity}.
- * <p>
+ * - Perpendicular angles may be visualized by a square or an additional dot.
+ *
+ * The possibilities are:
+ *
+ * - An angle is displayed as sector if attribute `type:"sector"`.
+ * - If `type:"square"`, instead of a sector a parallelogram is displayed.
+ * - In case of 'type:"auto"`, a square is displayed if the angle is near orthogonal. The precision
+ * to decide if an angle is orthogonal is determined by the attribute {@link Angle#orthoSensitivity}.
+ *
  * If no name is provided the angle label is automatically set to a lower greek letter. If no label should be displayed use
- * the attribute <tt>withLabel:false</tt> or set the name attribute to the empty string.
+ * the attribute `withLabel:false` or set the name attribute to the empty string.
+ *
+ * __Attention:__
+ * The center of an angle is determined by the *second* point - for sectors it is the first point.
  *
  * @pseudo
  * @name Angle
- * @augments Sector
+ * @elementclass curve
  * @constructor
  * @type Sector
  * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
- * First possibility of input parameters are:
- * @param {JXG.Point_JXG.Point_JXG.Point} p1,p2,p1 An angle is always drawn counterclockwise from <tt>p1</tt> to
- * <tt>p3</tt> around <tt>p2</tt>.
  *
- * Second possibility of input parameters are:
- * @param {JXG.Line_JXG.Line_array|number_array|number} line, line2, coords1 or direction1, coords2 or direction2, radius The angle is defined by two lines.
- * The two legs which define the angle are given by two coordinate arrays.
- * The points given by these coordinate arrays are projected initially (i.e. only once) onto the two lines.
- * The other possibility is to supply directions (+/- 1).
+ */
+/**
+ * @jsxgraphsignature Angle
+ * An angle is drawn counterclockwise from `p1` to `p2` around `center`.
+ * @param {PointLike} p1
+ * @param {PointLike} center
+ * @param {PointLike} p2
  *
  * @example
  * // Create an angle out of three free points
@@ -1204,6 +1241,20 @@ JXG.registerElement("majorsector", JXG.createMajorSector);
  *     t = board.create('text', [4, 4, function() { return JXG.toFixed(a.Value(), 2); }]);
  * })();
  * </script><pre>
+ *
+ */
+/**
+ * @jsxgraphsignature Angle
+ * The angle is defined by two lines.
+ * The two legs which define the angle are given by two coordinate arrays.
+ * The points given by these coordinate arrays are projected initially (i.e. only once) onto the two lines.
+ * The other possibility is to supply directions `+/- 1`.
+ *
+ * @param {Line} line1
+ * @param {Line} line2
+ * @param {Array|Number} c1 Coords1 or direction `+/- 1`
+ * @param {Array|Number} c2 Coords2 or direction `+/- 1`
+ * @param {NumberLike} r radius
  *
  * @example
  * // Create an angle out of two lines and two directions
@@ -1236,7 +1287,6 @@ JXG.registerElement("majorsector", JXG.createMajorSector);
  * })();
  * </script><pre>
  *
- *
  * @example
  * // Display the angle value instead of the name
  * var p1 = board.create('point', [0,2]);
@@ -1268,7 +1318,6 @@ JXG.registerElement("majorsector", JXG.createMajorSector);
  *     })();
  *
  * </script><pre>
- *
  *
  * @example
  * // Apply a transformation to an angle.
@@ -1718,7 +1767,7 @@ JXG.createAngle = function (board, parents, attributes) {
 
     attrsub = Type.copyAttributes(attributes, board.options, "angle", 'dot');
     /**
-     * Indicates a right angle. Invisible by default, use <tt>dot.visible: true</tt> to show.
+     * Indicates a right angle. Invisible by default, use `dot.visible: true` to show.
      * Though this dot indicates a right angle, it can be visible even if the angle is not a right
      * one.
      * @type JXG.Point
@@ -1915,34 +1964,41 @@ JXG.createAngle = function (board, parents, attributes) {
 JXG.registerElement("angle", JXG.createAngle);
 
 /**
- * @class A non-reflex angle is the instance of an angle that is at most 180°.
+ * @class
+ * A non-reflex angle is the instance of an angle that is at most 180°.
  * It is defined by a center, one point that
  * defines the radius, and a third point that defines the angle of the sector.
  * @pseudo
  * @name NonReflexAngle
- * @augments Angle
+ * @elementclass curve
  * @constructor
  * @type Sector
  * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {JXG.Point_JXG.Point_JXG.Point} p1,p2,p3 . Minor sector is a sector of a circle around p1 having measure less than or equal to
- * 180 degrees (pi radians) and starts at p2. The radius is determined by p2, the angle by p3.
+ *
+ */
+/**
+ * @jsxgraphsignature NonReflexAngle
+ * @param {PointLike} p1
+ * @param {PointLike} center
+ * @param {PointLike} p2
+ *
  * @example
  * // Create a non-reflex angle out of three free points
  * var p1 = board.create('point', [5.0, 3.0]),
- *     p2 = board.create('point', [1.0, 0.5]),
- *     p3 = board.create('point', [1.5, 5.0]),
+ *     center = board.create('point', [1.0, 0.5]),
+ *     p2 = board.create('point', [1.5, 5.0]),
  *
- *     a = board.create('nonreflexangle', [p1, p2, p3], {radius: 2}),
+ *     a = board.create('nonreflexangle', [p1, center, p2], {radius: 2}),
  *     t = board.create('text', [4, 4, function() { return JXG.toFixed(a.Value(), 2); }]);
  * </pre><div class="jxgbox" id="JXGd0ab6d6b-63a7-48b2-8749-b02bb5e744f9" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
  * (function () {
  *   var board = JXG.JSXGraph.initBoard('JXGd0ab6d6b-63a7-48b2-8749-b02bb5e744f9', {boundingbox: [-1, 7, 7, -1], axis: true, showcopyright: false, shownavigation: false}),
  *     p1 = board.create('point', [5.0, 3.0]),
- *     p2 = board.create('point', [1.0, 0.5]),
- *     p3 = board.create('point', [1.5, 5.0]),
+ *     center = board.create('point', [1.0, 0.5]),
+ *     p2 = board.create('point', [1.5, 5.0]),
  *
- *     a = board.create('nonreflexangle', [p1, p2, p3], {radius: 2}),
+ *     a = board.create('nonreflexangle', [p1, center, p2], {radius: 2}),
  *     t = board.create('text', [4, 4, function() { return JXG.toFixed(a.Value(), 2); }]);
  * })();
  * </script><pre>
@@ -1976,29 +2032,35 @@ JXG.registerElement("nonreflexangle", JXG.createNonreflexAngle);
  * defines the radius, and a third point that defines the angle of the sector.
  * @pseudo
  * @name ReflexAngle
- * @augments Angle
+ * @elementclass curve
  * @constructor
  * @type Sector
  * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {JXG.Point_JXG.Point_JXG.Point} p1,p2,p3 . Minor sector is a sector of a circle around p1 having measure less than or equal to
- * 180 degrees (pi radians) and starts at p2. The radius is determined by p2, the angle by p3.
+ *
+ */
+/**
+ * @jsxgraphsignature ReflexAngle
+ * @param {PointLike} p1
+ * @param {PointLike} center
+ * @param {PointLike} p2
+ *
  * @example
  * // Create a non-reflex angle out of three free points
  * var p1 = board.create('point', [5.0, 3.0]),
- *     p2 = board.create('point', [1.0, 0.5]),
- *     p3 = board.create('point', [1.5, 5.0]),
+ *     center = board.create('point', [1.0, 0.5]),
+ *     p2 = board.create('point', [1.5, 5.0]),
  *
- *     a = board.create('reflexangle', [p1, p2, p3], {radius: 2}),
+ *     a = board.create('reflexangle', [p1, center, p2], {radius: 2}),
  *     t = board.create('text', [4, 4, function() { return JXG.toFixed(a.Value(), 2); }]);
  * </pre><div class="jxgbox" id="JXGf2a577f2-553d-4f9f-a895-2d6d4b8c60e8" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
  * (function () {
  * var board = JXG.JSXGraph.initBoard('JXGf2a577f2-553d-4f9f-a895-2d6d4b8c60e8', {boundingbox: [-1, 7, 7, -1], axis: true, showcopyright: false, shownavigation: false}),
  *     p1 = board.create('point', [5.0, 3.0]),
- *     p2 = board.create('point', [1.0, 0.5]),
- *     p3 = board.create('point', [1.5, 5.0]),
+ *     center = board.create('point', [1.0, 0.5]),
+ *     p2 = board.create('point', [1.5, 5.0]),
  *
- *     a = board.create('reflexangle', [p1, p2, p3], {radius: 2}),
+ *     a = board.create('reflexangle', [p1, center, p2], {radius: 2}),
  *     t = board.create('text', [4, 4, function() { return JXG.toFixed(a.Value(), 2); }]);
  * })();
  * </script><pre>

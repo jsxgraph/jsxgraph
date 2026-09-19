@@ -637,8 +637,8 @@ JXG.registerElement("circumcirclearc", JXG.createCircumcircleArc);
 
 /**
  * @class
- * A minor arc is an arc of a circle around `p1` spanning an angle of less than or equal to
- * 180 degrees (&pi; radians) and starts at `p2`. The radius is determined by `p2`, the angle by `p3`.
+ * A minor arc is an arc of a circle around `center` spanning an angle of less than or equal to
+ * 180 degrees (&pi; radians) and starts at `p1`. The radius is determined by `p1`, the angle by `p2`.
  * @pseudo
  * @name MinorArc
  * @augments Arc
@@ -676,8 +676,8 @@ JXG.registerElement("minorarc", JXG.createMinorArc);
 
 /**
  * @class
-  * A major arc is an arc of a circle around `p1` spanning an angle of greater than or equal to
- * 180 degrees (&pi; radians) and starts at `p2`. The radius is determined by `p2`, the angle by `p3`.
+ * A major arc is an arc of a circle around `center` spanning an angle of greater than or equal to
+ * 180 degrees (&pi; radians) and starts at `p1`. The radius is determined by `p1`, the angle by `p2`.
  * @pseudo
  * @name MajorArc
  * @elementclass circle
