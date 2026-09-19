@@ -1,3 +1,9 @@
+## TODO
+
+- check domains (i.e. params a, b) of curves
+- arcs, sectors: check signatures having lines
+- check what base/composition.js does
+
 ## Attributes
 
 - Add `@attribute` to each attribute comment, in particular in `options.js` and `options3d.js`
