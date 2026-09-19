@@ -53,10 +53,14 @@ import Const from "../base/constants.js";
  * As a curve the arc has curve length 6.
  * @pseudo
  * @name Arc
+ * @elementclass curve
  * @augments Curve
  * @constructor
  * @type JXG.Curve
  * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
+ */
+/**
+ * @jsxgraphsignature Arc
  * @param {JXG.Point_JXG.Point_JXG.Point} p1,p2,p3 The result will be an arc of a circle around p1 through p2. The arc is drawn
  * counter-clockwise from p2 to p3.
  * @example
@@ -477,10 +481,14 @@ JXG.registerElement("arc", JXG.createArc);
  * @class A semicircle is a special arc defined by two points. The arc hits both points.
  * @pseudo
  * @name Semicircle
+ * @elementclass curve
  * @augments Arc
  * @constructor
  * @type Arc
  * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
+ */
+/**
+ * @jsxgraphsignature Semicircle
  * @param {JXG.Point_JXG.Point} p1,p2 The result will be a composition of an arc drawn clockwise from <tt>p1</tt> and
  * <tt>p2</tt> and the midpoint of <tt>p1</tt> and <tt>p2</tt>.
  * @example
@@ -546,10 +554,14 @@ JXG.registerElement("semicircle", JXG.createSemicircle);
  * @class A partial circum circle through three points.
  * @pseudo
  * @name CircumcircleArc
+ * @elementclass curve
  * @augments Arc
  * @constructor
  * @type Arc
  * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
+ */
+/**
+ * @jsxgraphsignature CircumcircleArc
  * @param {JXG.Point_JXG.Point_JXG.Point} p1,p2,p3 The result will be a composition of an arc of the circumcircle of
  * <tt>p1</tt>, <tt>p2</tt>, and <tt>p3</tt> and the midpoint of the circumcircle of the three points. The arc is drawn
  * counter-clockwise from <tt>p1</tt> over <tt>p2</tt> to <tt>p3</tt>.
@@ -624,10 +636,14 @@ JXG.registerElement("circumcirclearc", JXG.createCircumcircleArc);
  * defines the radius, and a third point that defines the angle of the arc.
  * @pseudo
  * @name MinorArc
+ * @elementclass curve
  * @augments Curve
  * @constructor
  * @type JXG.Curve
  * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
+ */
+/**
+ * @jsxgraphsignature MinorArc
  * @param {JXG.Point_JXG.Point_JXG.Point} p1,p2,p3 . Minor arc is an arc of a circle around p1 having measure less than or equal to
  * 180 degrees (pi radians) and starts at p2. The radius is determined by p2, the angle by p3.
  * @example
@@ -663,10 +679,14 @@ JXG.registerElement("minorarc", JXG.createMinorArc);
  * defines the radius, and a third point that defines the angle of the arc.
  * @pseudo
  * @name MajorArc
+ * @elementclass curve
  * @augments Curve
  * @constructor
  * @type JXG.Curve
  * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
+ */
+/**
+ * @jsxgraphsignature MajorArc
  * @param {JXG.Point_JXG.Point_JXG.Point} p1,p2,p3 . Major arc is an arc of a circle around p1 having measure greater than or equal to
  * 180 degrees (pi radians) and starts at p2. The radius is determined by p2, the angle by p3.
  * @example
