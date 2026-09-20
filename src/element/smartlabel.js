@@ -42,33 +42,35 @@ import Type from "../utils/type.js";
  * Examples are length of a
  * segment, perimeter or area of a circle or polygon (including polygonal chain),
  * slope of a line, value of an angle, and coordinates of a point.
- * <p>
+ *
  * If additionally a text, or a function is supplied and the content is not the empty string,
  * that text is displayed instead of the measurement.
- * <p>
- * Smartlabels use custom made CSS layouts defined in jsxgraph.css. Therefore, the inclusion of the file jsxgraph.css is mandatory or
+ *
+ * Smartlabels use custom made CSS layouts defined in jsxgraph.css. Therefore, the inclusion of the file `jsxgraph.css` is mandatory or
  * the CSS classes have to be replaced by other classes.
- * <p>
+ *
  * The default attributes for smartlabels are defined for each type of measured element in the following sub-objects.
  * This is a deviation from the usual JSXGraph attribute usage.
- * <ul>
- *  <li> <tt>JXG.Options.smartlabelangle</tt> for smartlabels of angle objects
- *  <li> <tt>JXG.Options.smartlabelcircle</tt> for smartlabels of circle objects
- *  <li> <tt>JXG.Options.smartlabelline</tt> for smartlabels of line objects
- *  <li> <tt>JXG.Options.smartlabelpoint</tt> for smartlabels of point objects.
- *  <li> <tt>JXG.Options.smartlabelpolygon</tt> for smartlabels of polygon objects.
- * </ul>
  *
+ * - `JXG.Options.smartlabelangle` for smartlabels of angle objects
+ * - `JXG.Options.smartlabelcircle` for smartlabels of circle objects
+ * - `JXG.Options.smartlabelline` for smartlabels of line objects
+ * - `JXG.Options.smartlabelpoint` for smartlabels of point objects.
+ * - `JXG.Options.smartlabelpolygon` for smartlabels of polygon objects.
  *
  * @pseudo
  * @name Smartlabel
+ * @elementclass text
  * @augments JXG.Text
  * @constructor
  * @type JXG.Text
  * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {JXG.GeometryElement} Parent parent object: point, line, circle, polygon, angle.
- * @param {String|Function} Txt Optional text. In case, this content is not the empty string,
- *  the measurement is overwritten by this text.
+ */
+/**
+ * @jsxgraphsignature Smartlabel
+ * @param {JXG.GeometryElement} element GeometryElements: point, line, circle, polygon, angle.
+ * @param {String|Function} [text] Optional text. In case, this content is not the empty string,
+ * the measurement is overwritten by this text.
  *
  * @example
  * var p1 = board.create('point', [3, 4], {showInfobox: false, withLabel: false});

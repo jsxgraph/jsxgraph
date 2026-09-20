@@ -346,27 +346,30 @@ JXG.extend(
 
 /**
  * @class Display any HTML content in an SVG foreignObject container - even below other elements.
- * <p>
- * Instead of board.create('foreignobject') the shortcut board.create('fo') may be used.
  *
- * <p style="background-color:#dddddd; padding:10px"><b>NOTE:</b> In Safari up to version 15, a foreignObject does not obey the layer structure
+ * Instead of `board.create('foreignobject')` the shortcut `board.create('fo')` may be used.
+ *
+ * __NOTE:__ In old Safari versions (up to version 15), a foreignObject does not obey the layer structure
  * if it contains &lt;video&gt; or &lt;iframe&gt; tags, as well as elements which are
- * positioned with <tt>position:absolute|relative|fixed</tt>. In this  case, the foreignobject will be
+ * positioned with `position:absolute|relative|fixed`. In this case, the foreignobject will be
  * "above" the JSXGraph construction.
- * </p>
+ * 
  *
  * @pseudo
  * @name ForeignObject
+ * @elementclass other
  * @augments JXG.ForeignObject
  * @constructor
  * @type JXG.ForeignObject
+ * @see Image
  *
+ */
+/**
+ * @jsxgraphsignature ForeignObject
  * @param {String} content HTML content of the foreignObject. May also be &lt;video&gt; or &lt;iframe&gt;
- * @param {Array} position Position of the foreignObject given by [x, y] in user coordinates. Same as for images.
+ * @param {Array} position Position of the foreignObject given by `[x, y]` in user coordinates. Same as for {@link Image}.
  * @param {Array} [size] (Optional) argument size of the foreignObject in user coordinates. If not given, size is specified by the HTML attributes
  * or CSS properties of the content.
- *
- * @see Image
  *
  * @example
  * var p = board.create('point', [1, 7], {size: 16});
