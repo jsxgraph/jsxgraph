@@ -3,6 +3,10 @@
 - check domains (i.e. params a, b) of curves
 - arcs, sectors: check signatures having lines
 - check what base/composition.js does
+- check:
+  - `@constructor`
+  - `@augments ...`
+  - `@type ...`
 
 ## Attributes
 

@@ -228,7 +228,7 @@ JXG.createOrthogonalProjection = function (board, parents, attributes) {
 
 /**
  * @class A perpendicular is a line orthogonal to a given line, through a given point not on the line,
- * 
+ *
  * @pseudo
  * @name Perpendicular
  * @elementclass line
@@ -608,7 +608,7 @@ JXG.createPerpendicularSegment = function (board, parents, attributes) {
  * The constructed point will be in the middle of `p1` and `p2`.
  * @param {PointLike} p1
  * @param {PointLike} p2
- * 
+ *
  * @example
  * // Create base elements: 2 points and 1 line
  * var p1 = board.create('point', [0.0, 2.0]);
@@ -632,7 +632,7 @@ JXG.createPerpendicularSegment = function (board, parents, attributes) {
 /**
  * @jsxgraphsignature Midpoint
  * The midpoint will be the xenter of the line segment `l`.
- * @param {Line} l 
+ * @param {Line} l
  */
 JXG.createMidpoint = function (board, parents, attributes) {
     var a, b, el, i, attr;
@@ -955,10 +955,10 @@ JXG.createParallelPoint = function (board, parents, attributes) {
 
 /**
  * @class A parallel is a line through a given point, parallel to a given line.
- * 
+ *
  * If original line is given as a JSXGraph line object, the resulting parallel line will be defined by the given point and an
  * infinitely far away point (an ideal point). That means, the line can not be shortened to a segment.
- * 
+ *
  * If the original line is given as two points, the resulting parallel line can be shortened to a a segment.
  * @pseudo
  * @name Parallel
@@ -969,7 +969,7 @@ JXG.createParallelPoint = function (board, parents, attributes) {
  */
 /**
  * @jsxgraphsignature Parallel
- * The constructed line contains `p` and has the same slope as `l`. 
+ * The constructed line contains `p` and has the same slope as `l`.
  * The order of the parameters is irrelevant.
  * @param {Line} l
  * @param {PointLike} p
@@ -1000,7 +1000,7 @@ JXG.createParallelPoint = function (board, parents, attributes) {
  * @param {PointLike} p1
  * @param {PointLike} p2
  * @param {PointLike} p
- * 
+ *
  * @example
  * var p1, p2, p3, l1, pl1;
  *
@@ -1120,33 +1120,40 @@ JXG.createParallel = function (board, parents, attributes) {
 
 /**
  * @class A segment with an arrow head attached thath is parallel to a given segment.
- * The segment is given by its defining two points, the arrow starts at a given point.
- * <p>
+ * The segment is given by its defining two points, the arrow starts at the third given point.
+ *
  * @pseudo
  * @constructor
- * @name Arrowparallel
+ * @name ArrowParallel
  * @elementclass line
  * @type Parallel
- * @augments Parallel
  * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {JXG.Point_JXG.Point_JXG.Point} p1,p2,p3 The constructed arrow contains p3 and has the same slope as the line through p1 and p2.
+ */
+/**
+ * @jsxgraphsignature ArrowParallel
+ * Parameters are `[p1, p2, p]`: The
+ * constructed arrow starts at `p` and has the same slope as the line through `p1` and `p2`.
+ * @param {PointLike} p1
+ * @param {PointLike} p2
+ * @param {PointLike} p
+ *
  * @example
- * // Create a parallel
+ * // Create an arrow  parallel
  * var p1 = board.create('point', [0.0, 2.0]);
  * var p2 = board.create('point', [2.0, 1.0]);
- * var l1 = board.create('segment', [p1, p2]);
+ * var l1 = plex1_board.create('segment', [p1, p2]);
  *
- * var p3 = board.create('point', [3.0, 3.0]);
- * var pl1 = board.create('arrowparallel', [p1, p2, p3]);
+ * var p = board.create('point', [3.0, 3.0]);
+ * var pl1 = board.create('arrowparallel', [p1, p2, p]);
  * </pre><div class="jxgbox" id="JXGeeacdf99-036f-4e83-aeb6-f7388423e369" style="width: 400px; height: 400px;"></div>
  * <script type="text/javascript">
  * (function () {
- *   var plex1_board = JXG.JSXGraph.initBoard('JXGeeacdf99-036f-4e83-aeb6-f7388423e369', {boundingbox: [-1, 9, 9, -1], axis: true, showcopyright: false, shownavigation: false});
- *   var plex1_p1 = plex1_board.create('point', [0.0, 2.0]);
- *   var plex1_p2 = plex1_board.create('point', [2.0, 1.0]);
- *   var plex1_l1 = plex1_board.create('segment', [plex1_p1, plex1_p2]);
- *   var plex1_p3 = plex1_board.create('point', [3.0, 3.0]);
- *   var plex1_pl1 = plex1_board.create('arrowparallel', [plex1_p1, plex1_p2, plex1_p3]);
+ *   var board = JXG.JSXGraph.initBoard('JXGeeacdf99-036f-4e83-aeb6-f7388423e369', {boundingbox: [-1, 9, 9, -1], axis: true, showcopyright: false, shownavigation: false});
+ *   var p1 = board.create('point', [0.0, 2.0]);
+ *   var p2 = board.create('point', [2.0, 1.0]);
+ *   var l1 = board.create('segment', [p1, p2]);
+ *   var p3 = board.create('point', [3.0, 3.0]);
+ *   var pl1 = board.create('arrowparallel', [p1, p2, p3]);
  * })();
  * </script><pre>
  */
@@ -1184,7 +1191,7 @@ JXG.createArrowParallel = function (board, parents, attributes) {
 };
 
 /**
- * @class A bisector is a line which divides an angle into two equal angles. It is given by three points A, B, and
+ * @class A bisector is a line which divides an angle into two equal angles. It is determined by three points A, B, and
  * C and divides the angle ABC into two equal sized parts.
  * @pseudo
  * @constructor
@@ -1193,8 +1200,14 @@ JXG.createArrowParallel = function (board, parents, attributes) {
  * @type JXG.Line
  * @augments JXG.Line
  * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {JXG.Point_JXG.Point_JXG.Point} p1,p2,p3 The angle described by <tt>p1</tt>, <tt>p2</tt> and <tt>p3</tt> will
- * be divided into two equal angles.
+ */
+/**
+ * @jsxgraphsignature Bisector
+ *
+ * @param {PointLike} p1
+ * @param {PointLike} p2
+ * @param {PointLike} p3
+ *
  * @example
  * var p1 = board.create('point', [6.0, 4.0]);
  * var p2 = board.create('point', [3.0, 2.0]);
@@ -1279,16 +1292,21 @@ JXG.createBisector = function (board, parents, attributes) {
 
 /**
  * @class Bisector lines are similar to {@link Bisector} but take two lines as parent elements. The resulting element is
- * a composition of two lines.
+ * a {@link JXG.Composition} element consisting of the two lines.
  * @pseudo
  * @constructor
  * @name Bisectorlines
  * @elementclass line
  * @type JXG.Composition
- * @augments JXG.Composition
  * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {JXG.Line_JXG.Line} l1,l2 The four angles described by the lines <tt>l1</tt> and <tt>l2</tt> will each
- * be divided into two equal angles.
+ */
+/**
+ * @jsxgraphsignature Bisectorlines
+ * The four angles described by the lines `l1` and `l2` will each
+ * be divided into two equal angles. *
+ * @param {Line} l1
+ * @param {Line} l2
+ *
  * @example
  * var p1 = board.create('point', [6.0, 4.0]);
  * var p2 = board.create('point', [3.0, 2.0]);
@@ -2349,7 +2367,7 @@ JXG.createMirrorPoint = function (board, parents, attributes) {
 
 /**
  * @class The graph of the integral function of a given function in a given interval.
- * 
+ *
  * The Integral element is used to visualize the area under a given curve over a given interval
  * and to calculate the area's value. For that a polygon and gliders are used. The polygon displays the area,
  * the gliders are used to change the interval dynamically.
@@ -2736,7 +2754,7 @@ JXG.createIntegral = function (board, parents, attributes) {
 /**
  * @class The area which is the set of solutions of a linear inequality or an inequality
  * of a function graph. For example, an inequality of type y <= f(x).
- * 
+ *
  * Display the solution set of a linear inequality (less than or equal to).
  * To be precise, the solution set of the inequality <i>y <= b/a * x + c/a</i> is shown.
  * In case <i>a = 0</i>, that is if the equation of the line is <i>bx + c = 0</i>,
