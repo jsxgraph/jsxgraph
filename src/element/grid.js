@@ -43,19 +43,26 @@ import Const from "../base/constants.js";
 
 /**
  * @class A grid is a mesh consisting of vertical and horizontal lines or other geometrical objects.
- * @pseudo
- * @description A grid is a set of vertical and horizontal lines or other geometrical objects (faces)
+ * 
+ * A grid is a set of vertical and horizontal lines or other geometrical objects (faces)
  * to support the user with element placement or to improve determination of position.
- * This method takes up to two facultative parent elements. These are used to set distance between
- * grid elements in case of attribute <tt>majorStep</tt> or <tt>minorElements</tt> is set to 'auto'.
+ * This method takes up to two optional parent elements. These are used to set distance between
+ * grid elements in case of attribute `majorStep` or `minorElements` is set to `'auto'`.
  * Then the major/minor grid element distance is set to the ticks distance of parent axes.
- * It is usually instantiated on the board's creation via the attribute <tt>grid</tt> set to true.
+ * It is usually instantiated on the board's creation via the attribute `grid` set to true.
+ * @pseudo
  * @constructor
  * @name Grid
+ * @elementclass other
  * @type JXG.Curve
  * @augments JXG.Curve
  * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {JXG.Axis_JXG.Axis} a1,a2 Optional parent axis.
+ */
+/**
+ * @jsxgraphsignature Grid
+ * Optional parent axes.
+ * @param {Axis} [a1]
+ * @param {Axis} [a2] 
  *
  * @example
  * // standard grid
