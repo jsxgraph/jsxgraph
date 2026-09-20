@@ -49,13 +49,19 @@ import Point from "../base/point.js";
  * @class A slider can be used to choose values from a given range of numbers.
  * @pseudo
  * @name Slider
- * @augments Glider
+ * @elementclass other
  * @constructor
  * @type JXG.Point
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {Array_Array_Array} start,end,range The first two arrays give the start and the end where the slider is drawn
- * on the board. The third array gives the start and the end of the range the slider operates as the first resp. the
- * third component of the array. The second component of the third array gives its start value.
+ */
+/**
+ * @jsxgraphsignature Slider
+ * The first two arrays give the start and the end positions of the slider line on the board.
+ * The third array gives range of the slider: the first resp. the third component of the array are the start and the end of the range.
+ * The second component of the array determines the initial value of the slider.
+ * @param {Array} start `[x, y]`
+ * @param {Array} end `[x, y]`
+ * @param {Array} range `[start, initial, end]`
  *
  * @example
  * // Create a slider with values between 1 and 10, initial position is 5.
@@ -67,6 +73,7 @@ import Point from "../base/point.js";
  *     var s = board.create('slider', [[1, 2], [3, 2], [1, 5, 10]]);
  *   })();
  * </script><pre>
+ *
  * @example
  * // Create a slider taking integer values between 1 and 5. Initial value is 3.
  * var s = board.create('slider', [[1, 3], [3, 1], [0, 3, 5]], {
@@ -85,6 +92,7 @@ import Point from "../base/point.js";
  *     });
  *   })();
  * </script><pre>
+ *
  * @example
  *     // Draggable slider
  *     var s1 = board.create('slider', [[-3, 1], [2, 1],[-10, 1, 10]], {

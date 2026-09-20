@@ -1618,10 +1618,9 @@ JXG.extend(
  *
  * In case of 'internal', an SVG text element is used to display the text.
  *
- *
- *
  * @pseudo
  * @name Text
+ * @elementclass text
  * @augments JXG.Text
  * @constructor
  * @type JXG.Text
@@ -1737,6 +1736,7 @@ JXG.registerElement("text", JXG.createText);
  *
  * @pseudo
  * @name Label
+ * @elementclass text
  * @augments JXG.Text
  * @constructor
  * @type JXG.Text

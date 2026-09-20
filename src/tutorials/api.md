@@ -1,5 +1,6 @@
 ## TODO
 
+- Elements: `@type` is not shown
 - check domains (i.e. params a, b) of curves
 - arcs, sectors: check signatures having lines
 - check what base/composition.js does
@@ -8,6 +9,9 @@
   - `@augments ...`
   - `@type ...`
 - Name: `MirrorElement` vs `Reflection`
+- `text.js`: HTMLSlider
+- `image.js`: If necessary enable coords, size with functions. Example
+- `@see` in element jsdocs
 
 ## Attributes
 

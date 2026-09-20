@@ -390,28 +390,35 @@ JXG.extend(
  * @class Display of an external image.
  * @pseudo
  * @name Image
+ * @elementclass other
  * @type JXG.Image
  * @augments JXG.Image
  * @constructor
  * @constructor
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {string,function_Array_Array} url,coords,size url defines the location of the image data. The array coords contains the user coordinates
- * of the lower left corner of the image.
- *   It can consist of two or three elements of type number, a string containing a GEONE<sub>x</sub>T
- *   constraint, or a function which takes no parameter and returns a number. Every element determines one coordinate. If a coordinate is
- *   given by a number, the number determines the initial position of a free image. If given by a string or a function that coordinate will be constrained
- *   that means the user won't be able to change the image's position directly by mouse because it will be calculated automatically depending on the string
- *   or the function's return value. If two parent elements are given the coordinates will be interpreted as 2D affine Euclidean coordinates, if three such
- *   parent elements are given they will be interpreted as homogeneous coordinates.
- * <p>
- * The array size defines the image's width and height in user coordinates.
+ */
+// *   It can consist of two or three elements of type number, a string containing a GEONE<sub>x</sub>T
+// *   constraint, or a function which takes no parameter and returns a number. Every element determines one coordinate. If a coordinate is
+// *   given by a number, the number determines the initial position of a free image. If given by a string or a function that coordinate will be constrained
+// *   that means the user won't be able to change the image's position directly by mouse because it will be calculated automatically depending on the string
+// *   or the function's return value. If two parent elements are given the coordinates will be interpreted as 2D affine Euclidean coordinates, if three such
+// *   parent elements are given they will be interpreted as homogeneous coordinates.
+/**
+ * @jsxgraphsignature Image
+ * @param {String|Function} url Defines the location of the image data. Data URIs are possible.
+ * @param {Array} coords The array `coords` of format `[[z], x, y]` contains the user coordinates of the lower left corner of the image.
+ * `[z,x, y]` are homogeneous coordinates, `[x,y]` are the (usual) Euclidean coordinates. The elements can be {@link NumberLike}.
+ * @param {Array} size The array `size` of format `[w, h]` defines the image's width and height in user coordinates. The elements can be {@link NumberLike}.
+ *
  * @example
- * var im = board.create('image', ['https://jsxgraph.org/jsxgraph/distrib/images/uccellino.jpg', [-3,-2], [3,3]]);
+ * var im = board.create('image', ['https://jsxgraph.org/jsxgraph/distrib/images/uccellino.jpg', [-3, -2], [3, 3]]);
  *
  * </pre><div class="jxgbox" id="JXG9850cda0-7ea0-4750-981c-68bacf9cca57" style="width: 400px; height: 400px;"></div>
  * <script type="text/javascript">
- *   var image_board = JXG.JSXGraph.initBoard('JXG9850cda0-7ea0-4750-981c-68bacf9cca57', {boundingbox: [-4, 4, 4, -4], axis: true, showcopyright: false, shownavigation: false});
- *   var image_im = image_board.create('image', ['https://jsxgraph.org/distrib/images/uccellino.jpg', [-3,-2],[3,3]]);
+ * (function() {
+ *   var board = JXG.JSXGraph.initBoard('JXG9850cda0-7ea0-4750-981c-68bacf9cca57', {boundingbox: [-4, 4, 4, -4], axis: true, showcopyright: false, shownavigation: false});
+ *   var im = board.create('image', ['https://jsxgraph.org/distrib/images/uccellino.jpg', [-3,-2], [3,3]]);
+ * })();
  * </script><pre>
  */
 JXG.createImage = function (board, parents, attributes) {
