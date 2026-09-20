@@ -7,6 +7,7 @@
   - `@constructor`
   - `@augments ...`
   - `@type ...`
+- Name: `MirrorElement` vs `Reflection`
 
 ## Attributes
 

@@ -1529,7 +1529,7 @@ JXG.createAngularBisectorsOfTwoLines = function (board, parents, attributes) {
  * @class Constructs the center of a {@link Circumcircle} without creating the circle.
  * Like the circumcircle the circumcenter is constructed by providing three points.
  * A circumcenter is given by three points which are all lying on the circle with the
- * constructed circumcenter as the midpoint.
+ * constructed circumcenter as the center.
  * @pseudo
  * @constructor
  * @name Circumcenter
@@ -1537,8 +1537,15 @@ JXG.createAngularBisectorsOfTwoLines = function (board, parents, attributes) {
  * @type JXG.Point
  * @augments JXG.Point
  * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {JXG.Point_JXG.Point_JXG.Point} p1,p2,p3 The constructed point is the midpoint of the circle determined
- * by p1, p2, and p3.
+ */
+/**
+ * @jsxgraphsignature Circumcenter
+ * The constructed point is the center of the circle determined by points `p1`, `p2`, and `p3`.
+ *
+ * @param {PointLike} p1
+ * @param {PointLike} p2
+ * @param {PointLike} p3
+ *
  * @example
  * var p1 = board.create('point', [0.0, 2.0]);
  * var p2 = board.create('point', [2.0, 1.0]);
@@ -1547,11 +1554,13 @@ JXG.createAngularBisectorsOfTwoLines = function (board, parents, attributes) {
  * var cc1 = board.create('circumcenter', [p1, p2, p3]);
  * </pre><div class="jxgbox" id="JXGe8a40f95-bf30-4eb4-88a8-f4d5495261fd" style="width: 400px; height: 400px;"></div>
  * <script type="text/javascript">
- *   var ccmex1_board = JXG.JSXGraph.initBoard('JXGe8a40f95-bf30-4eb4-88a8-f4d5495261fd', {boundingbox: [-1, 9, 9, -1], axis: true, showcopyright: false, shownavigation: false});
- *   var ccmex1_p1 = ccmex1_board.create('point', [0.0, 2.0]);
- *   var ccmex1_p2 = ccmex1_board.create('point', [6.0, 1.0]);
- *   var ccmex1_p3 = ccmex1_board.create('point', [3.0, 7.0]);
- *   var ccmex1_cc1 = ccmex1_board.create('circumcenter', [ccmex1_p1, ccmex1_p2, ccmex1_p3]);
+ * (function () {
+ *   var board = JXG.JSXGraph.initBoard('JXGe8a40f95-bf30-4eb4-88a8-f4d5495261fd', {boundingbox: [-1, 9, 9, -1], axis: true, showcopyright: false, shownavigation: false});
+ *   var p1 = board.create('point', [0.0, 2.0]);
+ *   var p2 = board.create('point', [6.0, 1.0]);
+ *   var p3 = board.create('point', [3.0, 7.0]);
+ *   var cc1 = board.create('circumcenter', [p1, p2, p3]);
+ * })();
  * </script><pre>
  */
 JXG.createCircumcenter = function (board, parents, attributes) {
@@ -1636,8 +1645,14 @@ JXG.createCircumcenter = function (board, parents, attributes) {
  * @type JXG.Point
  * @augments JXG.Point
  * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {JXG.Point_JXG.Point_JXG.Point} p1,p2,p3 The constructed point is the incenter of the triangle described
- * by p1, p2, and p3.
+ */
+/**
+ * @jsxgraphsignature Incenter
+ * The constructed point is the incenter of the triangle described by `p1`, `p2`, and `p3`.
+ * @param {PointLike} p1
+ * @param {PointLike} p2
+ * @param {PointLike} p3
+ *
  * @example
  * var p1 = board.create('point', [0.0, 2.0]);
  * var p2 = board.create('point', [2.0, 1.0]);
@@ -1646,11 +1661,13 @@ JXG.createCircumcenter = function (board, parents, attributes) {
  * var ic1 = board.create('incenter', [p1, p2, p3]);
  * </pre><div class="jxgbox" id="JXGe8a40f95-bf30-4eb4-88a8-a2d5495261fd" style="width: 400px; height: 400px;"></div>
  * <script type="text/javascript">
- *   var icmex1_board = JXG.JSXGraph.initBoard('JXGe8a40f95-bf30-4eb4-88a8-a2d5495261fd', {boundingbox: [-1, 9, 9, -1], axis: true, showcopyright: false, shownavigation: false});
- *   var icmex1_p1 = icmex1_board.create('point', [0.0, 2.0]);
- *   var icmex1_p2 = icmex1_board.create('point', [6.0, 1.0]);
- *   var icmex1_p3 = icmex1_board.create('point', [3.0, 7.0]);
- *   var icmex1_ic1 = icmex1_board.create('incenter', [icmex1_p1, icmex1_p2, icmex1_p3]);
+ * (function () {
+ *   var board = JXG.JSXGraph.initBoard('JXGe8a40f95-bf30-4eb4-88a8-a2d5495261fd', {boundingbox: [-1, 9, 9, -1], axis: true, showcopyright: false, shownavigation: false});
+ *   var p1 = board.create('point', [0.0, 2.0]);
+ *   var p2 = board.create('point', [6.0, 1.0]);
+ *   var p3 = board.create('point', [3.0, 7.0]);
+ *   var ic1 = board.create('incenter', [p1, p2, p3]);
+ * })();
  * </script><pre>
  */
 JXG.createIncenter = function (board, parents, attributes) {
@@ -1726,7 +1743,14 @@ JXG.createIncenter = function (board, parents, attributes) {
  * @type JXG.Circle
  * @augments JXG.Circle
  * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {JXG.Point_JXG.Point_JXG.Point} p1,p2,p3 The constructed element is the circle determined by <tt>p1</tt>, <tt>p2</tt>, and <tt>p3</tt>.
+ */
+/**
+ * @jsxgraphsignature Circumcircle
+ * The constructed element is the circle determined by `p1`, `p2`, and `p3`.
+ * @param {PointLike} p1
+ * @param {PointLike} p2
+ * @param {PointLike} p3
+ *
  * @example
  * var p1 = board.create('point', [0.0, 2.0]);
  * var p2 = board.create('point', [2.0, 1.0]);
@@ -1735,11 +1759,13 @@ JXG.createIncenter = function (board, parents, attributes) {
  * var cc1 = board.create('circumcircle', [p1, p2, p3]);
  * </pre><div class="jxgbox" id="JXGe65c9861-0bf0-402d-af57-3ab11962f5ac" style="width: 400px; height: 400px;"></div>
  * <script type="text/javascript">
- *   var ccex1_board = JXG.JSXGraph.initBoard('JXGe65c9861-0bf0-402d-af57-3ab11962f5ac', {boundingbox: [-1, 9, 9, -1], axis: true, showcopyright: false, shownavigation: false});
- *   var ccex1_p1 = ccex1_board.create('point', [0.0, 2.0]);
- *   var ccex1_p2 = ccex1_board.create('point', [6.0, 1.0]);
- *   var ccex1_p3 = ccex1_board.create('point', [3.0, 7.0]);
- *   var ccex1_cc1 = ccex1_board.create('circumcircle', [ccex1_p1, ccex1_p2, ccex1_p3]);
+ * (function () {
+ *   var board = JXG.JSXGraph.initBoard('JXGe65c9861-0bf0-402d-af57-3ab11962f5ac', {boundingbox: [-1, 9, 9, -1], axis: true, showcopyright: false, shownavigation: false});
+ *   var p1 = board.create('point', [0.0, 2.0]);
+ *   var p2 = board.create('point', [6.0, 1.0]);
+ *   var p3 = board.create('point', [3.0, 7.0]);
+ *   var cc1 = board.create('circumcircle', [p1, p2, p3]);
+ * })();
  * </script><pre>
  */
 JXG.createCircumcircle = function (board, parents, attributes) {
@@ -1812,8 +1838,14 @@ JXG.createCircumcircle = function (board, parents, attributes) {
  * @type JXG.Circle
  * @augments JXG.Circle
  * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {JXG.Point_JXG.Point_JXG.Point} p1,p2,p3 The constructed point is the midpoint of the incircle of
- * <tt>p1</tt>, <tt>p2</tt>, and <tt>p3</tt>.
+ */
+/**
+ * @jsxgraphsignature Incircle
+ * The constructed circle is the incircle of the triangle spanned by `p1`, `p2`, and `p3`.
+ * @param {PointLike} p1
+ * @param {PointLike} p2
+ * @param {PointLike} p3
+ *
  * @example
  * var p1 = board.create('point', [0.0, 2.0]);
  * var p2 = board.create('point', [2.0, 1.0]);
@@ -1822,11 +1854,13 @@ JXG.createCircumcircle = function (board, parents, attributes) {
  * var ic1 = board.create('incircle', [p1, p2, p3]);
  * </pre><div class="jxgbox" id="JXGe65c9861-0bf0-402d-af57-2ab12962f8ac" style="width: 400px; height: 400px;"></div>
  * <script type="text/javascript">
- *   var icex1_board = JXG.JSXGraph.initBoard('JXGe65c9861-0bf0-402d-af57-2ab12962f8ac', {boundingbox: [-1, 9, 9, -1], axis: true, showcopyright: false, shownavigation: false});
- *   var icex1_p1 = icex1_board.create('point', [0.0, 2.0]);
- *   var icex1_p2 = icex1_board.create('point', [6.0, 1.0]);
- *   var icex1_p3 = icex1_board.create('point', [3.0, 7.0]);
- *   var icex1_ic1 = icex1_board.create('incircle', [icex1_p1, icex1_p2, icex1_p3]);
+ * (function () {
+ *   var board = JXG.JSXGraph.initBoard('JXGe65c9861-0bf0-402d-af57-2ab12962f8ac', {boundingbox: [-1, 9, 9, -1], axis: true, showcopyright: false, shownavigation: false});
+ *   var p1 = board.create('point', [0.0, 2.0]);
+ *   var p2 = board.create('point', [6.0, 1.0]);
+ *   var p3 = board.create('point', [3.0, 7.0]);
+ *   var ic1 = board.create('incircle', [p1, p2, p3]);
+ * })();
  * </script><pre>
  */
 JXG.createIncircle = function (board, parents, attributes) {
@@ -1914,7 +1948,7 @@ JXG.createIncircle = function (board, parents, attributes) {
 
 /**
  * @class  Reflect a point, line, circle, curve, polygon across a given line.
- * A reflected element (point, polygon, line or curve) is given by a given
+ * A reflected element (point, line, ...) is given by a given
  * object of the same type and a line of reflection.
  * It is determined by the reflection of the given element
  * across the given line.
@@ -1925,7 +1959,14 @@ JXG.createIncircle = function (board, parents, attributes) {
  * @type JXG.GeometryElement
  * @augments JXG.GeometryElement
  * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {JXG.Point|JXG.Line|JXG.Curve|JXG.Polygon_JXG.Line} p,l The reflection element is the reflection of p across the line l.
+ */
+/**
+ * @jsxgraphsignature Reflection
+ * The resulting element is the reflection of an element `p` across the line `l`.
+ *
+ * @param {Point|Line|Circle|Curve|Polygon} p
+ * @param {Line} l
+ *
  * @example
  * var p1 = board.create('point', [0.0, 4.0]);
  * var p2 = board.create('point', [6.0, 1.0]);
@@ -1935,43 +1976,46 @@ JXG.createIncircle = function (board, parents, attributes) {
  * var rp1 = board.create('reflection', [p3, l1]);
  * </pre><div class="jxgbox" id="JXG087a798e-a36a-4f52-a2b4-29a23a69393b" style="width: 400px; height: 400px;"></div>
  * <script type="text/javascript">
- *   var rpex1_board = JXG.JSXGraph.initBoard('JXG087a798e-a36a-4f52-a2b4-29a23a69393b', {boundingbox: [-1, 9, 9, -1], axis: true, showcopyright: false, shownavigation: false});
- *   var rpex1_p1 = rpex1_board.create('point', [0.0, 4.0]);
- *   var rpex1_p2 = rpex1_board.create('point', [6.0, 1.0]);
- *   var rpex1_l1 = rpex1_board.create('line', [rpex1_p1, rpex1_p2]);
- *   var rpex1_p3 = rpex1_board.create('point', [3.0, 3.0]);
- *   var rpex1_rp1 = rpex1_board.create('reflection', [rpex1_p3, rpex1_l1]);
+ * (function () {
+ *   var board = JXG.JSXGraph.initBoard('JXG087a798e-a36a-4f52-a2b4-29a23a69393b', {boundingbox: [-1, 9, 9, -1], axis: true, showcopyright: false, shownavigation: false});
+ *   var p1 = board.create('point', [0.0, 4.0]);
+ *   var p2 = board.create('point', [6.0, 1.0]);
+ *   var l1 = board.create('line', [p1, p2]);
+ *   var p3 = board.create('point', [3.0, 3.0]);
+ *   var rp1 = board.create('reflection', [p3, l1]);
+ * })();
  * </script><pre>
+ *
  * @example
- *         // Reflection of more elements
- *         // reflection line
- *         var li = board.create('line', [1,1,1], {strokeColor: '#aaaaaa'});
+ *   // Reflection of more elements
+ *   // reflection line
+ *   var li = board.create('line', [1,1,1], {strokeColor: '#aaaaaa'});
  *
- *         var p1 = board.create('point', [-3,-1], {name: "A"});
- *         var q1 = board.create('reflection', [p1, li], {name: "A'"});
+ *   var p1 = board.create('point', [-3,-1], {name: "A"});
+ *   var q1 = board.create('reflection', [p1, li], {name: "A'"});
  *
- *         var l1 = board.create('line', [1,-5,1]);
- *         var l2 = board.create('reflection', [l1, li]);
+ *   var l1 = board.create('line', [1,-5,1]);
+ *   var l2 = board.create('reflection', [l1, li]);
  *
- *         var cu1 = board.create('curve', [[-3, -3, -2.5, -3, -3, -2.5], [-3, -2, -2, -2, -2.5, -2.5]], {strokeWidth:3});
- *         var cu2 = board.create('reflection', [cu1, li], {strokeColor: 'red', strokeWidth:3});
+ *   var cu1 = board.create('curve', [[-3, -3, -2.5, -3, -3, -2.5], [-3, -2, -2, -2, -2.5, -2.5]], {strokeWidth:3});
+ *   var cu2 = board.create('reflection', [cu1, li], {strokeColor: 'red', strokeWidth:3});
  *
- *         var pol1 = board.create('polygon', [[-6,-3], [-4,-5], [-5,-1.5]]);
- *         var pol2 = board.create('reflection', [pol1, li]);
+ *   var pol1 = board.create('polygon', [[-6,-3], [-4,-5], [-5,-1.5]]);
+ *   var pol2 = board.create('reflection', [pol1, li]);
  *
- *         var c1 = board.create('circle', [[-2,-2], [-2, -1]]);
- *         var c2 = board.create('reflection', [c1, li]);
+ *   var c1 = board.create('circle', [[-2,-2], [-2, -1]]);
+ *   var c2 = board.create('reflection', [c1, li]);
  *
- *         var a1 = board.create('arc', [[1, 1], [0, 1], [1, 0]], {strokeColor: 'red'});
- *         var a2 = board.create('reflection', [a1, li], {strokeColor: 'red'});
+ *   var a1 = board.create('arc', [[1, 1], [0, 1], [1, 0]], {strokeColor: 'red'});
+ *   var a2 = board.create('reflection', [a1, li], {strokeColor: 'red'});
  *
- *         var s1 = board.create('sector', [[-3.5,-3], [-3.5, -2], [-3.5,-4]], {
- *                           anglePoint: {visible:true}, center: {visible: true}, radiusPoint: {visible: true},
- *                           fillColor: 'yellow', strokeColor: 'black'});
- *         var s2 = board.create('reflection', [s1, li], {fillColor: 'yellow', strokeColor: 'black', fillOpacity: 0.5});
+ *   var s1 = board.create('sector', [[-3.5,-3], [-3.5, -2], [-3.5,-4]], {
+ *                     anglePoint: {visible:true}, center: {visible: true}, radiusPoint: {visible: true},
+ *                     fillColor: 'yellow', strokeColor: 'black'});
+ *   var s2 = board.create('reflection', [s1, li], {fillColor: 'yellow', strokeColor: 'black', fillOpacity: 0.5});
  *
- *         var an1 = board.create('angle', [[-4,3.9], [-3, 4], [-3, 3]]);
- *         var an2 = board.create('reflection', [an1, li]);
+ *   var an1 = board.create('angle', [[-4,3.9], [-3, 4], [-3, 3]]);
+ *   var an2 = board.create('reflection', [an1, li]);
  *
  * </pre><div id="JXG8f763af4-d449-11e7-93b3-901b0e1b8723" class="jxgbox" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
@@ -2156,36 +2200,42 @@ JXG.createReflection = function (board, parents, attributes) {
  * @type JXG.GeometryElement
  * @augments JXG.GeometryElement
  * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {JXG.Point|JXG.Line|JXG.Curve|JXG.Ppolygon_JXG.Point} p1,p2 The constructed element is the mirror image of p2 across p1.
+ */
+/**
+ * @jsxgraphsignature MirrorElement
+ * The constructed element is the mirror image of `p` across `mirr`.
+ * @param {Point|Line|Circle|Curve|Polygon} p
+ * @param{PointLike} mirr
+ *
  * @example
- *         // point of reflection
- *         var mirr = board.create('point', [-1,-1], {color: '#aaaaaa'});
+ *   // Mirror point
+ *   var mirr = board.create('point', [-1,-1], {color: '#aaaaaa'});
  *
- *         var p1 = board.create('point', [-3,-1], {name: "A"});
- *         var q1 = board.create('mirrorelement', [p1, mirr], {name: "A'"});
+ *   var p1 = board.create('point', [-3,-1], {name: "A"});
+ *   var q1 = board.create('mirrorelement', [p1, mirr], {name: "A'"});
  *
- *         var l1 = board.create('line', [1, -5, 1]);
- *         var l2 = board.create('mirrorelement', [l1, mirr]);
+ *   var l1 = board.create('line', [1, -5, 1]);
+ *   var l2 = board.create('mirrorelement', [l1, mirr]);
  *
- *         var cu1 = board.create('curve', [[-3, -3, -2.5, -3, -3, -2.5], [-3, -2, -2, -2, -2.5, -2.5]], {strokeWidth:3});
- *         var cu2 = board.create('mirrorelement', [cu1, mirr], {strokeColor: 'red', strokeWidth:3});
+ *   var cu1 = board.create('curve', [[-3, -3, -2.5, -3, -3, -2.5], [-3, -2, -2, -2, -2.5, -2.5]], {strokeWidth:3});
+ *   var cu2 = board.create('mirrorelement', [cu1, mirr], {strokeColor: 'red', strokeWidth:3});
  *
- *         var pol1 = board.create('polygon', [[-6,-2], [-4,-4], [-5,-0.5]]);
- *         var pol2 = board.create('mirrorelement', [pol1, mirr]);
+ *   var pol1 = board.create('polygon', [[-6,-2], [-4,-4], [-5,-0.5]]);
+ *   var pol2 = board.create('mirrorelement', [pol1, mirr]);
  *
- *         var c1 = board.create('circle', [[-6,-6], [-6, -5]]);
- *         var c2 = board.create('mirrorelement', [c1, mirr]);
+ *   var c1 = board.create('circle', [[-6,-6], [-6, -5]]);
+ *   var c2 = board.create('mirrorelement', [c1, mirr]);
  *
- *         var a1 = board.create('arc', [[1, 1], [0, 1], [1, 0]], {strokeColor: 'red'});
- *         var a2 = board.create('mirrorelement', [a1, mirr], {strokeColor: 'red'});
+ *   var a1 = board.create('arc', [[1, 1], [0, 1], [1, 0]], {strokeColor: 'red'});
+ *   var a2 = board.create('mirrorelement', [a1, mirr], {strokeColor: 'red'});
  *
- *         var s1 = board.create('sector', [[-3.5,-3], [-3.5, -2], [-3.5,-4]], {
- *                           anglePoint: {visible:true}, center: {visible: true}, radiusPoint: {visible: true},
- *                           fillColor: 'yellow', strokeColor: 'black'});
- *         var s2 = board.create('mirrorelement', [s1, mirr], {fillColor: 'yellow', strokeColor: 'black', fillOpacity: 0.5});
+ *   var s1 = board.create('sector', [[-3.5,-3], [-3.5, -2], [-3.5,-4]], {
+ *                     anglePoint: {visible:true}, center: {visible: true}, radiusPoint: {visible: true},
+ *                     fillColor: 'yellow', strokeColor: 'black'});
+ *   var s2 = board.create('mirrorelement', [s1, mirr], {fillColor: 'yellow', strokeColor: 'black', fillOpacity: 0.5});
  *
- *         var an1 = board.create('angle', [[-4,3.9], [-3, 4], [-3, 3]]);
- *         var an2 = board.create('mirrorelement', [an1, mirr]);
+ *   var an1 = board.create('angle', [[-4,3.9], [-3, 4], [-3, 3]]);
+ *   var an2 = board.create('mirrorelement', [an1, mirr]);
  *
  *
  * </pre><div id="JXG026c779c-d8d9-11e7-93b3-901b0e1b8723" class="jxgbox" style="width: 300px; height: 300px;"></div>
@@ -2221,7 +2271,6 @@ JXG.createReflection = function (board, parents, attributes) {
  *
  *         var an1 = board.create('angle', [[-4,3.9], [-3, 4], [-3, 3]]);
  *         var an2 = board.create('mirrorelement', [an1, mirr]);
- *
  *     })();
  *
  * </script><pre>
@@ -2336,6 +2385,7 @@ JXG.createMirrorElement = function (board, parents, attributes) {
  * @class A MirrorPoint is a special case of a {@link MirrorElement}.
  *
  * A mirror point is determined by the reflection of a given point against another given point.
+ * This method is superceded by the more general {@link MirrorElement}.
  * @pseudo
  * @constructor
  * @name MirrorPoint
@@ -2343,20 +2393,27 @@ JXG.createMirrorElement = function (board, parents, attributes) {
  * @type JXG.Point
  * @augments JXG.Point
  * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {JXG.Point_JXG.Point} p1,p2 The constructed point is the reflection of p2 against p1.
+ */
+/**
+ * @jsxgraphsignature MirrorPoint
+ * The constructed point is the mirror point of `p` against `mirr`.
  *
- * This method is superseeded by the more general {@link JXG.createMirrorElement}.
+ * @param {PointLike} p
+ * @param {PointLike} mirr
+ *
  * @example
- * var p1 = board.create('point', [3.0, 3.0]);
- * var p2 = board.create('point', [6.0, 1.0]);
+ * var p1 = board.create('point', [1.0, 3.0]);
+ * var mirr = board.create('point', [3.0, 2.0]);
  *
- * var mp1 = board.create('mirrorpoint', [p1, p2]);
+ * var p2 = board.create('mirrorpoint', [p1, mirr]);
  * </pre><div class="jxgbox" id="JXG7eb2a814-6c4b-4caa-8cfa-4183a948d25b" style="width: 400px; height: 400px;"></div>
  * <script type="text/javascript">
- *   var mpex1_board = JXG.JSXGraph.initBoard('JXG7eb2a814-6c4b-4caa-8cfa-4183a948d25b', {boundingbox: [-1, 9, 9, -1], axis: true, showcopyright: false, shownavigation: false});
- *   var mpex1_p1 = mpex1_board.create('point', [3.0, 3.0]);
- *   var mpex1_p2 = mpex1_board.create('point', [6.0, 1.0]);
- *   var mpex1_mp1 = mpex1_board.create('mirrorpoint', [mpex1_p1, mpex1_p2]);
+ * (function() {
+ *   var board = JXG.JSXGraph.initBoard('JXG7eb2a814-6c4b-4caa-8cfa-4183a948d25b', {boundingbox: [-1, 9, 9, -1], axis: true, showcopyright: false, shownavigation: false});
+ *   var p1 = board.create('point', [1.0, 3.0]);
+ *   var mirr = board.create('point', [3.0, 2.0]);
+ *   var p2 = board.create('mirrorpoint', [p1, mirr]);
+ * })();
  * </script><pre>
  */
 JXG.createMirrorPoint = function (board, parents, attributes) {
@@ -2378,16 +2435,23 @@ JXG.createMirrorPoint = function (board, parents, attributes) {
  * @type JXG.Curve
  * @augments JXG.Curve
  * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {Array_JXG.Curve} i,c The constructed element covers the area between the curve <tt>c</tt> and the x-axis
- * within the interval <tt>i</tt>.
+ */
+/**
+ * @jsxgraphsignature Integral
+ * The constructed element covers the area between the curve `c` and the x-axis
+ * within the interval `i`.
+ * @param {Array} domain Array of length 2 containing interval bounds for the integral
+ * @param {Functiongraph} f Function graph to be integrated.
  * @example
- * var c1 = board.create('functiongraph', [function (t) { return Math.cos(t)*t; }]);
- * var i1 = board.create('integral', [[-2.0, 2.0], c1]);
+ * var domain = board.create('functiongraph', [(t) => Math.cos(t) * t]);
+ * var integral = board.create('integral', [[-2.0, 2.0], domain]);
  * </pre><div class="jxgbox" id="JXGd45d7188-6624-4d6e-bebb-1efa2a305c8a" style="width: 400px; height: 400px;"></div>
  * <script type="text/javascript">
- *   var intex1_board = JXG.JSXGraph.initBoard('JXGd45d7188-6624-4d6e-bebb-1efa2a305c8a', {boundingbox: [-5, 5, 5, -5], axis: true, showcopyright: false, shownavigation: false});
- *   var intex1_c1 = intex1_board.create('functiongraph', [function (t) { return Math.cos(t)*t; }]);
- *   var intex1_i1 = intex1_board.create('integral', [[-2.0, 2.0], intex1_c1]);
+ * (function() {
+ *   var board = JXG.JSXGraph.initBoard('JXGd45d7188-6624-4d6e-bebb-1efa2a305c8a', {boundingbox: [-5, 5, 5, -5], axis: true, showcopyright: false, shownavigation: false});
+ *   var domain = board.create('functiongraph', [(t) => Math.cos(t) * t]);
+ *   var integral = board.create('integral', [[-2.0, 2.0], domain]);
+ * })();
  * </script><pre>
  */
 JXG.createIntegral = function (board, parents, attributes) {
@@ -2753,32 +2817,37 @@ JXG.createIntegral = function (board, parents, attributes) {
 
 /**
  * @class The area which is the set of solutions of a linear inequality or an inequality
- * of a function graph. For example, an inequality of type y <= f(x).
+ * of a function graph. For example, an inequality of type \\(y \leq f(x)\\).
  *
  * Display the solution set of a linear inequality (less than or equal to).
- * To be precise, the solution set of the inequality <i>y <= b/a * x + c/a</i> is shown.
- * In case <i>a = 0</i>, that is if the equation of the line is <i>bx + c = 0</i>,
- * the area of the inequality <i>bx + c <= 0</i> is shown.
+ * That is, the solution set of the inequality \\(y \leq (b \cdot x + c)a\\) is shown.
+ * In case \\(a = 0\\), i.e. if the equation of the line is \\(bx + c = 0\\),
+ * the area of the inequality \\(bx + c \leq 0\\) is shown.
  *
  * For function graphs the area below the function graph is filled, i.e. the
- * area of the inequality y <= f(x).
- * With the attribute inverse:true the area of the inequality y >= f(x) is filled.
+ * area of the inequality \\(y \leq f(x)\\).
+ * With the attribute `inverse:true` the area of the inequality \\(y \geq f(x)\\) is filled.
  * @pseudo
  *
- * @param {JXG.Line} l The area drawn will be the area below this line. With the attribute
- * inverse:true, the inequality 'greater than or equal to' is shown.
  * @constructor
  * @name Inequality
  * @elementclass curve
  * @type JXG.Curve
  * @augments JXG.Curve
  * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
+ */
+/**
+ * @jsxgraphsignature Inequality
+ * The area shown is the area below this line or function graph. With the attribute
+ * `inverse:true`, the inequality 'greater than or equal to' is shown.
+ * @param {Line|Functiongraph} l
+ *
  * @example
  * var p = board.create('point', [1, 3]),
  *     q = board.create('point', [-2, -4]),
  *     l = board.create('line', [p, q]),
  *     ineq = board.create('inequality', [l]);
- * ineq = board.create('inequality', [l]);
+ *
  * </pre><div class="jxgbox" id="JXG2b703006-fd98-11e1-b79e-ef9e591c002e" style="width: 400px; height: 400px;"></div>
  * <script type="text/javascript">
  * (function () {
@@ -2812,19 +2881,16 @@ JXG.createIntegral = function (board, parents, attributes) {
  * var ineq_lower = board.create('inequality', [f]);
  * var ineq_greater = board.create('inequality', [f], {inverse: true, fillColor: 'yellow'});
  *
- *
  * </pre><div id="JXGdb68c574-414c-11e8-839a-901b0e1b8723" class="jxgbox" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
- *     (function() {
+ * (function() {
  *         var board = JXG.JSXGraph.initBoard('JXGdb68c574-414c-11e8-839a-901b0e1b8723',
  *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
  *     var f = board.create('functiongraph', ['sin(x)', -2*Math.PI, 2*Math.PI]);
  *
  *     var ineq_lower = board.create('inequality', [f]);
  *     var ineq_greater = board.create('inequality', [f], {inverse: true, fillColor: 'yellow'});
- *
- *
- *     })();
+ *  })();
  *
  * </script><pre>
  *
