@@ -40,18 +40,18 @@ import Type from "../utils/type.js";
  * The comb element is defined by two points.
  * @pseudo
  * @name Comb
+ * @elementclass other
  * @augments JXG.Curve
  * @constructor
  * @type JXG.Curve
  * @throws {Error} If the element cannot be constructed with the given parent
  *  objects an exception is thrown.
- * Parameter options:
- * @param {JXG.Point,array,function_JXG.Point,array,function} point1,point2 Parent elements
- * can be two elements either of type {@link JXG.Point} or array of
- * numbers describing the coordinates of a point. In the latter case the point
- * will be constructed automatically as a fixed invisible point.
- * It is possible to provide a function returning an array or a point,
- * instead of providing an array or a point.
+ */
+/**
+ * @jsxgraphsignature Comb
+ * @param {PointLike} point1
+ * @param {PointLike} point2
+ *
  * @example
  * // Create a simple horizontal comb with invisible endpoints
  * var c = board.create('comb', [[1, 0], [3, 0]]);
@@ -91,9 +91,7 @@ import Type from "../utils/type.js";
  *     reverse: function(){ return (s.Value()<0.5) ? false : true; },
  *     frequency: function(){ return s.Value(); },
  *     angle: function(){ return s.Value() * Math.PI / 2; },
- *     curve: {
- *         strokeColor: 'red'
- *     }
+ *     strokeColor: 'red'
  * });
  *
  * </pre><div id="JXG6eb1bcd1-407e-4f13-8f0c-45ef39a0cfb3" class="jxgbox" style="width: 300px; height: 300px;"></div>
@@ -109,9 +107,7 @@ import Type from "../utils/type.js";
  *         reverse: function(){ return (s.Value()<0.5) ? false : true; },
  *         frequency: function(){ return s.Value(); },
  *         angle: function(){ return s.Value() * Math.PI / 2; },
- *         curve: {
- *             strokeColor: 'red'
- *         }
+ *         strokeColor: 'red'
  *     });
  *
  *     })();

@@ -2333,7 +2333,6 @@ JXG.extend(
             /**
              * @type {Image}
              * @ignore
-             * {ignore}
              */
             tmpImg = new Image();
             svg = this.dumpToDataURI(ignoreTexts);

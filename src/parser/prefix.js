@@ -29,18 +29,14 @@
 /**
  * @fileoverview Simple prefix parser for measurements and expressions of measurements.
  * An expression is given as
- * <ul>
- * <li> array starting with an operator as first element, followed
- * by one or more operands,
- * <li> number.
- * </ul>
- * <p>
- * Possible operands are:
- * <ul>
- * <li> '+', '-', '*', '/'
- * </ul>
  *
- * @example
+ * - array starting with an operator as first element, followed
+ * by one or more operands,
+ * - number.
+ *
+ * Possible operands are:
+ *
+ * - '+', '-', '*', '/'
  *
  */
 import JXG from "../jxg.js";
@@ -53,29 +49,25 @@ import Const from "../base/constants.js";
  * This is a simple prefix parser for measurements and expressions of measurements,
  * see {@link Measurement}.
  * An expression is given as
- * <ul>
- * <li> array starting with an operator as first element, followed
+ *
+ * - array starting with an operator as first element, followed
  * by one or more operands,
- * <li> number.
- * </ul>
- * <p>
+ * - number.
+ *
  * Possible operators are:
- * <ul>
- * <li> '+', '-', '*', '/': binary operators
- * <li> 'Area', 'Radius', 'Value', 'V', 'L': arbitrary methods of JSXGraph elements, supplied as strings.
- * <li> 'exec': call a function
- * </ul>
- * <p>
+ *
+ * - '+', '-', '*', '/': binary operators
+ * - 'Area', 'Radius', 'Value', 'V', 'L': arbitrary methods of JSXGraph elements, supplied as strings.
+ * - 'exec': call a function
+ *
  * Possible operands are:
- * <ul>
- * <li> numbers
- * <li> strings
- * <li> JSXGraph elements in case the operator is a method. Example: ['Area', circle] calls
- * the method circle.Area().
- * <li> prefix expressions (for binary operators)
- * <li> 'exec': call functions. Example: ['exec', 'sin', ['V', slider]] computes 'Math.sin(slider.Value())'.
- * As functions only functions in Math or JXG.Math are allowed.
- * </ul>
+ *
+ * - numbers
+ * - strings
+ * - JSXGraph elements in case the operator is a method. Example: ['Area', circle] calls the method {@link Circle.Area}.
+ * - prefix expressions (for binary operators)
+ * - 'exec': call functions. Example: `['exec', 'sin', ['V', slider]]` computes `Math.sin(slider.Value())`. As functions only functions
+ * in Math or JXG.Math are allowed.
  * @namespace
  *
  * @example

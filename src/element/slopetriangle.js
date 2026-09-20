@@ -76,16 +76,19 @@ var priv = {
 
 /**
  * @class Slope triangle to visualize the slope of a tangent to a curve, circle or line.
+ *
  * @pseudo
  * @name Slopetriangle
+ * @elementclass line
  * @augments JXG.Line
  * @constructor
  * @type JXG.Polygon
  * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
- * Parameter options:
- * @param {JXG.Line} t A tangent based on a glider on some object, e.g. curve, circle, line or turtle.
- * @param {JXG.Line_JXG.Point} li, p A line and a point on that line.
- *  The user has to take care that the point is a member of the line.
+ */
+/**
+ * @jsxgraphsignature Slopetriangle
+ * @param {Line} t A tangent based on a glider on some object, e.g. curve, circle, line or turtle.
+ *
  * @example
  * // Create a slopetriangle on a tangent
  * var f = board.create('plot', ['sin(x)']),
@@ -105,6 +108,12 @@ var priv = {
  *     st = board.create('slopetriangle', [t]);
  * })();
  * </script><pre>
+ */
+/**
+ * @jsxgraphsignature Slopetriangle
+ * A line and a point on that line. The user has to take care that the point is a member of the line.
+ * @param {Line} line
+ * @param {Point} p
  *
  * @example
  * // Create a on a line and a point on that line

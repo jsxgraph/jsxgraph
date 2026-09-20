@@ -162,7 +162,8 @@ d:
 	src/math/math.js src/math/probfuncs.js src/math/ia.js src/math/extrapolate.js src/math/qdt.js \
 	src/math/bqdt.js src/math/numerics.js src/math/nlp.js src/math/plot.js src/math/implicitplot.js \
 	src/math/metapost.js src/math/statistics.js src/math/geometry.js src/math/clip.js src/math/poly.js \
-	src/math/complex.js src/math/tiling.js src/renderer/abstract.js src/reader/file.js \
+	src/math/complex.js src/math/tiling.js src/reader/file.js \
+	src/renderer/abstract.js src/renderer/svg.js src/renderer/vml.js src/renderer/canvas.js src/renderer/no.js \
 	src/parser/geonext.js \
 	src/base/board.js src/options.js src/jsxgraph.js \
 	src/base/element.js src/base/coords.js src/base/coordselement.js src/base/point.js src/base/line.js \
@@ -170,8 +171,9 @@ d:
 	src/element/sector.js src/base/composition.js src/element/composition.js src/element/grid.js src/base/text.js src/base/image.js \
 	src/element/slider.js src/element/measure.js src/base/transformation.js src/base/turtle.js \
 	src/utils/color.js src/utils/zip.js src/utils/base64.js src/utils/uuid.js src/utils/encoding.js src/parser/datasource.js \
-	src/base/ticks.js 
-	@# src/base/chart.js src/parser/prefix.js src/parser/ca.js src/utils/dump.js src/renderer/svg.js src/renderer/vml.js src/renderer/canvas.js src/renderer/no.js src/element/comb.js src/element/slopetriangle.js src/element/checkbox.js src/element/input.js src/element/button.js src/element/vectorfield.js src/element/smartlabel.js src/base/foreignobject.js src/options3d.js src/3d/view3d.js src/3d/element3d.js src/3d/box3d.js src/3d/circle3d.js src/3d/point3d.js src/3d/curve3d.js src/3d/linspace3d.js src/3d/text3d.js src/3d/ticks3d.js src/3d/polygon3d.js src/3d/face3d.js src/3d/polyhedron3d.js src/3d/sphere3d.js src/3d/surface3d.js src/parser/3dmodels.js src/themes/mono_thin.js
+	src/base/ticks.js src/element/comb.js src/parser/prefix.js src/utils/dump.js src/renderer/svg.js \
+	src/element/slopetriangle.js 
+	@# src/base/chart.js src/parser/ca.js src/element/checkbox.js src/element/input.js src/element/button.js src/element/vectorfield.js src/element/smartlabel.js src/base/foreignobject.js src/options3d.js src/3d/view3d.js src/3d/element3d.js src/3d/box3d.js src/3d/circle3d.js src/3d/point3d.js src/3d/curve3d.js src/3d/linspace3d.js src/3d/text3d.js src/3d/ticks3d.js src/3d/polygon3d.js src/3d/face3d.js src/3d/polyhedron3d.js src/3d/sphere3d.js src/3d/surface3d.js src/parser/3dmodels.js src/themes/mono_thin.js
 
 # prettier:
 # 	$(PRETTIER) $(PRETTIERFLAGS) src

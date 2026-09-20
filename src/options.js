@@ -5148,18 +5148,6 @@ JXG.Options = {
             name: ''
         },
 
-        // /**
-        //  * Attributes for the curve displaying the comb.
-        //  *
-        //  * @type Curve
-        //  * @name Comb#curve
-        //  * @attribute
-        //  */
-        // curve: {
-        //     strokeWidth: 1,
-        //     strokeColor: '#0000ff',
-        //     fillColor: 'none'
-        // },
         strokeWidth: 1,
         strokeColor: '#0000ff',
         fillColor: 'none'

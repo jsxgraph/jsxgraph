@@ -17,6 +17,7 @@
 - `uuid.js`: to be retired?
 - `vml.js`: to be retired?
 - `parser/datasource.js`: no jsdoc, yet
+- `parser/prefix.js`: examples
 
 ## Attributes
 

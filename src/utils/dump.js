@@ -118,7 +118,8 @@ JXG.Dump = {
      * @param {Object} instance Attribute object of the element. Usually a copy is supplied
      * @param {Object} def Default attributes, the instance is compared to
      * @param {String} pre Helper string for debug output
-     * @returns
+     * @returns Boolean true if all elements can be deleted
+     * @private
      */
     _minimizeSubObject: function(instance, def, pre) {
         var p, pl, del,
