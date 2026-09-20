@@ -12,6 +12,11 @@
 - `text.js`: HTMLSlider
 - `image.js`: If necessary enable coords, size with functions. Example
 - `@see` in element jsdocs
+- Turtle: params and examples
+- `base64.js`: to be retired 
+- `uuid.js`: to be retired?
+- `vml.js`: to be retired?
+- `parser/datasource.js`: no jsdoc, yet
 
 ## Attributes
 

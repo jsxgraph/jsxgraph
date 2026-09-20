@@ -45,8 +45,8 @@ import GeometryElement from "./element.js";
 import Type from "../utils/type.js";
 
 /**
- * Constructs a new Turtle object.
  * @class This is the Turtle class.
+ * Constructs a new Turtle object.
  * It is derived from {@link JXG.GeometryElement}.
  * It stores all properties required
  * to move a turtle.
@@ -920,17 +920,17 @@ JXG.extend(
 
 /**
  * @class A turtle is a graphic paradigm similar to the programming languages Logo or PostScript.
+ * 
  * @pseudo
- * @description  Creates a new turtle
  * @name Turtle
+ * @elementclass curve
  * @augments JXG.Turtle
  * @constructor
  * @type JXG.Turtle
  *
- * @param {JXG.Board} board The board the turtle is put on.
- * @param {Array} parents
- * @param {Object} attributes Object containing properties for the element such as stroke-color and visibility. See {@link JXG.GeometryElement#setAttribute}
- * @returns {JXG.Turtle} Reference to the created turtle object.
+ */
+/**
+ * @jsxgraphsignature Turtle
  */
 JXG.createTurtle = function (board, parents, attributes) {
     var attr;

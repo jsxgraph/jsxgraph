@@ -140,7 +140,7 @@ JXG.Ticks = function (line, ticks, attributes) {
     /**
      * Array where the labels are saved. There is an array element for every tick,
      * even for minor ticks which don't have labels. In this case the array element
-     * contains just <tt>null</tt>.
+     * contains just `null`.
      * @type Array
      * @private
      */
@@ -1632,50 +1632,51 @@ JXG.extend(
     }
 );
 
+//  * <p>
+//  * Deprecated: Alternatively, a number defining the distance between two major ticks
+//  * can be specified. However, this is meanwhile ignored. Use attribute <tt>ticksDistance</tt> instead.
 /**
  * @class Ticks are used as distance markers on a line or curve.
  * They are mainly used for axis elements and slider elements. Ticks may stretch infinitely
  * or finitely, which can be set with {@link Ticks#majorHeight} and {@link Ticks#minorHeight}.
- * <p>
+ *
  * There are the following ways to position the tick lines:
- * <ol>
- *  <li> If an array is given as optional second parameter for the constructor
- * like e.g. <tt>board.create('ticks', [line, [1, 4, 5]])</tt>, then there will be (fixed) ticks at position
+ * 
+ * - If an array is given as optional second parameter for the constructor
+ * like e.g. `board.create('ticks', [line, [1, 4, 5]])` then there will be (fixed) ticks at position
  * 1, 4 and 5 of the line.
- *  <li> If there is only one parameter given, like e.g. <tt>board.create('ticks', [line])</tt>, the ticks will be set
+ * - If there is only one parameter given, like e.g. `board.create('ticks', [line])`, the ticks will be set
  * equidistant across the line element. There are two variants:
- *    <ol type="i">
- *      <li> Setting the attribute <tt>insertTicks:false</tt>: in this case the distance between two major ticks
- *          is determined by the attribute <tt>ticksDistance</tt>. This distance is given in user units.
- *      <li> Setting the attribute <tt>insertTicks:true</tt>: in this case the distance between two major ticks
+ *   - Setting the attribute `insertTicks:false`: in this case the distance between two major ticks
+ *          is determined by the attribute `ticksDistance`. This distance is given in user units.
+ *   - Setting the attribute `insertTicks:true`: in this case the distance between two major ticks
  *          is set automatically, depending on
- *          <ul>
- *              <li> the size of the board,
- *              <li> the attribute <tt>minTicksDistance</tt>,  which is the minimum distance between two consecutive minor ticks (in pixel).
- *          </ul>
+ *     - the size of the board,
+ *     - the attribute `minTicksDistance` which is the minimum distance between two consecutive minor ticks (in pixel).
+ *
  * The distance between two major ticks is a value of the form
- * <i>a 10<sup>i</sup></i>, where <i>a</i> is one of <i>{1, 2, 5}</i> and
- * the number <i>a 10<sup>i</sup></i> is maximized such that there are approximately
- * 6 major ticks and there are at least "minTicksDistance" pixel between minor ticks.
- * </ol>
- * <p>
+ * \\(a 10^i\\), where \\(a\\) is one of \\(\{1, 2, 5\}\\) and
+ * the number \\(a 10^i\\) is maximized such that there are approximately
+ * 6 major ticks and there are at least `minTicksDistance` pixel between minor ticks.
+ *
  * For arbitrary lines (and not axes) a "zero coordinate" is determined
  * which defines where the first tick is positioned. This zero coordinate
- * can be altered with the attribute <tt>anchor</tt>. Possible values are "left", "middle", "right" or a number.
+ * can be altered with the attribute `anchor`. Possible values are "left", "middle", "right" or a number.
  * The default value is "left".
  *
  * @pseudo
  * @name Ticks
+ * @elementclass other
  * @augments JXG.Ticks
  * @constructor
  * @type JXG.Ticks
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {JXG.Line|JXG.Curve} line The parents consist of the line or curve the ticks are going to be attached to.
+ */
+/**
+ * @jsxgraphsignature Ticks
+ * @param {Line|Curve} line The line or curve the ticks are going to be attached to.
  * @param {Array} [ticks] Optional array of numbers. If given, a fixed number of static ticks is created
  * at these user-supplied positions.
- * <p>
- * Deprecated: Alternatively, a number defining the distance between two major ticks
- * can be specified. However, this is meanwhile ignored. Use attribute <tt>ticksDistance</tt> instead.
  *
  * @example
  * // Add ticks to line 'l1' through 'p1' and 'p2'. The major ticks are
@@ -1698,6 +1699,7 @@ JXG.extend(
  *   var t = board.create('ticks', [l1, 2], {ticksDistance: 2, majorHeight: 40});
  * })();
  * </script><pre>
+ *
  * @example
  *  // Create ticks labels as fractions
  * board.create('axis', [[0,1], [1,1]], {
@@ -1713,7 +1715,6 @@ JXG.extend(
  * });
  *
  * </pre><div id="JXG4455acb2-6bf3-4801-8887-d7fcc1e4e1da" class="jxgbox" style="width: 300px; height: 300px;"></div>
- * <script src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" id="MathJax-script"></script>
  * <script type="text/javascript">
  *     (function() {
  *         var board = JXG.JSXGraph.initBoard('JXG4455acb2-6bf3-4801-8887-d7fcc1e4e1da',
@@ -1733,9 +1734,6 @@ JXG.extend(
  *     })();
  *
  * </script><pre>
- *
- * @example
- * // TODO
  *
  */
 JXG.createTicks = function (board, parents, attributes) {
@@ -1779,12 +1777,18 @@ JXG.createTicks = function (board, parents, attributes) {
  * @class Hatches are collections of short line segments used to mark congruent lines or curves.
  * @pseudo
  * @name Hatch
+ * @elementclass other
  * @augments JXG.Ticks
  * @constructor
  * @type JXG.Ticks
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {JXG.Line|JXG.curve} line The line or curve the hatch marks are going to be attached to.
- * @param {Number} numberofhashes Number of dashes. The distance of the hashes can be controlled with the attribute ticksDistance.
+ */
+/**
+ * @jsxgraphsignature Hatch
+ * The distance of the hashes can be controlled with the attribute `ticksDistance`.
+ * 
+ * @param {Line|curve} line The line or curve the hatch marks are going to be attached to.
+ * @param {Number} numberofhashes Number of dashes.
  * @example
  * // Create an axis providing two coords pairs.
  *   var p1 = board.create('point', [0, 3]);

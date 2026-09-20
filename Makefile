@@ -168,8 +168,10 @@ d:
 	src/base/element.js src/base/coords.js src/base/coordselement.js src/base/point.js src/base/line.js \
 	src/base/group.js src/base/circle.js src/element/conic.js src/base/polygon.js src/base/curve.js src/element/arc.js \
 	src/element/sector.js src/base/composition.js src/element/composition.js src/element/grid.js src/base/text.js src/base/image.js \
-	src/element/slider.js src/element/measure.js src/base/transformation.js 
-	@# src/base/chart.js src/base/turtle.js src/utils/color.js src/base/ticks.js src/utils/zip.js src/utils/base64.js src/utils/uuid.js src/utils/encoding.js src/parser/datasource.js src/parser/prefix.js src/parser/ca.js src/utils/dump.js src/renderer/svg.js src/renderer/vml.js src/renderer/canvas.js src/renderer/no.js src/element/comb.js src/element/slopetriangle.js src/element/checkbox.js src/element/input.js src/element/button.js src/element/vectorfield.js src/element/smartlabel.js src/base/foreignobject.js src/options3d.js src/3d/view3d.js src/3d/element3d.js src/3d/box3d.js src/3d/circle3d.js src/3d/point3d.js src/3d/curve3d.js src/3d/linspace3d.js src/3d/text3d.js src/3d/ticks3d.js src/3d/polygon3d.js src/3d/face3d.js src/3d/polyhedron3d.js src/3d/sphere3d.js src/3d/surface3d.js src/parser/3dmodels.js src/themes/mono_thin.js
+	src/element/slider.js src/element/measure.js src/base/transformation.js src/base/turtle.js \
+	src/utils/color.js src/utils/zip.js src/utils/base64.js src/utils/uuid.js src/utils/encoding.js src/parser/datasource.js \
+	src/base/ticks.js 
+	@# src/base/chart.js src/parser/prefix.js src/parser/ca.js src/utils/dump.js src/renderer/svg.js src/renderer/vml.js src/renderer/canvas.js src/renderer/no.js src/element/comb.js src/element/slopetriangle.js src/element/checkbox.js src/element/input.js src/element/button.js src/element/vectorfield.js src/element/smartlabel.js src/base/foreignobject.js src/options3d.js src/3d/view3d.js src/3d/element3d.js src/3d/box3d.js src/3d/circle3d.js src/3d/point3d.js src/3d/curve3d.js src/3d/linspace3d.js src/3d/text3d.js src/3d/ticks3d.js src/3d/polygon3d.js src/3d/face3d.js src/3d/polyhedron3d.js src/3d/sphere3d.js src/3d/surface3d.js src/parser/3dmodels.js src/themes/mono_thin.js
 
 # prettier:
 # 	$(PRETTIER) $(PRETTIERFLAGS) src
