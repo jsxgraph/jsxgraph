@@ -1295,13 +1295,13 @@ JXG.createBisector = function (board, parents, attributes) {
  * a {@link JXG.Composition} element consisting of the two lines.
  * @pseudo
  * @constructor
- * @name Bisectorlines
+ * @name BisectorLines
  * @elementclass line
  * @type JXG.Composition
  * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
  */
 /**
- * @jsxgraphsignature Bisectorlines
+ * @jsxgraphsignature BisectorLines
  * The four angles described by the lines `l1` and `l2` will each
  * be divided into two equal angles. *
  * @param {Line} l1
@@ -1417,14 +1417,14 @@ JXG.createAngularBisectorsOfTwoLines = function (board, parents, attributes) {
     // documentation
     /**
      * First line.
-     * @memberOf Bisectorlines.prototype
+     * @memberOf BisectorLines.prototype
      * @name line1
      * @type Line
      */
 
     /**
      * Second line.
-     * @memberOf Bisectorlines.prototype
+     * @memberOf BisectorLines.prototype
      * @name line2
      * @type Line
      */
