@@ -39,21 +39,24 @@ import Type from "../utils/type.js";
 /**
  * @class  A vector field on a plane can be visualized as a collection of arrows
  * with given magnitudes and directions, each attached to a point on the plane.
- * <p>
- * Plot a vector field either given by two functions f1(x, y) and f2(x,y) or by a function f(x, y) returning an array of size 2.
+ *
+ * Plot a vector field either given by two functions \\(f_1(x, y)\\) and \\(f_2(x,y)\\) or by a function \\(f(x, y)\\) returning an array of size 2.
  *
  * @pseudo
  * @name Vectorfield
+ * @elementclass curve
  * @augments JXG.Curve
  * @constructor
  * @type JXG.Curve
  * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
- * Parameter options:
- * @param {Array|Function|String} F Either an array containing two functions f1(x, y) and f2(x, y) or function f(x, y) returning an array of length 2.
- * @param {Array} xData Array of length 3 containing start value for x, number of steps, end value of x. The vector field will contain
- * (number of steps) + 1 vectors in direction of x.
- * @param {Array} yData Array of length 3 containing start value for y, number of steps, end value of y. The vector field will contain
- * (number of steps) + 1 vectors in direction of y.
+ */
+/**
+ * @jsxgraphsignature Vectorfield
+ * @param {Array|Function|String} F Either an array containing two functions `f1(x, y)` and `f2(x, y)` or function `f(x, y)` returning an array of length 2.
+ * @param {Array} xData Array of length 3 containing start value for `x`, number of steps, end value of `x`. The vector field will contain
+ * `(number of steps) + 1` vectors in direction of `x`.
+ * @param {Array} yData Array of length 3 containing start value for `y`, number of steps, end value of `y`. The vector field will contain
+ * `(number of steps) + 1` vectors in direction of `y`.
  *
  * @example
  * // Defining functions
@@ -270,16 +273,19 @@ JXG.registerElement("vectorfield", JXG.createVectorField);
  *
  * @pseudo
  * @name Slopefield
- * @augments Vectorfield
+ * @elementclass curve
  * @constructor
  * @type JXG.Curve
  * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
- * Parameter options:
- * @param {Function|String} F Function f(x, y) returning a number.
- * @param {Array} xData Array of length 3 containing start value for x, number of steps, end value of x. The slope field will contain
- * (number of steps) + 1 vectors in direction of x.
- * @param {Array} yData Array of length 3 containing start value for y, number of steps, end value of y. The slope field will contain
- * (number of steps) + 1 vectors in direction of y.
+ */
+/**
+ * @jsxgraphsignature Slopefield
+ * @param {Function|String} F Function `f(x, y)` returning a number.
+ * @param {Array} xData Array of length 3 containing start value for `x`, number of steps, end value of `x`. The vector field will contain
+ * `(number of steps) + 1` vectors in direction of `x`.
+ * @param {Array} yData Array of length 3 containing start value for `y`, number of steps, end value of `y`. The vector field will contain
+ * `(number of steps) + 1` vectors in direction of `y`.
+ *
  * @example
  * var field = board.create('slopefield', [
  *     (x, y) => x * x - x - 2,

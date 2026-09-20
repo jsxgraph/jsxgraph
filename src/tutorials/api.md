@@ -20,6 +20,7 @@
 - `vml.js`: to be retired?
 - `parser/datasource.js`: no jsdoc, yet
 - `parser/prefix.js`: examples
+- `parser/ca.js`: jsdoc missing massively
 - Smartlabel: CSS of font color
 
 ## Attributes
