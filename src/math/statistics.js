@@ -148,11 +148,12 @@ Mat.Statistics = {
      * than the value and at least <i>P</i> percent of the data is less than or equal to that value.
      * See <a href="https://en.wikipedia.org/wiki/Percentile">https://en.wikipedia.org/wiki/Percentile</a>.
      *
-     * Here, the <i>linear interpolation between closest ranks</i> method is used.
+     * Here, the *linear interpolation between closest ranks* method is used.
      * @param {Array} arr The set of values, need not be ordered.
      * @param {Number|Array} percentile One or several percentiles
      * @returns {Number|Array} Depending if a number or an array is the input for percentile, a number or an array containing the percentiles
      * is returned.
+     * @memberof JXG.Math.Statistics
      */
     percentile: function (arr, percentile) {
         var tmp, p,
@@ -199,6 +200,7 @@ Mat.Statistics = {
      * @param {Array} arr
      * @param {Number} [coef=1.5] factor for the interquartile range. If 0: no outliers
      * @returns {Array} quartile data: [min, 25%, 50%, 75%, max, [outliers]]
+     * @memberof JXG.Math.Statistics
      *
      * @see Boxplot
      */
@@ -748,11 +750,11 @@ Mat.Statistics = {
      *
      * </pre><div id="JXGda56df4d-a5a5-4c87-9ffc-9bbc1b512302-4" class="jxgbox" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
-     * {
+     * (function() {
      *  let board = JXG.JSXGraph.initBoard('JXGda56df4d-a5a5-4c87-9ffc-9bbc1b512302-4',
      *       { boundingbox: [-5, 1.5, 5, -.03], axis: true});
      *
-     *   let runs = [
+     *  let runs = [
      *       [0, 0.2, 'blue'],
      *       [0, 1.0, 'red'],
      *       [0, 5.0, 'orange'],
@@ -767,8 +769,8 @@ Mat.Statistics = {
      *       let x = Array(50000).fill(0).map(() => JXG.Math.Statistics.randomNormal(run[0],Math.sqrt(run[1])))  // sqrt so Std Dev, not Variance
      *       let res = JXG.Math.Statistics.histogram(x, { bins: 40, density: true, cumulative: false, range: false });
      *       board.create('curve', [res[1], res[0]], { strokeColor: run[2], strokeWidth:2});
-     *   })
-     * }
+     *   });
+     * })();
      * </script><pre>
 
      */
@@ -818,7 +820,7 @@ Mat.Statistics = {
      *
      * </pre><div id="JXGda56df4d-a5a5-4c87-9ffc-9bbc1b512302-5" class="jxgbox" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
-     * {
+     * (function() {
      *  let board = JXG.JSXGraph.initBoard('JXGda56df4d-a5a5-4c87-9ffc-9bbc1b512302-5',
      *       { boundingbox: [-.5, 1.5, 5, -.1], axis: true});
      *
@@ -836,11 +838,10 @@ Mat.Statistics = {
      *       let x = Array(50000).fill(0).map(() => JXG.Math.Statistics.randomExponential(run[0]))
      *       let res = JXG.Math.Statistics.histogram(x, { bins: 40, density: true, cumulative: false, range: false });
      *       board.create('curve', [res[1], res[0]], { strokeColor: run[1], strokeWidth:2});
-     *   })
-     * }
+     *   });
+     * })();
      * </script><pre>
-
-    */
+     */
     randomExponential: function (lbda) {
         var u;
 
@@ -891,13 +892,10 @@ Mat.Statistics = {
      *       let res = JXG.Math.Statistics.histogram(x, { bins: 50, density: true, cumulative: false, range: [0, 20] });
      *       board.create('curve', [res[1], res[0]], { strokeColor: run[2]});
      *
-     *   })
-     *
-     *
-     * </pre>
-     * <div id="JXGda56df4d-a5a5-4c87-9ffc-9bbc1b512302-6" class="jxgbox" style="width: 300px; height: 300px;"></div>
+     *   });
+     * </pre><div id="JXGda56df4d-a5a5-4c87-9ffc-9bbc1b512302-6" class="jxgbox" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
-     * {
+     * (function() {
      *  let board = JXG.JSXGraph.initBoard('JXGda56df4d-a5a5-4c87-9ffc-9bbc1b512302-6',
      *       { boundingbox: [-1.7, .5, 20, -.03], axis: true});
      *
@@ -920,7 +918,7 @@ Mat.Statistics = {
      *       let res = JXG.Math.Statistics.histogram(x, { bins: 50, density: true, cumulative: false, range: [0, 20] });
      *       board.create('curve', [res[1], res[0]], { strokeColor: run[2]});
      *   })
-     * }
+     * })();
      * </script><pre>
      *
      */
@@ -1094,11 +1092,9 @@ Mat.Statistics = {
      *     });
      *     board.create('curve', [res[1], res[0]], { strokeColor: run[2] });
      * });
-     *
-     *
      * </pre><div id="JXGda56df4d-a5a5-4c87-9ffc-9bbc1b512302-3" class="jxgbox" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
-     * {
+     * (function() {
      *  let board = JXG.JSXGraph.initBoard('JXGda56df4d-a5a5-4c87-9ffc-9bbc1b512302-3',
      *       { boundingbox: [-1.7, .5, 30, -.03], axis: true});
      *
@@ -1117,7 +1113,7 @@ Mat.Statistics = {
      *       let res = JXG.Math.Statistics.histogram(x, { bins: 40, density: true, cumulative: false, range: [0, 40] });
      *       board.create('curve', [res[1], res[0]], { strokeColor: run[2]});
      *   })
-     * }
+     * })();
      * </script><pre>
      *
      */
@@ -1330,7 +1326,7 @@ Mat.Statistics = {
      * Compute the histogram of a dataset.
      * Optional parameters can be supplied through a JavaScript object
      * with the following default values:
-     * <pre>
+     * ```
      * {
      *   bins: 10,          // Number of bins
      *   range: false,      // false or array. The lower and upper range of the bins.
@@ -1339,10 +1335,10 @@ Mat.Statistics = {
      *   density: false,    // If true, normalize the counts by dividing by sum(counts)
      *   cumulative: false
      * }
-     * </pre>
+     * ```
      * The function returns an array containing two arrays. The first array is of length bins+1
      * containing the start values of the bins. The last entry contains the end values of the last bin.
-     * <p>
+     * 
      * The second array contains the counts of each bin.
      * @param {Array} x
      * @param {Object} opt Optional parameters
@@ -1381,14 +1377,12 @@ Mat.Statistics = {
      *       res[0].unshift(0)  // add zero to front so cumulative starts at zero
      *       res[1].unshift(0)
      *       board2.create('curve', [res[1], res[0]], { strokeColor: run[2], strokeWidth:2 });
-     *   })
-     *
+     *   });
      *
      * </pre><div id="JXGda56df4d-a5a5-4c87-9ffc-9bbc1b512302" class="jxgbox" style="width: 300px; height: 300px; float:left;"></div>
-     * <div style='float:left;'>&nbsp;&nbsp;</div>
      * <div id="JXGda56df4d-a5a5-4c87-9ffc-9bbc1b512302-2" class="jxgbox" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
-     * {
+     * (function() {
      *  let board = JXG.JSXGraph.initBoard('JXGda56df4d-a5a5-4c87-9ffc-9bbc1b512302',
      *       { boundingbox: [-1.7, .5, 20, -.03], axis: true});
      *  let board2 = JXG.JSXGraph.initBoard('JXGda56df4d-a5a5-4c87-9ffc-9bbc1b512302-2',
@@ -1418,8 +1412,8 @@ Mat.Statistics = {
      *       res[0].unshift(0)  // add zero to front so cumulative starts at zero
      *       res[1].unshift(0)
      *       board2.create('curve', [res[1], res[0]], { strokeColor: run[2], strokeWidth:2 });
-     *   })
-     * }
+     *   });
+     * })();
      * </script><pre>
      *
      */

@@ -1136,10 +1136,7 @@ JXG.extend(
 /**
  * @jsxgraphsignature Polygon
  * @param {Array} vertices The polygon's vertices. If the first and the last vertex don't match the first one will be
- * added to the array by the creator. Here, two points match if they have the same 'id' attribute.
- *
- * Additionally, a polygon can be created by providing a polygon and a transformation (or an array of transformations).
- * The result is a polygon which is the transformation of the supplied polygon.
+ * added to the array by the creator. Here, two points match if they have the same `id` attribute.
  *
  * @example
  * var p1 = board.create('point', [0.0, 2.0]);
@@ -1174,10 +1171,10 @@ JXG.extend(
  * </script><pre>
  *
  * @example
- *   var f1 = function() { return [0.0, 2.0]; },
- *       f2 = function() { return [2.0, 1.0]; },
- *       f3 = function() { return [4.0, 6.0]; },
- *       f4 = function() { return [1.0, 4.0]; },
+ *   var f1 = () => [0.0, 2.0],
+ *       f2 = () => [2.0, 1.0],
+ *       f3 = () => [4.0, 6.0],
+ *       f4 = () => [1.0, 4.0],
  *       cc1 = board.create('polygon', [f1, f2, f3, f4]);
  *       board.update();
  *
@@ -1185,14 +1182,22 @@ JXG.extend(
  * <script type="text/javascript">
  *  (function () {
  *   var board = JXG.JSXGraph.initBoard('JXGceb09915-b783-44db-adff-7877ae3534c8', {boundingbox: [-1, 9, 9, -1], axis: false, showcopyright: false, shownavigation: false}),
- *       f1 = function() { return [0.0, 2.0]; },
- *       f2 = function() { return [2.0, 1.0]; },
- *       f3 = function() { return [4.0, 6.0]; },
- *       f4 = function() { return [1.0, 4.0]; },
+ *       f1 = () => [0.0, 2.0],
+ *       f2 = () => [2.0, 1.0],
+ *       f3 = () => [4.0, 6.0],
+ *       f4 = () => [1.0, 4.0],
  *       cc1 = board.create('polygon', [f1, f2, f3, f4]);
  *       board.update();
  *  })();
  * </script><pre>
+ */
+/**
+ * @jsxgraphsignature Polygon
+ * Additionally, a polygon can be created by providing a polygon and a transformation (or an array of transformations).
+ * The result is a polygon which is the transformation of the supplied polygon.
+ * @param {Polygon} pol
+ * @param {Transformation} t
+ *
  *
  * @example
  * var t = board.create('transform', [2, 1.5], {type: 'scale'});
@@ -1432,9 +1437,6 @@ JXG.createRegularPolygon = function (board, parents, attributes) {
  * @jsxgraphsignature PolygonalChain
  * @param {Array} vertices The polygon's vertices.
  *
- * Additionally, a polygonal chain can be created by providing a polygonal chain and a transformation (or an array of transformations).
- * The result is a polygonal chain which is the transformation of the supplied polygonal chain.
- *
  * @example
  *     var attr = {
  *             snapToGrid: true
@@ -1472,6 +1474,14 @@ JXG.createRegularPolygon = function (board, parents, attributes) {
  * </script><pre>
  *
  */
+/**
+ * @jsxgraphsignature PolygonalChain
+ * Additionally, a polygonal chain can be created by providing a polygonal chain and a transformation (or an array of transformations).
+ * The result is a polygonal chain which is the transformation of the supplied polygonal chain.
+ * @param {PolygonalChain} pol
+ * @param {Transformation} t
+ *
+ */
 JXG.createPolygonalChain = function (board, parents, attributes) {
     var attr, el;
 
@@ -1489,13 +1499,13 @@ JXG.createPolygonalChain = function (board, parents, attributes) {
 
 /**
  * @class A quadrilateral polygon with parallel opposite sides.
+ * Constructs a parallelogram. As input, three points or coordinate arrays are expected.
  * @pseudo
- * @description Constructs a parallelogram. As input, three points or coordinate arrays are expected.
  * @constructor
  * @name Parallelogram
  * @elementclass polygon
  * @type Polygon
- * @augments Polygon
+ * @augments JXG.Polygon
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
  */
 /**

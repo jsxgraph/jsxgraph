@@ -3069,9 +3069,9 @@ JXG.registerElement("curveunion", JXG.createCurveUnion);
 /**
  * @class Vertical or horizontal boxplot or also called box-and-whisker plot to present numerical data through their quartiles.
  * The direction of the boxplot is controlled by the attribute "dir". Internally, a boxplot is realized with a single JSXGraph curve.
- * <p>
- * Given a data set, the input array Q for the boxplot can be computed e.g. with the method {@link JXG.Math.Statistics.boxplot}.
  *
+ * Given a data set, the input array Q for the boxplot can be computed e.g. with the method {@link JXG.Math.Statistics.boxplot}.
+ * 
  * @example
  * var data = [57, 57, 57, 58, 63, 66, 66, 67, 67, 68, 69, 70, 70, 70, 70, 72, 73, 75, 75, 76, 76, 78, 79, 81];
  * var Q = JXG.Math.Statistics.boxplot(data);
@@ -3086,7 +3086,7 @@ JXG.registerElement("curveunion", JXG.createCurveUnion);
  * @see JXG.Math.Statistics#boxplot
  */
 /**
- * @jsxgraphsignature CurveDifference
+ * @jsxgraphsignature Boxplot
  * @param {Array} quantiles Array containing five quantiles (e.g. min, first quartile, median, third quartile, maximum) and an optional array with outlier values. The elements of this array can be of type number, function or string. The optional aub-array outlier is an array of numbers or a function returning an array of numbers.
  * @param {Number|Function} axis Axis position of the boxplot
  * @param {Number|Function} width Width of the rectangle part of the boxplot. The width of the first and 3th quartile
