@@ -955,23 +955,31 @@ JXG.extend(
  * @class Various types of charts for data visualization.
  * @pseudo
  * @name Chart
+ * @elementclass curve
  * @augments JXG.Chart
  * @constructor
  * @type JXG.Chart
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {Array} x Array of x-coordinates (default case, see below for alternatives)
- * @param {Array} y Array of y-coordinates (default case, see below for alternatives)
- * <p>
- * The parent array may be of one of the following forms:
- * <ol>
- * <li> Parents array looks like [number, number, number, ...]. It is interpreted as array of y-coordinates.
- * The x coordinates are automatically set to [1, 2, ...]
- * <li> Parents array looks like [[number, number, number, ...]]. The content is interpreted as array of y-coordinates.
- * The x coordinates are automatically set to [1, 2, ...]x coordinates are automatically set to [1, 2, ...]
- * Default case: [[x0,x1,x2,...],[y1,y2,y3,...]]
- * </ol>
  *
- * The attribute value for the key 'chartStyle' determines the type(s) of the chart. 'chartStyle' is a comma
+ * For more examples see
+ *
+ * - <a href="https://jsxgraph.org/wiki/index.php/Charts_from_HTML_tables_-_tutorial">JSXGraph wiki: Charts from HTML tables - tutorial</a>
+ * - <a href="https://jsxgraph.org/wiki/index.php/Pie_chart">JSXgraph wiki: Pie chart</a>
+ * - <a href="https://jsxgraph.org/wiki/index.php/Different_chart_styles">JSXGraph wiki: Various chart styles</a>
+ * - <a href="https://jsxgraph.org/wiki/index.php/Dynamic_bar_chart">JSXGraph wiki: Dynamic bar chart</a>
+ *
+ *
+ */
+/**
+ * @jsxgraphsignature Chart
+ * The parent array may be of one of the following forms:
+ *
+ * - Parents array looks like `[number, number, number, ...]`. It is interpreted as array of `y`-coordinates.
+ * The x coordinates are automatically set to `[1, 2, ...]`
+ * - Parents array looks like `[[number, number, number, ...]]`. The content is interpreted as array of `y`-coordinates.
+ * Default case: `[[x0,x1,x2,...],[y1,y2,y3,...]]`
+ *
+ * The attribute value for the key `chartStyle` determines the type(s) of the chart. `chartStyle` is a comma
  * separated list of strings of the possible chart types
  * 'bar', 'fit', 'line',  'pie', 'point', 'radar', 'spline'.
  *
@@ -982,6 +990,9 @@ JXG.extend(
  * @see JXG.Chart#drawPoints
  * @see JXG.Chart#drawRadar
  * @see JXG.Chart#drawSpline
+ *
+ * @param {Array} [x] Array of `x`-coordinates (default case, see below for alternatives)
+ * @param {Array} y Array of `y`-coordinates (default case, see below for alternatives)
  *
  * @example
  *   board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-0.5,8,9,-2],axis:true});
@@ -1112,43 +1123,40 @@ JXG.extend(
  * </script><pre>
  *
  * @example
- *             board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-12, 12, 20, -12], axis: false});
- *             board.suspendUpdate();
- *             // See labelArray and paramArray
- *             var dataArr = [[23, 14, 15.0], [60, 8, 25.0], [0, 11.0, 25.0], [10, 15, 20.0]];
+ *  board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-12, 12, 20, -12], axis: false});
+ *  // See labelArray and paramArray
+ *  var dataArr = [[23, 14, 15.0], [60, 8, 25.0], [0, 11.0, 25.0], [10, 15, 20.0]];
  *
- *             var a = board.create('chart', dataArr, {
- *                 chartStyle:'radar',
- *                 colorArray:['#0F408D','#6F1B75','#CA147A','#DA2228','#E8801B','#FCF302','#8DC922','#15993C','#87CCEE','#0092CE'],
- *                 //fillOpacity:0.5,
- *                 //strokeColor:'black',
- *                 //strokeWidth:1,
- *                 //polyStrokeWidth:1,
- *                 paramArray:['Speed','Flexibility', 'Costs'],
- *                 labelArray:['Ruby','JavaScript', 'PHP', 'Python'],
- *                 //startAngle:Math.PI/4,
- *                 legendPosition:'right',
- *                 //"startShiftRatio": 0.1,
- *                 //endShiftRatio:0.1,
- *                 //startShiftArray:[0,0,0],
- *                 //endShiftArray:[0.5,0.5,0.5],
- *                 start:0
- *                 //end:70,
- *                 //startArray:[0,0,0],
- *                 //endArray:[7,7,7],
- *                 //radius:3,
- *                 //showCircles:true,
- *                 //circleLabelArray:[1,2,3,4,5],
- *                 //highlightColorArray:['#E46F6A','#F9DF82','#F7FA7B','#B0D990','#69BF8E','#BDDDE4','#92C2DF','#637CB0','#AB91BC','#EB8EBF'],
- *             });
- *             board.unsuspendUpdate();
+ *  var a = board.create('chart', dataArr, {
+ *      chartStyle:'radar',
+ *      colorArray:['#0F408D','#6F1B75','#CA147A','#DA2228','#E8801B','#FCF302','#8DC922','#15993C','#87CCEE','#0092CE'],
+ *      //fillOpacity:0.5,
+ *      //strokeColor:'black',
+ *      //strokeWidth:1,
+ *      //polyStrokeWidth:1,
+ *      paramArray:['Speed','Flexibility', 'Costs'],
+ *      labelArray:['Ruby','JavaScript', 'PHP', 'Python'],
+ *      //startAngle:Math.PI/4,
+ *      legendPosition:'right',
+ *      //"startShiftRatio": 0.1,
+ *      //endShiftRatio:0.1,
+ *      //startShiftArray:[0,0,0],
+ *      //endShiftArray:[0.5,0.5,0.5],
+ *      start:0
+ *      //end:70,
+ *      //startArray:[0,0,0],
+ *      //endArray:[7,7,7],
+ *      //radius:3,
+ *      //showCircles:true,
+ *      //circleLabelArray:[1,2,3,4,5],
+ *      //highlightColorArray:['#E46F6A','#F9DF82','#F7FA7B','#B0D990','#69BF8E','#BDDDE4','#92C2DF','#637CB0','#AB91BC','#EB8EBF'],
+ *  });
  *
  * </pre><div id="JXG985fbbe6-0488-4073-b73b-cb3ebaea488a" class="jxgbox" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
  *     (function() {
  *         var board = JXG.JSXGraph.initBoard('JXG985fbbe6-0488-4073-b73b-cb3ebaea488a',
  *             {boundingbox: [-12, 12, 20, -12], axis: false, showcopyright: false, shownavigation: false});
- *                 board.suspendUpdate();
  *                 // See labelArray and paramArray
  *                 var dataArr = [[23, 14, 15.0], [60, 8, 25.0], [0, 11.0, 25.0], [10, 15, 20.0]];
  *
@@ -1176,19 +1184,10 @@ JXG.extend(
  *                     //circleLabelArray:[1,2,3,4,5],
  *                     //highlightColorArray:['#E46F6A','#F9DF82','#F7FA7B','#B0D990','#69BF8E','#BDDDE4','#92C2DF','#637CB0','#AB91BC','#EB8EBF'],
  *                 });
- *                 board.unsuspendUpdate();
- *
  *     })();
  *
  * </script><pre>
  *
- * For more examples see
- * <ul>
- * <li><a href="https://jsxgraph.org/wiki/index.php/Charts_from_HTML_tables_-_tutorial">JSXgraph wiki: Charts from HTML tables - tutorial</a>
- * <li><a href="https://jsxgraph.org/wiki/index.php/Pie_chart">JSXgraph wiki: Pie chart</a>
- * <li><a href="https://jsxgraph.org/wiki/index.php/Different_chart_styles">JSXgraph wiki: Various chart styles</a>
- * <li><a href="https://jsxgraph.org/wiki/index.php/Dynamic_bar_chart">JSXgraph wiki: Dynamic bar chart</a>
- * </ul>
  */
 JXG.createChart = function (board, parents, attributes) {
     var data,
@@ -1427,26 +1426,29 @@ JXG.Legend.prototype.drawVerticalLegend = function (board, attributes) {
 
 /**
  * @class Creates a legend for a chart element.
- * Parameter is a pair of coordinates. The label names and  the label colors are
+ * Parameters are a pair of coordinates. The label names and the label colors are
  * supplied in the attributes:
- * <ul>
- * <li> labels (Array): array of strings containing label names
- * <li> labelArray (Array): alternative array for label names (has precedence over 'labels')
- * <li> colors (Array): array of color values
- * <li> colorArray (Array): alternative array for color values (has precedence over 'colors')
- * <li> opacities (Array): opacity of a line in the legend
- * <li> legendStyle or style: at the time being only 'vertical' is supported.
- * <li> rowHeight: height of an entry in the legend (in px)
- * <li> linelenght: length of a line in the legend (measured in the coordinate system)
- * <li> frozen (Boolean, false):
- * </ul>
+ *
+ * - `labels` (Array): array of strings containing label names
+ * - `labelArray` (Array): alternative array for label names (has precedence over 'labels')
+ * - `colors` (Array): array of color values
+ * - `colorArray` (Array): alternative array for color values (has precedence over 'colors')
+ * - `opacities` (Array): opacity of a line in the legend
+ * - `legendStyle` or `style`: at the time being only 'vertical' is supported.
+ * - `rowHeight`: height of an entry in the legend (in px)
+ * - `linelength`: length of a line in the legend (measured in the coordinate system)
+ * - `frozen` (Boolean, false)
  *
  * @pseudo
  * @name Legend
+ * @elementclass text
  * @augments JXG.Legend
  * @constructor
  * @type JXG.Legend
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
+ */
+/**
+ * @jsxgraphsignature Legend
  * @param {Number} x Horizontal coordinate of the left top point of the legend
  * @param {Number} y Vertical coordinate of the left top point of the legend
  *
