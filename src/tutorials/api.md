@@ -8,6 +8,8 @@
   - `@constructor`
   - `@augments ...`
   - `@type ...`
+  - `@throws`
+- Not yet: `@see` for Element
 - Name: `MirrorElement` vs `Reflection`
 - `text.js`: HTMLSlider
 - `image.js`: If necessary enable coords, size with functions. Example

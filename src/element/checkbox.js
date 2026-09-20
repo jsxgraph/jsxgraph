@@ -54,32 +54,42 @@ var priv = {
 
 /**
  * @class A text element that contains an HTML checkbox tag.
- * For this element, the attribute "display" has to have the value 'html' (which is the default).
+ * For this element, the attribute `display` has to have the value 'html' (which is the default).
  *
- * <p><b>Setting a CSS class:</b> The attribute <tt>cssClass</tt> affects the HTML div element that contains the checkbox element. To change the CSS properties of the HTML checkbox element a selector of the form
- * <tt>.mycheck > checkbox { ... }</tt> has to be used. See the analog example for buttons:
+ * __Setting a CSS class:__ The attribute `cssClass` affects the HTML div element that contains the checkbox element.
+ * To change the CSS properties of the HTML checkbox element a selector of the form
+ * `.mycheck > checkbox { ... }` has to be used. See the analog example for buttons:
  * {@link Button}.
  *
- * <p><b>Access the checkbox element with JavaScript:</b>
- * The underlying HTML checkbox element can be accessed through the sub-object 'rendNodeCheck', e.g. to
+ * __Access the checkbox element with JavaScript:__
+ * The underlying HTML checkbox element can be accessed through the sub-object `rendNodeCheck`, e.g. to
  * add event listeners.
+ *
+ * The checkbox can be supplied with custom-made events by using the property `rendNodeCheckbox`.
  *
  * @pseudo
  * @name Checkbox
- * @augments Text
+ * @elementclass text
+ * @augments JXG.Text
  * @constructor
  * @type JXG.Text
+ * @see Button
+ * @see Input
  *
- * @param {number,function_number,function_String,function} x,y,label Parent elements for checkbox elements.
- *   <p>
- *   x and y are the coordinates of the lower left corner of the text box.
- *    The position of the text is fixed,
- *   x and y are numbers. The position is variable if x or y are functions.
- *   <p>
- *   The label of the input element may be given as string or function.
- *   <p>
- *   The value of the checkbox can be controlled with the attribute <tt>checked</tt>
- *   <p>The HTML node can be accessed with <tt>element.rendNodeCheckbox</tt>
+ */
+/**
+ * @jsxgraphsignature Checkbox
+ * `x` and `y` are the coordinates of the lower left corner of the text box.
+ * The position of the text is fixed if `x` and `y`. The position is variable if `x` or `y` are functions.
+ *
+ * The label of the input element may be given as string or function.
+ *
+ * The value of the checkbox can be controlled with the attribute `checked`
+ *
+ * The HTML node can be accessed with `element.rendNodeCheckbox`
+ * @param {NumberLike} x
+ * @param {NumberLike} y
+ * @param {String|Function} label
  *
  * @example
  *   // Create a checkbox element at position [0,3].
@@ -110,7 +120,6 @@ var priv = {
  * })();
  * </script><pre>
  *
- * The checkbox can be supplied with custom-made events by using the property rendNodeCheckbox.
  * @example
  * var checkbox = board.create('checkbox', [0, 4, 'Click me']),
  *     p = board.create('point', [1, 1]);

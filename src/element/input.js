@@ -60,30 +60,36 @@ var priv = {
 /**
  * @class This element is used to provide a constructor for special texts containing a
  * HTML form input element.
- * For this element, the attribute "display" has to have the value 'html' (which is the default).
+ * For this element, the attribute `display` has to have the value 'html' (which is the default).
  *
- * <p><b>Setting a CSS class:</b> The attribute <tt>cssClass</tt> affects the HTML div element that contains the input element. To change the CSS properties of the HTML input element a selector of the form
- * <tt>.myinput > input { ... }</tt> has to be used. See the analog example for buttons:
+ * __Setting a CSS class:__ The attribute `cssClass` affects the HTML div element that contains the input element. To change the CSS properties of the HTML input element a selector of the form
+ * `.myinput > input { ... }` has to be used. See the analog example for buttons:
  * {@link Button}.
  *
- * <p><b>Access the input element with JavaScript:</b>
- * The underlying HTML button element can be accessed through the sub-object 'rendNodeInput', e.g. to
- * add event listeners.
+ * __Access the input element with JavaScript:__
+ * The underlying HTML button element can be accessed through the sub-object `rendNodeInput`, e.g. to add event listeners.
  *
  * @pseudo
  * @name Input
- * @augments Text
+ * @elementclass text
+ * @augments JXG.Text
  * @constructor
  * @type JXG.Text
+ * @see Button
+ * @see Checkbox
  *
- * @param {number,function_number,function_String_String,function} x,y,value,label Parent elements for input elements.
- *   <p>
- *   x and y are the coordinates of the lower left corner of the text box. The position of the text is fixed,
- *   x and y are numbers. The position is variable if x or y are functions.
- *   <p>
- *   The default value of the input element must be given as string.
- *   <p>
- *   The label of the input element may be given as string or function.
+ */
+/**
+ * @jsxgraphsignature Input
+ * `x` and `y` are the coordinates of the lower left corner of the text box. The position of the text is fixed if
+ * `x` and `y` are numbers. The position is variable if x or y are functions.
+ * The default value of the input element must be given as string.
+ * The label of the input element may be given as string or function.
+ *
+ * @param {NumberLike} x
+ * @param {NumberLike} y
+ * @param {String} value
+ * @param {String|Function} label
  *
  * @example
  *  // Create an input element at position [1,4].
@@ -230,7 +236,7 @@ var priv = {
  *      CssClass: 'JXGtext_inp', HighlightCssClass: 'JXGtext_inp'
  * });
  *
- * </pre>
+ * </pre><div id="JXGa3642ebd-a7dc-41ac-beb2-0c9e705ab8b4" class="jxgbox" style="width: 300px; height: 300px;"></div>
  *         <style>
  *             div.JXGtext_inp {
  *                 font-weight: bold;
@@ -246,7 +252,6 @@ var priv = {
  *                 border-radius: 25px;
  *             }
  *         </style>
- * <div id="JXGa3642ebd-a7dc-41ac-beb2-0c9e705ab8b4" class="jxgbox" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
  *     (function() {
  *         var board = JXG.JSXGraph.initBoard('JXGa3642ebd-a7dc-41ac-beb2-0c9e705ab8b4',
