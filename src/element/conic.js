@@ -68,7 +68,7 @@ import Type from "../utils/type.js";
  * @param {PointLike} point2
  * @param {PointLike} point3
  * @param {Number} [start=0] parameter of the curve start, default: 0.
- * @param {Number} [end=2&pi;] parameter for the curve end, default: 2&pi;.
+ * @param {Number} [end=2π] parameter for the curve end, default: 2&pi;.
  * @example
  * // Create an Ellipse by three points
  * var A = board.create('point', [-1,4]);
@@ -125,7 +125,7 @@ import Type from "../utils/type.js";
  * @param {PointLike} point2
  * @param {NumberLike} number
  * @param {Number} [start=0] parameter of the curve start, default: 0.
- * @param {Number} [end=2&pi;] parameter for the curve end, default: 2&pi;.
+ * @param {Number} [end=2π] parameter for the curve end, default: 2&pi;.
  *
  */
 JXG.createEllipse = function (board, parents, attributes) {
@@ -369,8 +369,8 @@ JXG.createEllipse = function (board, parents, attributes) {
  * @param {PointLike} point1
  * @param {PointLike} point2
  * @param {PointLike} point3
- * @param {Number} [start=-&pi;] parameter of the curve start, default: -&pi;.
- * @param {Number} [end=-&pi;] parameter for the curve end, default: &pi;.
+ * @param {Number} [start=-π] parameter of the curve start, default: -&pi;.
+ * @param {Number} [end=π] parameter for the curve end, default: &pi;.
  * @example
  * // Create an Hyperbola by three points
  * var A = board.create('point', [-1,4]);
@@ -396,8 +396,8 @@ JXG.createEllipse = function (board, parents, attributes) {
  * @param {PointLike} point1
  * @param {PointLike} point2
  * @param {NumberLike} number
- * @param {Number} [start=-&pi;] parameter of the curve start, default: -&pi;.
- * @param {Number} [end=-&pi;] parameter for the curve end, default: &pi;.
+ * @param {Number} [start=-π] parameter of the curve start, default: -&pi;.
+ * @param {Number} [end=π] parameter for the curve end, default: &pi;.
  */
 JXG.createHyperbola = function (board, parents, attributes) {
     var polarForm,
@@ -611,8 +611,8 @@ JXG.createHyperbola = function (board, parents, attributes) {
  * Default values are -&pi; and &pi;.
  * @param {PointLike} point
  * @param {Line} line
- * @param {Number} [start=-&pi;] parameter of the curve start, default: -&pi;.
- * @param {Number} [end=-&pi;] parameter for the curve end, default: &pi;.
+ * @param {Number} [start=-π] parameter of the curve start, default: -&pi;.
+ * @param {Number} [end=π] parameter for the curve end, default: &pi;.
  *
  * @example
  * // Create a parabola by a point C and a line l.
