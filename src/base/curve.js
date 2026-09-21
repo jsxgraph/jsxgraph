@@ -1959,7 +1959,7 @@ JXG.registerElement("spline", JXG.createSpline);
  * @jsxgraphsignature Cardinalspline
  * Parameters are the points for the spline interpolation.
  * @param {...PointLike} point Unspecified number of points
- * @param {function|Number} tau Tension parameter
+ * @param {NumberLike} tau Tension parameter
  * @param {String} [type='uniform'] Type of the cardinal spline, may be 'uniform' (default) or 'centripetal'
  *
  * @example
