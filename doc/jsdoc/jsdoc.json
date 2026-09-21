@@ -29,7 +29,7 @@
     "jsxgraphStyle": true,
     "commonNav": false,
     "search": true,
-    "collapse": true,
+    "collapse": false,
     "private": true,
     "menu": {
         "JSXGraph": {

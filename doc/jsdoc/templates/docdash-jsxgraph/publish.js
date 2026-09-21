@@ -335,6 +335,9 @@ function buildMemberNav(items, itemHeading, itemsSeen, linktoFn) {
         var level = typeof docdash.navLevel === 'number' && docdash.navLevel >= 0 ?
             docdash.navLevel :
             Infinity;
+        var first_el_class = true;
+        var first_top = true;
+        var prev_item_heading;
 
         items.forEach(function(item) {
             var displayName;
@@ -342,6 +345,7 @@ function buildMemberNav(items, itemHeading, itemsSeen, linktoFn) {
             var members = { find: () => null };
             var conf = env && env.conf || {};
             var classes = '';
+            var new_el_class;
 
             if (docdash.jsxgraphStyle) {
                 // Distinguish between elements and classes
@@ -353,10 +357,18 @@ function buildMemberNav(items, itemHeading, itemsSeen, linktoFn) {
                 if (itemHeading === 'Elements') {
                     elclass = item.elementclass;
                     if (elclass === undefined) console.log('Missing elementclass:', item.name);
-                    if (elclass !== undefined && elclass !== elclass_prev) {
-                        itemsNav +=  '<li'+ classes +'><i>' + 
+                    // New element class
+                    new_el_class = (elclass !== undefined && elclass !== elclass_prev) ? true : false;
+                    if (new_el_class) {
+                        if (!first_el_class) {
+                            // Close the previous details
+                            itemsNav += '</ul></details>\n';
+                        }
+                        first_el_class = false;
+                        // itemsNav +=  '<li'+ classes +'><details><summary' + 
+                        itemsNav += '<details class="nav_element_class"><summary>' + 
                             elclass.charAt(0).toUpperCase() + elclass.slice(1) +
-                            '</i></li>';
+                            '</summary><ul>';
                     }
                     elclass_prev = elclass;
                 }
@@ -432,11 +444,17 @@ function buildMemberNav(items, itemHeading, itemsSeen, linktoFn) {
         });
 
         if (itemsNav !== '') {
-            if(docdash.collapse === "top") {
-                nav += '<h3 class="collapsed_header">' + itemHeading + '</h3><ul class="collapse_top">' + itemsNav + '</ul>';
-            }
-            else {
-                nav += '<h3>' + itemHeading + '</h3><ul>' + itemsNav + '</ul>';
+            // if(docdash.collapse === "top") {
+            //     nav += '<h3 class="collapsed_header">' + itemHeading + '</h3><ul class="collapse_top">' + itemsNav + '</ul>';
+            // }
+            // else {
+            //     nav += '<h3>' + itemHeading + '</h3><ul>' + itemsNav + '</ul>';
+            // }
+            first_top = false;
+            if (itemHeading === 'Elements') {
+                nav += '<details open class="nav_top"><summary>' + itemHeading + '</summary>' + itemsNav + '</details></details>';
+            } else {
+                nav += '<details open class="nav_top"><summary>' + itemHeading + '</summary><ul>' + itemsNav + '</ul></details>';
             }
         }
     }
