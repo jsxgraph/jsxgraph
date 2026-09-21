@@ -241,6 +241,7 @@ JXG.extend(JXG.GeometryElement3D.prototype, {
      * Set position of the 2D element. This is a
      * callback function, executed in {@link JXG.GeometryElement#setPosition}.
      * @param {JXG.Transform} t transformation
+     * @memberof JXG.GeometryElement3D
      * @private
      * @see JXG.GeometryElement#setPosition
      */
@@ -256,6 +257,8 @@ JXG.extend(JXG.GeometryElement3D.prototype, {
      * For example for a surface, params will contain values (u,v) such that the new 3D position is
      * `p = [X(u, v), Z(u, v), Z(u, v)]`.
      * @returns {Array} 3D coordinates of the projected point with homogeneous coordinates of the form [1, x, y, z].
+     * @memberof JXG.GeometryElement3D
+     * @private
      */
     projectCoords: function(p, params) {
         /* stub */
@@ -266,6 +269,7 @@ JXG.extend(JXG.GeometryElement3D.prototype, {
      * @param {Array} pScr 2D screen coordinates (in pixel) 
      * @param {Array} params See {@link JXG.Math.Geometry.projectScreenCoordsToParametric}
      * @returns Array of length 4 containing the coordinates of the nearest point on the curve or surface.
+     * @memberof JXG.GeometryElement3D
      */
     // TODO check if Geometry.projectScreenCoordsToParametric has range or (range_u and range_v) - depending on the dimension given in params
     projectScreenCoords: function (pScr, params, cyclic) {
