@@ -12,7 +12,7 @@ document.getElementById("nav-search").addEventListener("keyup", function(event) 
         //no search, show all results
         document.documentElement.removeAttribute(searchAttr);
         
-        document.querySelectorAll("nav details > ul > li:not(.level-hide)").forEach(function(elem) {
+        document.querySelectorAll("nav > ul > li:not(.level-hide)").forEach(function(elem) {
             elem.style.display = "block";
         });
 
@@ -21,7 +21,7 @@ document.getElementById("nav-search").addEventListener("keyup", function(event) 
             hideAllButCurrent();
         } else {
             //menu by default should be opened
-            document.querySelectorAll("nav details > ul > li > ul li").forEach(function(elem) {
+            document.querySelectorAll("nav > ul > li > ul li").forEach(function(elem) {
                 elem.style.display = "block";
             });
         }
@@ -30,25 +30,25 @@ document.getElementById("nav-search").addEventListener("keyup", function(event) 
         document.documentElement.setAttribute(searchAttr, '');
 
         //show all parents
-        document.querySelectorAll("nav details > ul > li").forEach(function(elem) {
+        document.querySelectorAll("nav > ul > li").forEach(function(elem) {
             elem.style.display = "block";
         });
-        document.querySelectorAll("nav details > ul").forEach(function(elem) {
+        document.querySelectorAll("nav > ul").forEach(function(elem) {
             elem.style.display = "block";
         });
         //hide all results
-        document.querySelectorAll("nav details > ul > li > ul li").forEach(function(elem) {
+        document.querySelectorAll("nav > ul > li > ul li").forEach(function(elem) {
             elem.style.display = "none";
         });
         //show results matching filter
-        document.querySelectorAll("nav details > ul > li > ul a").forEach(function(elem) {
+        document.querySelectorAll("nav > ul > li > ul a").forEach(function(elem) {
             if (!contains(elem.parentNode, search)) {
                 return;
             }
             elem.parentNode.style.display = "block";
         });
         //hide parents without children
-        document.querySelectorAll("nav details > ul > li").forEach(function(parent) {
+        document.querySelectorAll("nav > ul > li").forEach(function(parent) {
             var countSearchA = 0;
             parent.querySelectorAll("a").forEach(function(elem) {
                 if (contains(elem, search)) {
