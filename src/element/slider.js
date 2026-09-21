@@ -49,7 +49,7 @@ import Point from "../base/point.js";
  * @class A slider can be used to choose values from a given range of numbers.
  * @pseudo
  * @name Slider
- * @elementclass other
+ * @elementclass control
  * @constructor
  * @type JXG.Point
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.

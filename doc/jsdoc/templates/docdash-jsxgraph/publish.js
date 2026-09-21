@@ -366,7 +366,7 @@ function buildMemberNav(items, itemHeading, itemsSeen, linktoFn) {
                         }
                         first_el_class = false;
                         // itemsNav +=  '<li'+ classes +'><details><summary' + 
-                        itemsNav += '<details class="nav_element_class"><summary>' + 
+                        itemsNav += '<details open class="nav_element_class"><summary>' + 
                             elclass.charAt(0).toUpperCase() + elclass.slice(1) +
                             '</summary><ul>';
                     }

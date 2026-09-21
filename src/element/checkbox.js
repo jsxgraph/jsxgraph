@@ -69,7 +69,7 @@ var priv = {
  *
  * @pseudo
  * @name Checkbox
- * @elementclass text
+ * @elementclass control
  * @augments JXG.Text
  * @constructor
  * @type JXG.Text

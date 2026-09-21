@@ -63,7 +63,7 @@ var priv = {
  *
  * @pseudo
  * @name Button
- * @elementclass text
+ * @elementclass control
  * @augments JXG.Text
  * @constructor
  * @type JXG.Text
