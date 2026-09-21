@@ -23,6 +23,7 @@
 - `parser/ca.js`: jsdoc missing massively
 - Smartlabel: CSS of font color
 - Attributes of chart.js
+- jsdoc JXG.createAxes3D
 
 ## Attributes
 

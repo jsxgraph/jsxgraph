@@ -172,7 +172,7 @@ JXG.extend(
          * Generic function which evaluates the function term of the curve
          * and applies its transformations.
          * @param {Number} u
-         * @returns
+         * @returns {Array} Image `[x, y, z]` of function at `u`
          */
         evalF: function(u) {
             var t, i,
@@ -356,21 +356,25 @@ JXG.extend(
  * @class 3D Curves can be defined by mappings or by discrete data sets.
  * In general, a 3D curve is a mapping from R to R^3, where t maps to (x(t),y(t),z(t)).
  * The graph is drawn for t in the interval [a,b].
- * @pseudo
- * @description A 3D parametric curve is defined by a function
- *    <i>F: R<sup>1</sup> &rarr; R<sup>3</sup></i>.
+ * A 3D parametric curve is defined by a function
+ *    \\[F: {\mathbb R} \to {\mathbb R}^3.\\]
  *
+ * @pseudo
  * @name Curve3D
- * @augments Curve
+ * @elementclass 3D
  * @constructor
  * @type Object
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {Function_Function_Function_Array,Function} F<sub>X</sub>,F<sub>Y</sub>,F<sub>Z</sub>,range
+ */
+/**
+ * @jsxgraphsignature Curve3D
  * F<sub>X</sub>(u), F<sub>Y</sub>(u), F<sub>Z</sub>(u) are functions returning a number, range is the array containing
  * lower and upper bound for the range of the parameter u. range may also be a function returning an array of length two.
- * @param {Function_Array,Function} F,range Alternatively: F<sub>[X,Y,Z]</sub>(u) a function returning an array [x,y,z] of
- * numbers, range as above.
- * @param {Array_Array_Array} X,Y,Z Three arrays containing the coordinate points which define the curve.
+ * @param {Function} F<sub>X</sub>
+ * @param {Function} F<sub>Y</sub>
+ * @param {Function} F<sub>Z</sub>
+ * @param {Array|Function} range
+ * 
  * @example
  * // create a simple curve in 3d
  * var bound = [-1.5, 1.5];
@@ -393,7 +397,21 @@ JXG.extend(
  *         var curve = view.create('curve3d', [(u)=>Math.cos(u), (u)=>Math.sin(u), (u)=>(u/Math.PI)-1,[0,2*Math.PI] ]);
  *     })();
  * </script><pre>
-  */
+ */
+/**
+ * @jsxgraphsignature Curve3D
+ * F<sub>[X,Y,Z]</sub>(u) a function returning an array [x,y,z] of numbers, range as above.
+ * @param {Function} F<sub>Z</sub>
+ * @param {Array|Function} range
+ *
+ */
+/**
+ * @jsxgraphsignature Curve3D
+ * Three arrays containing the coordinate points which define the curve.
+ * @param {Array} X
+ * @param {Array} Y
+ * @param {Array} Z
+ */
 JXG.createCurve3D = function (board, parents, attributes) {
     var view = parents[0],
         F, X, Y, Z, range, attr, el,
@@ -472,27 +490,26 @@ JXG.registerElement("curve3d", JXG.createCurve3D);
 
 /**
  * @class A vector field is an assignment of a vector to each point in 3D space.
- * <p>
+ * 
  * Plot a vector field either given by three functions
- * f1(x, y, z), f2(x, y, z), and f3(x, y, z) or by a function f(x, y, z)
+ * \\(f_1(x, y, z)\\), \\(f_2(x, y, z)\\), and \\(f_3(x, y, z)\\) or by a function \\(f(x, y, z)\\)
  * returning an array of size 3.
  *
  * @pseudo
  * @name Vectorfield3D
+ * @elementclass 3D
  * @augments JXG.Curve3D
  * @constructor
  * @type JXG.Curve3D
  * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
- * Parameter options:
- * @param {Array|Function|String} F Either an array containing three functions f1(x, y, z), f2(x, y, z),
- * and f3(x, y) or function f(x, y, z) returning an array of length 3.
- * @param {Array} xData Array of length 3 containing start value for x, number of steps,
- * end value of x. The vector field will contain (number of steps) + 1 vectors in direction of x.
- * @param {Array} yData Array of length 3 containing start value for y, number of steps,
- * end value of y. The vector field will contain (number of steps) + 1 vectors in direction of y.
- * @param {Array} zData Array of length 3 containing start value for z, number of steps,
- * end value of z. The vector field will contain (number of steps) + 1 vectors in direction of z.
- *
+ * 
+ */
+/**
+ * @jsxgraphsignature Vectorfield3D
+ * Either an array containing three functions `f1(x, y, z)`, `f2(x, y, z)`, and `f3(x, y, z)`
+ * @param {Array} f1
+ * @param {Array} f2
+ * @param {Array} f3
  * @example
  * const view = board.create('view3d',
  *     [
@@ -540,6 +557,21 @@ JXG.registerElement("curve3d", JXG.createCurve3D);
  *     })();
  *
  * </script><pre>
+ *
+ */
+/**
+ * @jsxgraphsignature Vectorfield3D
+ * Function f(x, y, z) returning an array of length 3. The function may be given as JessieCode string.
+ * @param {Function|String} F 
+ */
+/**
+ * @jsxgraphsignature Vectorfield3D
+ * @param {Array} xData Array of length 3 containing start value for x, number of steps,
+ * end value of x. The vector field will contain (number of steps) + 1 vectors in direction of x.
+ * @param {Array} yData Array of length 3 containing start value for y, number of steps,
+ * end value of y. The vector field will contain (number of steps) + 1 vectors in direction of y.
+ * @param {Array} zData Array of length 3 containing start value for z, number of steps,
+ * end value of z. The vector field will contain (number of steps) + 1 vectors in direction of z.
  *
  */
 JXG.createVectorfield3D = function (board, parents, attributes) {

@@ -57,9 +57,9 @@ import Composition from "../base/composition.js";
  * type {@link View3D} instead.
  *
  * @augments JXG.GeometryElement
- * @param {Array} parents Array consisting of lower left corner [x, y] of the view inside the board, [width, height] of the view
- * and box size [[x1, x2], [y1,y2], [z1,z2]]. If the view's azimuth=0 and elevation=0, the 3D view will cover a rectangle with lower left corner
- * [x,y] and side lengths [w, h] of the board.
+ * @param {Array} parents Array consisting of lower left corner `[x, y]` of the view inside the board, `[width, height]` of the view
+ * and box size `[[x1, x2], [y1,y2], [z1,z2]]`. If the view's `azimuth=0` and `elevation=0`, the 3D view will cover a rectangle with lower left corner
+ * `[x,y]` and side lengths `[w, h]` of the board.
  */
 JXG.View3D = function (board, parents, attributes) {
     this.constructor(board, attributes, Const.OBJECT_TYPE_VIEW3D, Const.OBJECT_CLASS_3D);
@@ -112,8 +112,8 @@ JXG.View3D = function (board, parents, attributes) {
     };
 
     /**
-     * @type {Array}
      * The view box orientation matrix
+     * @type {Array}
      */
     this.matrix3DRot = [
         [1, 0, 0, 0],
@@ -144,20 +144,20 @@ JXG.View3D = function (board, parents, attributes) {
     /**
      * The 4×4 matrix that maps box coordinates to camera coordinates. These
      * coordinate systems fit into the View3D coordinate atlas as follows.
-     * <ul>
-     * <li><b>World coordinates.</b> The coordinates used to specify object
-     * positions in a JSXGraph scene.</li>
-     * <li><b>Box coordinates.</b> The world coordinates translated to put the
+     * 
+     * - __World coordinates.__ The coordinates used to specify object
+     * positions in a JSXGraph scene.
+     * - __Box coordinates.__ The world coordinates translated to put the
      * center of the view box at the origin.
-     * <li><b>Camera coordinates.</b> The coordinate system where the
-     * <code>x</code>, <code>y</code> plane is the screen, the origin is the
-     * center of the screen, and the <code>z</code> axis points out of the
+     * - __Camera coordinates.__ The coordinate system where the
+     * `x`, `y` plane is the screen, the origin is the
+     * center of the screen, and the `z` axis points out of the
      * screen, toward the viewer.
-     * <li><b>Focal coordinates.</b> The camera coordinates translated to put
+     * - __Focal coordinates.__ The camera coordinates translated to put
      * the origin at the focal point, which is set back from the screen by the
-     * focal distance.</li>
-     * </ul>
-     * The <code>boxToCam</code> transformation is exposed to help 3D elements
+     * focal distance.
+     * 
+     * The `boxToCam` transformation is exposed to help 3D elements
      * manage their 2D representations in central projection mode. To map world
      * coordinates to focal coordinates, use the
      * {@link JXG.View3D#worldToFocal} method.
@@ -2310,30 +2310,35 @@ JXG.extend(
 
 /**
  * @class A View3D element provides the container and the methods to create and display 3D elements.
- * @pseudo
  * @description  A View3D element provides the container and the methods to create and display 3D elements.
  * It is contained in a JSXGraph board.
- * <p>
+ * 
  * It is advisable to disable panning of the board by setting the board attribute "pan":
- * <pre>
+ * ```
  *   pan: {enabled: false}
- * </pre>
+ * ```
  * Otherwise users will not be able to rotate the scene with their fingers on a touch device.
- * <p>
+ * 
  * The start position of the camera can be adjusted by the attributes {@link View3D#az}, {@link View3D#el}, and {@link View3D#bank}.
  *
+ * @pseudo
  * @name View3D
+ * @elementclass 3D
  * @augments JXG.View3D
  * @constructor
  * @type Object
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {Array_Array_Array} lower,dim,cube  Here, lower is an array of the form [x, y] and
- * dim is an array of the form [w, h].
- * The arrays [x, y] and [w, h] define the 2D frame into which the 3D cube is
- * (roughly) projected. If the view's azimuth=0 and elevation=0, the 3D view will cover a rectangle with lower left corner
- * [x,y] and side lengths [w, h] of the board.
- * The array 'cube' is of the form [[x1, x2], [y1, y2], [z1, z2]]
+ */
+/**
+ * @jsxgraphsignature View3D
+ * The arrays `[x, y]` and `[w, h]` define the 2D frame into which the 3D cube is
+ * (roughly) projected. If the view's `azimuth=0` and `elevation=0`, the 3D view will cover a rectangle with lower left corner
+ * `[x,y]` and side lengths `[w, h]` of the board.
+ * The array `cube` is of the form `[[x1, x2], [y1, y2], [z1, z2]]`
  * which determines the coordinate ranges of the 3D cube.
+ * @param {Array} lower Array of the form `[x, y]`, position of the lower ledt corner of view3D in the board.
+ * @param {Array} dim Array of the form `[w, h]`. Size of view3D.
+ * @param {Array} cube  3D-size of view3D.
  *
  * @example
  *     var bound = [-4, 6];
@@ -2427,7 +2432,7 @@ JXG.extend(
  *
  * </script><pre>
  *
-* @example
+ * @example
  *     var bound = [-4, 6];
  *     var view = board.create('view3d',
  *         [[-4, -3], [8, 8],

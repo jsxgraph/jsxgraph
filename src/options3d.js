@@ -1653,10 +1653,10 @@ JXG.extend(Options, {
          * <p>
          * For each layer this depth ordering is done independently.
          * Sub-attributes:
-         *      <ul>
-         *          <li><tt>enabled</tt>: false/true
-         *          <li><tt>layers</tt>: [12, 13]
-         *      </ul>
+         *
+         *  - `enabled`: false/true
+         *  - `layers`: [12, 13]
+         *
          *
          * @name View3D#depthOrder
          * @attribute
@@ -1674,11 +1674,9 @@ JXG.extend(Options, {
 
         /**
          * Choose the projection type to be used: `parallel` or `central`.
-         * <ul>
-         * <li> `parallel` is parallel projection, also called orthographic projection
-         * <li> `central` is central projection, also called perspective projection
-         * </ul>
          *
+         * - `parallel` is parallel projection, also called orthographic projection
+         * - `central` is central projection, also called perspective projection
          *
          * @name View3D#projection
          * @attribute
@@ -1741,11 +1739,10 @@ JXG.extend(Options, {
         /**
          * Allow vertical dragging of objects, i.e. in direction of the z-axis.
          * Subobjects are
-         * <ul>
-         *  <li>enabled: true
-         *  <li>key: 'shift'
-         * </ul>
-         * <p>
+         *
+         * - enabled: true
+         * - key: 'shift'
+         *
          * Possible values for attribute <i>key</i>: 'shift' or 'ctrl'.
          *
          * @name View3D#verticalDrag
@@ -1877,32 +1874,27 @@ JXG.extend(Options, {
 
         /**
          * Specify the user handling of the elevation.
-         * <ul>
-         *  <li><tt>pointer</tt> sub-attributes:
-         *      <ul>
-         *          <li><tt>enabled</tt>: Boolean that specifies whether pointer navigation is allowed by elevation.
-         *          <li><tt>speed</tt>: Number indicating how many passes the range of the el_slider makes when the cursor crosses the entire board once in the horizontal direction.
-         *          <li><tt>outside</tt>: Boolean that specifies whether the pointer navigation is continued when the cursor leaves the board.
-         *          <li><tt>button</tt>: Which button of the pointer should be used? (<tt>'-1'</tt> (=no button), <tt>'0'</tt> or <tt>'2'</tt>)
-         *          <li><tt>key</tt>: Should an additional key be pressed? (<tt>'none'</tt>, <tt>'shift'</tt> or <tt>'ctrl'</tt>)
-         *      </ul>
-         *  <li><tt>keyboard</tt> sub-attributes:
-         *      <ul>
-         *          <li><tt>enabled</tt>: Boolean that specifies whether the keyboard (up/down arrow keys) can be used to navigate the board.
-         *          <li><tt>step</tt>: Size of the step per keystroke.
-         *          <li><tt>key</tt>: Should an additional key be pressed? (<tt>'none'</tt>, <tt>'shift'</tt> or <tt>'ctrl'</tt>)
-         *      </ul>
-         *  <li><tt>continuous</tt>: Boolean that specifies whether the el_slider starts again from the beginning when its end is reached.
-         *  <li><tt>slider</tt> attributes of the el_slider ({@link Slider}) with additional
-         *      <ul>
-         *          <li><tt>min</tt>: Minimum value.
-         *          <li><tt>max</tt>: Maximum value.
-         *          <li><tt>start</tt>: Start value.
-         *      </ul>
+         *
+         *  - `pointer` sub-attributes:
+         *    - `enabled`: Boolean that specifies whether pointer navigation is allowed by elevation.
+         *    - `speed`: Number indicating how many passes the range of the el_slider makes when the cursor crosses the entire board once in the horizontal direction.
+         *    - `outside`: Boolean that specifies whether the pointer navigation is continued when the cursor leaves the board.
+         *    - `button`: Which button of the pointer should be used? (`'-1'` (=no button), `'0'` or `'2'`)
+         *    - `key`: Should an additional key be pressed? (`'none'`, `'shift'` or `'ctrl'`)
+         *
+         *  - `keyboard` sub-attributes:
+         *    - `enabled`: Boolean that specifies whether the keyboard (up/down arrow keys) can be used to navigate the board.
+         *    - `step`: Size of the step per keystroke.
+         *    - `key`: Should an additional key be pressed? (`'none'`, `'shift'` or `'ctrl'`)
+         *  - `continuous`: Boolean that specifies whether the el_slider starts again from the beginning when its end is reached.
+         *  - `slider` attributes of the el_slider ({@link Slider}) with additional
+         *    - `min`: Minimum value.
+         *    - `max`: Maximum value.
+         *    - `start`: Start value.
          *     'min' and 'max' are used only if trackball is not enabled.
          *     Additionally, the attributes 'slider.point1.pos' and 'slider.point2.pos' control the position of the slider. Possible
-         *     values are 'auto' or an array [x, y] of length 2 for the position in user coordinates (or a function returning such an array).
-         * </ul>
+         *     values are 'auto' or an array `[x, y]` of length 2 for the position in user coordinates (or a function returning such an array).
+         *
          *
          * @name View3D#el
          * @attribute
@@ -1993,32 +1985,25 @@ JXG.extend(Options, {
 
         /**
          * Specify the user handling of the bank angle.
-         * <ul>
-         *  <li><tt>pointer</tt> sub-attributes:
-         *      <ul>
-         *          <li><tt>enabled</tt>: Boolean that specifies whether pointer navigation is allowed by elevation.
-         *          <li><tt>speed</tt>: Number indicating how many passes the range of the el_slider makes when the cursor crosses the entire board once in the horizontal direction.
-         *          <li><tt>outside</tt>: Boolean that specifies whether the pointer navigation is continued when the cursor leaves the board.
-         *          <li><tt>button</tt>: Which button of the pointer should be used? (<tt>'-1'</tt> (=no button), <tt>'0'</tt> or <tt>'2'</tt>)
-         *          <li><tt>key</tt>: Should an additional key be pressed? (<tt>'none'</tt>, <tt>'shift'</tt> or <tt>'ctrl'</tt>)
-         *      </ul>
-         *  <li><tt>keyboard</tt> sub-attributes:
-         *      <ul>
-         *          <li><tt>enabled</tt>: Boolean that specifies whether the keyboard ('<', '>' keys) can be used to navigate the board.
-         *          <li><tt>step</tt>: Size of the step per keystroke.
-         *          <li><tt>key</tt>: Should an additional key be pressed? (<tt>'none'</tt>, <tt>'shift'</tt> or <tt>'ctrl'</tt>)
-         *      </ul>
-         *  <li><tt>continuous</tt>: Boolean that specifies whether the el_slider starts again from the beginning when its end is reached.
-         *  <li><tt>slider</tt> attributes of the el_slider ({@link Slider}) with additional
-         *      <ul>
-         *          <li><tt>min</tt>: Minimum value.
-         *          <li><tt>max</tt>: Maximum value.
-         *          <li><tt>start</tt>: Start value.
-         *      </ul>
+         *
+         *  - `pointer` sub-attributes:
+         *    - `enabled`: Boolean that specifies whether pointer navigation is allowed by elevation.
+         *    - `speed`: Number indicating how many passes the range of the el_slider makes when the cursor crosses the entire board once in the horizontal direction.
+         *    - `outside`: Boolean that specifies whether the pointer navigation is continued when the cursor leaves the board.
+         *    - `button`: Which button of the pointer should be used? (`'-1'` (=no button), `'0'` or `'2'`)
+         *    - `key`: Should an additional key be pressed? (`'none'`, `'shift'` or `'ctrl'`)
+         *  - `keyboard` sub-attributes:
+         *    - `enabled`: Boolean that specifies whether the keyboard ('<', '>' keys) can be used to navigate the board.
+         *    - `step`: Size of the step per keystroke.
+         *    - `key`: Should an additional key be pressed? (`'none'`, `'shift'` or `'ctrl'`)
+         *  - `continuous`: Boolean that specifies whether the el_slider starts again from the beginning when its end is reached.
+         *  - `slider` attributes of the el_slider ({@link Slider}) with additional
+         *    - `min`: Minimum value.
+         *    - `max`: Maximum value.
+         *    - `start`: Start value.
          *      'min' and 'max' are used only if trackball is not enabled.
          *     Additionally, the attributes 'slider.point1.pos' and 'slider.point2.pos' control the position of the slider. Possible
          *     values are 'auto' or an array [x, y] of length 2 for the position in user coordinates (or a function returning such an array).
-         * </ul>
          *
          * @name View3D#bank
          * @attribute
@@ -2109,12 +2094,12 @@ JXG.extend(Options, {
 
         /**
          * Distance of the camera to the center of the view. Expects values
-         * larger than zero. If set to 'auto', r will be set to 1.01.
-         * <p>
-         * After a call of view.setView(az, el, r), view.nextView(),
-         * view.previousView(), or view.setCurrentView()
-         * with an optional r,
-         * the camera distance is set to this value of r until a call of view.freeR().
+         * larger than zero. If set to 'auto', `r` will be set to 1.01.
+         *
+         * After a call of `view.setView(az, el, r)`, `view.nextView()`,
+         * `view.previousView()`, or `view.setCurrentView()`
+         * with an optional `r`,
+         * the camera distance is set to this value of `r` until a call of `view.freeR()`.
          *
          * @type {Number|String}
          * @default 'auto'
@@ -2130,25 +2115,24 @@ JXG.extend(Options, {
          * Enable user handling by a virtual trackball that allows to move the 3D scene
          * with 3 degrees of freedom. If not enabled, direct user dragging (i.e. in the JSXGraph board, not manipulating the sliders) will only have
          * two degrees of freedom. This means, the z-axis will always be projected to a vertical 2D line.
-         * <p>
+         *
          * Sub-attributes:
-         *      <ul>
-         *          <li><tt>enabled</tt>: Boolean that specifies whether pointer navigation is allowed by elevation.
-         *          <li><tt>outside</tt>: Boolean that specifies whether the pointer navigation is continued when the cursor leaves the board.
-         *          <li><tt>button</tt>: Which button of the pointer should be used? (<tt>'-1'</tt> (=no button), <tt>'0'</tt> or <tt>'2'</tt>)
-         *          <li><tt>key</tt>: Should an additional key be pressed? (<tt>'none'</tt>, <tt>'shift'</tt> or <tt>'ctrl'</tt>)
-         *      </ul>
+         *
+         * - `enabled`: Boolean that specifies whether pointer navigation is allowed by elevation.
+         * - `outside`: Boolean that specifies whether the pointer navigation is continued when the cursor leaves the board.
+         * - `button`: Which button of the pointer should be used? (`'-1'` (=no button), `'0'` or `'2'`)
+         * - `key`: Should an additional key be pressed? (`'none'`, `'shift'` or `'ctrl'`)
          *
          * @name View3D#trackball
          * @attribute
          * @type Object
-         * @default <pre>{
+         * @default ```{
          *   enabled: false,
          *   outside: true,
          *   button: -1,
          *   key: 'none'
          * }
-         * </pre>
+         * ```
          */
         trackball: {
             enabled: false,
@@ -2167,12 +2151,12 @@ JXG.extend(Options, {
 
         /**
          * Fixed values for the view, which can be changed using keyboard keys `picture-up` and `picture-down`.
-         * Array of the form: [[el0, az0, r0], [el1, az1, r1, ...[eln, azn, rn]]
+         * Array of the form: `[[el0, az0, r0], [el1, az1, r1, ...[eln, azn, rn]]`
          *
          * @name View3D#values
          * @attribute
          * @type Array
-         * @default <tt>{[[0, 1.57], [0.78, 0.62], [0, 0], [5.49, 0.62], [4.71, 0], [3.93, 0.62], [3.14, 0], [2.36, 0.62], [1.57, 1.57]]}<tt>
+         * @default `{[[0, 1.57], [0.78, 0.62], [0, 0], [5.49, 0.62], [4.71, 0], [3.93, 0.62], [3.14, 0], [2.36, 0.62], [1.57, 1.57]]}`
          */
         values: [
             [0, 1.57],

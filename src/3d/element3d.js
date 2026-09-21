@@ -250,11 +250,11 @@ JXG.extend(JXG.GeometryElement3D.prototype, {
 
     /**
      * Project a 3D point to this element and update point.position. This function computes the
-     * preimage (u,v) of a 3D position (1, X, Y, Z)
+     * preimage (u,v) of a 3D position \\((1, X, Y, Z)\\)
      * @param {Array} p 3D position of the point (array of length 4, homogeneous coordinates)
      * @param {Array} params Changed in place to the new parameters of the point in terms of the elements functions X, Y, Z.
      * For example for a surface, params will contain values (u,v) such that the new 3D position is
-     * p = [X(u, v), Z(u, v), Z(u, v)].
+     * `p = [X(u, v), Z(u, v), Z(u, v)]`.
      * @returns {Array} 3D coordinates of the projected point with homogeneous coordinates of the form [1, x, y, z].
      */
     projectCoords: function(p, params) {
@@ -262,10 +262,10 @@ JXG.extend(JXG.GeometryElement3D.prototype, {
     },
 
     /**
-     *
-     * @param {*} pScr
-     * @param {*} params
-     * @returns
+     * Computes the screen coordinates (e.g. of of the mouse pointer) to a position on a 3D object.
+     * @param {Array} pScr 2D screen coordinates (in pixel) 
+     * @param {Array} params See {@link JXG.Math.Geometry.projectScreenCoordsToParametric}
+     * @returns Array of length 4 containing the coordinates of the nearest point on the curve or surface.
      */
     // TODO check if Geometry.projectScreenCoordsToParametric has range or (range_u and range_v) - depending on the dimension given in params
     projectScreenCoords: function (pScr, params, cyclic) {

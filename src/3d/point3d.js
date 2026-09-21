@@ -715,18 +715,21 @@ JXG.extend(
  *
  * @pseudo
  * @name Point3D
+ * @elementclass 3D
  * @augments JXG.Point3D
  * @constructor
  * @throws {Exception} If the element cannot be constructed with the given parent
  * objects an exception is thrown.
- * @param {number,function_number,function_number,function_JXG.GeometryElement3D} x,y,z,[slide=undefined] The coordinates are given as x, y, z consisting of numbers or functions.
- * If an optional 3D element "slide" is supplied, the point is a glider on that element. At the time of version v1.11, only elements of type line3d are supperted as glider hosts.
- * @param {array,function_JXG.GeometryElement3D} F,[slide=null] Alternatively, the coordinates can be supplied as
- *  <ul>
- *   <li>function returning an array [x,y,z] of length 3 of numbers or
- *   <li>array arr=[x,y,z] of length 3 consisting of numbers
- * </ul>
- * If an optional 3D element "slide" is supplied, the point is a glider on that element.
+ */
+/**
+ * @jsxgraphsignature Point3D
+ * The coordinates are given as `x`, `y`, `z` consisting of numbers or functions.
+ * If an optional 3D element `slide` is supplied, the point is a 3D glider on that element. 
+ *
+ * @param {NumberLike} x
+ * @param {NumberLike} y
+ * @param {NumberLike} z
+ * @param {JXG.GeometryElement3D} [slide=undefined]
  *
  * @example
  *    var bound = [-5, 5];
@@ -754,7 +757,6 @@ JXG.extend(
  *     })();
  *
  * </script><pre>
- *
  * @example
  *     // Glider on sphere
  *     var view = board.create(
@@ -817,6 +819,18 @@ JXG.extend(
  *     })();
  *
  * </script><pre>
+ */
+/**
+ * @jsxgraphsignature Point3D
+ * Alternatively, the coordinates can be supplied as
+ * 
+ * - function `() => [x,y,z]` returning an array of length 3 of numbers or
+ * - array `arr=[x,y,z] of length 3 consisting of numbers
+ * 
+ * If an optional 3D element `slide` is supplied, the point is a glider on that element.
+ * @param {Array|Function} F
+ * @param {JXG.GeometryElement3D} [slide=null] 
+ *
  *
  */
 JXG.createPoint3D = function (board, parents, attributes) {
