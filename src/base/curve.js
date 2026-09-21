@@ -1817,7 +1817,7 @@ JXG.registerElement("plot", JXG.createFunctiongraph);
  * p[3] = board.create('point', [4,1], {size: 4, face: 'o'});
  *
  * var c = board.create('spline', p, {strokeWidth:3});
- * </pre><div id="JXG6c197afc-e482-11e5-b1bf-901b0e1b8723" style="width: 300px; height: 300px;"></div>
+ * </pre><div id="JXG6c197afc-e482-11e5-b1bf-901b0e1b8723" class="jxgbox" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
  *     (function() {
  *         var board = JXG.JSXGraph.initBoard('JXG6c197afc-e482-11e5-b1bf-901b0e1b8723',
