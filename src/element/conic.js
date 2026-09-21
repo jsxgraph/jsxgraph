@@ -53,6 +53,9 @@ import Type from "../utils/type.js";
  * @augments JXG.Conic
  * @constructor
  * @type JXG.Curve
+ * @see Conic
+ * @see Hyperbola
+ * @see Parabola
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
  */
 /**
@@ -353,6 +356,9 @@ JXG.createEllipse = function (board, parents, attributes) {
  * @augments JXG.Conic
  * @constructor
  * @type JXG.Curve
+ * @see Conic
+ * @see Ellipse
+ * @see Parabola
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
  */
 /**
@@ -593,6 +599,9 @@ JXG.createHyperbola = function (board, parents, attributes) {
  * @constructor
  * @type Object
  * @description JXG.Curve
+ * @see Conic
+ * @see Ellipse
+ * @see Hyperbola
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
  */
 /**
@@ -828,6 +837,9 @@ JXG.createParabola = function (board, parents, attributes) {
  * @augments JXG.Curve
  * @constructor
  * @type JXG.Conic
+ * @see Ellipse
+ * @see Hyperbola
+ * @see Parabola
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
  */
 /**
