@@ -2850,6 +2850,8 @@ JXG.registerElement("derivative", JXG.createDerivative);
  * @augments JXG.Curve
  * @constructor
  * @type JXG.Curve
+ * @see CurveDifference
+ * @see CurveUnion
  */
 /**
  * @jsxgraphsignature CurveIntersection
@@ -2911,6 +2913,8 @@ JXG.createCurveIntersection = function (board, parents, attributes) {
  * @augments JXG.Curve
  * @constructor
  * @type JXG.Curve
+ * @see CurveDifference
+ * @see CurveIntersection
  */
 /**
  * @jsxgraphsignature CurveUnion
@@ -2972,6 +2976,8 @@ JXG.createCurveUnion = function (board, parents, attributes) {
  * @augments JXG.Curve
  * @constructor
  * @type JXG.Curve
+ * @see CurveIntersection
+ * @see CurveUnion
  */
 /**
  * @jsxgraphsignature CurveDifference

@@ -27,6 +27,7 @@
  *
  * Additionally, a line can be created by providing a line and a transformation (or an array of transformations).
  * Then, the result is a line which is the transformation of the supplied line.
+ * @see Segment
  */
 JXG.createLine = function (board, parents, attributes) { };
 
