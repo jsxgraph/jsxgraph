@@ -40,7 +40,7 @@ import Type from "../utils/type.js";
  * The comb element is defined by two points.
  * @pseudo
  * @name Comb
- * @elementclass other
+ * @elementclass various
  * @augments JXG.Curve
  * @constructor
  * @type JXG.Curve

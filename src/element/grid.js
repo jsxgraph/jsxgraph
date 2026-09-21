@@ -53,7 +53,7 @@ import Const from "../base/constants.js";
  * @pseudo
  * @constructor
  * @name Grid
- * @elementclass other
+ * @elementclass various
  * @type JXG.Curve
  * @augments JXG.Curve
  * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.

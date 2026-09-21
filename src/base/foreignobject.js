@@ -357,7 +357,7 @@ JXG.extend(
  *
  * @pseudo
  * @name ForeignObject
- * @elementclass other
+ * @elementclass various
  * @augments JXG.ForeignObject
  * @constructor
  * @type JXG.ForeignObject

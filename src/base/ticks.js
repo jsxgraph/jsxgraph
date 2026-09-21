@@ -1666,7 +1666,7 @@ JXG.extend(
  *
  * @pseudo
  * @name Ticks
- * @elementclass other
+ * @elementclass various
  * @augments JXG.Ticks
  * @constructor
  * @type JXG.Ticks
@@ -1777,7 +1777,7 @@ JXG.createTicks = function (board, parents, attributes) {
  * @class Hatches are collections of short line segments used to mark congruent lines or curves.
  * @pseudo
  * @name Hatch
- * @elementclass other
+ * @elementclass various
  * @augments JXG.Ticks
  * @constructor
  * @type JXG.Ticks

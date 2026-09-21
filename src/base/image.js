@@ -390,7 +390,7 @@ JXG.extend(
  * @class Display of an external image.
  * @pseudo
  * @name Image
- * @elementclass other
+ * @elementclass various
  * @type JXG.Image
  * @augments JXG.Image
  * @constructor

@@ -1102,7 +1102,7 @@ JXG.extend(
  *
  * @pseudo
  * @name Transformation
- * @elementclass other
+ * @elementclass various
  * @augments JXG.Transformation
  * @constructor
  * @type JXG.Transformation

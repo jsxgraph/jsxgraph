@@ -1955,7 +1955,7 @@ JXG.createIncircle = function (board, parents, attributes) {
  * @pseudo
  * @constructor
  * @name Reflection
- * @elementclass other
+ * @elementclass various
  * @type JXG.GeometryElement
  * @augments JXG.GeometryElement
  * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
@@ -2196,7 +2196,7 @@ JXG.createReflection = function (board, parents, attributes) {
  * @pseudo
  * @constructor
  * @name MirrorElement
- * @elementclass other
+ * @elementclass various
  * @type JXG.GeometryElement
  * @augments JXG.GeometryElement
  * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
