@@ -115,7 +115,7 @@ if (
 } } ?>
 
 <?js if (data.exceptions && exceptions.length) { ?>
-<h5 class="h5-throws">Throws:</h5>
+<h5 class="h5-throws">Throws</h5>
 <?js if (exceptions.length > 1) { ?><ul><?js
     exceptions.forEach(function(r) { ?>
         <li><?js= self.partial('exceptions.tmpl', r) ?></li>
