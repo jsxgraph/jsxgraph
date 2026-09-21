@@ -357,25 +357,38 @@ JXG.extend(
 
 /**
  * @class Construct a text element in a 3D view.
- * @pseudo
- * @description A Text3D object is defined by 3 coordinates [x, y, z, text] or an array / function for the position of the text
+ * A Text3D object is defined by 3 coordinates` [x, y, z, text]` or an array / function for the position of the text
  * and a string or function defining the text.
- * <p>
+ *
  * That is, all numbers can also be provided as functions returning a number.
- * <p>
+ *
  * At the time being, text display is independent from the camera view.
  *
+ * @pseudo
  * @name Text3D
+ * @elementclass 3D
  * @augments JXG.Text3D
- * @augments Text
  * @constructor
  * @throws {Exception} If the element cannot be constructed with the given parent
  * objects an exception is thrown.
- * @param {number,function_number,function_number,function_String,function_JXG.GeometryElement3D} x,y,z,txt,[slide=undefined]
- * The coordinates are given as x, y, z consisting of numbers of functions and the text.
- * If an optional 3D element "slide" is supplied, the point is a glider on that element.
- * @param {array,function_string_JXG.GeometryElement3D}} F,txt,[slide=undefined] Alternatively, the coordinates can be supplied as array or function returning an array.
- * If an optional 3D element "slide" is supplied, the point is a glider on that element.
+ */
+/**
+ * @jsxgraphsignature Text3D
+ * The coordinates are given as `x`, `y`, `z` consisting of numbers of functions and the text.
+ * If an optional 3D element `slide` is supplied, the text acts like a glider on that element.
+ * @param {NumberLike} x
+ * @param {NumberLike} y
+ * @param {NumberLike} z
+ * @param {String|Function} txt
+ * @param {JXG.GeometryElement3D} [slide=undefined]
+ */
+/**
+ * @jsxgraphsignature Text3D
+ * Alternatively, the coordinates can be supplied as array or function returning an array.
+ * If an optional 3D element `slide` is supplied, the text acts like a glider on that element.
+ * @param {Array|Function} F
+ * @param {String|Function} txt
+ * @param {JXG.GeometryElement3D} [slide=undefined]
  *
  * @example
  *     var bound = [-4, 6];
@@ -387,7 +400,7 @@ JXG.extend(
  *         });
  *
  *     var txt1 = view.create('text3d', [[1, 2, 1], 'hello'], {
- *         fontSize: 20,
+ *         fontSize: 20
  *     });
  *
  * </pre><div id="JXGb61d7c50-617a-4bed-9a45-13c949f90e94" class="jxgbox" style="width: 300px; height: 300px;"></div>
@@ -404,7 +417,7 @@ JXG.extend(
  *             });
  *
  *         var txt1 = view.create('text3d', [[1, 2, 1], 'hello'], {
- *             fontSize: 20,
+ *             fontSize: 20
  *         });
  *
  *     })();

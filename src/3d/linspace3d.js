@@ -341,73 +341,37 @@ JXG.extend(
 /**
  * @class A line in 3D is given by two points, or one point and a direction vector.
  *
- * @description
  * A line in 3D is given by two points, or one point and a direction vector.
  * That is, there are the following two possibilities to create a Line3D object:
- * <ol>
- * <li> The 3D line is defined by two 3D points (Point3D):
+ *
+ * - The 3D line is defined by two 3D points (Point3D):
  * The points can be either existing points or coordinate arrays of
- * the form [x, y, z].
- * <p> The 3D line is defined by a point (or coordinate array [x, y, z])
- * a direction given as array [x, y, z] and an optional range
- * given as array [s, e]. The default value for the range is [-Infinity, Infinity].
- * </ol>
+ * the form `[x, y, z]`.
+ * - The 3D line is defined by a point (or coordinate array `[x, y, z]`)
+ * a direction given as array `[x, y, z]` and an optional range
+ * given as array `[s, e]`. The default value for the range is `[-Infinity, Infinity]`.
+ *
  * All numbers can also be provided as functions returning a number.
- * The case [point, array] is ambiguous, it is not clear if 'array' contains the coordinates of a point
- * or of a direction. In that case, 'array' is interpreted as the coordinate array of a point,
+ * The case `[point, array]` is ambiguous, it is not clear if `array` contains the coordinates of a point
+ * or of a direction. In that case, `array` is interpreted as the coordinate array of a point,
  * i.e. the line is defined by two points.
  *
  * @pseudo
  * @name Line3D
+ * @elementclass 3D
  * @augments JXG.GeometryElement3D
  * @constructor
  * @type JXG.Line3D
  * @throws {Exception} If the element cannot be constructed with the given parent
  * objects an exception is thrown.
- * @param {JXG.Point3D,array,function_JXG.Point3D,array,function} point1,point2 First and second defining point of the line.
+ */
+/**
+ * @jsxgraphsignature Line3D
+ * First and second defining point of the line.
  * The attributes {@link Line3D#straightFirst} and {@link Line3D#straightLast} control if the line is displayed as
  * segment, ray or infinite line.
- * @param {JXG.Point3D,array,function_JXG.Line3D,array,function_array,function} point,direction,range The line is defined by point, direction and range.
- * <ul>
- * <li> point: Point3D or array of length 3
- * <li> direction: array of length 3 or function returning an array of numbers or function returning an array
- * <li> range: array of length 2, elements can also be functions. Use [-Infinity, Infinity] for infinite lines.
- * </ul>
- *
- * @example
- *     var bound = [-5, 5];
- *     var view = board.create('view3d',
- *         [[-6, -3], [8, 8],
- *         [bound, bound, bound]],
- *         {});
- *     var p = view.create('point3d', [1, 2, 2], { name:'A', size: 5 });
- *     // Lines through 2 points
- *     var l1 = view.create('line3d', [[1, 3, 3], [-3, -3, -3]], {point1: {visible: true}, point2: {visible: true} });
- *     var l2 = view.create('line3d', [p, l1.point1]);
- *
- *     // Line by point, direction, range
- *     var l3 = view.create('line3d', [p, [0, 0, 1], [-2, 4]]);
- *
- * </pre><div id='JXG05f9baa4-6059-4502-8911-6a934f823b3d' class='jxgbox' style='width: 300px; height: 300px;'></div>
- * <script type='text/javascript'>
- *     (function() {
- *         var board = JXG.JSXGraph.initBoard('JXG05f9baa4-6059-4502-8911-6a934f823b3d',
- *             {boundingbox: [-8, 8, 8,-8], axis: false, showcopyright: false, shownavigation: false});
- *         var bound = [-5, 5];
- *         var view = board.create('view3d',
- *             [[-6, -3], [8, 8],
- *             [bound, bound, bound]],
- *             {});
- *         var p = view.create('point3d', [1, 2, 2], { name:'A', size: 5 });
- *         // Lines through 2 points
- *         var l1 = view.create('line3d', [[1, 3, 3], [-3, -3, -3]], {name: 'll1', point1: {visible: true}, point2: {visible: true} });
- *         var l2 = view.create('line3d', [p, l1.point1]);
- *         // Line by point, direction, range
- *         var l3 = view.create('line3d', [p, [0, 0, 1], [-2, 4]]);
- *     })();
- *
- * </script><pre>
- *
+ * @param {Point3DLike} point1
+ * @param {Point3DLike} point2
  * @example
  *     var view = board.create(
  *         'view3d',
@@ -493,6 +457,47 @@ JXG.extend(
  *     })();
  *
  * </script><pre>
+ */
+/**
+ * @jsxgraphsignature Line3D
+ * @param {Point3DLike} point
+ * @param {Line3D|Array} direction
+ * @param {Array|Function} range Array of length 2, elements can also be functions. Use `[-Infinity, Infinity]` for infinite lines.
+ *
+ * @example
+ *     var bound = [-5, 5];
+ *     var view = board.create('view3d',
+ *         [[-6, -3], [8, 8],
+ *         [bound, bound, bound]],
+ *         {});
+ *     var p = view.create('point3d', [1, 2, 2], { name:'A', size: 5 });
+ *     // Lines through 2 points
+ *     var l1 = view.create('line3d', [[1, 3, 3], [-3, -3, -3]], {point1: {visible: true}, point2: {visible: true} });
+ *     var l2 = view.create('line3d', [p, l1.point1]);
+ *
+ *     // Line by point, direction, range
+ *     var l3 = view.create('line3d', [p, [0, 0, 1], [-2, 4]]);
+ *
+ * </pre><div id='JXG05f9baa4-6059-4502-8911-6a934f823b3d' class='jxgbox' style='width: 300px; height: 300px;'></div>
+ * <script type='text/javascript'>
+ *     (function() {
+ *         var board = JXG.JSXGraph.initBoard('JXG05f9baa4-6059-4502-8911-6a934f823b3d',
+ *             {boundingbox: [-8, 8, 8,-8], axis: false, showcopyright: false, shownavigation: false});
+ *         var bound = [-5, 5];
+ *         var view = board.create('view3d',
+ *             [[-6, -3], [8, 8],
+ *             [bound, bound, bound]],
+ *             {});
+ *         var p = view.create('point3d', [1, 2, 2], { name:'A', size: 5 });
+ *         // Lines through 2 points
+ *         var l1 = view.create('line3d', [[1, 3, 3], [-3, -3, -3]], {name: 'll1', point1: {visible: true}, point2: {visible: true} });
+ *         var l2 = view.create('line3d', [p, l1.point1]);
+ *         // Line by point, direction, range
+ *         var l3 = view.create('line3d', [p, [0, 0, 1], [-2, 4]]);
+ *     })();
+ *
+ * </script><pre>
+ *
  *
  * @example
  *  var view = board.create(
@@ -1347,33 +1352,32 @@ JXG.extend(
 /**
  * @class A 3D plane is defined either by a point and two linearly independent vectors, or by three points.
  *
- * @description
  * A 3D plane is defined either by a point and two linearly independent vectors, or by three points.
  * In the first case, the parameters are a 3D point (or a coordinate array) and two vectors (arrays).
  * In the second case, the parameters consist of three 3D points (given as points or coordinate arrays).
  * In order to distinguish the two cases, in the latter case (three points), the additional attribute {@link Plane3D#threePoints}
  * has to be supplied if both, the second point and the third point, are given as arrays or functions. Otherwise, it would not be
  * clear if the input arrays have to be interpreted as points or directions.
- * <p>
+ *
  * All coordinate arrays can be supplied as functions returning a coordinate array.
  *
  * @pseudo
  * @name  Plane3D
+ * @elementclass 3D
  * @augments JXG.GeometryElement3D
  * @constructor
  * @throws {Exception} If the element cannot be constructed with the given parent
  * objects an exception is thrown.
- *
- * @param {JXG.Point3D,array,function_JXG.Line3D,array,function_JXG.Line3D,array,function_array,function_array,function} point,direction1,direction2,[range1],[range2] The plane is defined by point, direction1, direction2, range1, and range2.
- * <ul>
- * <li> point: Point3D or array of length 3
- * <li> direction1: line3d element or array of length 3 or function returning an array of numbers or function returning an array
- * <li> direction2: line3d element or array of length 3 or function returning an array of numbers or function returning an array
- * <li> range1: array of length 2, elements can also be functions. Use [-Infinity, Infinity] for infinite lines.
- * <li> range2: array of length 2, elements can also be functions. Use [-Infinity, Infinity] for infinite lines.
- * </ul>
- * @param {JXG.Point3D,array,function_JXG.Point3D,array,function_JXG.Point3D,array,function} point1,point2,point3 The plane is defined by three points.
  * @type JXG.Plane3D
+ *
+ */
+/**
+ * @jsxgraphsignature Plane3D
+ * @param {Point3DLike} point
+ * @param {Line3D|Array|Function} direction1
+ * @param {Line3D|Array|Function} direction2
+ * @param {Array|Function} range1 Array of length 2, elements can also be functions. Use `[-Infinity, Infinity]` for infinite lines.
+ * @param {Array|Function} range2 Array of length 2, elements can also be functions. Use `[-Infinity, Infinity]` for infinite lines.
  *
  * @example
  *     var view = board.create(
@@ -1482,6 +1486,7 @@ JXG.extend(
  *     })();
  *
  * </script><pre>
+ *
  * @example
  *             var view = board.create(
  *                 'view3d',
@@ -1541,65 +1546,6 @@ JXG.extend(
  *     })();
  *
  * </script><pre>
- *
- * @example
- *     var view = board.create(
- *         'view3d',
- *         [[-6, -3], [8, 8],
- *         [[-3, 3], [-3, 3], [-3, 3]]],
- *         {
- *             depthOrder: {
- *                 enabled: true
- *             },
- *             projection: 'central',
- *             xPlaneRear: {fillOpacity: 0.2},
- *             yPlaneRear: {fillOpacity: 0.2},
- *             zPlaneRear: {fillOpacity: 0.2}
- *         }
- *     );
- *
- *     var A = view.create('point3d', [0, 0, 1], {size: 2});
- *     var B = view.create('point3d', [2, 2, 1], {size: 2});
- *     var C = view.create('point3d', [-2, 0, 1], {size: 2});
- *
- *     // Plane by three points
- *     var plane = view.create('plane3d', [A, B, C], {
- *         fillColor: 'blue'
- *     });
- *
- * </pre><div id="JXG139100df-3ece-4cd1-b34f-28b5b3105106" class="jxgbox" style="width: 300px; height: 300px;"></div>
- * <script type="text/javascript">
- *     (function() {
- *         var board = JXG.JSXGraph.initBoard('JXG139100df-3ece-4cd1-b34f-28b5b3105106',
- *             {boundingbox: [-8, 8, 8,-8], axis: false, showcopyright: false, shownavigation: false});
- *         var view = board.create(
- *             'view3d',
- *             [[-6, -3], [8, 8],
- *             [[-3, 3], [-3, 3], [-3, 3]]],
- *             {
- *                 depthOrder: {
- *                     enabled: true
- *                 },
- *                 projection: 'central',
- *                 xPlaneRear: {fillOpacity: 0.2},
- *                 yPlaneRear: {fillOpacity: 0.2},
- *                 zPlaneRear: {fillOpacity: 0.2}
- *             }
- *         );
- *
- *         var A = view.create('point3d', [0, 0, 1], {size: 2});
- *         var B = view.create('point3d', [2, 2, 1], {size: 2});
- *         var C = view.create('point3d', [-2, 0, 1], {size: 2});
- *
- *         // Plane by three points
- *         var plane = view.create('plane3d', [A, B, C], {
- *             fillColor: 'blue'
- *         });
- *
- *     })();
- *
- * </script><pre>
- *
  * @example
  *     var view = board.create(
  *         'view3d',
@@ -1666,6 +1612,71 @@ JXG.extend(
  *             fillColor: 'red',
  *             point2: {visible: true},
  *             point3: {visible: true}
+ *         });
+ *
+ *     })();
+ *
+ * </script><pre>
+ */
+/**
+ * @jsxgraphsignature Plane3D
+ * The plane is defined by three points.
+ * @param {Point3DLike} point1
+ * @param {Point3DLike} point2
+ * @param {Point3DLike} point3
+ *
+ * @example
+ *     var view = board.create(
+ *         'view3d',
+ *         [[-6, -3], [8, 8],
+ *         [[-3, 3], [-3, 3], [-3, 3]]],
+ *         {
+ *             depthOrder: {
+ *                 enabled: true
+ *             },
+ *             projection: 'central',
+ *             xPlaneRear: {fillOpacity: 0.2},
+ *             yPlaneRear: {fillOpacity: 0.2},
+ *             zPlaneRear: {fillOpacity: 0.2}
+ *         }
+ *     );
+ *
+ *     var A = view.create('point3d', [0, 0, 1], {size: 2});
+ *     var B = view.create('point3d', [2, 2, 1], {size: 2});
+ *     var C = view.create('point3d', [-2, 0, 1], {size: 2});
+ *
+ *     // Plane by three points
+ *     var plane = view.create('plane3d', [A, B, C], {
+ *         fillColor: 'blue'
+ *     });
+ *
+ * </pre><div id="JXG139100df-3ece-4cd1-b34f-28b5b3105106" class="jxgbox" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *     (function() {
+ *         var board = JXG.JSXGraph.initBoard('JXG139100df-3ece-4cd1-b34f-28b5b3105106',
+ *             {boundingbox: [-8, 8, 8,-8], axis: false, showcopyright: false, shownavigation: false});
+ *         var view = board.create(
+ *             'view3d',
+ *             [[-6, -3], [8, 8],
+ *             [[-3, 3], [-3, 3], [-3, 3]]],
+ *             {
+ *                 depthOrder: {
+ *                     enabled: true
+ *                 },
+ *                 projection: 'central',
+ *                 xPlaneRear: {fillOpacity: 0.2},
+ *                 yPlaneRear: {fillOpacity: 0.2},
+ *                 zPlaneRear: {fillOpacity: 0.2}
+ *             }
+ *         );
+ *
+ *         var A = view.create('point3d', [0, 0, 1], {size: 2});
+ *         var B = view.create('point3d', [2, 2, 1], {size: 2});
+ *         var C = view.create('point3d', [-2, 0, 1], {size: 2});
+ *
+ *         // Plane by three points
+ *         var plane = view.create('plane3d', [A, B, C], {
+ *             fillColor: 'blue'
  *         });
  *
  *     })();
@@ -1929,11 +1940,18 @@ JXG.registerElement('plane3d', JXG.createPlane3D);
  *
  * @pseudo
  * @name IntersectionLine3D
+ * @elementclass 3D
  * @augments JXG.Line3D
  * @constructor
  * @type JXG.Line3D
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {JXG.Plane3D_JXG.Plane3D} el1,el2 The result will be the intersection of el1 and el2.
+ */
+/**
+ * @jsxgraphsignature IntersectionLine3D
+ * The result will be the intersection of planes `el1` and `el2`.
+ * @param {Plane3D} el1
+ * @param {Plane3D} el2
+ *
  * @example
  * // Create the intersection line of two planes
  * var view = board.create(
@@ -1948,18 +1966,18 @@ JXG.registerElement('plane3d', JXG.createPlane3D);
  * );
  * var a = view.create('point3d', [2, 2, 0]);
  *
- * var p1 = view.create(
+ * var el1 = view.create(
  *    'plane3d',
  *     [a, [1, 0, 0], [0, 1, 0]],
  *     {fillColor: '#00ff80'}
  * );
- * var p2 = view.create(
+ * var el2 = view.create(
  *    'plane3d',
  *     [a, [-2, 1, 1], [1, -2, 1]],
  *     {fillColor: '#ff0000'}
  * );
  *
- * var i = view.create('intersectionline3d', [p1, p2]);
+ * var i = view.create('intersectionline3d', [el1, el2]);
  *
  * </pre><div id="JXGdb931076-b29a-4eff-b97e-4251aaf24943" class="jxgbox" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
@@ -1978,18 +1996,18 @@ JXG.registerElement('plane3d', JXG.createPlane3D);
  *         );
  *     var a = view.create('point3d', [2, 2, 0]);
  *
- *     var p1 = view.create(
+ *     var el1 = view.create(
  *        'plane3d',
  *         [a, [1, 0, 0], [0, 1, 0]],
  *         {fillColor: '#00ff80'}
  *     );
- *     var p2 = view.create(
+ *     var el2 = view.create(
  *        'plane3d',
  *         [a, [-2, 1, 1], [1, -2, 1]],
  *         {fillColor: '#ff0000'}
  *     );
  *
- *     var i = view.create('intersectionline3d', [p1, p2]);
+ *     var i = view.create('intersectionline3d', [el1, el2]);
  *
  *     })();
  *

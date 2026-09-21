@@ -432,13 +432,15 @@ JXG.extend(
 
 /**
  * @class This element creates a 3D face.
- * @pseudo
- * @description A 3D faces is TODO
+ * This is not a standalone object, but a part of a {@link Polyhedron3D}.
  *
+ * @pseudo
  * @name Face3D
- * @augments Curve
+ * @elementclass 3D
+ * @augments JXG.Curve
  * @constructor
  * @type Object
+ * @private
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
   */
 JXG.createFace3D = function (board, parents, attributes) {

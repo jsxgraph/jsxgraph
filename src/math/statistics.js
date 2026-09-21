@@ -1338,7 +1338,7 @@ Mat.Statistics = {
      * ```
      * The function returns an array containing two arrays. The first array is of length bins+1
      * containing the start values of the bins. The last entry contains the end values of the last bin.
-     * 
+     *
      * The second array contains the counts of each bin.
      * @param {Array} x
      * @param {Object} opt Optional parameters

@@ -1641,7 +1641,7 @@ JXG.extend(
  * or finitely, which can be set with {@link Ticks#majorHeight} and {@link Ticks#minorHeight}.
  *
  * There are the following ways to position the tick lines:
- * 
+ *
  * - If an array is given as optional second parameter for the constructor
  * like e.g. `board.create('ticks', [line, [1, 4, 5]])` then there will be (fixed) ticks at position
  * 1, 4 and 5 of the line.
@@ -1786,7 +1786,7 @@ JXG.createTicks = function (board, parents, attributes) {
 /**
  * @jsxgraphsignature Hatch
  * The distance of the hashes can be controlled with the attribute `ticksDistance`.
- * 
+ *
  * @param {Line|curve} line The line or curve the hatch marks are going to be attached to.
  * @param {Number} numberofhashes Number of dashes.
  * @example

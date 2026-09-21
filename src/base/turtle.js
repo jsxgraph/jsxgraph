@@ -920,7 +920,7 @@ JXG.extend(
 
 /**
  * @class A turtle is a graphic paradigm similar to the programming languages Logo or PostScript.
- * 
+ *
  * @pseudo
  * @name Turtle
  * @elementclass curve

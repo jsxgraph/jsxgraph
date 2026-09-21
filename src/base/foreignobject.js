@@ -353,7 +353,7 @@ JXG.extend(
  * if it contains &lt;video&gt; or &lt;iframe&gt; tags, as well as elements which are
  * positioned with `position:absolute|relative|fixed`. In this case, the foreignobject will be
  * "above" the JSXGraph construction.
- * 
+ *
  *
  * @pseudo
  * @name ForeignObject

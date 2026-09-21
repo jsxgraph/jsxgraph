@@ -38,24 +38,32 @@ import Mat from "../math/math.js";
 
 /**
  * @class Ticks are used as distance markers on a line in a 3D view.
- * @pseudo
- * @description Create 3D ticks.
- * <p>
+ * Create 3D ticks for another 3D element.
+ *
  * At the time being, the ticks are not connected to the line or axis. The connecting element is simply the
  * parameter point.
  *
+ * @pseudo
  * @name Ticks3D
- * @augments Curve
+ * @elementclass 3D
+ * @augments JXG.Curve
  * @constructor
  * @type Object
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {Array_Array_Number_Array} point,direction1,length,direction2 point is an array of length 3
- * determining the starting point of the grid. direction1 and direction2 are arrays of length 3. Here, direction1 is the direction
- * of the 3D line, direction2 is the direction of the ticks.
- * "length" is the length of the line.
+ */
+/**
+ * @jsxgraphsignature Ticks3D
+ * `point` is an array of length 3
+ * determining the starting point of the grid. `direction1` and `direction2` are arrays of length 3. Here, `direction1` is the direction
+ * of the 3D line, `direction2` is the direction of the ticks. `length` is the length of the line.
+ *
  * All parameters can be supplied as functions returning an appropriate data type.
- * <p>
- * The step width of the ticks is determined by the attribute "ticksDistance".
+ *
+ * The step width of the ticks is determined by the attribute `ticksDistance`.
+ * @param {Point3DLike} point
+ * @param {Array|Function} direction1
+ * @param {NumberLike} length
+ * @param {Array|Function} direction2
  *
  */
 JXG.createTicks3D = function (board, parents, attributes) {

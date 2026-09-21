@@ -46,13 +46,14 @@ import Geometry from "../math/geometry.js";
  * @augments JXG.GeometryElement
  * @param {JXG.View3D} view The 3D view the sphere is drawn on.
  * @param {String} method Can be:
- * <ul><li> <b><code>'twoPoints'</code></b> &ndash; The sphere is defined by its center and a point on the sphere.</li>
- * <li><b><code>'pointRadius'</code></b> &ndash; The sphere is defined by its center and its radius in user units.</li></ul>
- * The parameters <code>p1</code>, <code>p2</code> and <code>radius</code> must be set according to this method parameter.
+ * - `'twoPoints'` The sphere is defined by its center and a point on the sphere.
+ * - `'pointRadius'` The sphere is defined by its center and its radius in user units.
+ *
+ * The parameters `p1`, `p2` and `radius` must be set according to this method parameter.
  * @param {JXG.Point3D} par1 The center of the sphere.
  * @param {JXG.Point3D} par2 Can be:
- * <ul><li>A point on the sphere (if the construction method is <code>'twoPoints'</code>)</li>
- * <ul><li>A number or function (if the construction method is <code>'pointRadius'</code>)</li>
+ * - A point on the sphere (if the construction method is `'twoPoints'`)
+ * - A number or function (if the construction method is `'pointRadius'`)
  * @param {Object} attributes An object containing visual properties like in {@link JXG.Options#point3d} and
  * {@link JXG.Options#elements}, and optional a name and an id.
  * @see JXG.Board#generateName
@@ -410,14 +411,22 @@ JXG.extend(
  *
  * @pseudo
  * @name Sphere3D
+ * @elementclass 3D
  * @augments JXG.Sphere3D
  * @constructor
  * @type JXG.Sphere3D
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {JXG.Point3D_number,JXG.Point3D} center,radius The center must be given as a {@link JXG.Point3D} (see {@link JXG.providePoints3D}),
- * but the radius can be given as a number (which will create a sphere with a fixed radius) or another {@link JXG.Point3D}.
- * <p>
- * If the radius is supplied as number or the output of a function, its absolute value is taken.
+ */
+/**
+ * @jsxgraphsignature Sphere3D
+ * @param {Point3DLike} center
+ * @param {NumberLike} radius If the radius is supplied as number or the output of a function, its absolute value is taken.
+ *
+ */
+/**
+ * @jsxgraphsignature Sphere3D
+ * @param {Point3DLike} center
+ * @param {NumberLike} point Point on sphere defining the radius.
  *
  * @example
  * var view = board.create(

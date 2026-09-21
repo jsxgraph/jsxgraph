@@ -103,7 +103,7 @@ jxg.extend = function (object, extension, onlyOwn, toLower) {
  * Function returning a point like object.
  *
  * This could be
- * - a {@link point}
+ * - a {@link Point}
  * - coordinate array `[x, y]`
  * - coordinate array `[z, x, y]` with homogeneous coordinates.
  * In this case, `z` is 0 for infinite points, non-zero otherwise.
@@ -133,6 +133,36 @@ jxg.extend = function (object, extension, onlyOwn, toLower) {
  * A number or a function returning a number.
  *
  * @typedef {(Number | Function)} NumberLike
+ */
+
+/**
+ * An array of length 3 or 4.
+ *
+ * - coordinate array `[x, y, z]`: *affine coordinates*
+ * - coordinate array `[w, x, y, z]`: *homogeneous coordinates*.
+ *
+ * In most cases, both types (affine or homogeneous) coordinates can be used.
+ *
+ * @typedef {array} Coordinates3D
+ */
+
+/**
+ * A point, coordinates, or functions returning point or coordinates.
+ *
+ * @typedef {(Point3D | Coordinates3D | Point3DFunction)} Point3DLike
+ */
+
+/**
+ * Function returning a 3D point like object.
+ *
+ * This could be
+ * - a {@link Point3D}
+ * - coordinate array `[x, y, z]`
+ * - coordinate array `[w, x, y, z]` with homogeneous coordinates.
+ * In this case, `w` is 0 for infinite points, non-zero otherwise.
+ *
+ * @callback Point3DFunction
+ * @returns Point3DLike
  */
 
 /**

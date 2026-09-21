@@ -9,11 +9,11 @@
   - `@augments ...`
   - `@type ...`
   - `@throws`
-- Not yet: `@see` for Element
+- ~~Not yet: `@see` for Element~~
 - Name: `MirrorElement` vs `Reflection`
 - `text.js`: HTMLSlider
 - `image.js`: If necessary enable coords, size with functions. Example
-- `@see` in element jsdocs
+- ~~`@see` in element jsdocs~~
 - Turtle: params and examples
 - `base64.js`: to be retired 
 - `uuid.js`: to be retired?
@@ -24,6 +24,11 @@
 - Smartlabel: CSS of font color
 - Attributes of chart.js
 - jsdoc JXG.createAxes3D
+- jsdoc: Often, @see doubles @extends 
+- Add example Circle3D
+- IntersectionLine3D not dynamic, see example
+- Ticks3D: example
+- 3D elements: add construction with transformation
 
 ## Attributes
 

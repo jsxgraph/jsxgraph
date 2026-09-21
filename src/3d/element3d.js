@@ -266,7 +266,7 @@ JXG.extend(JXG.GeometryElement3D.prototype, {
 
     /**
      * Computes the screen coordinates (e.g. of of the mouse pointer) to a position on a 3D object.
-     * @param {Array} pScr 2D screen coordinates (in pixel) 
+     * @param {Array} pScr 2D screen coordinates (in pixel)
      * @param {Array} params See {@link JXG.Math.Geometry.projectScreenCoordsToParametric}
      * @returns Array of length 4 containing the coordinates of the nearest point on the curve or surface.
      * @memberof JXG.GeometryElement3D

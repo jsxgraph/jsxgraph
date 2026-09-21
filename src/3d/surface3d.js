@@ -441,22 +441,29 @@ JXG.extend(
 
 /**
  * @class A 3D parametric surface visualizes a map (u, v) &rarr; [X(u, v), Y(u, v), Z(u, v)].
- * @pseudo
  * @description A 3D parametric surface is defined by a function
  *    <i>F: R<sup>2</sup> &rarr; R<sup>3</sup></i>.
  *
+ * @pseudo
  * @name ParametricSurface3D
- * @augments Curve
+ * @elementclass 3D
  * @constructor
  * @type Object
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
  *
- * @param {Function_Function_Function_Array,Function_Array,Function} F<sub>X</sub>,F<sub>Y</sub>,F<sub>Z</sub>,rangeU,rangeV F<sub>X</sub>(u,v), F<sub>Y</sub>(u,v), F<sub>Z</sub>(u,v)
- * are functions returning a number, rangeU is the array containing lower and upper bound for the range of parameter u, rangeV is the array containing lower and
- * upper bound for the range of parameter v. rangeU and rangeV may also be functions returning an array of length two.
- * @param {Function_Array,Function_Array,Function} F,rangeU,rangeV Alternatively: F<sub>[X,Y,Z]</sub>(u,v)
- * a function returning an array [x,y,z] of numbers, rangeU and rangeV as above.
+ */
+/**
+ * @jsxgraphsignature ParametricSurface3D
+ * F<sub>X</sub>(u,v), F<sub>Y</sub>(u,v), F<sub>Z</sub>(u,v)
+ * are functions returning a number, `rangeU` is the array containing lower and upper bound for the range of parameter `u`,
+ * `rangeV` is the array containing lower and upper bound for the range of parameter `v`.
+ * `rangeU` and `rangeV` may also be functions returning an array of length two.
  *
+ * @param {Function} F1
+ * @param {Function} F2
+ * @param {Function} F3
+ * @param {Array|Function} rangeU
+ * @param {Array|Function} rangeV
  * @example
  * var view = board.create('view3d',
  * 		        [[-6, -3], [8, 8],
@@ -499,6 +506,15 @@ JXG.extend(
  *     })();
  *
  * </script><pre>
+ *
+ */
+/**
+ * @jsxgraphsignature ParametricSurface3D
+ * Alternatively: F<sub>[X,Y,Z]</sub>(u,v)
+ * a function returning an array [x,y,z] of numbers, rangeU and rangeV as above.
+ * @param {Function} F
+ * @param {Array|Function} rangeU
+ * @param {Array|Function} rangeV
  *
  */
 JXG.createParametricSurface3D = function (board, parents, attributes) {
@@ -684,18 +700,26 @@ JXG.registerElement("parametricsurface3d", JXG.createParametricSurface3D);
 /**
  * @class A 3D functiongraph visualizes a map (x, y) &rarr; f(x, y).
  * The graph is a {@link Curve3D} element.
- * @pseudo
- * @description A 3D function graph is defined by a function
- *    <i>F: R<sup>2</sup> &rarr; R</i>.
+ * A 3D function graph is defined by a function
+ *    \\[F: {\mathbb R}^2 \to {\mathbb R}.\\]
  *
+ * @pseudo
  * @name Functiongraph3D
- * @augments ParametricSurface3D
+ * @elementclass 3D
  * @constructor
  * @type Object
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {Function,String_Array_Array} F,rangeX,rangeY  F(x,y) is a function returning a number (or a JessieCode string), rangeX is the array containing
- * lower and upper bound for the range of x, rangeY is the array containing
- * lower and upper bound for the range of y.
+ */
+/**
+ * @jsxgraphsignature Functiongraph3D
+ * `rangeX` is the array containing
+ * lower and upper bound for the range of `x`, `rangeY` is the array containing
+ * lower and upper bound for the range of `y`.
+ *
+ * @param {Function|String} F The function F(x,y) returns a number (given as JavaScript function or a JessieCode string)
+ * @param {Array|Function} rangeX
+ * @param {Array|Function} rangeY
+ *
  * @example
  * var box = [-5, 5];
  * var view = board.create('view3d',

@@ -724,7 +724,7 @@ JXG.extend(
 /**
  * @jsxgraphsignature Point3D
  * The coordinates are given as `x`, `y`, `z` consisting of numbers or functions.
- * If an optional 3D element `slide` is supplied, the point is a 3D glider on that element. 
+ * If an optional 3D element `slide` is supplied, the point is a 3D glider on that element.
  *
  * @param {NumberLike} x
  * @param {NumberLike} y
@@ -823,13 +823,13 @@ JXG.extend(
 /**
  * @jsxgraphsignature Point3D
  * Alternatively, the coordinates can be supplied as
- * 
+ *
  * - function `() => [x,y,z]` returning an array of length 3 of numbers or
  * - array `arr=[x,y,z] of length 3 consisting of numbers
- * 
+ *
  * If an optional 3D element `slide` is supplied, the point is a glider on that element.
  * @param {Array|Function} F
- * @param {JXG.GeometryElement3D} [slide=null] 
+ * @param {JXG.GeometryElement3D} [slide=null]
  *
  *
  */

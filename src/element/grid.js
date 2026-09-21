@@ -43,7 +43,7 @@ import Const from "../base/constants.js";
 
 /**
  * @class A grid is a mesh consisting of vertical and horizontal lines or other geometrical objects.
- * 
+ *
  * A grid is a set of vertical and horizontal lines or other geometrical objects (faces)
  * to support the user with element placement or to improve determination of position.
  * This method takes up to two optional parent elements. These are used to set distance between
@@ -62,7 +62,7 @@ import Const from "../base/constants.js";
  * @jsxgraphsignature Grid
  * Optional parent axes.
  * @param {Axis} [a1]
- * @param {Axis} [a2] 
+ * @param {Axis} [a2]
  *
  * @example
  * // standard grid

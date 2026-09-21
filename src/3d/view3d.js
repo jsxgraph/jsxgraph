@@ -144,7 +144,7 @@ JXG.View3D = function (board, parents, attributes) {
     /**
      * The 4×4 matrix that maps box coordinates to camera coordinates. These
      * coordinate systems fit into the View3D coordinate atlas as follows.
-     * 
+     *
      * - __World coordinates.__ The coordinates used to specify object
      * positions in a JSXGraph scene.
      * - __Box coordinates.__ The world coordinates translated to put the
@@ -156,7 +156,7 @@ JXG.View3D = function (board, parents, attributes) {
      * - __Focal coordinates.__ The camera coordinates translated to put
      * the origin at the focal point, which is set back from the screen by the
      * focal distance.
-     * 
+     *
      * The `boxToCam` transformation is exposed to help 3D elements
      * manage their 2D representations in central projection mode. To map world
      * coordinates to focal coordinates, use the
@@ -2312,13 +2312,13 @@ JXG.extend(
  * @class A View3D element provides the container and the methods to create and display 3D elements.
  * @description  A View3D element provides the container and the methods to create and display 3D elements.
  * It is contained in a JSXGraph board.
- * 
+ *
  * It is advisable to disable panning of the board by setting the board attribute "pan":
  * ```
  *   pan: {enabled: false}
  * ```
  * Otherwise users will not be able to rotate the scene with their fingers on a touch device.
- * 
+ *
  * The start position of the camera can be adjusted by the attributes {@link View3D#az}, {@link View3D#el}, and {@link View3D#bank}.
  *
  * @pseudo

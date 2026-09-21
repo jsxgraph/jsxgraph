@@ -374,7 +374,7 @@ JXG.extend(
  * @param {Function} F<sub>Y</sub>
  * @param {Function} F<sub>Z</sub>
  * @param {Array|Function} range
- * 
+ *
  * @example
  * // create a simple curve in 3d
  * var bound = [-1.5, 1.5];
@@ -490,7 +490,7 @@ JXG.registerElement("curve3d", JXG.createCurve3D);
 
 /**
  * @class A vector field is an assignment of a vector to each point in 3D space.
- * 
+ *
  * Plot a vector field either given by three functions
  * \\(f_1(x, y, z)\\), \\(f_2(x, y, z)\\), and \\(f_3(x, y, z)\\) or by a function \\(f(x, y, z)\\)
  * returning an array of size 3.
@@ -502,7 +502,7 @@ JXG.registerElement("curve3d", JXG.createCurve3D);
  * @constructor
  * @type JXG.Curve3D
  * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
- * 
+ *
  */
 /**
  * @jsxgraphsignature Vectorfield3D
@@ -562,7 +562,7 @@ JXG.registerElement("curve3d", JXG.createCurve3D);
 /**
  * @jsxgraphsignature Vectorfield3D
  * Function f(x, y, z) returning an array of length 3. The function may be given as JessieCode string.
- * @param {Function|String} F 
+ * @param {Function|String} F
  */
 /**
  * @jsxgraphsignature Vectorfield3D

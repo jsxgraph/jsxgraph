@@ -41,14 +41,16 @@ import Type from "../utils/type.js";
  * @augments JXG.GeometryElement
  * @param {JXG.View3D} view The 3D view the polyhedron is drawn on.
  * @param {Object} polyhedron Defining data for the polyhedron, i.e. vertice coordinates and faces, which are lists of vertex numbers or keys. The structure of this object is
- * <pre>polyhedron = {
+ * ```
+ * polyhedron = {
  *        view: view,
  *        vertices: {},
  *        coords: {},
  *        coords2D: {},
  *        zIndex: {},
  *        faces: []
- *  };</pre>
+ *  };
+ * ```
  * @param {Array} faces List of face3d objects. These have been already generated in `createPolyhedron3D`.
  * @param {Object} attributes An object containing visual properties like in {@link JXG.Options#polyhedron3d} and {@link JXG.Options#elements},
  * and optionally a name and an id.
@@ -218,16 +220,21 @@ JXG.extend(
 
 /**
  * @class A polyhedron in a 3D view consists of faces.
- * @pseudo
- * @description Create a polyhedron in a 3D view consisting of faces. Faces can
+ * Create a polyhedron in a 3D view consisting of faces. Faces can
  * be 0-, 1- or 2-dimensional.
  *
+ * @pseudo
  * @name Polyhedron3D
+ * @elementclass 3D
  * @augments JXG.GeometryElement3D
  * @constructor
  * @type Object
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {} TODO
+ */
+/**
+ * @jsxgraphsignature Polyhedron3D
+ * @param {Array} vertices Array of vertices, given by {@link Coordinates3D} or functions returning {@link Coordinates3D}.
+ * @param {Array} faces Array of faces, given by indices of vertices.
  *
  * @example
  * var box = [-4, 4];
@@ -319,115 +326,7 @@ JXG.extend(
  *
  * </script><pre>
  *
- * @example
- * var box = [-4, 4];
- * var view = board.create(
- *     'view3d',
- *     [[-5, -3], [8, 8],
- *     [box, box, box]],
- *     {
- *         projection: 'parallel',
- *         trackball: { enabled: false },
- *         depthOrder: {
- *             enabled: true
- *         },
- *         xPlaneRear: { visible: false },
- *         yPlaneRear: { visible: false },
- *         zPlaneRear: { fillOpacity: 0.2 }
- *     }
- * );
- * var aa = view.create('point3d', [-3, -3, -3], { name: 'A', layer: 12});
- * var bb = view.create('point3d', [() => aa.X(), () => aa.Y(), 3], { name: 'B', fixed: true, layer: 12});
- * var cube = view.create('polyhedron3d', [
- *     {
- *         a: 'A',
- *         b: [3, -3, -3],
- *         c: [3, 3, -3],
- *         d: [-3, 3, -3],
- *
- *         e: bb,
- *         f: [3, -3, 3],
- *         g: [3, 3, 3],
- *         h: [-3, 3, 3]
- *     },
- *     [
- *         ['a', 'b', 'c', 'd'],
- *         ['a', 'b', 'f', 'e'],
- *         ['b', 'c', 'g', 'f'],
- *         ['c', 'd', 'h', 'g'],
- *         ['d', 'a', 'e', 'h'],
- *         ['e', 'f', 'g', 'h'],
- *
- *         ['a', 'g'], // Edge
- *         ['f']       // Vertex
- *     ]
- * ], {
- *     fillColorArray: ['blue', 'red', 'yellow'],
- *     fillOpacity: 0.4,
- *     layer: 12
- * });
- * cube.faces[6].setAttribute({ strokeWidth: 5 });
- * cube.faces[7].setAttribute({ strokeWidth: 10 });
- *
- * </pre><div id="JXG1e862f44-3e38-424b-98d5-f972338a8b7f" class="jxgbox" style="width: 300px; height: 300px;"></div>
- * <script type="text/javascript">
- *     (function() {
- *         var board = JXG.JSXGraph.initBoard('JXG1e862f44-3e38-424b-98d5-f972338a8b7f',
- *             {boundingbox: [-8, 8, 8,-8], axis: false, showcopyright: false, shownavigation: false});
- *     var box = [-4, 4];
- *     var view = board.create(
- *         'view3d',
- *         [[-5, -3], [8, 8],
- *         [box, box, box]],
- *         {
- *             projection: 'parallel',
- *             trackball: { enabled: false },
- *             depthOrder: {
- *                 enabled: true
- *             },
- *             xPlaneRear: { visible: false },
- *             yPlaneRear: { visible: false },
- *             zPlaneRear: { fillOpacity: 0.2 }
- *         }
- *     );
- *     var aa = view.create('point3d', [-3, -3, -3], { name: 'A', layer: 12});
- *     var bb = view.create('point3d', [() => aa.X(), () => aa.Y(), 3], { name: 'B', fixed: true, layer: 12});
- *     var cube = view.create('polyhedron3d', [
- *         {
- *             a: 'A',
- *             b: [3, -3, -3],
- *             c: [3, 3, -3],
- *             d: [-3, 3, -3],
- *
- *             e: bb,
- *             f: [3, -3, 3],
- *             g: [3, 3, 3],
- *             h: [-3, 3, 3]
- *         },
- *         [
- *             ['a', 'b', 'c', 'd'],
- *             ['a', 'b', 'f', 'e'],
- *             ['b', 'c', 'g', 'f'],
- *             ['c', 'd', 'h', 'g'],
- *             ['d', 'a', 'e', 'h'],
- *             ['e', 'f', 'g', 'h'],
- *
- *             ['a', 'g'], // Edge
- *             ['f']       // Vertex
- *         ]
- *     ], {
- *         fillColorArray: ['blue', 'red', 'yellow'],
- *         fillOpacity: 0.4,
- *         layer: 12
- *     });
- *     cube.faces[6].setAttribute({ strokeWidth: 5 });
- *     cube.faces[7].setAttribute({ strokeWidth: 10 });
- *
- *     })();
- *
- * </script><pre>
- *
- * @example
+  * @example
  * var box = [-4, 4];
  * var view = board.create(
  *     'view3d',
@@ -654,6 +553,120 @@ JXG.extend(
  *         maxLightness: 80
  *     }
  *     });
+ *
+ *     })();
+ *
+ * </script><pre>
+ *
+ */
+/**
+ * @jsxgraphsignature Polyhedron3D
+ * @param {Object} vertices JavaScript object containing key- value pairs of vertices. The values are {@link Coordinates3D} or functions returning {@link Coordinates3D}.
+ * @param {Array} faces Array of faces, given by keys of vertices.
+ *
+ * @example
+ * var box = [-4, 4];
+ * var view = board.create(
+ *     'view3d',
+ *     [[-5, -3], [8, 8],
+ *     [box, box, box]],
+ *     {
+ *         projection: 'parallel',
+ *         trackball: { enabled: false },
+ *         depthOrder: {
+ *             enabled: true
+ *         },
+ *         xPlaneRear: { visible: false },
+ *         yPlaneRear: { visible: false },
+ *         zPlaneRear: { fillOpacity: 0.2 }
+ *     }
+ * );
+ * var aa = view.create('point3d', [-3, -3, -3], { name: 'A', layer: 12});
+ * var bb = view.create('point3d', [() => aa.X(), () => aa.Y(), 3], { name: 'B', fixed: true, layer: 12});
+ * var cube = view.create('polyhedron3d', [
+ *     {
+ *         a: 'A',
+ *         b: [3, -3, -3],
+ *         c: [3, 3, -3],
+ *         d: [-3, 3, -3],
+ *
+ *         e: bb,
+ *         f: [3, -3, 3],
+ *         g: [3, 3, 3],
+ *         h: [-3, 3, 3]
+ *     },
+ *     [
+ *         ['a', 'b', 'c', 'd'],
+ *         ['a', 'b', 'f', 'e'],
+ *         ['b', 'c', 'g', 'f'],
+ *         ['c', 'd', 'h', 'g'],
+ *         ['d', 'a', 'e', 'h'],
+ *         ['e', 'f', 'g', 'h'],
+ *
+ *         ['a', 'g'], // Edge
+ *         ['f']       // Vertex
+ *     ]
+ * ], {
+ *     fillColorArray: ['blue', 'red', 'yellow'],
+ *     fillOpacity: 0.4,
+ *     layer: 12
+ * });
+ * cube.faces[6].setAttribute({ strokeWidth: 5 });
+ * cube.faces[7].setAttribute({ strokeWidth: 10 });
+ *
+ * </pre><div id="JXG1e862f44-3e38-424b-98d5-f972338a8b7f" class="jxgbox" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *     (function() {
+ *         var board = JXG.JSXGraph.initBoard('JXG1e862f44-3e38-424b-98d5-f972338a8b7f',
+ *             {boundingbox: [-8, 8, 8,-8], axis: false, showcopyright: false, shownavigation: false});
+ *     var box = [-4, 4];
+ *     var view = board.create(
+ *         'view3d',
+ *         [[-5, -3], [8, 8],
+ *         [box, box, box]],
+ *         {
+ *             projection: 'parallel',
+ *             trackball: { enabled: false },
+ *             depthOrder: {
+ *                 enabled: true
+ *             },
+ *             xPlaneRear: { visible: false },
+ *             yPlaneRear: { visible: false },
+ *             zPlaneRear: { fillOpacity: 0.2 }
+ *         }
+ *     );
+ *     var aa = view.create('point3d', [-3, -3, -3], { name: 'A', layer: 12});
+ *     var bb = view.create('point3d', [() => aa.X(), () => aa.Y(), 3], { name: 'B', fixed: true, layer: 12});
+ *     var cube = view.create('polyhedron3d', [
+ *         {
+ *             a: 'A',
+ *             b: [3, -3, -3],
+ *             c: [3, 3, -3],
+ *             d: [-3, 3, -3],
+ *
+ *             e: bb,
+ *             f: [3, -3, 3],
+ *             g: [3, 3, 3],
+ *             h: [-3, 3, 3]
+ *         },
+ *         [
+ *             ['a', 'b', 'c', 'd'],
+ *             ['a', 'b', 'f', 'e'],
+ *             ['b', 'c', 'g', 'f'],
+ *             ['c', 'd', 'h', 'g'],
+ *             ['d', 'a', 'e', 'h'],
+ *             ['e', 'f', 'g', 'h'],
+ *
+ *             ['a', 'g'], // Edge
+ *             ['f']       // Vertex
+ *         ]
+ *     ], {
+ *         fillColorArray: ['blue', 'red', 'yellow'],
+ *         fillOpacity: 0.4,
+ *         layer: 12
+ *     });
+ *     cube.faces[6].setAttribute({ strokeWidth: 5 });
+ *     cube.faces[7].setAttribute({ strokeWidth: 10 });
  *
  *     })();
  *

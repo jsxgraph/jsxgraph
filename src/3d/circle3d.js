@@ -265,22 +265,31 @@ JXG.extend(
 
 /**
  * @class A circle in 3D can be defined by various combinations of points and numbers.
- * @pseudo
- * @description In 3D space, a circle consists of all points on a given plane with a given distance from a given point. The given point is called the center, and the given distance is called the radius.
+ * In 3D space, a circle consists of all points on a given plane with a given distance from a given point.
+ * The given point is called the center, and the given distance is called the radius.
  * A circle can be constructed by providing a center, a normal vector, and a radius (given as a number or function).
- * <p>
+ *
  * If the radius has a negative value, its absolute value is taken. If the radius evaluates to NaN,
  * the circle is not displayed. This is convenient for constructing an intersection circle, which is empty when its parents do not intersect.
+ * @pseudo
  * @name Circle3D
+ * @elementclass 3D
  * @augments JXG.Circle3D
  * @constructor
  * @type JXG.Circle3D
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {JXG.Point,Array,Function_Array,Function_Number,Function} center,normal,radius The center must be given as a {@link JXG.Point}, array or function (see {@link JXG.providePoints}).
- * The normal vector can be given as an array of four numbers (i.e. homogeneous coordinates [0, x, y, z]) or a function returning an array of length 4
+ */
+/**
+ * @jsxgraphsignature Circle3D
+ * The normal vector can be given as an array of four numbers (i.e. homogeneous coordinates `[0, x, y, z]`) or a function returning an array of length 4
  * and the radius can be given as a number (which will create a circle with a fixed radius) or a function.
- * <p>
- * If the radius is supplied as a number or the output of a function, its absolute value is taken. When the radius evaluates to NaN, the circle does not display.
+ *
+ * If the radius is supplied as a number or the output of a function, its absolute value is taken.
+ * If the radius evaluates to NaN, the circle does not display.
+ *
+ * @param {Point3DLike} center
+ * @param {Array|Function} normal
+ * @param {NumberLike} radius
  */
 JXG.createCircle3D = function (board, parents, attributes) {
     var view = parents[0],
@@ -311,11 +320,18 @@ JXG.registerElement("circle3d", JXG.createCircle3D);
  *
  * @pseudo
  * @name IntersectionCircle3D
+ * @elementclass 3D
  * @augments JXG.Circle3D
  * @constructor
  * @type JXG.Circle3D
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {JXG.Sphere3D_JXG.Sphere3D|JXG.Plane3D} el1,el2 The result will be the intersection of el1 and el2.
+ */
+/**
+ * @jsxgraphsignature IntersectionCircle3D
+ * The result will be the intersection of `el1` and `el2`.
+ * @param {Sphere3D} el1
+ * @param {Sphere3D|Plane3D} el2
+ *
  * @example
  * // Create the intersection circle of two spheres
  * var view = board.create(
@@ -367,11 +383,12 @@ JXG.registerElement("circle3d", JXG.createCircle3D);
  *            [a1, 2],
  *            {fillColor: '#00ff80'}
  *        );
- *        var p2 = view.create(
+ *        var s2 = view.create(
  *           'sphere3d',
  *            [a2, 2],
  *            {fillColor: '#ff0000'}
  *        );
+ *        var i = view.create('intersectioncircle3d', [s1, s2]);
  *
  *     })();
  *
