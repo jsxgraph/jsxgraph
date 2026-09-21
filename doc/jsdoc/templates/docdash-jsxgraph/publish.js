@@ -208,7 +208,7 @@ function addSignatureTypes(f) {
     var types = f.type ? buildItemTypeStrings(f) : [];
 
     f.signature = (f.signature || '') + '<span class="type-signature">' +
-        (types.length ? ' :' + types.join('|') : '') + '</span>';
+        (types.length ? ' : ' + types.join('|') : '') + '</span>';
 }
 
 function addAttribs(f) {

@@ -25,15 +25,12 @@
         <h2><?js if (doc.ancestors && doc.ancestors.length) { ?>
             <span class="ancestors"><?js= doc.ancestors.join('') ?></span>
         <?js } ?>
-        <?js if (doc.kind === 'namespace') { ?>
+        <?js if (doc.kind === 'namespace') { 
+            /* print(doc.name); */ ?>
             Namespace
         <?js } else { ?>
-            <?js
-            if (doc.isPseudo) {
-                print("Element ");
-            }
-            print(doc.name);
-            ?>
+            <?js if (doc.isPseudo) { print("Element "); } ?>
+            <?js= doc.name ?>
         <?js } ?>
         <?js if (doc.variation) { ?>
             <sup class="variation"><?js= doc.variation ?></sup>

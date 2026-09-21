@@ -3,7 +3,7 @@
    --------------------------------------------------------------------------
    Farb- und Typografie-Schema orientiert an jsxgraph.org
      primary   #10427C   secondary #08648f   accent  #aedcef
-     Fonts     Fira Sans / Fira Sans Condensed / Fira Mono
+     Fonts     Fira Sans (400/400i/600) + Fira Code (400/600)
      Radius    0.5rem 0 0.5rem 0  (asymmetrisch, wie Buttons/Inputs der Website)
 
    Es werden ausschliesslich die bereits vorhandenen Selektoren/Klassen
@@ -20,6 +20,8 @@
    1. Design-Tokens
    -------------------------------------------------------------------------- */
 :root {
+  color-scheme: light dark;
+
   /* Marken- und Flaechenfarben */
   --jxg-primary:        #10427c;
   --jxg-primary-dark:   #0a2c54;
@@ -50,14 +52,12 @@
   /* Typografie */
   --jxg-font-sans:  'Fira Sans', 'Source Sans Pro', -apple-system, BlinkMacSystemFont,
                     'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  --jxg-font-head:  'Fira Sans Condensed', 'Fira Sans', 'Montserrat', 'Source Sans Pro',
-                    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --jxg-font-mono:  'Fira Mono', 'Fira Code', ui-monospace, SFMono-Regular, Menlo,
-                    Consolas, Monaco, 'Andale Mono', monospace;
+  --jxg-font-head:  var(--jxg-font-sans);
+  --jxg-font-mono:  'Fira Code', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
   --jxg-fs-base:     1rem;
   --jxg-fs-small:    0.875rem;
-  --jxg-fs-tiny:     0.78rem;
+  --jxg-fs-tiny:     0.8rem;
   --jxg-lh:          1.65;
 
   /* Form, Abstand, Tiefe */
@@ -173,7 +173,7 @@ blockquote {
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: 'Fira Sans Condensed', 'Fira Sans', 'Montserrat', 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: 'Fira Sans', 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   font-family: var(--jxg-font-head);
 }
 
@@ -187,13 +187,13 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 h1 {
-  font-size: 2.4rem;
+  font-size: 2.1rem;
   margin: 1em 0 .5em;
   letter-spacing: -0.01em;
 }
 
 h1.page-title {
-  font-size: 2.6rem;
+  font-size: 2.1rem;
   margin: 0 0 1.25rem;
   padding-bottom: .5rem;
   line-height: 1.1;
@@ -203,17 +203,17 @@ h1.page-title {
 }
 
 h2 {
-  font-size: 1.75rem;
+  font-size: 1.6rem;
   margin: 1.8em 0 .4em;
 }
 
 h3 {
-  font-size: 1.35rem;
+  font-size: 1.25rem;
   margin: 1.6em 0 .4em;
 }
 
 h4 {
-  font-size: 1.05rem;
+  font-size: 1rem;
   font-weight: 600;
   margin: 1.4em 0 .4em;
   color: #1d2733;
@@ -235,7 +235,7 @@ h4.name {
   border-radius: var(--jxg-radius);
   margin: 2.25em 0 .75em;
   padding: .7rem .85rem;
-  font-family: 'Fira Mono', 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Consolas, Monaco, 'Andale Mono', monospace;
+  font-family: 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   font-family: var(--jxg-font-mono);
   font-size: 1rem;
   font-weight: 600;
@@ -274,71 +274,19 @@ h4.name a:hover {
 /* h5 = "Parameters:", "Returns:", "Example", "Type:" ...
    sowie die Zwischenueberschriften der Uebersicht */
 h5, .container-overview .subsection-title {
-  font-size: .8rem;
-  font-weight: 700;
-  letter-spacing: .08em;
-  text-transform: uppercase;
+  font-size: 0.875rem;
+  font-size: var(--jxg-fs-small);
+  font-weight: 600;
+  letter-spacing: 0;
   color: #5d6b7a;
   color: var(--jxg-text-muted);
   margin: 1.6em 0 .5em;
 }
 
 h6 {
-  font-size: .95rem;
-  letter-spacing: 0;
-  margin: 1.2em 0 .3em;
-  font-style: normal;
-  color: #5d6b7a;
-  color: var(--jxg-text-muted);
-}
-
-/* Ueberschriften innerhalb von Beschreibungstexten (Tutorials, README) */
-.usertext h1 {
-  font-family: 'Fira Sans Condensed', 'Fira Sans', 'Montserrat', 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  font-family: var(--jxg-font-head);
-  font-size: 1.75rem;
-  margin: 1.8em 0 .6em;
-  font-weight: 600;
-}
-
-.usertext h2 {
-  font-family: 'Fira Sans Condensed', 'Fira Sans', 'Montserrat', 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  font-family: var(--jxg-font-head);
-  font-size: 1.4rem;
-  margin: 1.6em 0 .5em;
-  font-weight: 600;
-}
-
-.usertext h3 {
-  font-family: 'Fira Sans Condensed', 'Fira Sans', 'Montserrat', 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  font-family: var(--jxg-font-head);
-  font-size: 1.15rem;
-  margin: 1.4em 0 .4em;
-  font-weight: 600;
-}
-
-.usertext h4 {
-  font-family: 'Fira Sans Condensed', 'Fira Sans', 'Montserrat', 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  font-family: var(--jxg-font-head);
   font-size: 1rem;
-  margin: 1.2em 0 .3em;
-  font-weight: 600;
-}
-
-.usertext h5 {
-  font-size: .95rem;
-  margin: 1em 0 .3em;
-  font-weight: 600;
-  text-transform: none;
   letter-spacing: 0;
-  color: #5d6b7a;
-  color: var(--jxg-text-muted);
-}
-
-.usertext h6 {
-  font-size: .9rem;
-  margin: 1em 0 .3em;
-  font-weight: 600;
+  margin: 1.2em 0 .3em;
   font-style: normal;
   color: #5d6b7a;
   color: var(--jxg-text-muted);
@@ -348,7 +296,7 @@ h6 {
    5. Code (inline)
    -------------------------------------------------------------------------- */
 tt, code, kbd, samp, pre {
-  font-family: 'Fira Mono', 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Consolas, Monaco, 'Andale Mono', monospace;
+  font-family: 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   font-family: var(--jxg-font-mono);
   font-size: .9em;
   background: #eaf1f5;
@@ -403,7 +351,6 @@ article {
 }
 
 .class-description {
-  font-size: 1.12rem;
   line-height: 1.6;
   color: #5d6b7a;
   color: var(--jxg-text-muted);
@@ -428,7 +375,7 @@ article {
 }
 
 .important {
-  font-weight: 700;
+  font-weight: 600;
   color: #a3231b;
   color: var(--jxg-danger);
 }
@@ -481,6 +428,23 @@ nav {
   scrollbar-color: var(--jxg-border-strong) transparent;
 }
 
+/* Logo ueber dem Suchfeld. Als Pseudoelement der Navigation, damit am
+   HTML nichts zu aendern ist. Es ist reine Marke, kein Link - zum Verlinken
+   muesste ein <a> ins Template. */
+nav::before {
+  content: "";
+  display: block;
+  -webkit-box-flex: 0;
+      -ms-flex: none;
+          flex: none;
+  height: 2.5rem;
+  margin: 0 0 1.1rem;
+  background-image: url('https://jsxgraph.org/home/media/logos/jsxgraph/png/screen/jsxgraph-logo_blue-text-solid.png');
+  background-repeat: no-repeat;
+  background-position: left center;
+  background-size: contain;
+}
+
 nav #nav-search {
   position: sticky;
   top: 0;
@@ -488,7 +452,7 @@ nav #nav-search {
   width: 100%;
   height: auto;
   margin: 0 0 1rem;
-  padding: .55rem .8rem;
+  padding: .6rem .75rem;
   font-family: inherit;
   font-size: 0.875rem;
   font-size: var(--jxg-fs-small);
@@ -497,10 +461,10 @@ nav #nav-search {
   color: var(--jxg-text);
   background: #ffffff;
   background: var(--jxg-bg);
-  border: 2px solid #b6c6d4;
-  border: 2px solid var(--jxg-border-strong);
-  border-radius: 0.5rem 0 0.5rem 0;
-  border-radius: var(--jxg-radius-brand);
+  border: 1px solid #d7e0e8;
+  border: 1px solid var(--jxg-border);
+  border-radius: 0.4rem;
+  border-radius: var(--jxg-radius);
   box-shadow: 0 -1rem 0 #f3f6f8;
   box-shadow: 0 -1rem 0 var(--jxg-bg-subtle);
   outline-offset: 2px;
@@ -511,9 +475,10 @@ nav.wrap a {
 }
 
 nav h2 {
-  font-family: 'Fira Sans Condensed', 'Fira Sans', 'Montserrat', 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: 'Fira Sans', 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   font-family: var(--jxg-font-head);
-  font-size: .95rem;
+  font-size: 0.875rem;
+  font-size: var(--jxg-fs-small);
   font-weight: 600;
   margin: 0 0 .2rem;
   padding: 0;
@@ -532,12 +497,13 @@ nav > h2 > a {
 nav h3 {
   margin: 1.6rem 0 .5rem;
   padding: 0 .55rem;
-  font-family: 'Fira Sans Condensed', 'Fira Sans', 'Montserrat', 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: 'Fira Sans', 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   font-family: var(--jxg-font-head);
-  font-size: .72rem;
+  font-size: 0.8rem;
+  font-size: var(--jxg-fs-tiny);
   text-transform: uppercase;
-  letter-spacing: .12em;
-  font-weight: 700;
+  letter-spacing: .08em;
+  font-weight: 600;
   line-height: 1.4;
   color: #5d6b7a;
   color: var(--jxg-text-muted);
@@ -610,6 +576,161 @@ nav ul ul a:active {
 }
 
 /* --------------------------------------------------------------------------
+   7b. Aufklappbare Gruppen IN der Navigation
+   Die obersten Gruppen (ELEMENTS, CLASSES, NAMESPACES ...) behalten die
+   Kastenoptik des Hauptbereichs, nur kompakter. Die verschachtelten Gruppen
+   mit .nav_element_class sind flach und wirken als Zwischenueberschrift.
+   Alle Regeln sind mit "nav " praefixiert, der Hauptbereich bleibt unberuehrt.
+   -------------------------------------------------------------------------- */
+nav details {
+  margin: .75rem 0;
+  padding: 0 .5rem;
+  border: 1px solid #d7e0e8;
+  border: 1px solid var(--jxg-border);
+  border-radius: 0.4rem;
+  border-radius: var(--jxg-radius);
+  background-color: #ffffff;
+  background-color: var(--jxg-bg);
+}
+
+nav details[open] {
+  padding-bottom: .5rem;
+}
+
+nav summary {
+  position: relative;
+  top: auto;
+  z-index: auto;
+  margin: 0 -.5rem;
+  padding: .6rem 2.1rem .6rem .75rem;
+  background-color: #f3f6f8;
+  background-color: var(--jxg-bg-subtle);
+  border: 0;
+  border-radius: 0.4rem;
+  border-radius: var(--jxg-radius);
+  box-shadow: none;
+  font-family: 'Fira Sans', 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-family: var(--jxg-font-head);
+  font-size: 0.8rem;
+  font-size: var(--jxg-fs-tiny);
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: #5d6b7a;
+  color: var(--jxg-text-muted);
+}
+
+nav details[open] > summary {
+  border-radius: 0.4rem 0.4rem 0 0;
+  border-radius: var(--jxg-radius) var(--jxg-radius) 0 0;
+  border-bottom: 1px solid #d7e0e8;
+  border-bottom: 1px solid var(--jxg-border);
+  margin-bottom: .5rem;
+}
+
+nav summary:hover {
+  background-color: #e4f1f8;
+  background-color: var(--jxg-accent-soft);
+  color: #10427c;
+  color: var(--jxg-primary);
+}
+
+/* Verschachtelte Gruppen: keine Kastenoptik.
+   Die Klasse kann am <details> oder am <summary> haengen - beides abgedeckt. */
+nav .nav_element_class,
+nav details:has(> summary.nav_element_class) {
+  margin: .1rem 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background-color: transparent;
+}
+
+nav .nav_element_class[open],
+nav details[open]:has(> summary.nav_element_class) {
+  padding-bottom: 0;
+}
+
+/* ... dafuer deutlich staerker gesetzt als die einfachen Eintraege:
+   Primaerfarbe, halbfett und eine feine Trennlinie darunter. */
+nav .nav_element_class > summary,
+nav summary.nav_element_class {
+  margin: .5rem -.5rem .1rem 0;
+  padding: .3rem 1.9rem .25rem .55rem;
+  background-color: transparent;
+  border-radius: 0;
+  border-bottom: 0;
+  /* Trennlinie als Hintergrundbild statt als Rahmen: so laesst sie sich
+     beidseitig gleich weit einruecken, ohne die Box - und damit den
+     Plus-Kreis - zu verschieben. */
+  background-image: -webkit-linear-gradient(#d7e0e8, #d7e0e8);
+  background-image: linear-gradient(#d7e0e8, #d7e0e8);
+  background-image: linear-gradient(var(--jxg-border), var(--jxg-border));
+  background-size: calc(100% - .85rem) 1px;
+  background-position: .25rem 100%;
+  background-repeat: no-repeat;
+  font-family: 'Fira Sans', 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-family: var(--jxg-font-sans);
+  font-size: 0.875rem;
+  font-size: var(--jxg-fs-small);
+  font-weight: 600;
+  line-height: 1.45;
+  letter-spacing: 0;
+  text-transform: none;
+  color: #10427c;
+  color: var(--jxg-primary);
+}
+
+nav .nav_element_class[open] > summary,
+nav details[open] > summary.nav_element_class {
+  border-radius: 0;
+  border-bottom: 0;
+  margin-bottom: .1rem;
+}
+
+nav .nav_element_class > summary:hover,
+nav summary.nav_element_class:hover {
+  background-color: #e4f1f8;
+  background-color: var(--jxg-accent-soft);
+  background-image: -webkit-linear-gradient(#aedcef, #aedcef);
+  background-image: linear-gradient(#aedcef, #aedcef);
+  background-image: linear-gradient(var(--jxg-accent), var(--jxg-accent));
+  color: #08648f;
+  color: var(--jxg-secondary);
+}
+
+/* Verschachtelte Gruppen und ihre Eintraege einruecken */
+nav details details {
+  margin-left: .6rem;
+}
+
+nav details details ul a,
+nav details details ul a:active {
+  padding-left: .95rem;
+}
+
+/* Marker: derselbe Kreis wie im Hauptbereich. Masse und Position stehen in
+   rem statt em, damit die unterschiedlichen Schriftgroessen der beiden Ebenen
+   ihn nicht mitskalieren - so sind alle Kreise gleich gross.
+   Beide Ebenen reichen dank ihrer negativen Seitenmargen bis an den Rahmen
+   der Gruppe, deshalb genuegt ein gemeinsamer Wert: die Kreise liegen damit
+   automatisch untereinander und haben rechts denselben Abstand wie oben
+   und unten. */
+nav summary::after {
+  right: .53rem;
+  width: 1.15rem;
+  height: 1.15rem;
+  background-size: .55rem 1px;
+}
+
+nav summary::before {
+  right: .83rem;
+  width: .55rem;
+  height: 1px;
+}
+
+/* --------------------------------------------------------------------------
    8. Fusszeile
    -------------------------------------------------------------------------- */
 footer {
@@ -633,7 +754,7 @@ footer {
    9. Signaturen / Typangaben
    -------------------------------------------------------------------------- */
 .signature-attributes {
-  font-size: .7em;
+  font-size: .8em;
   color: #08648f;
   color: var(--jxg-secondary);
   font-style: italic;
@@ -652,25 +773,28 @@ footer {
 }
 
 .name, span.signature {
-  font-family: 'Fira Mono', 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Consolas, Monaco, 'Andale Mono', monospace;
+  font-family: 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   font-family: var(--jxg-font-mono);
 }
 
-/* Signaturbloecke im Usage-Abschnitt: gleiche Kastenoptik wie die
-   Detailtabellen, nur eine Stufe kleiner */
+/* Signaturbloecke im Usage-Abschnitt: keine Kastenoptik, sondern flache
+   Zeilen, die nur durch eine feine Linie voneinander getrennt sind. */
 details.signature {
-  margin: .75rem 0;
-  padding: 0 1.1rem;
-  border: 1px solid #d7e0e8;
-  border: 1px solid var(--jxg-border);
-  border-radius: 0.4rem;
-  border-radius: var(--jxg-radius);
-  background-color: #ffffff;
-  background-color: var(--jxg-bg);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-bottom: 1px solid #d7e0e8;
+  border-bottom: 1px solid var(--jxg-border);
+  border-radius: 0;
+  background-color: transparent;
+}
+
+details.signature:last-of-type {
+  border-bottom: 0;
 }
 
 details.signature[open] {
-  padding-bottom: 1.1rem;
+  padding: 0 0 .9rem .9rem;
 }
 
 summary .signature {
@@ -681,40 +805,49 @@ summary.signature {
   position: relative;
   top: auto;
   z-index: auto;
-  background-color: #f3f6f8;
-  background-color: var(--jxg-bg-subtle);
+  background-color: transparent;
   border: 0;
-  border-radius: 0.4rem;
-  border-radius: var(--jxg-radius);
+  border-radius: 0;
   box-shadow: none;
-  margin: 0 -1.1rem;
-  padding: .7rem 2.8em .7rem .85rem;
-  font-family: 'Fira Mono', 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Consolas, Monaco, 'Andale Mono', monospace;
+  margin: 0;
+  padding: .6rem 1.2rem .6rem .1rem;
+  font-family: 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   font-family: var(--jxg-font-mono);
-  font-size: .95rem;
-  font-weight: 500;
+  font-size: 0.875rem;
+  font-size: var(--jxg-fs-small);
+  font-weight: 600;
+  color: #10427c;
+  color: var(--jxg-primary);
 }
 
+summary.signature:hover {
+  background-color: transparent;
+  color: #08648f;
+  color: var(--jxg-secondary);
+}
+
+/* Der Inhalt wird ueber das padding des details eingerueckt, die Kopfzeile
+   holt sich diesen Einzug mit negativem Rand wieder zurueck - so bleibt sie
+   in beiden Zustaenden an derselben Stelle. */
 details.signature[open] > summary {
-  border-radius: 0.4rem 0.4rem 0 0;
-  border-radius: var(--jxg-radius) var(--jxg-radius) 0 0;
-  border-bottom: 1px solid #d7e0e8;
-  border-bottom: 1px solid var(--jxg-border);
-  margin-bottom: 1.1rem;
+  border-radius: 0;
+  border-bottom: 0;
+  margin: 0 0 .6rem -.9rem;
 }
 
+/* Marker: Groesse kommt aus der Basisregel, nur dezenter im Rand.
+   Die Signaturzeilen enden 1.1rem weiter innen als die Kopfzeile des
+   Usage-Kastens (dessen padding). Damit die Kreise beider Ebenen exakt
+   untereinander liegen, ragt der innere um genau diesen Betrag nach
+   aussen - daher der negative Wert. */
 summary.signature::after {
-  right: .7em;
-  width: 1.4em;
-  height: 1.4em;
-  background-size: .6em 2px;
+  right: -.4rem;
   border-color: #d7e0e8;
   border-color: var(--jxg-border);
 }
 
 summary.signature::before {
-  right: 1.1em;
-  width: .6em;
+  right: -.1rem;
 }
 
 /* --------------------------------------------------------------------------
@@ -748,13 +881,9 @@ summary.signature::before {
   border-top: 1px solid var(--jxg-border);
   background-color: #ffffff;
   background-color: var(--jxg-bg);
-  color: #10427c;
-  color: var(--jxg-primary);
+  color: #5d6b7a;
+  color: var(--jxg-text-muted);
   font-weight: 600;
-  font-size: 0.78rem;
-  font-size: var(--jxg-fs-tiny);
-  letter-spacing: .06em;
-  text-transform: uppercase;
   white-space: nowrap;
 }
 
@@ -766,6 +895,17 @@ summary.signature::before {
   border-top: 1px solid var(--jxg-border);
   color: #1d2733;
   color: var(--jxg-text);
+}
+
+/* Werte, die so im Quelltext stehen wuerden, in Monospace: Vorgabewerte
+   (false, null, 0, '#0000ff') und ueberschriebene Member. Source und See
+   bleiben in der Grundschrift - dort steht mal ein Bezeichner, mal ein
+   erklaerender Satz, und der Link traegt die Auszeichnung schon. */
+.details dd.tag-default,
+.details dd.tag-overrides {
+  font-family: 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-family: var(--jxg-font-mono);
+  font-size: .92em;
 }
 
 /* erste Zeile ohne Trennlinie, sonst doppelt mit dem Rahmen */
@@ -942,21 +1082,21 @@ nav::-webkit-scrollbar-thumb:hover {
 
 /* --------------------------------------------------------------------------
    Eingebettete JSXGraph-Konstruktionen auf die Optik der Codeblocke bringen.
+   Breite und Hoehe bleiben bei den Werten aus dem style-Attribut, die Konstruktion
+   wird also nicht mehr gedehnt; max-width verhindert nur das Ueberlaufen auf
+   schmalen Schirmen.
    .jxgbox kommt aus jsxgraph.css, das im <head> NACH jsdoc.css eingebunden
-   wird; Breite und Hoehe stehen zusaetzlich als style-Attribut am Element und
-   das margin in einem <style>-Block der Seite. Ohne !important kaeme diese
-   Regel dagegen nicht an.
+   wird, und das margin aus einem <style>-Block der Seite. Ohne !important
+   kaeme diese Regel dagegen nicht an.
    -------------------------------------------------------------------------- */
 .jxgbox {
-  width: 100% !important;
   max-width: 100% !important;
-  margin: 1.25em 0 !important;
+  margin: 1.25em auto !important;
   border: 1px solid #d7e0e8 !important;
   border: 1px solid var(--jxg-border) !important;
   border-radius: 0.4rem !important;
   border-radius: var(--jxg-radius) !important;
   background-color: #ffffff !important;
-  background-color: var(--jxg-bg) !important;
 }
 
 /* --------------------------------------------------------------------------
@@ -1036,13 +1176,9 @@ td, th {
 thead tr, thead tr {
   background-color: #f3f6f8;
   background-color: var(--jxg-bg-subtle);
-  color: #10427c;
-  color: var(--jxg-primary);
+  color: #5d6b7a;
+  color: var(--jxg-text-muted);
   font-weight: 600;
-  font-size: 0.78rem;
-  font-size: var(--jxg-fs-tiny);
-  letter-spacing: .06em;
-  text-transform: uppercase;
   border-bottom: 1px solid #d7e0e8;
   border-bottom: 1px solid var(--jxg-border);
 }
@@ -1060,9 +1196,8 @@ thead tr, thead tr {
 .params td, .params .name, .props .name, .name code {
   color: #1d2733;
   color: var(--jxg-text);
-  font-family: 'Fira Mono', 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Consolas, Monaco, 'Andale Mono', monospace;
+  font-family: 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   font-family: var(--jxg-font-mono);
-  font-size: .92em;
 }
 
 .params td {
@@ -1087,9 +1222,8 @@ thead tr, thead tr {
 span.param-type, .params td .param-type, .param-type dd {
   color: #08648f;
   color: var(--jxg-secondary);
-  font-family: 'Fira Mono', 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Consolas, Monaco, 'Andale Mono', monospace;
+  font-family: 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   font-family: var(--jxg-font-mono);
-  font-weight: 500;
 }
 
 .param-type dt, .param-type dd {
@@ -1283,7 +1417,7 @@ details[open] {
 }
 
 summary {
-  font-family: 'Fira Sans Condensed', 'Fira Sans', 'Montserrat', 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: 'Fira Sans', 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   font-family: var(--jxg-font-head);
   color: #10427c;
   color: var(--jxg-primary);
@@ -1293,8 +1427,8 @@ summary {
   border-radius: 0.4rem;
   border-radius: var(--jxg-radius);
   font-weight: 600;
-  font-size: 1.3rem;
-  padding: .6em 3em .6em .85em;
+  font-size: 1.25rem;
+  padding: .6em 2.3rem .6em .85em;
   margin: 0 -1.1rem;
   position: -webkit-sticky;
   position: sticky;
@@ -1335,24 +1469,23 @@ summary::after {
   content: "";
   box-sizing: border-box;
   position: absolute;
-  right: .7em;
+  right: .7rem;
   top: 50%;
   -webkit-transform: translateY(-50%);
           transform: translateY(-50%);
-  width: 1.5em;
-  height: 1.5em;
-  border: 2px solid #aedcef;
-  border: 2px solid var(--jxg-accent);
+  width: 1.15rem;
+  height: 1.15rem;
+  border: 1px solid #d7e0e8;
+  border: 1px solid var(--jxg-border);
   border-radius: 50%;
-  background-color: #ffffff;
-  background-color: var(--jxg-bg);
+  background-color: transparent;
   background-image: -webkit-linear-gradient(currentColor, currentColor);
   background-image: linear-gradient(currentColor, currentColor);
-  background-size: .7em 2px;
+  background-size: .55rem 1px;
   background-position: center;
   background-repeat: no-repeat;
-  color: #08648f;
-  color: var(--jxg-secondary);
+  color: #5d6b7a;
+  color: var(--jxg-text-muted);
   z-index: 0;
   transition: background-color .2s ease, border-color .2s ease, color .2s ease;
 }
@@ -1360,13 +1493,13 @@ summary::after {
 summary::before {
   content: "";
   position: absolute;
-  right: 1.1em;
+  right: 1rem;
   top: 50%;
-  width: .7em;
-  height: 2px;
-  border-radius: 2px;
-  background-color: #08648f;
-  background-color: var(--jxg-secondary);
+  width: .55rem;
+  height: 1px;
+  border-radius: 0;
+  background-color: #5d6b7a;
+  background-color: var(--jxg-text-muted);
   -webkit-transform: translateY(-50%) rotate(90deg);
           transform: translateY(-50%) rotate(90deg);
   z-index: 1;
@@ -1381,15 +1514,14 @@ details[open] > summary::before {
 summary:hover::after {
   border-color: #08648f;
   border-color: var(--jxg-secondary);
-  background-color: #08648f;
-  background-color: var(--jxg-secondary);
-  color: #ffffff;
-  color: var(--jxg-text-invert);
+  background-color: transparent;
+  color: #08648f;
+  color: var(--jxg-secondary);
 }
 
 summary:hover::before {
-  background-color: #ffffff;
-  background-color: var(--jxg-text-invert);
+  background-color: #08648f;
+  background-color: var(--jxg-secondary);
 }
 
 /* --------------------------------------------------------------------------
@@ -1415,7 +1547,7 @@ summary:hover::before {
   white-space: nowrap;
   font-size: 0.875rem;
   font-size: var(--jxg-fs-small);
-  font-family: 'Fira Mono', 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Consolas, Monaco, 'Andale Mono', monospace;
+  font-family: 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   font-family: var(--jxg-font-mono);
   -webkit-column-break-inside: avoid;
           break-inside: avoid;
@@ -1494,24 +1626,18 @@ summary:hover::before {
     margin: 0 3.5rem .9rem 0;
   }
 
-  h1 {
-    font-size: 1.9rem;
-  }
-
+  h1,
   h1.page-title {
-    font-size: 2rem;
+    font-size: 1.75rem;
   }
 
   h2 {
-    font-size: 1.45rem;
+    font-size: 1.35rem;
   }
 
-  h3 {
-    font-size: 1.2rem;
-  }
-
+  h3,
   summary {
-    font-size: 1.15rem;
+    font-size: 1.1rem;
   }
 
   #main section {
@@ -1537,16 +1663,26 @@ summary:hover::before {
     padding: .7rem .75rem;
   }
 
-  /* Tabellen horizontal scrollbar statt gequetscht */
+  /* Tabellen bleiben Tabellen und brechen um.
+     display: block waere hier falsch: die Zeilengruppen bekommen dann eine
+     anonyme Tabelle als Elternbox, die sich auf ihren Inhalt zusammenzieht -
+     rechts bliebe die halbe Flaeche leer. */
   table {
-    display: block;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
+    display: table;
+    width: 100%;
+  }
+
+  td, th {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
+  .params .type {
     white-space: normal;
   }
 
   h4.name {
-    font-size: .92rem;
+    font-size: 0.875rem;
     padding: .6em .7em;
   }
 
@@ -1609,30 +1745,120 @@ summary:hover::before {
 }
 
 /* --------------------------------------------------------------------------
-   17. Schriften (lokal ausgeliefert)
+   16b. Dunkles Farbschema
+
+   Umgeschaltet wird allein ueber die Systemeinstellung. Es werden nur die
+   Tokens neu belegt - kein einziger Baustein des Layouts aendert sich. Die
+   festen Werte, die im uebrigen Stylesheet vor jedem var() stehen, sind
+   reine Notnagel fuer Umgebungen ohne Custom Properties; wo var() greift,
+   gewinnen die Werte von hier.
+
+   Zwei Stellen brauchen Sonderbehandlung: die Syntaxfarben, die auf hellen
+   Grund gerechnet waren, und die JSXGraph-Konstruktionen - die behalten
+   ihren weissen Grund, weil die Bibliothek Achsen und Beschriftungen in
+   dunklen Farben zeichnet.
+   -------------------------------------------------------------------------- */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --jxg-primary:        #8fbdea;
+    --jxg-primary-dark:   #bcd9f4;
+    --jxg-primary-light:  #aed0f2;
+    --jxg-secondary:      #6ec3e2;
+    --jxg-accent:         #2f5f85;
+    --jxg-accent-soft:    #17334c;
+
+    --jxg-bg:             #0f1720;
+    --jxg-bg-subtle:      #17212c;
+    --jxg-bg-inline-code: #1c2734;
+    --jxg-code-bg:        #141d27;
+    --jxg-code-fg:        #d4dee8;
+    --jxg-code-gutter:    #273746;
+
+    --jxg-text:           #dce5ef;
+    --jxg-text-muted:     #94a4b5;
+    --jxg-text-invert:    #0f1720;
+
+    --jxg-border:         #2b3a48;
+    --jxg-border-strong:  #3d4f60;
+    --jxg-danger:         #ef9189;
+
+    --jxg-shadow-sm:      0 1px 2px rgba(0, 0, 0, .40);
+    --jxg-shadow:         0 2px 10px rgba(0, 0, 0, .45);
+    --jxg-shadow-lg:      0 10px 30px rgba(0, 0, 0, .55);
+  }
+
+  /* Syntaxfarben mit genuegend Kontrast auf dunklem Grund */
+  .str, .atv {
+    color: #86d2a8;
+  }
+
+  .com {
+    color: #8b9bab;
+  }
+
+  .lit, .dec, .var, .atn {
+    color: #e3a874;
+  }
+
+  /* Der Schleier ueber der mobilen Navigation darf dunkler ausfallen */
+  .overlay {
+    background: rgba(0, 0, 0, .55);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   17. Schriften
+
+   Bewusst knapp gehalten: zwei Familien, fuenf Dateien. Ueberschriften und
+   Fliesstext teilen sich Fira Sans und unterscheiden sich nur ueber Groesse,
+   Farbe und Gewicht - das beruhigt das Schriftbild und spart zwei Downloads
+   gegenueber der vorherigen Fassung mit Fira Sans Condensed.
+
+     Fira Sans  400, 400 kursiv, 600   -> fonts/Fira-Sans/
+     Fira Code  400, 600               -> fonts/Fira-Code/
+
+   Source Sans Pro bleibt als Ersatz in der Kette. Ein Browser laedt eine
+   Ersatzschrift nur, wenn die vorherige ausfaellt - die Datei kostet im
+   Normalfall also nichts.
    -------------------------------------------------------------------------- */
 @font-face {
-  font-family: 'Montserrat';
+  font-family: 'Fira Sans';
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url('../fonts/Montserrat/Montserrat-Regular.eot');
-  src: url('../fonts/Montserrat/Montserrat-Regular.eot?#iefix') format('embedded-opentype'),
-       url('../fonts/Montserrat/Montserrat-Regular.woff2') format('woff2'),
-       url('../fonts/Montserrat/Montserrat-Regular.woff') format('woff'),
-       url('../fonts/Montserrat/Montserrat-Regular.ttf')  format('truetype');
+  src: url('../fonts/Fira-Sans/FiraSans-Regular.ttf') format('truetype');
 }
 
 @font-face {
-  font-family: 'Montserrat';
-  font-style: normal;
-  font-weight: 700;
+  font-family: 'Fira Sans';
+  font-style: italic;
+  font-weight: 400;
   font-display: swap;
-  src: url('../fonts/Montserrat/Montserrat-Bold.eot');
-  src: url('../fonts/Montserrat/Montserrat-Bold.eot?#iefix') format('embedded-opentype'),
-       url('../fonts/Montserrat/Montserrat-Bold.woff2') format('woff2'),
-       url('../fonts/Montserrat/Montserrat-Bold.woff') format('woff'),
-       url('../fonts/Montserrat/Montserrat-Bold.ttf')  format('truetype');
+  src: url('../fonts/Fira-Sans/FiraSans-Italic.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Fira Sans';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('../fonts/Fira-Sans/FiraSans-SemiBold.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Fira Code';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../fonts/Fira-Code/FiraCode-Regular.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Fira Code';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('../fonts/Fira-Code/FiraCode-SemiBold.ttf') format('truetype');
 }
 
 @font-face {
@@ -1640,23 +1866,7 @@ summary:hover::before {
   font-weight: 400;
   font-style: normal;
   font-display: swap;
-  src: url('../fonts/Source-Sans-Pro/sourcesanspro-regular-webfont.eot');
-  src: url('../fonts/Source-Sans-Pro/sourcesanspro-regular-webfont.eot?#iefix') format('embedded-opentype'),
-       url('../fonts/Source-Sans-Pro/sourcesanspro-regular-webfont.woff2') format('woff2'),
+  src: url('../fonts/Source-Sans-Pro/sourcesanspro-regular-webfont.woff2') format('woff2'),
        url('../fonts/Source-Sans-Pro/sourcesanspro-regular-webfont.woff') format('woff'),
-       url('../fonts/Source-Sans-Pro/sourcesanspro-regular-webfont.ttf') format('truetype'),
-       url('../fonts/Source-Sans-Pro/sourcesanspro-regular-webfont.svg#source_sans_proregular') format('svg');
-}
-
-@font-face {
-  font-family: 'Source Sans Pro';
-  font-weight: 300;
-  font-style: normal;
-  font-display: swap;
-  src: url('../fonts/Source-Sans-Pro/sourcesanspro-light-webfont.eot');
-  src: url('../fonts/Source-Sans-Pro/sourcesanspro-light-webfont.eot?#iefix') format('embedded-opentype'),
-       url('../fonts/Source-Sans-Pro/sourcesanspro-light-webfont.woff2') format('woff2'),
-       url('../fonts/Source-Sans-Pro/sourcesanspro-light-webfont.woff') format('woff'),
-       url('../fonts/Source-Sans-Pro/sourcesanspro-light-webfont.ttf') format('truetype'),
-       url('../fonts/Source-Sans-Pro/sourcesanspro-light-webfont.svg#source_sans_prolight') format('svg');
+       url('../fonts/Source-Sans-Pro/sourcesanspro-regular-webfont.ttf') format('truetype');
 }
