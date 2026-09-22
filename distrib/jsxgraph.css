@@ -186,7 +186,7 @@
 .smart-label-solid {
     padding: 1px 7px 1px 7px;
     margin: 0;
-    color: white;
+    color: white !important;
     border-radius: 150px;
     text-align: center;
     vertical-align: middle;
