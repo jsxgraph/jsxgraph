@@ -16,11 +16,11 @@ var self = this;
         // print(name);
 
         // Build up string like "board.create('element' [a, b, c])"
-        let name_str = `<span class="signature">board.create('${memberof.toLowerCase()}', `;
+        let name_str = `<span class="signature">board.create('<span class="signature-element">${memberof.toLowerCase()}</span>', `;
         print(name_str);
       }
       // Extract params from data.signature:
-    ?><?js= (data.signature.replace(/\(/, "[").replace(/\)/, "]") + ");</span>" || '') ?></summary>
+    ?><?js= (data.signature.replace(/\(/, "[").replace(/\)/, "]").replace(/([\[,]\s*)([^,\[\]]+?)\s*(?=[,\]])/g, "$1<span class='signature-param'>$2</span>") + ");</span>" || '') ?></summary>
 
 <!--
     <?js if (data.summary) { ?>
@@ -41,12 +41,12 @@ var self = this;
 <?js } ?>
 
 <?js if (data.augments && data.alias && data.alias.indexOf('module:') === 0) { ?>
-    <h5 class="h5-extends">Extends:</h5>
+    <h5 class="h5-extends">Extends</h5>
     <?js= self.partial('augments.tmpl', data) ?>
 <?js } ?>
 
 <?js if (kind === 'event' && data.type && data.type.names) {?>
-    <h5 class="h5-types">Type:</h5>
+    <h5 class="h5-types">Type</h5>
     <ul>
         <li>
             <?js= self.partial('type.tmpl', data.type.names) ?>
@@ -55,7 +55,7 @@ var self = this;
 <?js } ?>
 
 <?js if (data['this']) { ?>
-    <h5 class="h5-this">This:</h5>
+    <h5 class="h5-this">This</h5>
     <ul><li><?js= this.linkto(data['this'], data['this']) ?></li></ul>
 <?js } ?>
 
