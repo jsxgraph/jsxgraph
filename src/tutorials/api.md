@@ -19,11 +19,9 @@
 - `parser/datasource.js`: no jsdoc, yet
 - `parser/prefix.js`: examples
 - `parser/ca.js`: jsdoc missing massively
-- Smartlabel: CSS of font color
 - Attributes of chart.js
 - jsdoc JXG.createAxes3D
 - Add example Circle3D
-- IntersectionLine3D not dynamic, see example
 - Ticks3D: example
 - 3D elements: add construction with transformation
 
@@ -32,6 +30,8 @@
 - ~~Not yet: `@see` for Element~~
 - ~~`@see` in element jsdocs~~
 - ~~Turtle: params and examples~~
+- ~~Smartlabel: CSS of font color~~ (in main branch)
+- ~~IntersectionLine3D not dynamic, see example~~ (in main branch)
 
 ## Attributes
 
