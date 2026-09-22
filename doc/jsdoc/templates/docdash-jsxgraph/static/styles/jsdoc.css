@@ -4,7 +4,7 @@
    Farb- und Typografie-Schema orientiert an jsxgraph.org
      primary   #10427C   secondary #08648f   accent  #aedcef
      Fonts     Fira Sans (400/400i/600) + Fira Code (400/600)
-     Radius    0.5rem 0 0.5rem 0  (asymmetrisch, wie Buttons/Inputs der Website)
+     Radius    0.7rem 0 0.7rem 0  (asymmetrisch, wie Buttons/Inputs der Website)
 
    Es werden ausschliesslich die bereits vorhandenen Selektoren/Klassen
    verwendet – keine neuen Klassennamen, keine Aenderung am HTML noetig.
@@ -20,94 +20,96 @@
    1. Design-Tokens
    -------------------------------------------------------------------------- */
 :root {
-  color-scheme: light dark;
+    color-scheme: light dark;
 
-  /* Marken- und Flaechenfarben */
-  --jxg-primary:        #10427c;
-  --jxg-primary-dark:   #0a2c54;
-  --jxg-primary-light:  #2a6bb5;
-  --jxg-secondary:      #08648f;
-  --jxg-accent:         #aedcef;
-  --jxg-accent-soft:    #e4f1f8;
+    /* Marken- und Flaechenfarben */
+    --jxg-primary:        #10427c;
+    --jxg-primary-dark:   #0a2c54;
+    --jxg-primary-light:  #2a6bb5;
+    --jxg-secondary:      #08648f;
+    --jxg-accent:         #aedcef;
+    --jxg-accent-soft:    #e4f1f8;
 
-  --jxg-bg:             #ffffff;
-  --jxg-bg-subtle:      #f3f6f8;
-  --jxg-bg-inline-code: #eaf1f5;
-  --jxg-code-bg:        #f5f8fa;
-  --jxg-code-fg:        #24303d;
-  --jxg-code-gutter:    #dce5ee;
+    --jxg-bg:             #ffffff;
+    --jxg-bg-subtle:      #f3f6f8;
+    --jxg-bg-inline-code: #eaf1f5;
+    --jxg-code-bg:        #f5f8fa;
+    --jxg-code-fg:        #24303d;
+    --jxg-code-gutter:    #dce5ee;
 
-  /* Text */
-  --jxg-text:           #1d2733;
-  --jxg-text-muted:     #5d6b7a;
-  --jxg-text-invert:    #ffffff;
-  --jxg-link:           var(--jxg-primary);
-  --jxg-link-hover:     var(--jxg-secondary);
+    /* Text */
+    --jxg-text:           #1d2733;
+    --jxg-text-muted:     #5d6b7a;
+    --jxg-text-invert:    #ffffff;
+    --jxg-link:           var(--jxg-primary);
+    --jxg-param:          #9c4221;
+    --jxg-element:        #0b7a5a;
+    --jxg-link-hover:     var(--jxg-secondary);
 
-  /* Linien, Signale */
-  --jxg-border:         #d7e0e8;
-  --jxg-border-strong:  #b6c6d4;
-  --jxg-danger:         #a3231b;
+    /* Linien, Signale */
+    --jxg-border:         #d7e0e8;
+    --jxg-border-strong:  #b6c6d4;
+    --jxg-danger:         #a3231b;
 
-  /* Typografie */
-  --jxg-font-sans:  'Fira Sans', 'Source Sans Pro', -apple-system, BlinkMacSystemFont,
-                    'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  --jxg-font-head:  var(--jxg-font-sans);
-  --jxg-font-mono:  'Fira Code', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    /* Typografie */
+    --jxg-font-sans:  'Fira Sans', 'Source Sans Pro', -apple-system, BlinkMacSystemFont,
+    'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    --jxg-font-head:  var(--jxg-font-sans);
+    --jxg-font-mono:  'Fira Code', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
-  --jxg-fs-base:     1rem;
-  --jxg-fs-small:    0.875rem;
-  --jxg-fs-tiny:     0.8rem;
-  --jxg-lh:          1.65;
+    --jxg-fs-base:     1rem;
+    --jxg-fs-small:    0.875rem;
+    --jxg-fs-tiny:     0.8rem;
+    --jxg-lh:          1.6;
 
-  /* Form, Abstand, Tiefe */
-  --jxg-radius:        0.4rem;
-  --jxg-radius-brand:  0.5rem 0 0.5rem 0;
-  --jxg-shadow-sm:     0 1px 2px rgba(16, 66, 124, 0.08);
-  --jxg-shadow:        0 2px 10px rgba(16, 66, 124, 0.10);
-  --jxg-shadow-lg:     0 10px 30px rgba(16, 66, 124, 0.18);
+    /* Form, Abstand, Tiefe */
+    --jxg-radius:        0.6rem;
+    --jxg-radius-brand:  0.7rem 0 0.7rem 0;
+    --jxg-shadow-sm:     0 1px 2px rgba(16, 66, 124, 0.08);
+    --jxg-shadow:        0 2px 10px rgba(16, 66, 124, 0.10);
+    --jxg-shadow-lg:     0 10px 30px rgba(16, 66, 124, 0.18);
 
-  --jxg-nav-width:     17.5rem;
-  --jxg-gutter:        2.5rem;
-  --jxg-content-max:   80rem;
+    --jxg-nav-width:     17.5rem;
+    --jxg-gutter:        2.5rem;
+    --jxg-content-max:   80rem;
 }
 
 /* --------------------------------------------------------------------------
    2. Grundgeruest
    -------------------------------------------------------------------------- */
 * {
-  box-sizing: border-box;
+    box-sizing: border-box;
 }
 
 html, body {
-  height: auto;
-  min-height: 100%;
-  width: 100%;
-  scroll-behavior: smooth;
-  scroll-padding-top: 4.5rem;
+    height: auto;
+    min-height: 100%;
+    width: 100%;
+    scroll-behavior: smooth;
+    scroll-padding-top: 7.5rem;
 }
 
 body {
-  margin: 0;
-  padding: 0;
-  color: #1d2733;
-  color: var(--jxg-text);
-  background-color: #ffffff;
-  background-color: var(--jxg-bg);
-  font-family: 'Fira Sans', 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  font-family: var(--jxg-font-sans);
-  font-size: 1rem;
-  font-size: var(--jxg-fs-base);
-  line-height: 1.65;
-  line-height: var(--jxg-lh);
-  -webkit-text-size-adjust: 100%;
-  -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
+    margin: 0;
+    padding: 0;
+    color: #1d2733;
+    color: var(--jxg-text);
+    background-color: #ffffff;
+    background-color: var(--jxg-bg);
+    font-family: 'Fira Sans', 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-family: var(--jxg-font-sans);
+    font-size: 1rem;
+    font-size: var(--jxg-fs-base);
+    line-height: 1.6;
+    line-height: var(--jxg-lh);
+    -webkit-text-size-adjust: 100%;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
 }
 
 img {
-  max-width: 100%;
-  height: auto;
+    max-width: 100%;
+    height: auto;
 }
 
 /* --------------------------------------------------------------------------
@@ -115,478 +117,497 @@ img {
    -------------------------------------------------------------------------- */
 a,
 a:active {
-  color: #10427c;
-  color: var(--jxg-link);
-  text-decoration: none;
-  border-bottom: 0;
-  transition: color .15s ease, background-color .15s ease;
+    color: #10427c;
+    color: var(--jxg-link);
+    text-decoration: none;
+    border-bottom: 0;
+    transition: color .15s ease, background-color .15s ease;
 }
 
 a:hover {
-  color: #08648f;
-  color: var(--jxg-link-hover);
-  text-decoration: underline;
-  text-decoration-thickness: 2px;
-  text-underline-offset: 0.15em;
-  border-bottom: 0;
+    color: #08648f;
+    color: var(--jxg-link-hover);
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.15em;
+    border-bottom: 0;
 }
 
 article a {
-  border-bottom: 0;
-  text-decoration: underline;
-  text-decoration-color: #aedcef;
-  text-decoration-color: var(--jxg-accent);
-  text-decoration-thickness: 2px;
-  text-underline-offset: 0.15em;
+    border-bottom: 0;
+    text-decoration: underline;
+    text-decoration-color: #aedcef;
+    text-decoration-color: var(--jxg-accent);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.15em;
 }
 
 article a:hover,
 article a:active {
-  border-bottom: 0;
-  text-decoration-color: currentColor;
+    border-bottom: 0;
+    text-decoration-color: currentColor;
 }
 
 article .description a {
-  word-break: break-word;
+    word-break: break-word;
 }
 
 /* --------------------------------------------------------------------------
    4. Typografie
    -------------------------------------------------------------------------- */
 p, ul, ol, blockquote {
-  margin-block: 0 1em;
-  line-height: 1.65;
-  line-height: var(--jxg-lh);
+    margin-block: 0 1em;
+    line-height: 1.6;
+    line-height: var(--jxg-lh);
 }
 
 blockquote {
-  margin-inline: 0;
-  padding: .6em 1.1em;
-  border-left: 4px solid #aedcef;
-  border-left: 4px solid var(--jxg-accent);
-  background: #f3f6f8;
-  background: var(--jxg-bg-subtle);
-  border-radius: 0.5rem 0 0.5rem 0;
-  border-radius: var(--jxg-radius-brand);
-  color: #5d6b7a;
-  color: var(--jxg-text-muted);
+    margin-inline: 0;
+    padding: .6em 1.1em;
+    border-left: 4px solid #aedcef;
+    border-left: 4px solid var(--jxg-accent);
+    background: #f3f6f8;
+    background: var(--jxg-bg-subtle);
+    border-radius: 0.7rem 0 0.7rem 0;
+    border-radius: var(--jxg-radius-brand);
+    color: #5d6b7a;
+    color: var(--jxg-text-muted);
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: 'Fira Sans', 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  font-family: var(--jxg-font-head);
+    font-family: 'Fira Sans', 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-family: var(--jxg-font-head);
 }
 
 h1, h2, h3, h4, h5, h6 {
-  color: #10427c;
-  color: var(--jxg-primary);
-  font-weight: 600;
-  line-height: 1.2;
-  margin: 0;
-  overflow-wrap: break-word;
+    color: #10427c;
+    color: var(--jxg-primary);
+    font-weight: 600;
+    line-height: 1.2;
+    margin: 0;
+    overflow-wrap: break-word;
 }
 
 h1 {
-  font-size: 2.1rem;
-  margin: 1em 0 .5em;
-  letter-spacing: -0.01em;
+    font-size: 2.1rem;
+    margin: 1em 0 .5em;
+    letter-spacing: -0.01em;
 }
 
 h1.page-title {
-  font-size: 2.1rem;
-  margin: 0 0 1.25rem;
-  padding-bottom: .5rem;
-  line-height: 1.1;
-  word-wrap: break-word;
-  border-bottom: 3px solid #aedcef;
-  border-bottom: 3px solid var(--jxg-accent);
+    position: -webkit-sticky;
+    position: sticky;
+    /* #main hat oben keinen Innenabstand mehr, der Titel sitzt also von Haus
+       aus auf 0 - beim Anheften bewegt er sich dadurch kein Stueck. Die
+       Polsterung von 1.25rem mittet die Zeile so aus, dass die Trennlinie
+       genau auf der Oberkante des Suchfelds liegt (1rem Rand + 2.5rem Logo
+       + 1.1rem Abstand). */
+    top: 0;
+    z-index: 4;
+    font-size: 1.9rem;
+    font-weight: 400;
+    margin: 0 0 1.25rem;
+    padding: 1.25rem 0;
+    line-height: 1.1;
+    word-wrap: break-word;
+    background-color: #ffffff;
+    background-color: var(--jxg-bg);
+    border-bottom: 1px solid #d7e0e8;
+    border-bottom: 1px solid var(--jxg-border);
 }
 
 h2 {
-  font-size: 1.6rem;
-  margin: 1.8em 0 .4em;
+    font-size: 1.6rem;
+    margin: 1.8em 0 .4em;
 }
 
 h3 {
-  font-size: 1.25rem;
-  margin: 1.6em 0 .4em;
+    font-size: 1.25rem;
+    margin: 1.6em 0 .4em;
 }
 
 h4 {
-  font-size: 1rem;
-  font-weight: 600;
-  margin: 1.4em 0 .4em;
-  color: #1d2733;
-  color: var(--jxg-text);
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 1.4em 0 .4em;
+    color: #1d2733;
+    color: var(--jxg-text);
 }
 
 /* Signatur-Kopfzeile eines Members / einer Methode */
 h4.name {
-  display: block;
-  color: #10427c;
-  color: var(--jxg-primary);
-  background: #f3f6f8;
-  background: var(--jxg-bg-subtle);
-  box-shadow: 0 1px 2px rgba(16, 66, 124, 0.08);
-  box-shadow: var(--jxg-shadow-sm);
-  border: 1px solid #d7e0e8;
-  border: 1px solid var(--jxg-border);
-  border-radius: 0.4rem;
-  border-radius: var(--jxg-radius);
-  margin: 2.25em 0 .75em;
-  padding: .7rem .85rem;
-  font-family: 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  font-family: var(--jxg-font-mono);
-  font-size: 1rem;
-  font-weight: 600;
-  line-height: 1.5;
-  scroll-margin-top: 4.5rem;
-  overflow-wrap: anywhere;
+    display: block;
+    color: #10427c;
+    color: var(--jxg-primary);
+    background: #f3f6f8;
+    background: var(--jxg-bg-subtle);
+    box-shadow: 0 1px 2px rgba(16, 66, 124, 0.08);
+    box-shadow: var(--jxg-shadow-sm);
+    border: 1px solid #d7e0e8;
+    border: 1px solid var(--jxg-border);
+    border-radius: 0.6rem;
+    border-radius: var(--jxg-radius);
+    margin: 2.25em 0 .75em;
+    padding: .4rem .85rem;
+    font-family: 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-family: var(--jxg-font-mono);
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1.45;
+    scroll-margin-top: 7.5rem;
+    overflow-wrap: anywhere;
 }
 
 /* Signaturkopf wird zur Kopfzeile der Detailtabelle:
    unten eckig, kein Abstand - die Trennlinie liefert sein border-bottom */
 h4.name:has(+ .details) {
-  margin-bottom: 0;
-  border-bottom-left-radius: 0;
-  border-bottom-right-radius: 0;
+    margin-bottom: 0;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
 }
 
 h4.name + .details {
-  margin-top: 0;
-  border-top: 0;
-  border-top-left-radius: 0;
-  border-top-right-radius: 0;
+    margin-top: 0;
+    border-top: 0;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
 }
 
 h4.name a {
-  color: #08648f;
-  color: var(--jxg-secondary);
-  border-bottom: 0;
+    color: #08648f;
+    color: var(--jxg-secondary);
+    border-bottom: 0;
 }
 
 h4.name a:hover {
-  color: #2a6bb5;
-  color: var(--jxg-primary-light);
-  border-bottom: 0;
+    color: #2a6bb5;
+    color: var(--jxg-primary-light);
+    border-bottom: 0;
 }
 
 /* h5 = "Parameters:", "Returns:", "Example", "Type:" ...
    sowie die Zwischenueberschriften der Uebersicht */
-h5, .container-overview .subsection-title {
-  font-size: 0.875rem;
-  font-size: var(--jxg-fs-small);
-  font-weight: 600;
-  letter-spacing: 0;
-  color: #5d6b7a;
-  color: var(--jxg-text-muted);
-  margin: 1.6em 0 .5em;
+h5,
+.h3-parameters,
+.h3-returns,
+.h3-examples,
+.h3-throws,
+.h3-types,
+h3.subsection-title,
+h4.subsection-title,
+.container-overview .subsection-title {
+    font-family: 'Fira Sans', 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-family: var(--jxg-font-head);
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: 0;
+    color: #5d6b7a;
+    color: var(--jxg-text-muted);
+    margin: 1.6em 0 .5em;
 }
 
 h6 {
-  font-size: 1rem;
-  letter-spacing: 0;
-  margin: 1.2em 0 .3em;
-  font-style: normal;
-  color: #5d6b7a;
-  color: var(--jxg-text-muted);
+    font-size: 1rem;
+    letter-spacing: 0;
+    margin: 1.2em 0 .3em;
+    font-style: normal;
+    color: #5d6b7a;
+    color: var(--jxg-text-muted);
 }
 
 /* --------------------------------------------------------------------------
    5. Code (inline)
    -------------------------------------------------------------------------- */
 tt, code, kbd, samp, pre {
-  font-family: 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  font-family: var(--jxg-font-mono);
-  font-size: .9em;
-  background: #eaf1f5;
-  background: var(--jxg-bg-inline-code);
+    font-family: 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-family: var(--jxg-font-mono);
+    /* gleiche Groesse wie der umgebende Text - Fira Code hat nahezu dieselbe
+       x-Hoehe wie Fira Sans, eine Verkleinerung braucht es hier nicht */
+    font-size: 1em;
+    background: #eaf1f5;
+    background: var(--jxg-bg-inline-code);
 }
 
 tt, code, kbd, samp {
-  padding: .12em .4em;
-  border-radius: 0.4rem;
-  border-radius: var(--jxg-radius);
-  color: #0a2c54;
-  color: var(--jxg-primary-dark);
-  overflow-wrap: break-word;
+    padding: .12em .4em;
+    border-radius: 0.6rem;
+    border-radius: var(--jxg-radius);
+    color: #0a2c54;
+    color: var(--jxg-primary-dark);
+    overflow-wrap: break-word;
 }
 
 pre {
-  padding-bottom: 0;
-  margin: 0 0 1em;
-  border-radius: 0.4rem;
-  border-radius: var(--jxg-radius);
-  max-width: 100%;
+    padding-bottom: 0;
+    margin: 0 0 1em;
+    border-radius: 0.6rem;
+    border-radius: var(--jxg-radius);
+    max-width: 100%;
 }
 
 /* --------------------------------------------------------------------------
    6. Layout: Hauptbereich, Sektionen
    -------------------------------------------------------------------------- */
 #main {
-  float: none;
-  width: auto;
-  max-width: 80rem;
-  max-width: var(--jxg-content-max);
-  margin-left: 17.5rem;
-  margin-left: var(--jxg-nav-width);
-  padding: 2.5rem 2.5rem 4rem;
-  padding: var(--jxg-gutter) var(--jxg-gutter) 4rem;
-  min-width: 0;
+    float: none;
+    width: auto;
+    max-width: 80rem;
+    max-width: var(--jxg-content-max);
+    margin-left: 17.5rem;
+    margin-left: var(--jxg-nav-width);
+    padding: 2.5rem 2.5rem 4rem;
+    padding: 0 var(--jxg-gutter) 4rem;
+    min-width: 0;
 }
 
 header {
-  display: block;
+    display: block;
 }
 
 section {
-  display: block;
-  background-color: #ffffff;
-  background-color: var(--jxg-bg);
-  padding: 0;
+    display: block;
+    background-color: #ffffff;
+    background-color: var(--jxg-bg);
+    padding: 0;
 }
 
 article {
-  min-width: 0;
+    min-width: 0;
 }
 
 .class-description {
-  line-height: 1.6;
-  color: #5d6b7a;
-  color: var(--jxg-text-muted);
-  margin: 1em 0 1.5em;
-  max-width: 70ch;
+    margin: 1em 0 1.5em;
 }
 
 .class-description:empty {
-  margin: 0;
+    margin: 0;
 }
 
 .description {
-  margin: 1em 0;
+    margin: 1em 0;
 }
 
 .variation {
-  display: none;
+    display: none;
 }
 
 .clear {
-  clear: both;
+    clear: both;
 }
 
 .important {
-  font-weight: 600;
-  color: #a3231b;
-  color: var(--jxg-danger);
+    font-weight: 600;
+    color: #a3231b;
+    color: var(--jxg-danger);
 }
 
 .yes-def {
-  text-indent: -1000px;
+    text-indent: -1000px;
 }
 
 .disabled {
-  color: #5d6b7a;
-  color: var(--jxg-text-muted);
+    color: #5d6b7a;
+    color: var(--jxg-text-muted);
 }
 
 .ancestors {
-  color: #5d6b7a;
-  color: var(--jxg-text-muted);
-  font-weight: 400;
+    color: #5d6b7a;
+    color: var(--jxg-text-muted);
+    font-weight: 400;
 }
 
 .ancestors a {
-  color: #5d6b7a !important;
-  color: var(--jxg-text-muted) !important;
-  text-decoration: none;
+    color: #5d6b7a !important;
+    color: var(--jxg-text-muted) !important;
+    text-decoration: none;
 }
 
 /* --------------------------------------------------------------------------
    7. Navigation (Sidebar)
    -------------------------------------------------------------------------- */
 nav {
-  float: none;
-  display: flex;
-  flex-direction: column;
-  width: 17.5rem;
-  width: var(--jxg-nav-width);
-  height: 100%;
-  position: fixed;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  z-index: 4;
-  background: #f3f6f8;
-  background: var(--jxg-bg-subtle);
-  border-right: 1px solid #d7e0e8;
-  border-right: 1px solid var(--jxg-border);
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  padding: 1rem 1.1rem 3rem;
-  scrollbar-width: thin;
-  scrollbar-color: #b6c6d4 transparent;
-  scrollbar-color: var(--jxg-border-strong) transparent;
+    float: none;
+    display: flex;
+    flex-direction: column;
+    width: 17.5rem;
+    width: var(--jxg-nav-width);
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    z-index: 4;
+    background: #f3f6f8;
+    background: var(--jxg-bg-subtle);
+    border-right: 1px solid #d7e0e8;
+    border-right: 1px solid var(--jxg-border);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 1rem 1.1rem 3rem;
+    scrollbar-width: thin;
+    scrollbar-color: #b6c6d4 transparent;
+    scrollbar-color: var(--jxg-border-strong) transparent;
 }
 
 /* Logo ueber dem Suchfeld. Als Pseudoelement der Navigation, damit am
    HTML nichts zu aendern ist. Es ist reine Marke, kein Link - zum Verlinken
    muesste ein <a> ins Template. */
 nav::before {
-  content: "";
-  display: block;
-  -webkit-box-flex: 0;
-      -ms-flex: none;
-          flex: none;
-  position: -webkit-sticky;
-  position: sticky;
-  top: 0;
-  z-index: 3;
-  height: 2.5rem;
-  margin: 0 0 1.1rem;
-  background-color: #f3f6f8;
-  background-color: var(--jxg-bg-subtle);
-  box-shadow: 0 -1rem 0 #f3f6f8;
-  box-shadow: 0 -1rem 0 var(--jxg-bg-subtle);
-  background-image: url('../images/jsxgraph-api-logo_blue-text-solid-250.png');
-  background-image: -webkit-image-set(
-      url('../images/jsxgraph-api-logo_blue-text-solid-250.png') 1x,
-      url('../images/jsxgraph-api-logo_blue-text-solid-500.png') 2x);
-  background-image: image-set(
-      url('../images/jsxgraph-api-logo_blue-text-solid-250.png') 1x,
-      url('../images/jsxgraph-api-logo_blue-text-solid-500.png') 2x);
-  background-repeat: no-repeat;
-  background-position: left center;
-  background-size: contain;
+    content: "";
+    display: block;
+    -webkit-box-flex: 0;
+    -ms-flex: none;
+    flex: none;
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+    z-index: 3;
+    height: 2.5rem;
+    margin: 0 0 1.1rem;
+    background-color: #f3f6f8;
+    background-color: var(--jxg-bg-subtle);
+    box-shadow: 0 -1rem 0 #f3f6f8;
+    box-shadow: 0 -1rem 0 var(--jxg-bg-subtle);
+    background-image: url('../images/jsxgraph-api-logo_blue-text-solid-250.png');
+    background-image: -webkit-image-set(
+            url('../images/jsxgraph-api-logo_blue-text-solid-250.png') 1x,
+            url('../images/jsxgraph-api-logo_blue-text-solid-500.png') 2x);
+    background-image: image-set(
+            url('../images/jsxgraph-api-logo_blue-text-solid-250.png') 1x,
+            url('../images/jsxgraph-api-logo_blue-text-solid-500.png') 2x);
+    background-repeat: no-repeat;
+    background-position: left center;
+    background-size: contain;
 }
 
 nav #nav-search {
-  position: sticky;
-  top: 3.6rem;
-  z-index: 2;
-  width: 100%;
-  height: auto;
-  margin: 0 0 1rem;
-  padding: .6rem .75rem;
-  font-family: inherit;
-  font-size: 0.875rem;
-  font-size: var(--jxg-fs-small);
-  line-height: 1.4;
-  color: #1d2733;
-  color: var(--jxg-text);
-  background: #ffffff;
-  background: var(--jxg-bg);
-  border: 1px solid #d7e0e8;
-  border: 1px solid var(--jxg-border);
-  border-radius: 0.4rem;
-  border-radius: var(--jxg-radius);
-  box-shadow: 0 -1.1rem 0 #f3f6f8;
-  box-shadow: 0 -1.1rem 0 var(--jxg-bg-subtle);
-  outline-offset: 2px;
+    position: sticky;
+    top: 3.6rem;
+    z-index: 2;
+    width: 100%;
+    height: auto;
+    margin: 0 0 1rem;
+    padding: .6rem .75rem;
+    font-family: inherit;
+    font-size: 0.875rem;
+    font-size: var(--jxg-fs-small);
+    line-height: 1.4;
+    color: #1d2733;
+    color: var(--jxg-text);
+    background: #ffffff;
+    background: var(--jxg-bg);
+    border: 1px solid #d7e0e8;
+    border: 1px solid var(--jxg-border);
+    border-radius: 0.6rem;
+    border-radius: var(--jxg-radius);
+    box-shadow: 0 -1.1rem 0 #f3f6f8;
+    box-shadow: 0 -1.1rem 0 var(--jxg-bg-subtle);
+    outline-offset: 2px;
 }
 
 nav.wrap a {
-  word-wrap: break-word;
+    word-wrap: break-word;
 }
 
 nav h2 {
-  font-family: 'Fira Sans', 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  font-family: var(--jxg-font-head);
-  font-size: 0.875rem;
-  font-size: var(--jxg-fs-small);
-  font-weight: 600;
-  margin: 0 0 .2rem;
-  padding: 0;
+    font-family: 'Fira Sans', 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-family: var(--jxg-font-head);
+    font-size: 0.875rem;
+    font-size: var(--jxg-fs-small);
+    font-weight: 600;
+    margin: 0 0 .2rem;
+    padding: 0;
 }
 
 nav > h2 > a {
-  display: block;
-  margin: 0;
-  padding: .35rem .55rem;
-  border-radius: 0.4rem;
-  border-radius: var(--jxg-radius);
-  color: #10427c !important;
-  color: var(--jxg-primary) !important;
+    display: block;
+    margin: 0;
+    padding: .35rem .55rem;
+    border-radius: 0.6rem;
+    border-radius: var(--jxg-radius);
+    color: #10427c !important;
+    color: var(--jxg-primary) !important;
 }
 
 nav h3 {
-  margin: 1.6rem 0 .5rem;
-  padding: 0 .55rem;
-  font-family: 'Fira Sans', 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  font-family: var(--jxg-font-head);
-  font-size: 0.8rem;
-  font-size: var(--jxg-fs-tiny);
-  text-transform: uppercase;
-  letter-spacing: .08em;
-  font-weight: 600;
-  line-height: 1.4;
-  color: #5d6b7a;
-  color: var(--jxg-text-muted);
+    margin: 1.6rem 0 .5rem;
+    padding: 0 .55rem;
+    font-family: 'Fira Sans', 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-family: var(--jxg-font-head);
+    font-size: 0.8rem;
+    font-size: var(--jxg-fs-tiny);
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    font-weight: 600;
+    line-height: 1.4;
+    color: #5d6b7a;
+    color: var(--jxg-text-muted);
 }
 
 nav h3.collapsed_header {
-  cursor: pointer;
+    cursor: pointer;
 }
 
 nav ul {
-  font-family: 'Fira Sans', 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  font-family: var(--jxg-font-sans);
-  font-size: 0.875rem;
-  font-size: var(--jxg-fs-small);
-  line-height: 1.4;
-  padding: 0;
-  margin: 0;
-  list-style-type: none;
+    font-family: 'Fira Sans', 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-family: var(--jxg-font-sans);
+    font-size: 0.875rem;
+    font-size: var(--jxg-fs-small);
+    line-height: 1.4;
+    padding: 0;
+    margin: 0;
+    list-style-type: none;
 }
 
 nav ul a,
 nav ul a:active {
-  font-family: 'Fira Sans', 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  font-family: var(--jxg-font-sans);
-  display: block;
-  padding: .3rem .55rem;
-  margin: 1px 0;
-  border-radius: 0.4rem;
-  border-radius: var(--jxg-radius);
-  font-size: 0.875rem;
-  font-size: var(--jxg-fs-small);
-  line-height: 1.45;
-  color: #1d2733;
-  color: var(--jxg-text);
-  overflow-wrap: break-word;
+    font-family: 'Fira Sans', 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-family: var(--jxg-font-sans);
+    display: block;
+    padding: .3rem .55rem;
+    margin: 1px 0;
+    border-radius: 0.6rem;
+    border-radius: var(--jxg-radius);
+    font-size: 0.875rem;
+    font-size: var(--jxg-fs-small);
+    line-height: 1.45;
+    color: #1d2733;
+    color: var(--jxg-text);
+    overflow-wrap: break-word;
 }
 
 nav a:hover,
 nav a:active {
-  color: #10427c;
-  color: var(--jxg-primary);
-  background: #e4f1f8;
-  background: var(--jxg-accent-soft);
-  text-decoration: none;
+    color: #10427c;
+    color: var(--jxg-primary);
+    background: #e4f1f8;
+    background: var(--jxg-accent-soft);
+    text-decoration: none;
 }
 
 nav > ul {
-  padding: 0;
-  margin-bottom: .5rem;
+    padding: 0;
+    margin-bottom: .5rem;
 }
 
 nav > ul > li > a {
-  color: #1d2733;
-  color: var(--jxg-text);
-  margin-top: 0;
+    color: #1d2733;
+    color: var(--jxg-text);
+    margin-top: 0;
 }
 
 nav ul ul a {
-  color: #5d6b7a;
-  color: var(--jxg-text-muted);
-  border-left: 2px solid #d7e0e8;
-  border-left: 2px solid var(--jxg-border);
-  border-radius: 0 0.4rem 0.4rem 0;
-  border-radius: 0 var(--jxg-radius) var(--jxg-radius) 0;
+    color: #5d6b7a;
+    color: var(--jxg-text-muted);
+    border-left: 2px solid #d7e0e8;
+    border-left: 2px solid var(--jxg-border);
+    border-radius: 0 0.6rem 0.6rem 0;
+    border-radius: 0 var(--jxg-radius) var(--jxg-radius) 0;
 }
 
 nav ul ul a,
 nav ul ul a:active {
-  padding-left: 1.1rem;
+    padding-left: 1.1rem;
 }
 
 /* --------------------------------------------------------------------------
@@ -597,131 +618,131 @@ nav ul ul a:active {
    Alle Regeln sind mit "nav " praefixiert, der Hauptbereich bleibt unberuehrt.
    -------------------------------------------------------------------------- */
 nav details {
-  margin: .75rem 0;
-  padding: 0 .5rem;
-  border: 1px solid #d7e0e8;
-  border: 1px solid var(--jxg-border);
-  border-radius: 0.4rem;
-  border-radius: var(--jxg-radius);
-  background-color: #ffffff;
-  background-color: var(--jxg-bg);
+    margin: .75rem 0;
+    padding: 0 .5rem;
+    border: 1px solid #d7e0e8;
+    border: 1px solid var(--jxg-border);
+    border-radius: 0.6rem;
+    border-radius: var(--jxg-radius);
+    background-color: #ffffff;
+    background-color: var(--jxg-bg);
 }
 
 nav details[open] {
-  padding-bottom: .5rem;
+    padding-bottom: .5rem;
 }
 
 nav summary {
-  position: relative;
-  top: auto;
-  z-index: auto;
-  margin: 0 -.5rem;
-  padding: .6rem 2.1rem .6rem .75rem;
-  background-color: #f3f6f8;
-  background-color: var(--jxg-bg-subtle);
-  border: 0;
-  border-radius: 0.4rem;
-  border-radius: var(--jxg-radius);
-  box-shadow: none;
-  font-family: 'Fira Sans', 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  font-family: var(--jxg-font-head);
-  font-size: 0.8rem;
-  font-size: var(--jxg-fs-tiny);
-  font-weight: 600;
-  line-height: 1.4;
-  letter-spacing: .08em;
-  text-transform: uppercase;
-  color: #5d6b7a;
-  color: var(--jxg-text-muted);
+    position: relative;
+    top: auto;
+    z-index: auto;
+    margin: 0 -.5rem;
+    padding: .6rem 2.1rem .6rem .75rem;
+    background-color: #f3f6f8;
+    background-color: var(--jxg-bg-subtle);
+    border: 0;
+    border-radius: 0.6rem;
+    border-radius: var(--jxg-radius);
+    box-shadow: none;
+    font-family: 'Fira Sans', 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-family: var(--jxg-font-head);
+    font-size: 0.8rem;
+    font-size: var(--jxg-fs-tiny);
+    font-weight: 600;
+    line-height: 1.4;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: #5d6b7a;
+    color: var(--jxg-text-muted);
 }
 
 nav details[open] > summary {
-  border-radius: 0.4rem 0.4rem 0 0;
-  border-radius: var(--jxg-radius) var(--jxg-radius) 0 0;
-  border-bottom: 1px solid #d7e0e8;
-  border-bottom: 1px solid var(--jxg-border);
-  margin-bottom: .5rem;
+    border-radius: 0.6rem 0.6rem 0 0;
+    border-radius: var(--jxg-radius) var(--jxg-radius) 0 0;
+    border-bottom: 1px solid #d7e0e8;
+    border-bottom: 1px solid var(--jxg-border);
+    margin-bottom: .5rem;
 }
 
 nav summary:hover {
-  background-color: #e4f1f8;
-  background-color: var(--jxg-accent-soft);
-  color: #10427c;
-  color: var(--jxg-primary);
+    background-color: #e4f1f8;
+    background-color: var(--jxg-accent-soft);
+    color: #10427c;
+    color: var(--jxg-primary);
 }
 
 /* Verschachtelte Gruppen: keine Kastenoptik.
    Die Klasse kann am <details> oder am <summary> haengen - beides abgedeckt. */
 nav .nav_element_class,
 nav details:has(> summary.nav_element_class) {
-  margin: .1rem 0;
-  padding: 0;
-  border: 0;
-  border-radius: 0;
-  background-color: transparent;
+    margin: .1rem 0;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background-color: transparent;
 }
 
 nav .nav_element_class[open],
 nav details[open]:has(> summary.nav_element_class) {
-  padding-bottom: 0;
+    padding-bottom: 0;
 }
 
 /* ... dafuer deutlich staerker gesetzt als die einfachen Eintraege:
    Primaerfarbe, halbfett und eine feine Trennlinie darunter. */
 nav .nav_element_class > summary,
 nav summary.nav_element_class {
-  margin: .5rem -.5rem .1rem 0;
-  padding: .3rem 1.9rem .25rem .55rem;
-  background-color: transparent;
-  border-radius: 0;
-  border-bottom: 0;
-  /* Trennlinie als Hintergrundbild statt als Rahmen: so laesst sie sich
-     beidseitig gleich weit einruecken, ohne die Box - und damit den
-     Plus-Kreis - zu verschieben. */
-  background-image: -webkit-linear-gradient(#d7e0e8, #d7e0e8);
-  background-image: linear-gradient(#d7e0e8, #d7e0e8);
-  background-image: linear-gradient(var(--jxg-border), var(--jxg-border));
-  background-size: calc(100% - .85rem) 1px;
-  background-position: .25rem 100%;
-  background-repeat: no-repeat;
-  font-family: 'Fira Sans', 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  font-family: var(--jxg-font-sans);
-  font-size: 0.875rem;
-  font-size: var(--jxg-fs-small);
-  font-weight: 600;
-  line-height: 1.45;
-  letter-spacing: 0;
-  text-transform: none;
-  color: #10427c;
-  color: var(--jxg-primary);
+    margin: .5rem -.5rem .1rem 0;
+    padding: .3rem 1.9rem .25rem .55rem;
+    background-color: transparent;
+    border-radius: 0;
+    border-bottom: 0;
+    /* Trennlinie als Hintergrundbild statt als Rahmen: so laesst sie sich
+       beidseitig gleich weit einruecken, ohne die Box - und damit den
+       Plus-Kreis - zu verschieben. */
+    background-image: -webkit-linear-gradient(#d7e0e8, #d7e0e8);
+    background-image: linear-gradient(#d7e0e8, #d7e0e8);
+    background-image: linear-gradient(var(--jxg-border), var(--jxg-border));
+    background-size: calc(100% - .85rem) 1px;
+    background-position: .25rem 100%;
+    background-repeat: no-repeat;
+    font-family: 'Fira Sans', 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-family: var(--jxg-font-sans);
+    font-size: 0.875rem;
+    font-size: var(--jxg-fs-small);
+    font-weight: 600;
+    line-height: 1.45;
+    letter-spacing: 0;
+    text-transform: none;
+    color: #10427c;
+    color: var(--jxg-primary);
 }
 
 nav .nav_element_class[open] > summary,
 nav details[open] > summary.nav_element_class {
-  border-radius: 0;
-  border-bottom: 0;
-  margin-bottom: .1rem;
+    border-radius: 0;
+    border-bottom: 0;
+    margin-bottom: .1rem;
 }
 
 nav .nav_element_class > summary:hover,
 nav summary.nav_element_class:hover {
-  background-color: #e4f1f8;
-  background-color: var(--jxg-accent-soft);
-  background-image: -webkit-linear-gradient(#aedcef, #aedcef);
-  background-image: linear-gradient(#aedcef, #aedcef);
-  background-image: linear-gradient(var(--jxg-accent), var(--jxg-accent));
-  color: #08648f;
-  color: var(--jxg-secondary);
+    background-color: #e4f1f8;
+    background-color: var(--jxg-accent-soft);
+    background-image: -webkit-linear-gradient(#aedcef, #aedcef);
+    background-image: linear-gradient(#aedcef, #aedcef);
+    background-image: linear-gradient(var(--jxg-accent), var(--jxg-accent));
+    color: #08648f;
+    color: var(--jxg-secondary);
 }
 
 /* Verschachtelte Gruppen und ihre Eintraege einruecken */
 nav details details {
-  margin-left: .6rem;
+    margin-left: .6rem;
 }
 
 nav details details ul a,
 nav details details ul a:active {
-  padding-left: .95rem;
+    padding-left: .95rem;
 }
 
 /* Marker: derselbe Kreis wie im Hauptbereich. Masse und Position stehen in
@@ -732,121 +753,154 @@ nav details details ul a:active {
    automatisch untereinander und haben rechts denselben Abstand wie oben
    und unten. */
 nav summary::after {
-  right: .53rem;
-  width: 1.15rem;
-  height: 1.15rem;
-  background-size: .55rem 1px;
+    right: .53rem;
+    width: 1.15rem;
+    height: 1.15rem;
+    background-size: .55rem 1px;
 }
 
 nav summary::before {
-  right: .83rem;
-  width: .55rem;
-  height: 1px;
+    right: .83rem;
+    width: .55rem;
+    height: 1px;
 }
 
 /* --------------------------------------------------------------------------
    8. Fusszeile
    -------------------------------------------------------------------------- */
 footer {
-  color: #5d6b7a;
-  color: var(--jxg-text-muted);
-  margin-left: 17.5rem;
-  margin-left: var(--jxg-nav-width);
-  display: block;
-  padding: 1.25rem 2.5rem;
-  padding: 1.25rem var(--jxg-gutter);
-  border-top: 1px solid #d7e0e8;
-  border-top: 1px solid var(--jxg-border);
-  background: #f3f6f8;
-  background: var(--jxg-bg-subtle);
-  font-style: normal;
-  font-size: 0.875rem;
-  font-size: var(--jxg-fs-small);
+    color: #5d6b7a;
+    color: var(--jxg-text-muted);
+    margin-left: 17.5rem;
+    margin-left: var(--jxg-nav-width);
+    display: block;
+    padding: 1.25rem 2.5rem;
+    padding: 1.25rem var(--jxg-gutter);
+    border-top: 1px solid #d7e0e8;
+    border-top: 1px solid var(--jxg-border);
+    background: #f3f6f8;
+    background: var(--jxg-bg-subtle);
+    font-style: normal;
+    font-size: 0.875rem;
+    font-size: var(--jxg-fs-small);
 }
 
 /* --------------------------------------------------------------------------
    9. Signaturen / Typangaben
    -------------------------------------------------------------------------- */
 .signature-attributes {
-  font-size: .8em;
-  color: #08648f;
-  color: var(--jxg-secondary);
-  font-style: italic;
-  font-weight: 400;
+    font-size: .8em;
+    color: #08648f;
+    color: var(--jxg-secondary);
+    font-style: italic;
+    font-weight: 400;
 }
 
 .type-signature {
-  color: #08648f;
-  color: var(--jxg-secondary);
-  font-weight: 400;
+    color: #08648f;
+    color: var(--jxg-secondary);
+    font-weight: 400;
 }
 
 .type-signature:last-child {
-  color: #5d6b7a;
-  color: var(--jxg-text-muted);
+    color: #5d6b7a;
+    color: var(--jxg-text-muted);
 }
 
 .name, span.signature {
-  font-family: 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  font-family: var(--jxg-font-mono);
+    font-family: 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-family: var(--jxg-font-mono);
+}
+
+/* wie .signature, aber in eigener Farbe - fuer die Parameter innerhalb einer
+   Signatur und fuer dieselben Namen in der Parametertabelle darunter.
+   Der zweite Selektor ist noetig, weil .name code aus der Tabellenregel
+   sonst spezifischer waere. */
+.signature-param,
+.name code.signature-param {
+    font-family: 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-family: var(--jxg-font-mono);
+    font-size: 1em;
+    font-weight: 600;
+    color: #9c4221;
+    color: var(--jxg-param);
 }
 
 /* Signaturbloecke im Usage-Abschnitt: keine Kastenoptik, sondern flache
    Zeilen, die nur durch eine feine Linie voneinander getrennt sind. */
 details.signature {
-  margin: 0;
-  padding: 0;
-  border: 0;
-  border-bottom: 1px solid #d7e0e8;
-  border-bottom: 1px solid var(--jxg-border);
-  border-radius: 0;
-  background-color: transparent;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-bottom: 1px solid #d7e0e8;
+    border-bottom: 1px solid var(--jxg-border);
+    border-radius: 0;
+    background-color: transparent;
 }
 
 details.signature:last-of-type {
-  border-bottom: 0;
+    border-bottom: 0;
 }
 
 details.signature[open] {
-  padding: 0 0 .9rem .9rem;
+    padding: 0 0 .9rem .9rem;
 }
 
 summary .signature {
-  color: inherit;
+    color: inherit;
 }
 
 summary.signature {
-  position: relative;
-  top: auto;
-  z-index: auto;
-  background-color: transparent;
-  border: 0;
-  border-radius: 0;
-  box-shadow: none;
-  margin: 0;
-  padding: .6rem 1.2rem .6rem .1rem;
-  font-family: 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  font-family: var(--jxg-font-mono);
-  font-size: 0.875rem;
-  font-size: var(--jxg-fs-small);
-  font-weight: 600;
-  color: #10427c;
-  color: var(--jxg-primary);
+    position: relative;
+    top: auto;
+    z-index: auto;
+    background-color: transparent;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    margin: 0;
+    padding: .6rem 1.2rem .6rem .1rem;
+    font-family: 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-family: var(--jxg-font-mono);
+    font-size: 1rem;
+    font-weight: 600;
+    color: #10427c;
+    color: var(--jxg-primary);
 }
 
 summary.signature:hover {
-  background-color: transparent;
-  color: #08648f;
-  color: var(--jxg-secondary);
+    background-color: transparent;
+    color: #08648f;
+    color: var(--jxg-secondary);
+}
+
+/* Elementtyp innerhalb der Signatur, also der Name in board.create('...') */
+.signature-element {
+    font-family: 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-family: var(--jxg-font-mono);
+    font-size: 1em;
+    font-weight: 600;
+    color: #0b7a5a;
+    color: var(--jxg-element);
+}
+
+summary.signature:hover .signature-param {
+    color: #9c4221;
+    color: var(--jxg-param);
+}
+
+summary.signature:hover .signature-element {
+    color: #0b7a5a;
+    color: var(--jxg-element);
 }
 
 /* Der Inhalt wird ueber das padding des details eingerueckt, die Kopfzeile
    holt sich diesen Einzug mit negativem Rand wieder zurueck - so bleibt sie
    in beiden Zustaenden an derselben Stelle. */
 details.signature[open] > summary {
-  border-radius: 0;
-  border-bottom: 0;
-  margin: 0 0 .6rem -.9rem;
+    border-radius: 0;
+    border-bottom: 0;
+    margin: 0 0 .6rem -.9rem;
 }
 
 /* Marker: Groesse kommt aus der Basisregel, nur dezenter im Rand.
@@ -855,60 +909,160 @@ details.signature[open] > summary {
    untereinander liegen, ragt der innere um genau diesen Betrag nach
    aussen - daher der negative Wert. */
 summary.signature::after {
-  right: -.4rem;
-  border-color: #d7e0e8;
-  border-color: var(--jxg-border);
+    right: -.4rem;
+    border-color: #d7e0e8;
+    border-color: var(--jxg-border);
 }
 
 summary.signature::before {
-  right: -.1rem;
+    right: -.1rem;
+}
+
+/* --------------------------------------------------------------------------
+   9b. Seitenkopf und Abschlussblock der neuen Container-Struktur
+   -------------------------------------------------------------------------- */
+
+/* Seitenkopf: derselbe Kasten wie der Abschlussblock am Artikelende */
+.container-section-header {
+    margin: 0 0 1.5rem;
+    padding: 1.1rem;
+    border: 1px solid #d7e0e8;
+    border: 1px solid var(--jxg-border);
+    border-radius: 0.6rem;
+    border-radius: var(--jxg-radius);
+    background-color: #ffffff;
+    background-color: var(--jxg-bg);
+}
+
+.container-section-header > :first-child,
+.container-section-header h2 {
+    margin-top: 0;
+}
+
+.container-section-header > :last-child,
+.container-section-header .class-description {
+    margin-bottom: 0;
+}
+
+.container-section-header .class-description > :last-child {
+    margin-bottom: 0;
+}
+
+/* "Element" / "Class" vor dem Seitentitel: Etikett in Pillenform */
+.main-type,
+.container-main-type {
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: .45em;
+    padding: .2em .8em;
+    border: 1px solid #d7e0e8;
+    border: 1px solid var(--jxg-border);
+    border-radius: 999px;
+    background-color: #f3f6f8;
+    background-color: var(--jxg-bg-subtle);
+    color: #5d6b7a;
+    color: var(--jxg-text-muted);
+    font-family: 'Fira Sans', 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-family: var(--jxg-font-sans);
+    font-size: 0.8rem;
+    font-size: var(--jxg-fs-tiny);
+    font-weight: 600;
+    line-height: 1.6;
+    letter-spacing: .02em;
+    white-space: nowrap;
+}
+
+/* Sammelblock am Ende des Artikels (Throws, Extends, Parameters ...):
+   derselbe Kasten wie die Detailtabellen darueber. */
+.container-article-other {
+    margin: 1.75rem 0 0;
+    padding: 1.1rem;
+    border: 1px solid #d7e0e8;
+    border: 1px solid var(--jxg-border);
+    border-radius: 0.6rem;
+    border-radius: var(--jxg-radius);
+    background-color: #ffffff;
+    background-color: var(--jxg-bg);
+}
+
+/* "Throws", "Extends", "Parameters" darin sind vollwertige Abschnitts-
+   ueberschriften, keine Rubriken - also im Stil und in der Groesse der
+   Summary-Kopfzeilen darueber. */
+.container-article-other h3,
+.container-article-other .container-overview h3 {
+    font-family: 'Fira Sans', 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-family: var(--jxg-font-head);
+    font-size: 1.05rem;
+    font-weight: 600;
+    line-height: 1.4;
+    letter-spacing: 0;
+    text-transform: none;
+    color: #10427c;
+    color: var(--jxg-primary);
+    margin: 1.5em 0 .5em;
+}
+
+.container-article-other .container-overview > :first-child {
+    margin-top: 0;
+}
+
+.container-article-other .container-overview > :last-child {
+    margin-bottom: 0;
+}
+
+/* Auf manchen Seiten bleibt der Wrapper leer - dann keinen leeren
+   Rahmen stehen lassen. */
+.container-article-other:not(:has(h3, h4, table, p)) {
+    display: none;
+}
+
+.details:not(:has(dt)) {
+    display: none;
 }
 
 /* --------------------------------------------------------------------------
    10. Detail-Listen (Description / Type / Source / See / Default ...)
    -------------------------------------------------------------------------- */
 .details {
-  display: grid;
-  grid-template-columns: max-content minmax(0, 1fr);
-  margin: .75rem 0 1.5rem;
-  padding: 0;
-  border: 1px solid #d7e0e8;
-  border: 1px solid var(--jxg-border);
-  border-radius: 0.4rem;
-  border-radius: var(--jxg-radius);
-  box-shadow: 0 1px 2px rgba(16, 66, 124, 0.08);
-  box-shadow: var(--jxg-shadow-sm);
-  background-color: #ffffff;
-  background-color: var(--jxg-bg);
-  overflow: hidden;
-  line-height: 1.6;
-  font-size: 0.875rem;
-  font-size: var(--jxg-fs-small);
+    display: grid;
+    grid-template-columns: max-content minmax(0, 1fr);
+    margin: .75rem 0 1.5rem;
+    padding: 0;
+    border: 1px solid #d7e0e8;
+    border: 1px solid var(--jxg-border);
+    border-radius: 0.6rem;
+    border-radius: var(--jxg-radius);
+    box-shadow: 0 1px 2px rgba(16, 66, 124, 0.08);
+    box-shadow: var(--jxg-shadow-sm);
+    background-color: #ffffff;
+    background-color: var(--jxg-bg);
+    overflow: hidden;
+    line-height: 1.6;
 }
 
 /* Beschriftungsspalte der "Tabelle" */
 .details dt {
-  width: auto;
-  float: none;
-  padding: .7rem .85rem;
-  border-top: 1px solid #d7e0e8;
-  border-top: 1px solid var(--jxg-border);
-  background-color: #ffffff;
-  background-color: var(--jxg-bg);
-  color: #5d6b7a;
-  color: var(--jxg-text-muted);
-  font-weight: 600;
-  white-space: nowrap;
+    width: auto;
+    float: none;
+    padding: .7rem .85rem;
+    border-top: 1px solid #d7e0e8;
+    border-top: 1px solid var(--jxg-border);
+    background-color: #ffffff;
+    background-color: var(--jxg-bg);
+    color: #5d6b7a;
+    color: var(--jxg-text-muted);
+    font-weight: 600;
+    white-space: nowrap;
 }
 
 .details dd {
-  margin: 0;
-  min-width: 0;
-  padding: .7rem .85rem;
-  border-top: 1px solid #d7e0e8;
-  border-top: 1px solid var(--jxg-border);
-  color: #1d2733;
-  color: var(--jxg-text);
+    margin: 0;
+    min-width: 0;
+    padding: .7rem .85rem;
+    border-top: 1px solid #d7e0e8;
+    border-top: 1px solid var(--jxg-border);
+    color: #1d2733;
+    color: var(--jxg-text);
 }
 
 /* Werte, die so im Quelltext stehen wuerden, in Monospace: Vorgabewerte
@@ -917,181 +1071,180 @@ summary.signature::before {
    erklaerender Satz, und der Link traegt die Auszeichnung schon. */
 .details dd.tag-default,
 .details dd.tag-overrides {
-  font-family: 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  font-family: var(--jxg-font-mono);
-  font-size: .92em;
+    font-family: 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-family: var(--jxg-font-mono);
 }
 
 /* erste Zeile ohne Trennlinie, sonst doppelt mit dem Rahmen */
 .details dt:first-of-type,
 .details dd:first-of-type {
-  border-top: 0;
+    border-top: 0;
 }
 
 .details ul {
-  margin: 0;
+    margin: 0;
 }
 
 .details ul {
-  list-style-type: none;
-  padding-left: 0;
+    list-style-type: none;
+    padding-left: 0;
 }
 
 .details li li {
-  list-style-type: disc;
-  margin-left: 1.1rem;
+    list-style-type: disc;
+    margin-left: 1.1rem;
 }
 
 .details pre.prettyprint {
-  margin: 0;
+    margin: 0;
 }
 
 .details .object-value {
-  padding-top: 0;
+    padding-top: 0;
 }
 
 .details p:first-child {
-  margin-top: 0;
+    margin-top: 0;
 }
 
 .details p:last-child {
-  margin-bottom: 0;
+    margin-bottom: 0;
 }
 
 /* --------------------------------------------------------------------------
    11. Beispiele / Quelltext
    -------------------------------------------------------------------------- */
 .code-caption {
-  font-style: normal;
-  font-size: 0.875rem;
-  font-size: var(--jxg-fs-small);
-  font-weight: 600;
-  color: #5d6b7a;
-  color: var(--jxg-text-muted);
-  margin: 1.25em 0 .4em;
+    font-style: normal;
+    font-size: 0.875rem;
+    font-size: var(--jxg-fs-small);
+    font-weight: 600;
+    color: #5d6b7a;
+    color: var(--jxg-text-muted);
+    margin: 1.25em 0 .4em;
 }
 
 .prettyprint {
-  font-size: 0.875rem;
-  font-size: var(--jxg-fs-small);
-  overflow: auto;
-  border: 1px solid #d7e0e8;
-  border: 1px solid var(--jxg-border);
-  border-radius: 0.4rem;
-  border-radius: var(--jxg-radius);
-  background: #f5f8fa;
-  background: var(--jxg-code-bg);
-  box-shadow: none;
-  margin: 0 0 1.25em;
-  max-width: 100%;
-  tab-size: 4;
-  scrollbar-width: thin;
-  scrollbar-color: #b6c6d4 transparent;
-  scrollbar-color: var(--jxg-border-strong) transparent;
+    font-size: 0.875rem;
+    font-size: var(--jxg-fs-small);
+    overflow: auto;
+    border: 1px solid #d7e0e8;
+    border: 1px solid var(--jxg-border);
+    border-radius: 0.6rem;
+    border-radius: var(--jxg-radius);
+    background: #f5f8fa;
+    background: var(--jxg-code-bg);
+    box-shadow: none;
+    margin: 0 0 1.25em;
+    max-width: 100%;
+    tab-size: 4;
+    scrollbar-width: thin;
+    scrollbar-color: #b6c6d4 transparent;
+    scrollbar-color: var(--jxg-border-strong) transparent;
 }
 
 /* dezente Scrollbars fuer Codeblocke und Navigation (WebKit/Blink) */
 .prettyprint::-webkit-scrollbar,
 nav::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
+    width: 10px;
+    height: 10px;
 }
 
 .prettyprint::-webkit-scrollbar-track,
 nav::-webkit-scrollbar-track {
-  background: transparent;
+    background: transparent;
 }
 
 .prettyprint::-webkit-scrollbar-thumb,
 nav::-webkit-scrollbar-thumb {
-  background-color: #b6c6d4;
-  background-color: var(--jxg-border-strong);
-  border-radius: 999px;
-  border: 2px solid transparent;
-  background-clip: padding-box;
+    background-color: #b6c6d4;
+    background-color: var(--jxg-border-strong);
+    border-radius: 999px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
 }
 
 .prettyprint::-webkit-scrollbar-thumb:hover,
 nav::-webkit-scrollbar-thumb:hover {
-  background-color: #5d6b7a;
-  background-color: var(--jxg-text-muted);
-  background-clip: padding-box;
+    background-color: #5d6b7a;
+    background-color: var(--jxg-text-muted);
+    background-clip: padding-box;
 }
 
 .prettyprint.source {
-  width: inherit;
-  line-height: 1.55;
-  display: block;
-  background-color: #f5f8fa;
-  background-color: var(--jxg-code-bg);
-  color: #24303d;
-  color: var(--jxg-code-fg);
+    width: inherit;
+    line-height: 1.55;
+    display: block;
+    background-color: #f5f8fa;
+    background-color: var(--jxg-code-bg);
+    color: #24303d;
+    color: var(--jxg-code-fg);
 }
 
 .prettyprint code {
-  line-height: 1.55;
-  display: block;
-  background-color: #f5f8fa;
-  background-color: var(--jxg-code-bg);
-  color: #24303d;
-  color: var(--jxg-code-fg);
-  padding: 0;
-  border-radius: 0;
+    line-height: 1.55;
+    display: block;
+    background-color: #f5f8fa;
+    background-color: var(--jxg-code-bg);
+    color: #24303d;
+    color: var(--jxg-code-fg);
+    padding: 0;
+    border-radius: 0;
 }
 
 .prettyprint > code {
-  padding: 1rem 1.1rem;
+    padding: 1rem 1.1rem;
 }
 
 .prettyprint .linenums code {
-  padding: 0 1rem;
+    padding: 0 1rem;
 }
 
 .prettyprint .linenums li:first-of-type code {
-  padding-top: 1rem;
+    padding-top: 1rem;
 }
 
 .prettyprint code span.line {
-  display: inline-block;
+    display: inline-block;
 }
 
 .prettyprint.linenums {
-  padding-left: 3.5em;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
+    padding-left: 3.5em;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
 .prettyprint.linenums ol {
-  padding-left: 0;
-  margin: 0;
+    padding-left: 0;
+    margin: 0;
 }
 
 .prettyprint.linenums li {
-  border-left: 3px solid #dce5ee;
-  border-left: 3px solid var(--jxg-code-gutter);
-  color: #5d6b7a;
-  color: var(--jxg-text-muted);
+    border-left: 3px solid #dce5ee;
+    border-left: 3px solid var(--jxg-code-gutter);
+    color: #5d6b7a;
+    color: var(--jxg-text-muted);
 }
 
 .prettyprint.linenums li.selected,
 .prettyprint.linenums li.selected * {
-  background-color: #dce5ee;
-  background-color: var(--jxg-code-gutter);
+    background-color: #dce5ee;
+    background-color: var(--jxg-code-gutter);
 }
 
 .prettyprint.linenums li * {
-  -webkit-user-select: text;
-  -moz-user-select: text;
-  -ms-user-select: text;
-  user-select: text;
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
 }
 
 .prettyprint.linenums li code:empty:after {
-  content: "";
-  display: inline-block;
-  width: 0;
+    content: "";
+    display: inline-block;
+    width: 0;
 }
 
 /* --------------------------------------------------------------------------
@@ -1104,13 +1257,13 @@ nav::-webkit-scrollbar-thumb:hover {
    kaeme diese Regel dagegen nicht an.
    -------------------------------------------------------------------------- */
 .jxgbox {
-  max-width: 100% !important;
-  margin: 1.25em auto !important;
-  border: 1px solid #d7e0e8 !important;
-  border: 1px solid var(--jxg-border) !important;
-  border-radius: 0.4rem !important;
-  border-radius: var(--jxg-radius) !important;
-  background-color: #ffffff !important;
+    max-width: 100% !important;
+    margin: 1.25em auto !important;
+    border: 1px solid #d7e0e8 !important;
+    border: 1px solid var(--jxg-border) !important;
+    border-radius: 0.6rem !important;
+    border-radius: var(--jxg-radius) !important;
+    background-color: #ffffff !important;
 }
 
 /* --------------------------------------------------------------------------
@@ -1121,464 +1274,470 @@ nav::-webkit-scrollbar-thumb:hover {
    prettify.css - inhaltlich aendert sich dadurch nichts.
    -------------------------------------------------------------------------- */
 .pln {
-  color: #24303d;
-  color: var(--jxg-code-fg);
+    color: #24303d;
+    color: var(--jxg-code-fg);
 }
 
 .str, .atv {
-  color: #0b7a5a;
+    color: #0b7a5a;
 }
 
 .kwd, .tag {
-  color: #10427c;
-  color: var(--jxg-primary);
-  font-weight: 600;
+    color: #10427c;
+    color: var(--jxg-primary);
+    font-weight: 600;
 }
 
 .com {
-  color: #7b8a99;
-  font-style: italic;
+    color: #7b8a99;
+    font-style: italic;
 }
 
 .typ, .fun {
-  color: #08648f;
-  color: var(--jxg-secondary);
+    color: #08648f;
+    color: var(--jxg-secondary);
 }
 
 .lit, .dec, .var {
-  color: #9c4221;
+    color: #9c4221;
 }
 
 .pun, .opn, .clo {
-  color: #5d6b7a;
-  color: var(--jxg-text-muted);
+    color: #5d6b7a;
+    color: var(--jxg-text-muted);
 }
 
 .atn {
-  color: #9c4221;
+    color: #9c4221;
 }
 
 /* --------------------------------------------------------------------------
    12. Tabellen (Parameter, Properties)
    -------------------------------------------------------------------------- */
 table {
-  border-spacing: 0;
-  border: 1px solid #d7e0e8;
-  border: 1px solid var(--jxg-border);
-  border-collapse: separate;
-  border-radius: 0.4rem;
-  border-radius: var(--jxg-radius);
-  box-shadow: 0 1px 2px rgba(16, 66, 124, 0.08);
-  box-shadow: var(--jxg-shadow-sm);
-  overflow: hidden;
-  width: 100%;
-  font-size: 0.875rem;
-  font-size: var(--jxg-fs-small);
-  margin: 1em 0 1.5em;
-  background: #ffffff;
-  background: var(--jxg-bg);
+    border-spacing: 0;
+    border: 1px solid #d7e0e8;
+    border: 1px solid var(--jxg-border);
+    border-collapse: separate;
+    border-radius: 0.6rem;
+    border-radius: var(--jxg-radius);
+    box-shadow: 0 1px 2px rgba(16, 66, 124, 0.08);
+    box-shadow: var(--jxg-shadow-sm);
+    overflow: hidden;
+    width: 100%;
+    margin: 1em 0 1.5em;
+    background: #ffffff;
+    background: var(--jxg-bg);
 }
 
 td, th {
-  margin: 0;
-  text-align: left;
-  vertical-align: top;
-  padding: .7rem .85rem;
-  display: table-cell;
+    margin: 0;
+    text-align: left;
+    vertical-align: top;
+    padding: .7rem .85rem;
+    display: table-cell;
+}
+
+th {
+    padding-top: .4rem;
+    padding-bottom: .4rem;
 }
 
 thead tr, thead tr {
-  background-color: #f3f6f8;
-  background-color: var(--jxg-bg-subtle);
-  color: #5d6b7a;
-  color: var(--jxg-text-muted);
-  font-weight: 600;
-  border-bottom: 1px solid #d7e0e8;
-  border-bottom: 1px solid var(--jxg-border);
+    background-color: #f3f6f8;
+    background-color: var(--jxg-bg-subtle);
+    color: #5d6b7a;
+    color: var(--jxg-text-muted);
+    font-weight: 600;
+    border-bottom: 1px solid #d7e0e8;
+    border-bottom: 1px solid var(--jxg-border);
 }
 
 .params .type {
-  white-space: nowrap;
+    white-space: nowrap;
 }
 
 .params code {
-  white-space: pre;
-  background: transparent;
-  padding: 0;
+    white-space: pre;
+    background: transparent;
+    padding: 0;
 }
 
 .params td, .params .name, .props .name, .name code {
-  color: #1d2733;
-  color: var(--jxg-text);
-  font-family: 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  font-family: var(--jxg-font-mono);
+    color: #1d2733;
+    color: var(--jxg-text);
+    font-family: 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-family: var(--jxg-font-mono);
 }
 
 .params td {
-  border-top: 1px solid #d7e0e8;
-  border-top: 1px solid var(--jxg-border);
+    border-top: 1px solid #d7e0e8;
+    border-top: 1px solid var(--jxg-border);
 }
 
 .params td.description > p:first-child,
 .props td.description > p:first-child {
-  margin-top: 0;
-  padding-top: 0;
+    margin-top: 0;
+    padding-top: 0;
 }
 
 .params td.description > p:last-child,
 .props td.description > p:last-child {
-  margin-bottom: 0;
-  padding-bottom: 0;
-  font-family: 'Fira Sans', 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  font-family: var(--jxg-font-sans);
+    margin-bottom: 0;
+    padding-bottom: 0;
+    font-family: 'Fira Sans', 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-family: var(--jxg-font-sans);
 }
 
 span.param-type, .params td .param-type, .param-type dd {
-  color: #08648f;
-  color: var(--jxg-secondary);
-  font-family: 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  font-family: var(--jxg-font-mono);
+    color: #08648f;
+    color: var(--jxg-secondary);
+    font-family: 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-family: var(--jxg-font-mono);
 }
 
 .param-type dt, .param-type dd {
-  display: inline-block;
+    display: inline-block;
 }
 
 .param-type {
-  margin: .75rem 0;
+    margin: .75rem 0;
 }
 
 /* --------------------------------------------------------------------------
    13. Mobile Navigation (Burger-Button, Overlay)
    -------------------------------------------------------------------------- */
 .navicon-button {
-  display: none;
-  position: relative;
-  align-items: center;
-  justify-content: center;
-  width: 2.75rem;
-  height: 2.75rem;
-  padding: 0;
-  background: #10427c;
-  background: var(--jxg-primary);
-  border-radius: 0.5rem 0 0.5rem 0;
-  border-radius: var(--jxg-radius-brand);
-  box-shadow: 0 2px 10px rgba(16, 66, 124, 0.10);
-  box-shadow: var(--jxg-shadow);
-  transition: .25s;
-  cursor: pointer;
-  -webkit-user-select: none;
-     -moz-user-select: none;
-      -ms-user-select: none;
-          user-select: none;
-  opacity: .95;
+    display: none;
+    position: relative;
+    align-items: center;
+    justify-content: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    padding: 0;
+    background: #10427c;
+    background: var(--jxg-primary);
+    border-radius: 0.7rem 0 0.7rem 0;
+    border-radius: var(--jxg-radius-brand);
+    box-shadow: 0 2px 10px rgba(16, 66, 124, 0.10);
+    box-shadow: var(--jxg-shadow);
+    transition: .25s;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    opacity: .95;
 }
 
 .navicon-button .navicon:before,
 .navicon-button .navicon:after {
-  transition: .25s;
+    transition: .25s;
 }
 
 .navicon-button:hover {
-  transition: .3s;
-  opacity: 1;
-  background: #2a6bb5;
-  background: var(--jxg-primary-light);
+    transition: .3s;
+    opacity: 1;
+    background: #2a6bb5;
+    background: var(--jxg-primary-light);
 }
 
 .navicon-button:hover .navicon:before,
 .navicon-button:hover .navicon:after {
-  transition: .25s;
+    transition: .25s;
 }
 
 .navicon-button:hover .navicon:before {
-  top: .5rem;
+    top: .5rem;
 }
 
 .navicon-button:hover .navicon:after {
-  top: -.5rem;
+    top: -.5rem;
 }
 
 .navicon {
-  position: relative;
-  width: 1.4rem;
-  height: 2px;
-  background: #ffffff;
-  background: var(--jxg-text-invert);
-  transition: .3s;
-  border-radius: 2px;
+    position: relative;
+    width: 1.4rem;
+    height: 2px;
+    background: #ffffff;
+    background: var(--jxg-text-invert);
+    transition: .3s;
+    border-radius: 2px;
 }
 
 .navicon:before, .navicon:after {
-  display: block;
-  content: "";
-  height: 2px;
-  width: 1.4rem;
-  background: #ffffff;
-  background: var(--jxg-text-invert);
-  position: absolute;
-  z-index: 1;
-  transition: .3s .2s;
-  border-radius: 2px;
+    display: block;
+    content: "";
+    height: 2px;
+    width: 1.4rem;
+    background: #ffffff;
+    background: var(--jxg-text-invert);
+    position: absolute;
+    z-index: 1;
+    transition: .3s .2s;
+    border-radius: 2px;
 }
 
 .navicon:before {
-  top: .42rem;
+    top: .42rem;
 }
 
 .navicon:after {
-  top: -.42rem;
+    top: -.42rem;
 }
 
 /* geoeffneter Zustand */
 .nav-trigger:checked + label:not(.steps) .navicon:before,
 .nav-trigger:checked + label:not(.steps) .navicon:after {
-  top: 0 !important;
+    top: 0 !important;
 }
 
 .nav-trigger:checked + label .navicon:before,
 .nav-trigger:checked + label .navicon:after {
-  transition: .4s;
+    transition: .4s;
 }
 
 .nav-trigger:checked + label {
-  -webkit-transform: scale(.9);
-          transform: scale(.9);
+    -webkit-transform: scale(.9);
+    transform: scale(.9);
 }
 
 .nav-trigger:checked + label.plus .navicon,
 .nav-trigger:checked + label.x .navicon {
-  background: transparent;
+    background: transparent;
 }
 
 .nav-trigger:checked + label.plus .navicon:before,
 .nav-trigger:checked + label.x .navicon:before {
-  -webkit-transform: rotate(-45deg);
-          transform: rotate(-45deg);
-  background: #ffffff;
-  background: var(--jxg-text-invert);
+    -webkit-transform: rotate(-45deg);
+    transform: rotate(-45deg);
+    background: #ffffff;
+    background: var(--jxg-text-invert);
 }
 
 .nav-trigger:checked + label.plus .navicon:after,
 .nav-trigger:checked + label.x .navicon:after {
-  -webkit-transform: rotate(45deg);
-          transform: rotate(45deg);
-  background: #ffffff;
-  background: var(--jxg-text-invert);
+    -webkit-transform: rotate(45deg);
+    transform: rotate(45deg);
+    background: #ffffff;
+    background: var(--jxg-text-invert);
 }
 
 .nav-trigger:checked + label.plus {
-  -webkit-transform: scale(.9) rotate(45deg);
-          transform: scale(.9) rotate(45deg);
+    -webkit-transform: scale(.9) rotate(45deg);
+    transform: scale(.9) rotate(45deg);
 }
 
 .nav-trigger:checked ~ nav {
-  left: 0 !important;
-  box-shadow: 0 10px 30px rgba(16, 66, 124, 0.18);
-  box-shadow: var(--jxg-shadow-lg);
+    left: 0 !important;
+    box-shadow: 0 10px 30px rgba(16, 66, 124, 0.18);
+    box-shadow: var(--jxg-shadow-lg);
 }
 
 .nav-trigger:checked ~ .overlay {
-  display: block;
+    display: block;
 }
 
 .nav-trigger {
-  position: fixed;
-  top: 0;
-  clip: rect(0, 0, 0, 0);
+    position: fixed;
+    top: 0;
+    clip: rect(0, 0, 0, 0);
 }
 
 .overlay {
-  display: none;
-  position: fixed;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(10, 44, 84, .45);
-  -webkit-backdrop-filter: blur(2px);
-          backdrop-filter: blur(2px);
-  z-index: 3;
+    display: none;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(10, 44, 84, .45);
+    -webkit-backdrop-filter: blur(2px);
+    backdrop-filter: blur(2px);
+    z-index: 3;
 }
 
 /* Suchmodus der Navigation */
 .level-hide {
-  display: none;
+    display: none;
 }
 
 html[data-search-mode] .level-hide {
-  display: block;
+    display: block;
 }
 
 /* --------------------------------------------------------------------------
    14. Aufklappbare Abschnitte (Attributes / Members / Methods)
    -------------------------------------------------------------------------- */
 details {
-  margin: 1.5rem 0;
-  padding: 0 1.1rem;
-  border: 1px solid #d7e0e8;
-  border: 1px solid var(--jxg-border);
-  border-radius: 0.4rem;
-  border-radius: var(--jxg-radius);
-  background-color: #ffffff;
-  background-color: var(--jxg-bg);
+    margin: 1.5rem 0;
+    padding: 0 1.1rem;
+    border: 1px solid #d7e0e8;
+    border: 1px solid var(--jxg-border);
+    border-radius: 0.6rem;
+    border-radius: var(--jxg-radius);
+    background-color: #ffffff;
+    background-color: var(--jxg-bg);
 }
 
 details[open] {
-  padding-bottom: 1.1rem;
+    padding-bottom: 1.1rem;
 }
 
 summary {
-  font-family: 'Fira Sans', 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  font-family: var(--jxg-font-head);
-  color: #10427c;
-  color: var(--jxg-primary);
-  background-color: #f3f6f8;
-  background-color: var(--jxg-bg-subtle);
-  border: 0;
-  border-radius: 0.4rem;
-  border-radius: var(--jxg-radius);
-  font-weight: 600;
-  font-size: 1.25rem;
-  padding: .6em 2.3rem .6em .85em;
-  margin: 0 -1.1rem;
-  position: -webkit-sticky;
-  position: sticky;
-  top: 0;
-  z-index: 2;
-  cursor: pointer;
-  transition: background-color .15s ease, border-color .15s ease, color .15s ease;
-  list-style: none;
+    font-family: 'Fira Sans', 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-family: var(--jxg-font-head);
+    color: #10427c;
+    color: var(--jxg-primary);
+    background-color: #f3f6f8;
+    background-color: var(--jxg-bg-subtle);
+    border: 0;
+    border-radius: 0.6rem;
+    border-radius: var(--jxg-radius);
+    font-weight: 600;
+    font-size: 1.05rem;
+    line-height: 1.4;
+    padding: .45rem 2.3rem .45rem .85rem;
+    margin: 0 -1.1rem;
+    position: -webkit-sticky;
+    position: sticky;
+    /* Knapp unter die Unterkante des Seitentitels, absichtlich ein paar
+       Hundertstel darueber: der Titel hat den hoeheren z-index und deckt die
+       Ueberlappung ab. Bei exakt gleichem Wert bliebe durch Rundung auf
+       Geraetepixel eine haarfeine Luecke, durch die Text durchscrollt. */
+    top: 4.45rem;
+    z-index: 2;
+    cursor: pointer;
+    transition: background-color .15s ease, border-color .15s ease, color .15s ease;
+    list-style: none;
 }
 
 summary:hover {
-  background-color: #e4f1f8;
-  background-color: var(--jxg-accent-soft);
+    background-color: #e4f1f8;
+    background-color: var(--jxg-accent-soft);
 }
 
 /* aufgeklappt: Kopfzeile verschmilzt mit dem Rahmen darunter */
 details[open] > summary {
-  border-radius: 0.4rem 0.4rem 0 0;
-  border-radius: var(--jxg-radius) var(--jxg-radius) 0 0;
-  border-bottom: 1px solid #d7e0e8;
-  border-bottom: 1px solid var(--jxg-border);
-  margin-bottom: 1.1rem;
+    border-radius: 0.6rem 0.6rem 0 0;
+    border-radius: var(--jxg-radius) var(--jxg-radius) 0 0;
+    border-bottom: 1px solid #d7e0e8;
+    border-bottom: 1px solid var(--jxg-border);
+    margin-bottom: 1.1rem;
 }
 
 /* Standard-Klappdreieck ausblenden (WebKit/Blink bzw. Gecko) */
 summary::-webkit-details-marker {
-  display: none;
+    display: none;
 }
 
 summary::marker {
-  content: "";
+    content: "";
 }
 
 /* ... und rechts durch ein Plus im Kreis ersetzt, dessen senkrechter Balken
    beim Aufklappen in die Waagerechte dreht (wie beim Burger-Menue).
    ::after = Kreis + waagerechter Balken, ::before = drehender Balken. */
 summary::after {
-  content: "";
-  box-sizing: border-box;
-  position: absolute;
-  right: .7rem;
-  top: 50%;
-  -webkit-transform: translateY(-50%);
-          transform: translateY(-50%);
-  width: 1.15rem;
-  height: 1.15rem;
-  border: 1px solid #d7e0e8;
-  border: 1px solid var(--jxg-border);
-  border-radius: 50%;
-  background-color: transparent;
-  background-image: -webkit-linear-gradient(currentColor, currentColor);
-  background-image: linear-gradient(currentColor, currentColor);
-  background-size: .55rem 1px;
-  background-position: center;
-  background-repeat: no-repeat;
-  color: #5d6b7a;
-  color: var(--jxg-text-muted);
-  z-index: 0;
-  transition: background-color .2s ease, border-color .2s ease, color .2s ease;
+    content: "";
+    box-sizing: border-box;
+    position: absolute;
+    right: .7rem;
+    top: 50%;
+    -webkit-transform: translateY(-50%);
+    transform: translateY(-50%);
+    width: 1.15rem;
+    height: 1.15rem;
+    border: 1px solid #d7e0e8;
+    border: 1px solid var(--jxg-border);
+    border-radius: 50%;
+    background-color: transparent;
+    background-image: -webkit-linear-gradient(currentColor, currentColor);
+    background-image: linear-gradient(currentColor, currentColor);
+    background-size: .55rem 1px;
+    background-position: center;
+    background-repeat: no-repeat;
+    color: #5d6b7a;
+    color: var(--jxg-text-muted);
+    z-index: 0;
+    transition: background-color .2s ease, border-color .2s ease, color .2s ease;
 }
 
 summary::before {
-  content: "";
-  position: absolute;
-  right: 1rem;
-  top: 50%;
-  width: .55rem;
-  height: 1px;
-  border-radius: 0;
-  background-color: #5d6b7a;
-  background-color: var(--jxg-text-muted);
-  -webkit-transform: translateY(-50%) rotate(90deg);
-          transform: translateY(-50%) rotate(90deg);
-  z-index: 1;
-  transition: -webkit-transform .25s ease, transform .25s ease, background-color .2s ease;
+    content: "";
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    width: .55rem;
+    height: 1px;
+    border-radius: 0;
+    background-color: #5d6b7a;
+    background-color: var(--jxg-text-muted);
+    -webkit-transform: translateY(-50%) rotate(90deg);
+    transform: translateY(-50%) rotate(90deg);
+    z-index: 1;
+    transition: -webkit-transform .25s ease, transform .25s ease, background-color .2s ease;
 }
 
 details[open] > summary::before {
-  -webkit-transform: translateY(-50%) rotate(0deg);
-          transform: translateY(-50%) rotate(0deg);
+    -webkit-transform: translateY(-50%) rotate(0deg);
+    transform: translateY(-50%) rotate(0deg);
 }
 
 summary:hover::after {
-  border-color: #08648f;
-  border-color: var(--jxg-secondary);
-  background-color: transparent;
-  color: #08648f;
-  color: var(--jxg-secondary);
+    border-color: #08648f;
+    border-color: var(--jxg-secondary);
+    background-color: transparent;
+    color: #08648f;
+    color: var(--jxg-secondary);
 }
 
 summary:hover::before {
-  background-color: #08648f;
-  background-color: var(--jxg-secondary);
+    background-color: #08648f;
+    background-color: var(--jxg-secondary);
 }
 
 /* --------------------------------------------------------------------------
    15. Mehrspaltige Kurzlisten (Attribute, Members, Methods)
    -------------------------------------------------------------------------- */
 .list_container {
-  max-width: 100%;
-  overflow: hidden;
-  column-width: 13rem;
-  column-gap: 2rem;
-  column-rule: 1px solid #d7e0e8;
-  column-rule: 1px solid var(--jxg-border);
-  margin-bottom: 1.75rem;
+    max-width: 100%;
+    overflow: hidden;
+    column-width: 13rem;
+    column-gap: 2rem;
+    column-rule: 1px solid #d7e0e8;
+    column-rule: 1px solid var(--jxg-border);
+    margin-bottom: 1.75rem;
 }
 
 .columntext {
-  width: auto;
-  max-width: 100%;
-  margin: 0;
-  padding: .15rem 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  font-size: 0.875rem;
-  font-size: var(--jxg-fs-small);
-  font-family: 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  font-family: var(--jxg-font-mono);
-  -webkit-column-break-inside: avoid;
-          break-inside: avoid;
+    width: auto;
+    max-width: 100%;
+    margin: 0;
+    padding: .15rem 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-family: 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-family: var(--jxg-font-mono);
+    -webkit-column-break-inside: avoid;
+    break-inside: avoid;
 }
 
 /* Raute vor statischen Members in der Navigation */
 [data-type="member"] a::before {
-  content: '#';
-  display: inline-block;
-  margin-right: .3rem;
-  color: #5d6b7a;
-  color: var(--jxg-text-muted);
+    content: '#';
+    display: inline-block;
+    margin-right: .3rem;
+    color: #5d6b7a;
+    color: var(--jxg-text-muted);
 }
 
 #disqus_thread {
-  margin-left: 0;
-  margin-top: 2rem;
+    margin-left: 0;
+    margin-top: 2rem;
 }
 
 /* --------------------------------------------------------------------------
@@ -1587,175 +1746,179 @@ summary:hover::before {
 
 /* Grosse Bildschirme: etwas mehr Luft und groessere Basisschrift */
 @media only screen and (min-width: 1600px) {
-  :root {
-    --jxg-nav-width: 19rem;
-    --jxg-fs-base: 1.05rem;
-  }
+    :root {
+        --jxg-nav-width: 19rem;
+        --jxg-fs-base: 1.05rem;
+    }
 }
 
 /* Kleinere Desktops / Tablets quer: schmalere Sidebar */
 @media only screen and (max-width: 1100px) {
-  :root {
-    --jxg-nav-width: 14.5rem;
-  }
+    :root {
+        --jxg-nav-width: 14.5rem;
+    }
 }
 
 /* Tablets hoch und Smartphones: Sidebar wird zum Off-Canvas-Menue */
 @media only screen and (max-width: 880px) {
-  body {
-    overflow-x: hidden;
-    overflow-x: clip;
-  }
+    body {
+        overflow-x: hidden;
+        overflow-x: clip;
+    }
 
-  nav {
-    background: #f3f6f8;
-    background: var(--jxg-bg-subtle);
-    width: min(20rem, 85vw);
-    height: 100%;
-    position: fixed;
-    top: 0;
-    right: auto;
-    bottom: 0;
-    left: -100%;
-    z-index: 5;
-    padding: 1rem;
-    transition: left .25s ease;
-  }
+    nav {
+        background: #f3f6f8;
+        background: var(--jxg-bg-subtle);
+        width: min(20rem, 85vw);
+        height: 100%;
+        position: fixed;
+        top: 0;
+        right: auto;
+        bottom: 0;
+        left: -100%;
+        z-index: 5;
+        padding: 1rem;
+        transition: left .25s ease;
+    }
 
-  .navicon-button {
-    display: inline-flex;
-    position: fixed;
-    top: 1rem;
-    right: 1rem;
-    z-index: 6;
-  }
+    .navicon-button {
+        display: inline-flex;
+        position: fixed;
+        top: 1rem;
+        right: 1rem;
+        z-index: 6;
+    }
 
-  #main {
-    width: 100%;
-    margin-left: 0;
-    padding: 1.5rem 1.1rem 3rem;
-  }
+    #main {
+        width: 100%;
+        margin-left: 0;
+        padding: 0 1.1rem 3rem;
+    }
 
-  #main h1.page-title {
-    margin: 0 3.5rem .9rem 0;
-  }
+    #main h1.page-title {
+        margin: 0 3.5rem .9rem 0;
+    }
 
-  h1,
-  h1.page-title {
-    font-size: 1.75rem;
-  }
+    h1,
+    h1.page-title {
+        font-size: 1.6rem;
+    }
 
-  h2 {
-    font-size: 1.35rem;
-  }
+    summary {
+        top: 4.1rem;
+    }
 
-  h3,
-  summary {
-    font-size: 1.1rem;
-  }
+    h2 {
+        font-size: 1.35rem;
+    }
 
-  #main section {
-    padding: 0;
-  }
+    h3,
+    summary {
+        font-size: 1rem;
+    }
 
-  footer {
-    margin-left: 0;
-  }
+    #main section {
+        padding: 0;
+    }
 
-  /* Beschriftung als eigene Zeile ueber dem Wert */
-  .details {
-    grid-template-columns: minmax(0, 1fr);
-  }
+    footer {
+        margin-left: 0;
+    }
 
-  .details dt {
-    white-space: normal;
-    padding: .45rem .75rem;
-  }
+    /* Beschriftung als eigene Zeile ueber dem Wert */
+    .details {
+        grid-template-columns: minmax(0, 1fr);
+    }
 
-  .details dd {
-    border-top: 0;
-    padding: .7rem .75rem;
-  }
+    .details dt {
+        white-space: normal;
+        padding: .45rem .75rem;
+    }
 
-  /* Tabellen bleiben Tabellen und brechen um.
-     display: block waere hier falsch: die Zeilengruppen bekommen dann eine
-     anonyme Tabelle als Elternbox, die sich auf ihren Inhalt zusammenzieht -
-     rechts bliebe die halbe Flaeche leer. */
-  table {
-    display: table;
-    width: 100%;
-  }
+    .details dd {
+        border-top: 0;
+        padding: .7rem .75rem;
+    }
 
-  td, th {
-    overflow-wrap: anywhere;
-    word-break: break-word;
-  }
+    /* Tabellen bleiben Tabellen und brechen um.
+       display: block waere hier falsch: die Zeilengruppen bekommen dann eine
+       anonyme Tabelle als Elternbox, die sich auf ihren Inhalt zusammenzieht -
+       rechts bliebe die halbe Flaeche leer. */
+    table {
+        display: table;
+        width: 100%;
+    }
 
-  .params .type {
-    white-space: normal;
-  }
+    td, th {
+        overflow-wrap: anywhere;
+        word-break: break-word;
+    }
 
-  h4.name {
-    font-size: 0.875rem;
-    padding: .6em .7em;
-  }
+    .params .type {
+        white-space: normal;
+    }
 
-  .prettyprint.linenums {
-    padding-left: 2.8em;
-  }
+    h4.name {
+        font-size: 0.875rem;
+        padding: .6em .7em;
+    }
 
-  .list_container {
-    column-width: 10rem;
-    column-gap: 1.25rem;
-  }
+    .prettyprint.linenums {
+        padding-left: 2.8em;
+    }
+
+    .list_container {
+        column-width: 10rem;
+        column-gap: 1.25rem;
+    }
 }
 
 /* Sehr schmale Geraete */
 @media only screen and (max-width: 420px) {
-  :root {
-    --jxg-fs-base: .95rem;
-  }
+    :root {
+        --jxg-fs-base: .95rem;
+    }
 
-  #main {
-    padding: 1.25rem .85rem 2.5rem;
-  }
+    #main {
+        padding: 0 .85rem 2.5rem;
+    }
 
-  .list_container {
-    column-width: auto;
-    columns: 1;
-    column-rule: none;
-  }
+    .list_container {
+        column-width: auto;
+        columns: 1;
+        column-rule: none;
+    }
 
-  td, th {
-    padding: .55rem .6rem;
-  }
+    td, th {
+        padding: .55rem .6rem;
+    }
 }
 
 /* Bewegungsreduktion respektieren */
 @media (prefers-reduced-motion: reduce) {
-  * {
-    transition: none !important;
-    scroll-behavior: auto !important;
-  }
+    * {
+        transition: none !important;
+        scroll-behavior: auto !important;
+    }
 }
 
 /* Druckausgabe */
 @media print {
-  nav, .navicon-button, .overlay {
-    display: none !important;
-  }
+    nav, .navicon-button, .overlay {
+        display: none !important;
+    }
 
-  #main, footer {
-    margin-left: 0;
-    max-width: none;
-  }
+    #main, footer {
+        margin-left: 0;
+        max-width: none;
+    }
 
-  .prettyprint, .prettyprint code, .prettyprint.source {
-    background: #f3f6f8;
-    background: var(--jxg-bg-subtle);
-    color: #1d2733;
-    color: var(--jxg-text);
-  }
+    .prettyprint, .prettyprint code, .prettyprint.source {
+        background: #f3f6f8;
+        background: var(--jxg-bg-subtle);
+        color: #1d2733;
+        color: var(--jxg-text);
+    }
 }
 
 /* --------------------------------------------------------------------------
@@ -1773,62 +1936,64 @@ summary:hover::before {
    dunklen Farben zeichnet.
    -------------------------------------------------------------------------- */
 @media (prefers-color-scheme: dark) {
-  :root {
-    --jxg-primary:        #8fbdea;
-    --jxg-primary-dark:   #bcd9f4;
-    --jxg-primary-light:  #aed0f2;
-    --jxg-secondary:      #6ec3e2;
-    --jxg-accent:         #2f5f85;
-    --jxg-accent-soft:    #17334c;
+    :root {
+        --jxg-primary:        #8fbdea;
+        --jxg-primary-dark:   #bcd9f4;
+        --jxg-primary-light:  #aed0f2;
+        --jxg-secondary:      #6ec3e2;
+        --jxg-accent:         #2f5f85;
+        --jxg-accent-soft:    #17334c;
 
-    --jxg-bg:             #0f1720;
-    --jxg-bg-subtle:      #17212c;
-    --jxg-bg-inline-code: #1c2734;
-    --jxg-code-bg:        #141d27;
-    --jxg-code-fg:        #d4dee8;
-    --jxg-code-gutter:    #273746;
+        --jxg-bg:             #0f1720;
+        --jxg-bg-subtle:      #17212c;
+        --jxg-bg-inline-code: #1c2734;
+        --jxg-code-bg:        #141d27;
+        --jxg-code-fg:        #d4dee8;
+        --jxg-code-gutter:    #273746;
 
-    --jxg-text:           #dce5ef;
-    --jxg-text-muted:     #94a4b5;
-    --jxg-text-invert:    #0f1720;
+        --jxg-text:           #dce5ef;
+        --jxg-text-muted:     #94a4b5;
+        --jxg-text-invert:    #0f1720;
+        --jxg-param:          #e3a874;
+        --jxg-element:        #86d2a8;
 
-    --jxg-border:         #2b3a48;
-    --jxg-border-strong:  #3d4f60;
-    --jxg-danger:         #ef9189;
+        --jxg-border:         #2b3a48;
+        --jxg-border-strong:  #3d4f60;
+        --jxg-danger:         #ef9189;
 
-    --jxg-shadow-sm:      0 1px 2px rgba(0, 0, 0, .40);
-    --jxg-shadow:         0 2px 10px rgba(0, 0, 0, .45);
-    --jxg-shadow-lg:      0 10px 30px rgba(0, 0, 0, .55);
-  }
+        --jxg-shadow-sm:      0 1px 2px rgba(0, 0, 0, .40);
+        --jxg-shadow:         0 2px 10px rgba(0, 0, 0, .45);
+        --jxg-shadow-lg:      0 10px 30px rgba(0, 0, 0, .55);
+    }
 
-  /* Syntaxfarben mit genuegend Kontrast auf dunklem Grund */
-  .str, .atv {
-    color: #86d2a8;
-  }
+    /* Syntaxfarben mit genuegend Kontrast auf dunklem Grund */
+    .str, .atv {
+        color: #86d2a8;
+    }
 
-  .com {
-    color: #8b9bab;
-  }
+    .com {
+        color: #8b9bab;
+    }
 
-  .lit, .dec, .var, .atn {
-    color: #e3a874;
-  }
+    .lit, .dec, .var, .atn {
+        color: #e3a874;
+    }
 
-  /* Logo mit hellem Schriftzug */
-  nav::before {
-    background-image: url('../images/jsxgraph-api-logo_white-text-solid-250.png');
-    background-image: -webkit-image-set(
-        url('../images/jsxgraph-api-logo_white-text-solid-250.png') 1x,
-        url('../images/jsxgraph-api-logo_white-text-solid-500.png') 2x);
-    background-image: image-set(
-        url('../images/jsxgraph-api-logo_white-text-solid-250.png') 1x,
-        url('../images/jsxgraph-api-logo_white-text-solid-500.png') 2x);
-  }
+    /* Logo mit hellem Schriftzug */
+    nav::before {
+        background-image: url('../images/jsxgraph-api-logo_white-text-solid-250.png');
+        background-image: -webkit-image-set(
+                url('../images/jsxgraph-api-logo_white-text-solid-250.png') 1x,
+                url('../images/jsxgraph-api-logo_white-text-solid-500.png') 2x);
+        background-image: image-set(
+                url('../images/jsxgraph-api-logo_white-text-solid-250.png') 1x,
+                url('../images/jsxgraph-api-logo_white-text-solid-500.png') 2x);
+    }
 
-  /* Der Schleier ueber der mobilen Navigation darf dunkler ausfallen */
-  .overlay {
-    background: rgba(0, 0, 0, .55);
-  }
+    /* Der Schleier ueber der mobilen Navigation darf dunkler ausfallen */
+    .overlay {
+        background: rgba(0, 0, 0, .55);
+    }
 }
 
 /* --------------------------------------------------------------------------
@@ -1847,51 +2012,51 @@ summary:hover::before {
    Normalfall also nichts.
    -------------------------------------------------------------------------- */
 @font-face {
-  font-family: 'Fira Sans';
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url('../fonts/Fira-Sans/FiraSans-Regular.ttf') format('truetype');
+    font-family: 'Fira Sans';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url('../fonts/Fira-Sans/FiraSans-Regular.ttf') format('truetype');
 }
 
 @font-face {
-  font-family: 'Fira Sans';
-  font-style: italic;
-  font-weight: 400;
-  font-display: swap;
-  src: url('../fonts/Fira-Sans/FiraSans-Italic.ttf') format('truetype');
+    font-family: 'Fira Sans';
+    font-style: italic;
+    font-weight: 400;
+    font-display: swap;
+    src: url('../fonts/Fira-Sans/FiraSans-Italic.ttf') format('truetype');
 }
 
 @font-face {
-  font-family: 'Fira Sans';
-  font-style: normal;
-  font-weight: 600;
-  font-display: swap;
-  src: url('../fonts/Fira-Sans/FiraSans-SemiBold.ttf') format('truetype');
+    font-family: 'Fira Sans';
+    font-style: normal;
+    font-weight: 600;
+    font-display: swap;
+    src: url('../fonts/Fira-Sans/FiraSans-SemiBold.ttf') format('truetype');
 }
 
 @font-face {
-  font-family: 'Fira Code';
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url('../fonts/Fira-Code/FiraCode-Regular.ttf') format('truetype');
+    font-family: 'Fira Code';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url('../fonts/Fira-Code/FiraCode-Regular.ttf') format('truetype');
 }
 
 @font-face {
-  font-family: 'Fira Code';
-  font-style: normal;
-  font-weight: 600;
-  font-display: swap;
-  src: url('../fonts/Fira-Code/FiraCode-SemiBold.ttf') format('truetype');
+    font-family: 'Fira Code';
+    font-style: normal;
+    font-weight: 600;
+    font-display: swap;
+    src: url('../fonts/Fira-Code/FiraCode-SemiBold.ttf') format('truetype');
 }
 
 @font-face {
-  font-family: 'Source Sans Pro';
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-  src: url('../fonts/Source-Sans-Pro/sourcesanspro-regular-webfont.woff2') format('woff2'),
-       url('../fonts/Source-Sans-Pro/sourcesanspro-regular-webfont.woff') format('woff'),
-       url('../fonts/Source-Sans-Pro/sourcesanspro-regular-webfont.ttf') format('truetype');
+    font-family: 'Source Sans Pro';
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+    src: url('../fonts/Source-Sans-Pro/sourcesanspro-regular-webfont.woff2') format('woff2'),
+    url('../fonts/Source-Sans-Pro/sourcesanspro-regular-webfont.woff') format('woff'),
+    url('../fonts/Source-Sans-Pro/sourcesanspro-regular-webfont.ttf') format('truetype');
 }
