@@ -166,13 +166,12 @@ JXG.GeometryElement = function (board, attributes, type, oclass) {
      * access to SVG nodes. The properties of such an SVG node can then be changed
      * by calling setAttribute(). Note that there are a few elements which consist
      * of more than one SVG nodes:
-     * <ul>
-     * <li> Elements with arrow tail or head: rendNodeTriangleStart, rendNodeTriangleEnd
-     * <li> SVG (or VML) texts: rendNodeText
-     * <li> Button: rendNodeForm, rendNodeButton, rendNodeTag
-     * <li> Checkbox: rendNodeForm, rendNodeCheckbox, rendNodeLabel, rendNodeTag
-     * <li> Input: rendNodeForm, rendNodeInput, rendNodeLabel, rendNodeTag
-     * </ul>
+     *
+     * - Elements with arrow tail or head: rendNodeTriangleStart, rendNodeTriangleEnd
+     * - SVG (or VML) texts: rendNodeText
+     * - Button: rendNodeForm, rendNodeButton, rendNodeTag
+     * - Checkbox: rendNodeForm, rendNodeCheckbox, rendNodeLabel, rendNodeTag
+     * - Input: rendNodeForm, rendNodeInput, rendNodeLabel, rendNodeTag
      *
      * Here is are two examples: The first example shows how to access the SVG node,
      * the second example demonstrates how to change SVG attributes.

@@ -119,11 +119,9 @@ JXG.Options = {
          * Enable browser scrolling on touch interfaces if the user double taps into an empty region
          * of the board. In turn, browser scrolling is deactivated as soon as a JSXGraph element is dragged.
          *
-         * <ul>
-         * <li> Implemented for pointer touch devices - not with mouse, pen or old iOS touch.
-         * <li> It only works if browserPan:true
-         * <li> One finger action by the settings "pan.enabled:true" and "pan.needTwoFingers:false" has priority.
-         * </ul>
+         * - Implemented for pointer touch devices - not with mouse, pen or old iOS touch.
+         * - It only works if browserPan:true
+         * - One finger action by the settings "pan.enabled:true" and "pan.needTwoFingers:false" has priority.
          *
          * @name JXG.Board#browserPan
          * @attribute
@@ -425,14 +423,14 @@ JXG.Options = {
          * Attribute(s) to control the fullscreen icon. The attribute "showFullscreen"
          * controls if the icon is shown.
          * The following attribute(s) can be set:
-         * <ul>
-         *  <li> symbol (String): Unicode symbol which is shown in the navigation bar.  Default: svg code for '\u26f6', other
+         *
+         *  - symbol (String): Unicode symbol which is shown in the navigation bar.  Default: svg code for '\u26f6', other
          * possibilities are the unicode symbols '\u26f6' and '\u25a1'. However, '\u26f6' is not supported by MacOS and iOS.
-         *  <li> scale (number between 0 and 1): Relative size of the larger side of the JSXGraph board in the fullscreen window. 1.0 gives full width or height.
+         *  - scale (number between 0 and 1): Relative size of the larger side of the JSXGraph board in the fullscreen window. 1.0 gives full width or height.
          * Default value is 0.85.
-         *  <li> id (String): Id of the HTML element which is brought to full screen or null if the JSXgraph div is taken.
+         *  - id (String): Id of the HTML element which is brought to full screen or null if the JSXgraph div is taken.
          * It may be an outer div element, e.g. if the old aspect ratio trick is used. Default: null, i.e. use the JSXGraph div.
-         * </ul>
+         *
          *
          * @example
          * var board = JXG.JSXGraph.initBoard('35bec5a2-fd4d-11e8-ab14-901b0e1b8723',
@@ -494,18 +492,18 @@ JXG.Options = {
 
         /**
          * Support for internationalization of number formatting. This affects
-         * <ul>
-         *  <li> axis labels
-         *  <li> infobox
-         *  <li> texts consisting of numbers only
-         *  <li> smartlabel elements
-         *  <li> slider labels
-         *  <li> tapemeasure elements
-         *  <li> integral element labels
-         * </ul>
-         * See <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat">https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat</a>
+         *
+         * - axis labels
+         * - infobox
+         * - texts consisting of numbers only
+         * - smartlabel elements
+         * - slider labels
+         * - tapemeasure elements
+         * - integral element labels
+         *
+         * See {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat}
          * for an overview on the possibilities and the options.
-         * <p>
+         *
          * User generated texts consisting of texts AND numbers have to be internationalized by the user, see
          * {@link Text#intl}.
          * Language locale and options can be individually controlled for each element by its intl attribute.
@@ -514,7 +512,7 @@ JXG.Options = {
          * @name JXG.Board#intl
          * @attribute
          * @type Object
-         * @default <tt>{enabled: false}</tt>
+         * @default `{enabled: false}`
          * @see Integral#label
          * @see Slider#intl
          * @see Text#intl
@@ -919,26 +917,24 @@ JXG.Options = {
          * However, it is recommended to allow dragging outside of the JSXGraph board only
          * in certain constructions where users may not "loose" points outside of the board.
          * In such a case, points may become unreachable.
-         * <p>
+         *
          * A situation where dragging outside of the board is uncritical is for example if
          * only sliders are used to interact with the construction.
-         * <p>
+         *
          * Possible values for this attributes are:
-         * <ul>
-         * <li> an element specified by document.getElementById('some id');
-         * <li> null: to use the JSXGraph container div element
-         * <li> document
-         * </ul>
-         * <p>
+         *
+         * - an element specified by document.getElementById('some id');
+         * - null: to use the JSXGraph container div element
+         * - document
+         *
          * Since the introduction of this attribute "moveTarget", the value "document" has become sort of
          * default on touch devices like smartphones. However, it is no longer the case that the document listens to
          * move events, but there is the new feature "setPointerCapture", which is also implicitly enabled on certain devices.
          * In future versions, JSXGraph may adopt this new standard and distinguish only two cases:
-         * <ul>
-         * <li>null: no pointerCapture
-         * <li>document: use pointerCapture
-         * </ul>
-         * <p>
+         *
+         * - null: no pointerCapture
+         * - document: use pointerCapture
+         *
          * This attribute is immutable.
          * It can be changed as follows:
          *
@@ -1005,13 +1001,14 @@ JXG.Options = {
          * Control the possibilities for panning interaction (i.e. moving the origin).
          *
          * Possible sub-attributes with default values are:
-         * <pre>
+         *
+         * ```
          * pan: {
          *   enabled: true   // Allow panning
          *   needTwoFingers: false, // panning is done with two fingers on touch devices
          *   needShift: true, // mouse panning needs pressing of the shift key
          * }
-         * </pre>
+         * ```
          *
          * @name JXG.Board#pan
          * @attribute
@@ -1030,10 +1027,11 @@ JXG.Options = {
          * touch events), fullscreen, keyboard, resize, and zoom events.
          * The latter events are essentially mouse wheel events.
          * Decide if JSXGraph listens to these events.
-         * <p>
+         *
          * Using a Boolean value turns on all events (or not), supplying an object of
          * the form
-         * <pre>
+         *
+         * ```
          *  {
          *     fullscreen: true / false,
          *     keyboard: true / false,
@@ -1041,10 +1039,12 @@ JXG.Options = {
          *     resize: true / false,
          *     wheel: true / false
          *  }
-         * </pre>
+         * ```
+         *
          * activates individual event handlers. If an event is NOT given,
          * it will be activated.
-         * <p>This attribute is immutable. Please use
+         *
+         * This attribute is immutable. Please use
          * {@link JXG.Board#addEventHandlers()} and
          * {@link JXG.Board#removeEventHandlers()} directly.
          *
