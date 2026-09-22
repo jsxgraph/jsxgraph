@@ -13,7 +13,6 @@
 - Name: `MirrorElement` vs `Reflection`
 - `text.js`: HTMLSlider
 - `image.js`: If necessary enable coords, size with functions. Example
-- Turtle: params and examples
 - `base64.js`: to be retired 
 - `uuid.js`: to be retired?
 - `vml.js`: to be retired?
@@ -27,8 +26,12 @@
 - IntersectionLine3D not dynamic, see example
 - Ticks3D: example
 - 3D elements: add construction with transformation
+
+## DONE
+
 - ~~Not yet: `@see` for Element~~
 - ~~`@see` in element jsdocs~~
+- ~~Turtle: params and examples~~
 
 ## Attributes
 
