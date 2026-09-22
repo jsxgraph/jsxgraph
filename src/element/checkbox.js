@@ -106,9 +106,9 @@ var priv = {
  * </pre><div class="jxgbox" id="JXG0e835e0b-ed0c-4b85-b682-78158c0e6f5c" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
  * (function() {
- *   var t1_board = JXG.JSXGraph.initBoard('JXG0e835e0b-ed0c-4b85-b682-78158c0e6f5c', {boundingbox: [-3, 6, 5, -3], axis: true, showcopyright: false, shownavigation: false});
- *   var checkbox = t1_board.create('checkbox', [0, 3, 'Change Y'], {});
- *   var p = t1_board.create('point', [
+ *   var board = JXG.JSXGraph.initBoard('JXG0e835e0b-ed0c-4b85-b682-78158c0e6f5c', {boundingbox: [-3, 6, 5, -3], axis: true, showcopyright: false, shownavigation: false});
+ *   var checkbox = board.create('checkbox', [0, 3, 'Change Y'], {});
+ *   var p = board.create('point', [
  *       function(){ return 0.5;}, // X-coordinate
  *       function() {
  *           y = 0.5;
@@ -147,6 +147,7 @@ var priv = {
  * }, checkbox);
  * })();
  * </script><pre>
+ *
  * @example
  *     var i1 = board.create('input', [1, 5, 'sin(x)', 'f(x)='], {cssStyle: 'width:4em', maxlength: 2});
  *         var c1 = board.create('checkbox', [1, 3, 'label 1'], {});

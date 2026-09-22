@@ -2565,7 +2565,7 @@ JXG.registerElement("riemannsum", JXG.createRiemannsum);
  *       g1 = board.create('glider',[2, 1, c1]),
  *       s1 = board.create('segment',[g1, p1]),
  *       p2 = board.create('midpoint',[s1]),
- *       curve = tc1_board.create('tracecurve', [g1, p2]);
+ *       curve = board.create('tracecurve', [g1, p2]);
  * })();
  * </script><pre>
  */

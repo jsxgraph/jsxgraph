@@ -1649,9 +1649,12 @@ JXG.extend(
  *   var t1 = board.create('text',[0,1,"Hello World"]);
  * </pre><div class="jxgbox" id="JXG896013aa-f24e-4e83-ad50-7bc7df23f6b7" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
- *   var t1_board = JXG.JSXGraph.initBoard('JXG896013aa-f24e-4e83-ad50-7bc7df23f6b7', {boundingbox: [-3, 6, 5, -3], axis: true, showcopyright: false, shownavigation: false});
- *   var t1 = t1_board.create('text',[0,1,"Hello World"]);
+ * (function() {
+ *   var board = JXG.JSXGraph.initBoard('JXG896013aa-f24e-4e83-ad50-7bc7df23f6b7', {boundingbox: [-3, 6, 5, -3], axis: true, showcopyright: false, shownavigation: false});
+ *   var t1 = board.create('text',[0,1,"Hello World"]);
+ * })();
  * </script><pre>
+ *
  * @example
  * // Create a variable text at a variable position.
  *   var s = board.create('slider',[[0,4],[3,4],[-2,0,2]]);

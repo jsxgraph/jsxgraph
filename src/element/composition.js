@@ -784,6 +784,7 @@ JXG.createMidpoint = function (board, parents, attributes) {
  * @param {PointLike} p1
  * @param {PointLike} p2
  * @param {PointLike} p3
+ *
  * @example
  * var p1 = board.create('point', [0.0, 2.0]);
  * var p2 = board.create('point', [2.0, 1.0]);
@@ -794,10 +795,10 @@ JXG.createMidpoint = function (board, parents, attributes) {
  * <script type="text/javascript">
  * (function() {
  *   var board = JXG.JSXGraph.initBoard('JXG488c4be9-274f-40f0-a469-c5f70abe1f0e', {boundingbox: [-1, 9, 9, -1], axis: true, showcopyright: false, shownavigation: false});
- *   var p1 = ppex1_board.create('point', [0.0, 2.0]);
- *   var p2 = ppex1_board.create('point', [2.0, 1.0]);
- *   var p3 = ppex1_board.create('point', [3.0, 3.0]);
- *   var pp1 = ppex1_board.create('parallelpoint', [p1, p2, p3]);
+ *   var p1 = board.create('point', [0.0, 2.0]);
+ *   var p2 = board.create('point', [2.0, 1.0]);
+ *   var p3 = board.create('point', [3.0, 3.0]);
+ *   var pp1 = board.create('parallelpoint', [p1, p2, p3]);
  * })();
  * </script><pre>
  */
@@ -1141,7 +1142,7 @@ JXG.createParallel = function (board, parents, attributes) {
  * // Create an arrow  parallel
  * var p1 = board.create('point', [0.0, 2.0]);
  * var p2 = board.create('point', [2.0, 1.0]);
- * var l1 = plex1_board.create('segment', [p1, p2]);
+ * var l1 = board.create('segment', [p1, p2]);
  *
  * var p = board.create('point', [3.0, 3.0]);
  * var pl1 = board.create('arrowparallel', [p1, p2, p]);

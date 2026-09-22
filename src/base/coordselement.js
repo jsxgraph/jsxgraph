@@ -1810,11 +1810,13 @@ JXG.extend(
          * var button2 = board.create('button', [1, 5, 'stop animation',function(){p2.stopAnimation()}]);
          * </pre><div class="jxgbox" id="JXG10e885ea-b05d-4e7d-a473-bac2554bce68" style="width: 200px; height: 200px;"></div>
          * <script type="text/javascript">
-         *   var gpex4_board = JXG.JSXGraph.initBoard('JXG10e885ea-b05d-4e7d-a473-bac2554bce68', {boundingbox: [-1, 10, 10, -1], axis: true, showcopyright: false, shownavigation: false});
-         *   var gpex4_c1 = gpex4_board.create('curve',[(u)=>4*Math.cos(u)+4,(u)=>2*Math.sin(u)+2,0,2*Math.PI]);
-         *   var gpex4_p2 = gpex4_board.create('glider', [gpex4_c1]);
-         *   gpex4_board.create('button', [1, 7, 'start animation',function(){gpex4_p2.startAnimation(1,8)}]);
-         *   gpex4_board.create('button', [1, 5, 'stop animation',function(){gpex4_p2.stopAnimation()}]);
+         * (function() {
+         *   var board = JXG.JSXGraph.initBoard('JXG10e885ea-b05d-4e7d-a473-bac2554bce68', {boundingbox: [-1, 10, 10, -1], axis: true, showcopyright: false, shownavigation: false});
+         *   var c1 = board.create('curve',[(u)=>4*Math.cos(u)+4,(u)=>2*Math.sin(u)+2,0,2*Math.PI]);
+         *   var p2 = board.create('glider', [c1]);
+         *   board.create('button', [1, 7, 'start animation',function(){p2.startAnimation(1,8)}]);
+         *   board.create('button', [1, 5, 'stop animation',function(){p2.stopAnimation()}]);
+         * })();
          * </script><pre>
          *
          * @example

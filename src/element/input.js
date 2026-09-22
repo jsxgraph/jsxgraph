@@ -115,27 +115,29 @@ var priv = {
  *  }
  * </pre><div class="jxgbox" id="JXGc70f55f1-21ba-4719-a37d-a93ae2943faa" style="width: 500px; height: 300px;"></div>
  * <script type="text/javascript">
- *   var t1_board = JXG.JSXGraph.initBoard('JXGc70f55f1-21ba-4719-a37d-a93ae2943faa', {boundingbox: [-3, 6, 5, -3], axis: true, showcopyright: false, shownavigation: false});
- *   var input = t1_board.create('input', [1, 4, 'sin(x)*x', 'f(x)='], {cssStyle: 'width: 100px'});
- *   var f = t1_board.jc.snippet(input.Value(), true, 'x', false);
- *   var graph = t1_board.create('functiongraph',[f,
+ * (function() {
+ *   var board = JXG.JSXGraph.initBoard('JXGc70f55f1-21ba-4719-a37d-a93ae2943faa', {boundingbox: [-3, 6, 5, -3], axis: true, showcopyright: false, shownavigation: false});
+ *   var input = board.create('input', [1, 4, 'sin(x)*x', 'f(x)='], {cssStyle: 'width: 100px'});
+ *   var f = board.jc.snippet(input.Value(), true, 'x', false);
+ *   var graph = board.create('functiongraph',[f,
  *          function() {
- *            var c = new JXG.Coords(JXG.COORDS_BY_SCREEN,[0,0],t1_board);
+ *            var c = new JXG.Coords(JXG.COORDS_BY_SCREEN,[0,0],board);
  *            return c.usrCoords[1];
  *          },
  *          function() {
- *            var c = new JXG.Coords(JXG.COORDS_BY_SCREEN,[t1_board.canvasWidth,0],t1_board);
+ *            var c = new JXG.Coords(JXG.COORDS_BY_SCREEN,[board.canvasWidth,0],board);
  *            return c.usrCoords[1];
  *          }
  *        ]);
  *
- *  t1_board.create('text', [1, 3, '<button onclick="updateGraph()">Update graph</button>']);
+ *  board.create('text', [1, 3, '<button onclick="updateGraph()">Update graph</button>']);
  *
  *  var updateGraph = function() {
- *      graph.Y = t1_board.jc.snippet(input.Value(), true, 'x', false);
+ *      graph.Y = board.jc.snippet(input.Value(), true, 'x', false);
  *      graph.updateCurve();
- *      t1_board.update();
+ *      board.update();
  *  }
+ * })();
  * </script><pre>
  *
  * @example
