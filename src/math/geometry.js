@@ -2589,7 +2589,7 @@ JXG.extend(
          * @param {String} [method] Intersection method, possible values are 'newton' and 'segment'.
          * If both curves are given by functions (assumed to be continuous), 'newton' is the default, otherwise
          * 'segment' is the default.
-         * @parame {Boolean} testSegment If true require that the intersection is inside of the allowed bounds for both elements (in _meetCurveCurveIterative)
+         * @param {Boolean} testSegment If true require that the intersection is inside of the allowed bounds for both elements (in _meetCurveCurveIterative)
          * @returns {JXG.Coords} intersection point
          *
          * @see JXG.Math.Geometry.meetCurveCurveDiscrete

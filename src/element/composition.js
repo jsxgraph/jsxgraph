@@ -2207,7 +2207,7 @@ JXG.createReflection = function (board, parents, attributes) {
  * @jsxgraphsignature MirrorElement
  * The constructed element is the mirror image of `p` across `mirr`.
  * @param {Point|Line|Circle|Curve|Polygon} p
- * @param{PointLike} mirr
+ * @param {PointLike} mirr
  *
  * @example
  *   // Mirror point

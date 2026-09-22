@@ -1596,9 +1596,9 @@ JXG.extend(
          * this anchor element.
          * This is handled with this.relativeCoords. If the element is a label
          * relativeCoords are given in scrCoords, otherwise in usrCoords.
-         * @param{Array} coordinates Offset from the anchor element. These are the values for this.relativeCoords.
+         * @param {Array} coordinates Offset from the anchor element. These are the values for this.relativeCoords.
          * In case of a label, coordinates are screen coordinates. Otherwise, coordinates are user coordinates.
-         * @param{Boolean} isLabel Yes/no
+         * @param {Boolean} isLabel Yes/no
          * @private
          */
         addAnchor: function (coordinates, isLabel) {
@@ -2500,17 +2500,17 @@ JXG.extend(
  * Generic method to create point, text or image.
  * Determines the type of the construction, i.e. free, or constrained by function,
  * transformation or of glider type.
- * @param{Object} Callback Object type, e.g. JXG.Point, JXG.Text or JXG.Image
- * @param{Object} board Link to the board object
- * @param{Array} coords Array with coordinates. This may be: array of numbers, function
+ * @param {Object} Callback Object type, e.g. JXG.Point, JXG.Text or JXG.Image
+ * @param {Object} board Link to the board object
+ * @param {Array} coords Array with coordinates. This may be: array of numbers, function
  * returning an array of numbers, array of functions returning a number, object and transformation.
  * If the attribute "slideObject" exists, a glider element is constructed.
- * @param{Object} attr Attributes object
- * @param{Object} arg1 Optional argument 1: in case of text this is the text content,
+ * @param {Object} attr Attributes object
+ * @param {Object} arg1 Optional argument 1: in case of text this is the text content,
  * in case of an image this is the url.
- * @param{Array} arg2 Optional argument 2: in case of image this is an array containing the size of
+ * @param {Array} arg2 Optional argument 2: in case of image this is an array containing the size of
  * the image.
- * @returns{Object} returns the created object or false.
+ * @return {Object} returns the created object or false.
  */
 JXG.CoordsElement.create = function (Callback, board, coords, attr, arg1, arg2) {
     var el,

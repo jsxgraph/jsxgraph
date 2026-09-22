@@ -2538,8 +2538,7 @@ JXG.registerElement("riemannsum", JXG.createRiemannsum);
  * @elementclass curve
  * @augments JXG.Curve
  * @constructor
- * @type Object
- * @descript JXG.Curve
+ * @type JXG.Curve
  * @see JXG.Curve
  */
 /**

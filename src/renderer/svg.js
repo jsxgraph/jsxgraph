@@ -194,7 +194,7 @@ JXG.SVGRenderer = function (container, dim) {
      *
      * If the id is used in an "url()" call it must be eascaped.
      *
-     * @params {String} one or strings which will be concatenated.
+     * @param {String} one or strings which will be concatenated.
      * @return {String}
      * @private
      */
@@ -207,7 +207,7 @@ JXG.SVGRenderer = function (container, dim) {
      * Combine arguments to a string, joined by empty string.
      * The container id needs to be escaped, as it may contain URI-unsafe characters
      *
-     * @params {String} str variable number of strings
+     * @param {String} str variable number of strings
      * @returns String
      * @see JXG.SVGRenderer#toURL
      * @private
@@ -230,7 +230,7 @@ JXG.SVGRenderer = function (container, dim) {
      * Combine arguments to an URL string of the form url(#...)
      * Masks the container id. Calls {@link JXG.SVGRenderer#toStr}.
      *
-     * @params {String} str variable number of strings
+     * @param {String} str variable number of strings
      * @returns URL string
      * @see JXG.SVGRenderer#toStr
      * @private
