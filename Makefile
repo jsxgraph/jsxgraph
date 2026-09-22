@@ -157,7 +157,7 @@ d:
 	@# ./doc/jsdoc/tests/pseudo.js ./doc/jsdoc/tests/test.js src/options.js
 	@# node_modules/.bin/jsdoc -a all --pedantic -c ./doc/jsdoc/jsdoc.json ./doc/jsdoc/tests/test.js 
 	@# ./doc/jsdoc/tests/pseudo.js ./doc/jsdoc/tests/lineshort.js
-	node_modules/.bin/jsdoc -a all --pedantic -c ./doc/jsdoc/jsdoc.json src/jxg.js src/utils/env.js \
+	node_modules/.bin/jsdoc -a all --verbose --pedantic -c ./doc/jsdoc/jsdoc.json src/jxg.js src/utils/env.js \
 	src/base/constants.js src/utils/type.js src/utils/xml.js src/utils/event.js src/utils/expect.js \
 	src/math/math.js src/math/probfuncs.js src/math/ia.js src/math/extrapolate.js src/math/qdt.js \
 	src/math/bqdt.js src/math/numerics.js src/math/nlp.js src/math/plot.js src/math/implicitplot.js \

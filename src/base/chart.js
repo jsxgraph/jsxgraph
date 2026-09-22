@@ -955,7 +955,7 @@ JXG.extend(
  * @class Various types of charts for data visualization.
  * @pseudo
  * @name Chart
- * @elementclass curve
+ * @elementclass various
  * @augments JXG.Chart
  * @constructor
  * @type JXG.Chart

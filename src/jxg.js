@@ -429,7 +429,7 @@ jxg.extend(
 
         /**
          * @class
-         * 
+         *
          * @pseudo
          * @name JXG.board
          * @elementclass board
