@@ -2,6 +2,11 @@
   "source": {
     "include": []
   },
+  "meta": {                       
+    "title": "JSXGraph API docs",
+    "description": "JSXGraph API documentation",
+    "keyword": "JSXGraph"
+  },
   "plugins": [
     "./doc/jsdoc/plugins/jsdoc-newsignature-plugin/index.js",
     "./doc/jsdoc/plugins/jsxgraph-pseudo-class-plugin/index.js",
