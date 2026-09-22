@@ -1304,7 +1304,8 @@ JXG.createBisector = function (board, parents, attributes) {
 /**
  * @jsxgraphsignature BisectorLines
  * The four angles described by the lines `l1` and `l2` will each
- * be divided into two equal angles. *
+ * be divided into two equal angles.
+ *
  * @param {Line} l1
  * @param {Line} l2
  *

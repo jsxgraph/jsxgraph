@@ -65,7 +65,7 @@ if (
   params.length
 ) {
 ?>
-  <h5 class="h5-parameters">Parameters:</h5>
+  <h5 class="h5-parameters">Parameters</h5>
   <?js= this.partial('params.tmpl', params) ?>
 <?js } ?>
 
@@ -75,35 +75,35 @@ if (
 <?js } ?>
 
 <?js if (data.kind !== 'module' && data.requires && data.requires.length) { ?>
-<h5 class="h5-requires">Requires:</h5>
+<h5 class="h5-requires">Requires</h5>
 <ul><?js data.requires.forEach(function(r) { ?>
     <li><?js= self.linkto(r) ?></li>
 <?js }); ?></ul>
 <?js } ?>
 
 <?js if (data.fires && fires.length) { ?>
-<h5 class="h5-fires">Fires:</h5>
+<h5 class="h5-fires">Fires</h5>
 <ul><?js fires.forEach(function(f) { ?>
     <li><?js= self.linkto(f) ?></li>
 <?js }); ?></ul>
 <?js } ?>
 
 <?js if (data.listens && listens.length) { ?>
-<h5 class="h5-listens">Listens to Events:</h5>
+<h5 class="h5-listens">Listens to Events</h5>
 <ul><?js listens.forEach(function(f) { ?>
     <li><?js= self.linkto(f) ?></li>
 <?js }); ?></ul>
 <?js } ?>
 
 <?js if (data.listeners && listeners.length) { ?>
-<h5 class="h5-listeners">Listeners of This Event:</h5>
+<h5 class="h5-listeners">Listeners of This Event</h5>
 <ul><?js listeners.forEach(function(f) { ?>
     <li><?js= self.linkto(f) ?></li>
 <?js }); ?></ul>
 <?js } ?>
 
 <?js if (data.modifies && modifies.length) {?>
-<h5 class="h5-modifies">Modifies:</h5>
+<h5 class="h5-modifies">Modifies</h5>
 <?js if (modifies.length > 1) { ?><ul><?js
     modifies.forEach(function(m) { ?>
         <li><?js= self.partial('modifies.tmpl', m) ?></li>
@@ -127,7 +127,7 @@ if (
 } } ?>
 
 <?js if (data.returns && returns.length) { ?>
-<h5 class="h5-returns">Returns:</h5>
+<h5 class="h5-returns">Returns</h5>
 <?js if (returns.length > 1) { ?><ul><?js
     returns.forEach(function(r) { ?>
         <li><?js= self.partial('returns.tmpl', r) ?></li>
@@ -139,7 +139,7 @@ if (
 } } ?>
 
 <?js if (data.yields && yields.length) { ?>
-<h5 class="h5-yields">Yields:</h5>
+<h5 class="h5-yields">Yields</h5>
 <?js if (yields.length > 1) { ?><ul><?js
     yields.forEach(function(r) { ?>
         <li><?js= self.partial('returns.tmpl', r) ?></li>

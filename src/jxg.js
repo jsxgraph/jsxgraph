@@ -132,7 +132,7 @@ jxg.extend = function (object, extension, onlyOwn, toLower) {
 /**
  * A number or a function returning a number.
  *
- * @typedef {(Number | Function)} NumberLike
+ * @typedef {Number | Function} NumberLike
  */
 
 /**

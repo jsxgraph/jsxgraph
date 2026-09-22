@@ -3085,7 +3085,7 @@ JXG.registerElement("curveunion", JXG.createCurveUnion);
  *
  * @pseudo
  * @name Boxplot
- * @elementclass curve
+ * @elementclass various
  * @augments JXG.Curve
  * @constructor
  * @type JXG.Curve

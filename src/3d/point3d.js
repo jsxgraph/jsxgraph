@@ -824,7 +824,7 @@ JXG.extend(
  * Alternatively, the coordinates can be supplied as
  *
  * - function `() => [x,y,z]` returning an array of length 3 of numbers or
- * - array `arr=[x,y,z] of length 3 consisting of numbers
+ * - array `arr=[x,y,z]` of length 3 consisting of numbers
  *
  * If an optional 3D element `slide` is supplied, the point is a glider on that element.
  * @param {Array|Function} F
