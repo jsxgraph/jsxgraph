@@ -686,64 +686,64 @@ JXG.extend(Options, {
          * }</pre>
          *
          * @example
-         *         var view = board.create(
-         *             'view3d',
-         *             [[-5, -3], [8, 8],
-         *             [[-3, 3], [-3, 3], [-3, 3]]],
-         *             {
-         *                 projection: 'central',
-         *                 trackball: { enabled: true },
-         *                 depthOrder: {
-         *                     enabled: true
-         *                 },
-         *                 xPlaneRear: { visible: false },
-         *                 yPlaneRear: { visible: false },
-         *                 zPlaneRear: { fillOpacity: 0.2, visible: true }
-         *             }
-         *         );
+         *   var view = board.create(
+         *       'view3d',
+         *       [[-5, -3], [8, 8],
+         *       [[-3, 3], [-3, 3], [-3, 3]]],
+         *       {
+         *           projection: 'central',
+         *           trackball: { enabled: true },
+         *           depthOrder: {
+         *               enabled: true
+         *           },
+         *           xPlaneRear: { visible: false },
+         *           yPlaneRear: { visible: false },
+         *           zPlaneRear: { fillOpacity: 0.2, visible: true }
+         *       }
+         *   );
          *
-         *         let rho = 1.6180339887;
-         *         let vertexList = [
-         *             [0, -1, -rho], [0, +1, -rho], [0, -1, rho], [0, +1, rho],
-         *             [1, rho, 0], [-1, rho, 0], [1, -rho, 0], [-1, -rho, 0],
-         *             [-rho, 0, 1], [-rho, 0, -1], [rho, 0, 1], [rho, 0, -1]
-         *         ];
-         *         let faceArray = [
-         *             [4, 1, 11],
-         *             [11, 1, 0],
-         *             [6, 11, 0],
-         *             [0, 1, 9],
-         *             [11, 10, 4],
-         *             [9, 1, 5],
-         *             [8, 9, 5],
-         *             [5, 3, 8],
-         *             [6, 10, 11],
-         *             [2, 3, 10],
-         *             [2, 10, 6],
-         *             [8, 3, 2],
-         *             [3, 4, 10],
-         *             [7, 8, 2],
-         *             [9, 8, 7],
-         *             [0, 9, 7],
-         *             [4, 3, 5],
-         *             [5, 1, 4],
-         *             [0, 7, 6],
-         *             [7, 2, 6]
-         *         ];
-         *         var ico = view.create('polyhedron3d', [vertexList, faceArray], {
-         *             fillColorArray: [],
-         *             fillOpacity: 1,
-         *             strokeWidth: 0.1,
-         *             layer: 12,
-         *             shader: {
-         *                 enabled: true,
-         *                 type: 'angle',
-         *                 hue: 0,
-         *                 saturation: 90,
-         *                 minlightness: 60,
-         *                 maxLightness: 80
-         *             }
-         *         });
+         *   let rho = 1.6180339887;
+         *   let vertexList = [
+         *       [0, -1, -rho], [0, +1, -rho], [0, -1, rho], [0, +1, rho],
+         *       [1, rho, 0], [-1, rho, 0], [1, -rho, 0], [-1, -rho, 0],
+         *       [-rho, 0, 1], [-rho, 0, -1], [rho, 0, 1], [rho, 0, -1]
+         *   ];
+         *   let faceArray = [
+         *       [4, 1, 11],
+         *       [11, 1, 0],
+         *       [6, 11, 0],
+         *       [0, 1, 9],
+         *       [11, 10, 4],
+         *       [9, 1, 5],
+         *       [8, 9, 5],
+         *       [5, 3, 8],
+         *       [6, 10, 11],
+         *       [2, 3, 10],
+         *       [2, 10, 6],
+         *       [8, 3, 2],
+         *       [3, 4, 10],
+         *       [7, 8, 2],
+         *       [9, 8, 7],
+         *       [0, 9, 7],
+         *       [4, 3, 5],
+         *       [5, 1, 4],
+         *       [0, 7, 6],
+         *       [7, 2, 6]
+         *   ];
+         *   var ico = view.create('polyhedron3d', [vertexList, faceArray], {
+         *       fillColorArray: [],
+         *       fillOpacity: 1,
+         *       strokeWidth: 0.1,
+         *       layer: 12,
+         *       shader: {
+         *           enabled: true,
+         *           type: 'angle',
+         *           hue: 0,
+         *           saturation: 90,
+         *           minlightness: 60,
+         *           maxLightness: 80
+         *       }
+         *   });
          *
          * </pre><div id="JXGbf32b040-affb-4e03-a05b-abfe953f614d" class="jxgbox" style="width: 300px; height: 300px;"></div>
          * <script type="text/javascript">
@@ -1683,13 +1683,13 @@ JXG.extend(Options, {
          * @type String
          * @default 'parallel'
          * @example
-         *         var bound = [-5, 5];
-         *         var view = board.create('view3d',
-         *             [[-6, -3], [8, 8],
-         *             [bound, bound, bound]],
-         *             {
-         *                 projection: 'parallel'
-         *             });
+         *  var bound = [-5, 5];
+         *  var view = board.create('view3d',
+         *      [[-6, -3], [8, 8],
+         *      [bound, bound, bound]],
+         *      {
+         *          projection: 'parallel'
+         *      });
          *
          * </pre><div id="JXG80d81b13-c604-4841-bdf6-62996440088a" class="jxgbox" style="width: 300px; height: 300px;"></div>
          * <script type="text/javascript">
@@ -1709,13 +1709,13 @@ JXG.extend(Options, {
          * </script><pre>
          *
          * @example
-         *         var bound = [-5, 5];
-         *         var view = board.create('view3d',
-         *             [[-6, -3], [8, 8],
-         *             [bound, bound, bound]],
-         *             {
-         *                 projection: 'central'
-         *             });
+         *  var bound = [-5, 5];
+         *  var view = board.create('view3d',
+         *      [[-6, -3], [8, 8],
+         *      [bound, bound, bound]],
+         *      {
+         *          projection: 'central'
+         *      });
          *
          * </pre><div id="JXGdb7b7c99-631c-41d0-99bf-c0a8d0138218" class="jxgbox" style="width: 300px; height: 300px;"></div>
          * <script type="text/javascript">
@@ -1809,16 +1809,16 @@ JXG.extend(Options, {
          * }</pre>
          *
          * @example
-         *     var bound = [-4, 6];
-         *     var view = board.create('view3d',
-         *         [[-4, -3], [8, 8],
-         *         [bound, bound, bound]],
-         *         {
-         *             projection: 'parallel',
-         *             az: {
-         *                 slider: {visible: true, start: 0.75 * Math.PI}
-         *             }
-         *         });
+         *  var bound = [-4, 6];
+         *  var view = board.create('view3d',
+         *      [[-4, -3], [8, 8],
+         *      [bound, bound, bound]],
+         *      {
+         *          projection: 'parallel',
+         *          az: {
+         *              slider: {visible: true, start: 0.75 * Math.PI}
+         *          }
+         *      });
          *
          * </pre><div id="JXG4c381f21-f043-4419-941d-75f384c026d0" class="jxgbox" style="width: 300px; height: 300px;"></div>
          * <script type="text/javascript">
@@ -1920,16 +1920,16 @@ JXG.extend(Options, {
          *      },
          * }<pre>
          * @example
-         *     var bound = [-4, 6];
-         *     var view = board.create('view3d',
-         *         [[-4, -3], [8, 8],
-         *         [bound, bound, bound]],
-         *         {
-         *             projection: 'parallel',
-         *             el: {
-         *                 slider: {visible: true}
-         *             }
-         *         });
+         *  var bound = [-4, 6];
+         *  var view = board.create('view3d',
+         *      [[-4, -3], [8, 8],
+         *      [bound, bound, bound]],
+         *      {
+         *          projection: 'parallel',
+         *          el: {
+         *              slider: {visible: true}
+         *          }
+         *      });
          *
          * </pre><div id="JXG8926f733-c42e-466b-853c-74feb795e879" class="jxgbox" style="width: 300px; height: 300px;"></div>
          * <script type="text/javascript">
@@ -2029,16 +2029,16 @@ JXG.extend(Options, {
          *      },
          * }<pre>
          * @example
-         *     var bound = [-4, 6];
-         *     var view = board.create('view3d',
-         *         [[-4, -3], [8, 8],
-         *         [bound, bound, bound]],
-         *         {
-         *             projection: 'parallel',
-         *             bank: {
-         *                 slider: {visible: true}
-         *             }
-         *         });
+         *  var bound = [-4, 6];
+         *  var view = board.create('view3d',
+         *      [[-4, -3], [8, 8],
+         *      [bound, bound, bound]],
+         *      {
+         *          projection: 'parallel',
+         *          bank: {
+         *              slider: {visible: true}
+         *          }
+         *      });
          *
          * </pre><div id="JXGb67811ea-c1e3-4d1e-b13c-3537b3436f6c" class="jxgbox" style="width: 300px; height: 300px;"></div>
          * <script type="text/javascript">

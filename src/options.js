@@ -293,8 +293,7 @@ JXG.Options = {
          *
          * </script><pre>
          *
-         * @example
-         *  // Display ticks labels as fractions
+         * @example <caption>Display ticks labels as fractions</caption>
          *  var board = JXG.JSXGraph.initBoard('jxgbox', {
          *      boundingbox: [-1.2, 2.3, 1.2, -2.3],
          *      axis: true,
@@ -522,9 +521,7 @@ JXG.Options = {
          * @see Ticks#intl
          * @see JXG.Board.infobox
          *
-         * @example
-         * // Set the board-wide locale and use individual
-         * // options for a text.
+         * @example <caption>Set the board-wide locale and use individual options for a text</caption>
          * const board = JXG.JSXGraph.initBoard(BOARDID, {
          *     axis: true,
          *     intl: {
@@ -573,9 +570,7 @@ JXG.Options = {
          *
          * </script><pre>
          *
-         * @example
-         * // Here, locale is disabled in general, but enabled for the horizontal
-         * // axis and the infobox.
+         * @example <caption>Here, locale is disabled in general, but enabled for the horizontal axis and the infobox</caption>
          * const board = JXG.JSXGraph.initBoard(BOARDID, {
          *     boundingbox: [-0.5, 0.5, 0.5, -0.5],
          *     intl: {
@@ -713,13 +708,12 @@ JXG.Options = {
 
         /**
          * Control using the keyboard to change the construction.
-         * <ul>
-         * <li> enabled: true / false
-         * <li> dx: horizontal shift amount per key press
-         * <li> dy: vertical shift amount per key press
-         * <li> panShift: zoom if shift key is pressed
-         * <li> panCtrl: zoom if ctrl key is pressed
-         * </ul>
+         *
+         * - enabled: true / false
+         * - dx: horizontal shift amount per key press
+         * - dy: vertical shift amount per key press
+         * - panShift: zoom if shift key is pressed
+         * - panCtrl: zoom if ctrl key is pressed
          *
          * @example
          * var board = JXG.JSXGraph.initBoard("jxgbox", {boundingbox: [-5,5,5,-5],
@@ -778,7 +772,7 @@ JXG.Options = {
          * @name JXG.Board#logging
          * @attribute
          * @type Object
-         * @default <tt>{enabled: false}</tt>
+         * @default `{enabled: false}`
          *
          * @example
          * var board = JXG.JSXGraph.initBoard(BOARDID,
@@ -866,7 +860,7 @@ JXG.Options = {
          * @attribute
          * @type Array
          * @see JXG.Board#boundingBox
-         * @default [-Infinity, Infinity, Infinity, -Infinity]
+         * @default `[-Infinity, Infinity, Infinity, -Infinity]`
          *
          * @example
          * var board = JXG.JSXGraph.initBoard('jxgbox', {
@@ -1138,12 +1132,12 @@ JXG.Options = {
          * @default <tt>{enabled: true, throttle: 10}</tt>
          *
          * @example
-         *     var board = JXG.JSXGraph.initBoard('jxgbox', {
-         *         boundingbox: [-5,5,5,-5],
-         *         keepAspectRatio: true,
-         *         axis: true,
-         *         resize: {enabled: true, throttle: 200}
-         *     });
+         * var board = JXG.JSXGraph.initBoard('jxgbox', {
+         *     boundingbox: [-5,5,5,-5],
+         *     keepAspectRatio: true,
+         *     axis: true,
+         *     resize: {enabled: true, throttle: 200}
+         * });
          *
          * </pre><div id="JXGb55d4608-5d71-4bc3-b332-18c15fbda8c3" class="jxgbox" style="width: 300px; height: 300px;"></div>
          * <script type="text/javascript">
@@ -2805,8 +2799,8 @@ JXG.Options = {
          *     })();
          *
          * </script><pre>
-         * @example
-         * // Generate a logarithmic labelling of the vertical axis by setting the attribute generateLabelText.
+         *
+         * @example <caption>Generate a logarithmic labelling of the vertical axis by setting the attribute generateLabelText</caption>
          * const board = JXG.JSXGraph.initBoard('jxgbox', {
          *   boundingBox: [-10, 10, 10, -10], axis: true,
          *   defaultAxes: {
@@ -3152,8 +3146,8 @@ JXG.Options = {
          * @see Ticks#ticksDistance
          * @see Ticks#minTicksDistance
          * @default false
-         * @example
-         * // Create an axis providing two coord pairs.
+         *
+         * @example <caption>Create an axis providing two coord pairs</caption>
          *   var p1 = board.create('point', [0, 0]);
          *   var p2 = board.create('point', [50, 25]);
          *   var l1 = board.create('line', [p1, p2]);
@@ -3232,27 +3226,27 @@ JXG.Options = {
          * [1,0] the tick is only visible to the left of the line.
          *
         * @example
-        *         var board = JXG.JSXGraph.initBoard("jxgbox", {
-        *             boundingbox: [-5, 5, 5, -5],
-        *             axis: true,
-        *             defaultAxes: {
-        *                 x: {
-        *                     ticks: {
-        *                         majorTickEndings: [1, 0],
-        *                         ignoreInfiniteTickEndings: false
-        *                     }
-        *                 },
-        *                 y: {
-        *                     ticks: {
-        *                         majorTickEndings: [0, 1],
-        *                         ignoreInfiniteTickEndings: false
-        *                     }
-        *                 }
-        *             }
-        *         });
+        *  var board = JXG.JSXGraph.initBoard("jxgbox", {
+        *      boundingbox: [-5, 5, 5, -5],
+        *      axis: true,
+        *      defaultAxes: {
+        *          x: {
+        *              ticks: {
+        *                  majorTickEndings: [1, 0],
+        *                  ignoreInfiniteTickEndings: false
+        *              }
+        *          },
+        *          y: {
+        *              ticks: {
+        *                  majorTickEndings: [0, 1],
+        *                  ignoreInfiniteTickEndings: false
+        *              }
+        *          }
+        *      }
+        *  });
         *
-        *         var p = board.create('point', [1, 1]);
-        *         var l = board.create('line', [1, -1, 1]);
+        *  var p = board.create('point', [1, 1]);
+        *  var l = board.create('line', [1, -1, 1]);
         *
         * </pre><div id="JXGf9ccb731-7a73-44d1-852e-f9c9c405a9d1" class="jxgbox" style="width: 300px; height: 300px;"></div>
         * <script type="text/javascript">
@@ -3679,9 +3673,7 @@ JXG.Options = {
          * @see JXG.Board#intl
          * @see Text#intl
          *
-                  * @example
-         * // Here, locale is disabled in general, but enabled for the horizontal
-         * // axis and the infobox.
+         * @example <caption>Here, locale is disabled in general, but enabled for the horizontal axis and the infobox</caption>
          * const board = JXG.JSXGraph.initBoard(BOARDID, {
          *     boundingbox: [-0.5, 0.5, 0.5, -0.5],
          *     intl: {
@@ -3942,8 +3934,8 @@ JXG.Options = {
          * @attribute
          * @default 'counterclockwise'
          * @visprop
-         * @example
          *
+         * @example
          * var p1, p2, p3, a;
          * p1 = board.create('point', [0, 0]);
          * p2 = board.create('point', [4, 0]);
@@ -4315,7 +4307,7 @@ JXG.Options = {
          * @see Axis#anchor
          * @see Axis#anchorDist
          *
-         * @example // Use navigation to see effect.
+         * @example <caption>position: use navigation to see effect</caption>
          *  var axis1, axis2, circle;
          *
          *  board.create('axis', [[0,0],[1,0]],{
@@ -4353,7 +4345,7 @@ JXG.Options = {
          *
          * </script><pre>
          *
-         * @example // Use navigation to see effect.
+         * @example <caption>position: use navigation to see effect</caption>
          *      board.create('axis', [[0,0],[1,0]],{
          *          position: 'sticky',
          *          anchor: 'right',
@@ -4505,8 +4497,7 @@ JXG.Options = {
          * @name Axis#ticksAutoPos
          * @attribute
          * @default false
-         * @example
-         * // Navigate to see an effect.
+         * @example <caption>ticksAutoPos: use navigation to see effect</caption>
          * board.create('axis', [[0, 0], [1, 0]], {
          *     position: 'sticky',
          *     anchor: 'left right',
@@ -5879,10 +5870,7 @@ JXG.Options = {
          * @attribute
          * @private
          *
-         * @example
-         * // Theme 1
-         * // quadratic grid appearance with distance of major grid elements set to the primarily greater one
-         *
+         * @example <caption>Theme 1 - quadratic grid appearance with distance of major grid elements set to the primarily greater one</caption>
          * JXG.JSXGraph.initBoard('jxgbox', {
          *     boundingbox: [-4, 4, 4, -4], axis: true,
          *     defaultAxes: {
@@ -5905,10 +5893,7 @@ JXG.Options = {
          *     })();
          * </script> <pre>
          *
-         * @example
-         * // Theme 2
-         * // lines and points in between
-         *
+         * @example <caption>Theme 2 - lines and points in between</caption>
          * JXG.JSXGraph.initBoard('jxgbox', {
          *     boundingbox: [-4, 4, 4, -4], axis: false,
          *     grid: { theme: 2 },
@@ -5923,10 +5908,7 @@ JXG.Options = {
          *     })();
          * </script> <pre>
          *
-         * @example
-         * // Theme 3
-         * // lines and thinner lines in between
-         *
+         * @example <caption>Theme 3 - lines and thinner lines in between</caption>
          * JXG.JSXGraph.initBoard('jxgbox', {
          *     boundingbox: [-4, 4, 4, -4], axis: false,
          *     grid: { theme: 3 },
@@ -5941,10 +5923,7 @@ JXG.Options = {
          *     })();
          * </script> <pre>
          *
-         * @example
-         * // Theme 4
-         * // lines with grid of '+'s plotted in between
-         *
+         * @example <caption>Theme 4 - lines with grid of '+'s plotted in between</caption>
          * JXG.JSXGraph.initBoard('jxgbox', {
          *     boundingbox: [-4, 4, 4, -4], axis: false,
          *     grid: { theme: 4 },
@@ -5959,10 +5938,7 @@ JXG.Options = {
          *     })();
          * </script> <pre>
          *
-         * @example
-         * // Theme 5
-         * // grid of '+'s and points in between
-         *
+         * @example <caption>Theme 5 - grid of '+'s and points in between</caption>
          * JXG.JSXGraph.initBoard('jxgbox', {
          *     boundingbox: [-4, 4, 4, -4], axis: false,
          *     grid: { theme: 5 },
@@ -5977,10 +5953,7 @@ JXG.Options = {
          *     })();
          * </script> <pre>
          *
-         * @example
-         * // Theme 6
-         * // grid of circles with points in between
-         *
+         * @example <caption>Theme 6 - grid of circles with points in between</caption>
          * JXG.JSXGraph.initBoard('jxgbox', {
          *     boundingbox: [-4, 4, 4, -4], axis: false,
          *     grid: { theme: 6 },
@@ -8257,7 +8230,7 @@ JXG.Options = {
         /**
          * If set to true, the point will only snap to (possibly invisibly) grid points
          * when within {@link Point#attractorDistance} of such a grid point.
-         * <p>
+         *
          * The coordinates of the grid points are either integer multiples of snapSizeX and snapSizeY
          * (given in user coordinates, not pixels) or are the intersection points
          * of the major ticks of the boards default axes in case that snapSizeX, snapSizeY are negative.
@@ -8668,7 +8641,7 @@ JXG.Options = {
 
         /**
          * Orientation of the sector: 'clockwise' or 'counterclockwise' (default).
-         * <p>
+         *
          * If the attribute 'selection' is set to 'minor' or 'major' and
          * "the other" angle sector is to be taken, the orientation of the angle switches, too.
          *
@@ -8911,19 +8884,19 @@ JXG.Options = {
          * @default empty
          *
          * @example
-         *         var n = board.create('slider', [[-2, 3], [4, 3], [1, 5, 100]], {
-         *             name: 'n',
-         *             snapWidth: 1,
-         *             snapValues: [1, 22, 77, 100],
-         *             snapValueDistance: 5
-         *         });
+         *  var n = board.create('slider', [[-2, 3], [4, 3], [1, 5, 100]], {
+         *      name: 'n',
+         *      snapWidth: 1,
+         *      snapValues: [1, 22, 77, 100],
+         *      snapValueDistance: 5
+         *  });
          *
-         *         var k = board.create('slider', [[-2, -1], [4, -1], [-4, 0, 4]], {
-         *             name: 'k',
-         *             snapWidth: 0.1,
-         *             snapValues: [-3, -1, 1, 3],
-         *             snapValueDistance: 0.4
-         *         });
+         *  var k = board.create('slider', [[-2, -1], [4, -1], [-4, 0, 4]], {
+         *      name: 'k',
+         *      snapWidth: 0.1,
+         *      snapValues: [-3, -1, 1, 3],
+         *      snapValueDistance: 0.4
+         *  });
          *
          * </pre><div id="JXG9be68014-4e14-479a-82b4-e92d9b8f6eef" class="jxgbox" style="width: 300px; height: 300px;"></div>
          * <script type="text/javascript">
@@ -9497,11 +9470,10 @@ JXG.Options = {
 
         /**
          * CSS classes for the smart label. Available classes are:
-         * <ul>
-         * <li> 'smart-label-solid'
-         * <li> 'smart-label-outline'
-         * <li> 'smart-label-pure'
-         * </ul>
+         *
+         * - 'smart-label-solid'
+         * - 'smart-label-outline'
+         * - 'smart-label-pure'
          *
          * By default, an additional class is given specific for the element type.
          * Available classes are 'smart-label-angle', 'smart-label-circle',
@@ -10215,32 +10187,32 @@ JXG.Options = {
 
         /**
          * Default CSS properties of the HTML text element.
-         * <p>
+         *
          * The CSS properties which are set here, are handed over to the style property
          * of the HTML text element. That means, they have higher property than any
          * CSS class.
-         * <p>
+         *
          * If a property which is set here should be overruled by a CSS class
          * then this property should be removed here.
-         * <p>
+         *
          * The reason, why this attribute should be kept to its default value at all,
          * is that screen dumps of SVG boards with <tt>board.renderer.dumpToCanvas()</tt>
          * will ignore the font-family if it is set in a CSS class.
          * It has to be set explicitly as style attribute.
-         * <p>
+         *
          * In summary, the order of priorities (specificity) from high to low is
-         * <ol>
-         *  <li> JXG.Options.text.cssStyle
-         *  <li> JXG.Options.text.cssDefaultStyle
-         *  <li> JXG.Options.text.cssClass
-         * </ol>
-         * @example
+         *
+         * - JXG.Options.text.cssStyle
+         * - JXG.Options.text.cssDefaultStyle
+         * - JXG.Options.text.cssClass
+         *
          * If all texts should get its font-family from the default CSS class
          * before initializing the board
-         * <pre>
+         *
+         * ```
          *   JXG.Options.text.cssDefaultStyle = '';
          *   JXG.Options.text.highlightCssDefaultStyle = '';
-         * </pre>
+         * ```
          * should be called.
          *
          * @name cssDefaultStyle
@@ -10256,17 +10228,18 @@ JXG.Options = {
 
         /**
          * Default CSS properties of the HTML text element in case of highlighting.
-         * <p>
          * The CSS properties which are set here, are handed over to the style property
          * of the HTML text element. That means, they have higher property than any
          * CSS class.
-         * @example
+         *
          * If all texts should get its font-family from the default CSS class
          * before initializing the board
-         * <pre>
+         *
+         * ```
          *   JXG.Options.text.cssDefaultStyle = '';
          *   JXG.Options.text.highlightCssDefaultStyle = '';
-         * </pre>
+         * ```
+         *
          * should be called.
          *
          * @name highlightCssDefaultStyle
@@ -10282,7 +10255,7 @@ JXG.Options = {
 
         /**
          * CSS properties of the HTML text element.
-         * <p>
+         *
          * The CSS properties which are set here, are handed over to the style property
          * of the HTML text element. That means, they have higher property (specificity) han any
          * CSS class.
@@ -10300,7 +10273,7 @@ JXG.Options = {
 
         /**
          * CSS properties of the HTML text element in case of highlighting.
-         * <p>
+         *
          * The CSS properties which are set here, are handed over to the style property
          * of the HTML text element. That means, they have higher property (specificity) than any
          * CSS class.
@@ -10333,7 +10306,7 @@ JXG.Options = {
          * If true, MathJax will be used to render the input string.
          * Supports MathJax 2 and above.
          * It is recommended to use this option together with the option
-         * "parse: false". Otherwise, 4 backslashes (e.g. &bsol;&bsol;&bsol;&bsol;alpha) are needed
+         * `parse: false`. Otherwise, 4 backslashes (e.g. &bsol;&bsol;&bsol;&bsol;alpha) are needed
          * instead of two (e.g. &bsol;&bsol;alpha).
          *
          * @name useMathJax
@@ -10657,8 +10630,7 @@ JXG.Options = {
          * @default <tt>{}</tt>
          * @type Object
          *
-         * @example
-         * // to globally apply macros to all text elements use:
+         * @example <caption>Globally apply macros to all text elements</caption>
          * JXG.Options.text.katexMacros = {'\\jxg': 'JSXGraph is awesome'};
          *
          * const board = JXG.JSXGraph.initBoard('jxgbox', {

@@ -332,8 +332,7 @@ JXG.registerElement("circle3d", JXG.createCircle3D);
  * @param {Sphere3D} el1
  * @param {Sphere3D|Plane3D} el2
  *
- * @example
- * // Create the intersection circle of two spheres
+ * @example <caption>Create the intersection circle of two spheres</caption>
  * var view = board.create(
  *     'view3d',
  *     [[-6, -3], [8, 8],

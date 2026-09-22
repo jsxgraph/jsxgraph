@@ -375,8 +375,7 @@ JXG.extend(
  * @param {Function} F<sub>Z</sub>
  * @param {Array|Function} range
  *
- * @example
- * // create a simple curve in 3d
+ * @example <caption>Create a simple curve in 3D</caption>
  * var bound = [-1.5, 1.5];
  * var view=board.create('view3d',
  *     [[-4, -4],[8, 8],
@@ -510,6 +509,7 @@ JXG.registerElement("curve3d", JXG.createCurve3D);
  * @param {Array} f1
  * @param {Array} f2
  * @param {Array} f3
+ *
  * @example
  * const view = board.create('view3d',
  *     [

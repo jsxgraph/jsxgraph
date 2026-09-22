@@ -464,6 +464,7 @@ JXG.extend(
  * @param {Function} F3
  * @param {Array|Function} rangeU
  * @param {Array|Function} rangeV
+ *
  * @example
  * var view = board.create('view3d',
  * 		        [[-6, -3], [8, 8],

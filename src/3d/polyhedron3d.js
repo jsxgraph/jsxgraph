@@ -326,7 +326,7 @@ JXG.extend(
  *
  * </script><pre>
  *
-  * @example
+ * @example
  * var box = [-4, 4];
  * var view = board.create(
  *     'view3d',
