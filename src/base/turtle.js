@@ -53,16 +53,16 @@ import Type from "../utils/type.js";
  * @constructor
  * @param {JXG.Board} board The board the new turtle is drawn on.
  * @param {Array} parents Start position and start direction of the turtle. Possible values are
+ * ```
  * [x, y, angle]
  * [[x, y], angle]
  * [x, y]
  * [[x, y]]
+ * ```
  * @param {Object} attributes Attributes to change the visual properties of the turtle object
  * All angles are in degrees.
  *
- * @example
- *
- * //creates a figure 8 animation
+ * @example <caption>Creates a figure 8 animation</caption>
  * var board = JXG.JSXGraph.initBoard('jxgbox',{boundingbox: [-250, 250, 250, -250]});
  * var t = board.create('turtle',[0, 0], {strokeOpacity:0.5});
  * t.setPenSize(3);
@@ -88,9 +88,9 @@ import Type from "../utils/type.js";
  * </pre><div class="jxgbox" id="JXG14167b1c-2ad3-11e5-8dd9-901b0e1b8723" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
  *     (function() {
- *         var brd = JXG.JSXGraph.initBoard('JXG14167b1c-2ad3-11e5-8dd9-901b0e1b8723',
+ *         var board = JXG.JSXGraph.initBoard('JXG14167b1c-2ad3-11e5-8dd9-901b0e1b8723',
  *             {boundingbox: [-250, 250, 250, -250], axis: true, showcopyright: false, shownavigation: false});
- *               var t = brd.create('turtle',[0, 0], {strokeOpacity:0.5});
+ *               var t = board.create('turtle',[0, 0], {strokeOpacity:0.5});
  *               t.setPenSize(3);
  *               t.right(90);
  *               var alpha = 0;
@@ -140,9 +140,9 @@ JXG.Turtle = function (board, parents, attributes) {
         // [x,y,dir]
         if (parents.length === 3) {
             // Only numbers are accepted at the moment
-            x = parents[0];
-            y = parents[1];
-            dir = parents[2];
+            x = Type.evaluate(parents[0]);
+            y = Type.evaluate(parents[1]);
+            dir = Type.evaluate(parents[2]);
         } else if (parents.length === 2) {
             // [[x,y],dir]
             if (Type.isArray(parents[0])) {
@@ -151,8 +151,8 @@ JXG.Turtle = function (board, parents, attributes) {
                 dir = parents[1];
                 // [x,y]
             } else {
-                x = parents[0];
-                y = parents[1];
+                x = Type.evaluate(parents[0]);
+                y = Type.evaluate(parents[1]);
             }
             // [[x,y]]
         } else {
@@ -931,6 +931,73 @@ JXG.extend(
  */
 /**
  * @jsxgraphsignature Turtle
+ * Start position and start direction of the turtle.
+ * @param {NumberLike} x
+ * @param {NumberLike} y
+ * @param {NumberLike} [angle=90]
+ *
+ * @example <caption>Animation of an 8</caption>
+ * var board = JXG.JSXGraph.initBoard('jxgbox',{boundingbox: [-250, 250, 250, -250]});
+ * var t = board.create('turtle', [0, 0], {
+ *     strokeOpacity:0.5, strokeColor: 'blue', strokeWidth: 4
+ * });
+ * t.setPenSize(3);
+ * t.right(90);
+ * var alpha = 0;
+ *
+ * var run = function() {
+ *  t.forward(2);
+ *  if (Math.floor(alpha / 360) % 2 === 0) {
+ *   t.left(1);        // turn left by 1 degree
+ *  } else {
+ *   t.right(1);       // turn right by 1 degree
+ *  }
+ *  alpha += 1;
+ *
+ *  if (alpha < 1440) {  // stop after two rounds
+ *   setTimeout(run, 20);
+ *  }
+ * }
+ *
+ * run();
+ *
+ * </pre><div class="jxgbox" id="JXG14167b1c-2ad3-15f5-8dd9-901b0e1b8723" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *     (function() {
+ *         var board = JXG.JSXGraph.initBoard('JXG14167b1c-2ad3-15f5-8dd9-901b0e1b8723',
+ *             {boundingbox: [-250, 250, 250, -250], axis: true, showcopyright: false, shownavigation: false});
+ * var t = board.create('turtle', [0, 0], {
+ *     strokeOpacity:0.5, strokeColor: 'blue', strokeWidth: 4
+ * });
+ *               t.setPenSize(3);
+ *               t.right(90);
+ *               var alpha = 0;
+ *
+ *              var run = function() {
+ *              t.forward(2);
+ *             if (Math.floor(alpha / 360) % 2 === 0) {
+ *                t.left(1);        // turn left by 1 degree
+ *              } else {
+ *                   t.right(1);       // turn right by 1 degree
+ *             }
+ *             alpha += 1;
+ *
+ *             if (alpha < 1440) {  // stop after two rounds
+ *                 setTimeout(run, 20);
+ *               }
+ *             }
+ *
+ *          run();
+ *
+ *     })();
+ *
+ * </script><pre>
+ */
+/**
+ * @jsxgraphsignature Turtle
+ * Start position and start direction of the turtle.
+ * @param {Array} coords Array [x, y] with start position
+ * @param {NumberLike} [angle=90]
  */
 JXG.createTurtle = function (board, parents, attributes) {
     var attr;
