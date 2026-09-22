@@ -859,10 +859,11 @@ JXG.extend(
 
 /**
  * @class A circle can be defined by various combinations of points and numbers.
- * @pseudo
- * @description  A circle consists of all points with a given distance from one point. This point is called center, the distance is called radius.
+ * A circle consists of all points with a given distance from one point. This point is called center, the distance is called radius.
  * A circle can be constructed by providing a center and a point on the circle or a center and a radius (given as a number, function,
  * line, or circle). If the radius is a negative value, its absolute values is taken.
+ *
+ * @pseudo
  * @name Circle
  * @elementclass circle
  * @augments JXG.Circle

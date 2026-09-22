@@ -22,15 +22,18 @@ var self = this;
     ?><?js= (data.signature || '') ?></h4>
 
     <?js if (data.summary) { ?>
-        <p class="summary usertext"><?js= summary
+        <!--<p class="summary usertext"><?js= summary
             .trim()
             .replace(/^<p>/, "")
-            .replace(/<\/p>$/, "") ?></p>
+            .replace(/<\/p>$/, "") ?></p>-->
+    <?js } ?>
+    <?js if (data.description) {?>
+      <p class="tag-description"><?js= data.description ?></p>
     <?js } ?>
 <?js } ?>
 
 <?js
-// only shows singature in class (not in constructor-doclet)
+// only shows signature in class (not in constructor-doclet)
 if (data.kind === 'class') {
 ?>
   <?js= this.partial('signatureblocks.tmpl', data) ?>
@@ -70,7 +73,7 @@ if (data.kind === 'class') {
 if (
   !data.isPseudo &&
   data.params &&
-  params.length 
+  params.length
   // &&
   // !(data.signatureBlocks && data.signatureBlocks.length)
 ) {
@@ -108,16 +111,16 @@ if (
 <?js }); ?></ul>
 <?js } ?>
 
-<?js if (data.modifies && modifies.length) {?>		
-<h5 class="h5-modifies">Modifies:</h5>		
-<?js if (modifies.length > 1) { ?><ul><?js		
-    modifies.forEach(function(m) { ?>		
-        <li><?js= self.partial('modifies.tmpl', m) ?></li>		
-    <?js });		
-?></ul><?js } else {		
-    modifies.forEach(function(m) { ?>		
-        <?js= self.partial('modifies.tmpl', m) ?>		
-    <?js });		
+<?js if (data.modifies && modifies.length) {?>
+<h5 class="h5-modifies">Modifies:</h5>
+<?js if (modifies.length > 1) { ?><ul><?js
+    modifies.forEach(function(m) { ?>
+        <li><?js= self.partial('modifies.tmpl', m) ?></li>
+    <?js });
+?></ul><?js } else {
+    modifies.forEach(function(m) { ?>
+        <?js= self.partial('modifies.tmpl', m) ?>
+    <?js });
 } } ?>
 
 <?js if (data.exceptions && exceptions.length) { ?>
@@ -144,14 +147,14 @@ if (
     <?js });
 } } ?>
 
-<?js if (data.yields && yields.length) { ?>		
-<h5 class="h5-yields">Yields:</h5>		
-<?js if (yields.length > 1) { ?><ul><?js		
-    yields.forEach(function(r) { ?>		
-        <li><?js= self.partial('returns.tmpl', r) ?></li>		
-    <?js });		
-?></ul><?js } else {		
-    yields.forEach(function(r) { ?>		
-        <?js= self.partial('returns.tmpl', r) ?>		
-    <?js });		
+<?js if (data.yields && yields.length) { ?>
+<h5 class="h5-yields">Yields:</h5>
+<?js if (yields.length > 1) { ?><ul><?js
+    yields.forEach(function(r) { ?>
+        <li><?js= self.partial('returns.tmpl', r) ?></li>
+    <?js });
+?></ul><?js } else {
+    yields.forEach(function(r) { ?>
+        <?js= self.partial('returns.tmpl', r) ?>
+    <?js });
 } } ?>

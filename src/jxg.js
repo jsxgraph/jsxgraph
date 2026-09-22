@@ -428,6 +428,13 @@ jxg.extend(
         },
 
         /**
+         * @class
+         * 
+         * @pseudo
+         * @name JXG.board
+         * @elementclass board
+         */
+        /**
          * Initialize a new board.
          * Alias of {@link JXG.JSXGraph.initBoard}.
          * @param {String|Object} box id of or reference to the HTML element in which the board is painted.
@@ -628,8 +635,15 @@ jxg.extend(
         },
 
         /**
+         * @class
+         *
+         * @pseudo
+         * @name JXG.appBox
+         * @elementclass board
+         */
+        /**
          * Create a JSXGraph div element containing a JSXGraph board inside of a user supplied div.
-         * <p>
+         *
          * The styling of the supplied div is up to the user, see the style-tag in the example below for
          * one possibility. The CSS for the inner div, hosting the JSXGraph board, is supplied by the attributes
          *
