@@ -1031,6 +1031,58 @@ summary.signature::before {
 }
 
 /* --------------------------------------------------------------------------
+   9c. Method entries
+
+   One box per entry. The .container-method wrapper comes from method.tmpl -
+   a method entry is a run of sibling elements (signature, description,
+   parameter table, examples, return value), and CSS cannot enclose a run of
+   siblings. The signature heading sits flush inside it as the header row,
+   the same construction as the page header and the usage section.
+   -------------------------------------------------------------------------- */
+.container-method {
+    margin: 1.5em 0;
+    padding: 0 1.1rem 1.1rem;
+    border: 1px solid #d7e0e8;
+    border: 1px solid var(--jxg-border);
+    border-radius: 0.6rem;
+    border-radius: var(--jxg-radius);
+    background-color: #ffffff;
+    background-color: var(--jxg-bg);
+}
+
+.container-method h4.name {
+    margin: 0 -1.1rem 1.1rem;
+    border-width: 0 0 1px;
+    border-radius: 0.6rem 0.6rem 0 0;
+    border-radius: var(--jxg-radius) var(--jxg-radius) 0 0;
+    box-shadow: none;
+}
+
+.container-method > :last-child {
+    margin-bottom: 0;
+}
+
+/* At the end of an article the same partial is rendered inside
+   .container-article-other, which already draws a box. A second frame there
+   would double up, so the wrapper goes flat in that context. */
+.container-article-other .container-method {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background-color: transparent;
+}
+
+.container-article-other .container-method h4.name {
+    margin: 0 0 .75em;
+    border-width: 1px;
+    border-radius: 0.6rem;
+    border-radius: var(--jxg-radius);
+    box-shadow: 0 1px 2px rgba(16, 66, 124, 0.08);
+    box-shadow: var(--jxg-shadow-sm);
+}
+
+/* --------------------------------------------------------------------------
    10. Detail lists (Description / Type / Source / See / Default ...)
    -------------------------------------------------------------------------- */
 .details {

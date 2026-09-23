@@ -3,8 +3,8 @@ var data = obj;
 var self = this;
 ?>
 
+<div class="container-method">
 <?js if (data.kind !== 'module' && !data.hideconstructor && data.kind !== 'class') { ?>
-
     <?js if (data.kind === 'class' && data.classdesc) { ?>
     <h2>Constructor</h2>
     <?js } ?>
@@ -158,3 +158,4 @@ if (
         <?js= self.partial('returns.tmpl', r) ?>
     <?js });
 } } ?>
+</div>
