@@ -1049,21 +1049,19 @@ JXG.extend(
         /**
          * Set the visibility of an element. The visibility is influenced by
          * (listed in ascending priority):
-         * <ol>
-         * <li> The value of the element's attribute 'visible'
-         * <li> The visibility of a parent element. (Example: label)
+         *
+         * 1) The value of the element's attribute 'visible'
+         * 2) The visibility of a parent element. (Example: label)
          * This overrules the value of the element's attribute value only if
          * this attribute value of the element is 'inherit'.
-         * <li> being inside of the canvas
-         * </ol>
+         * 3) being inside of the canvas
          *
          * This method is called three times for most elements:
-         * <ol>
-         * <li> between {@link JXG.GeometryElement#update}
+         *
+         * 1) between {@link JXG.GeometryElement#update}
          * and {@link JXG.GeometryElement#updateRenderer}. In case the value is 'inherit', nothing is done.
-         * <li> Recursively, called by itself for child elements. Here, 'inherit' is overruled by the parent's value.
-         * <li> In {@link JXG.GeometryElement#updateRenderer}, if the element is outside of the canvas.
-         * </ol>
+         * 2) Recursively, called by itself for child elements. Here, 'inherit' is overruled by the parent's value.
+         * 3) In {@link JXG.GeometryElement#updateRenderer}, if the element is outside of the canvas.
          *
          * @param  {Boolean} parent_val Visibility of the parent element.
          * @return {JXG.GeometryElement} Reference to the element.

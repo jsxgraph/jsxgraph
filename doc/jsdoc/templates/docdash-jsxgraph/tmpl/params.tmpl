@@ -75,7 +75,7 @@
         <th>Default</th>
         <?js } ?>
 
-        <th class="last">Description</th>
+        <th>Description</th>
     </tr>
     </thead>
 
@@ -121,7 +121,7 @@
                 </td>
             <?js } ?>
 
-            <td class="description last"><?js= param.description ?><?js if (param.subparams) { ?>
+            <td class="description"><?js= param.description ?><?js if (param.subparams) { ?>
                 <h6>Properties</h6>
                 <?js= self.partial('params.tmpl', param.subparams) ?>
             <?js } ?></td>

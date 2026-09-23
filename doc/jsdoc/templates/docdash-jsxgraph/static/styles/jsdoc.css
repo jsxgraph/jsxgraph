@@ -2170,7 +2170,8 @@ summary:hover::before {
     font-style: normal;
     font-weight: 400;
     font-display: swap;
-    src: url('../fonts/Fira-Sans/FiraSans-Regular.ttf') format('truetype');
+    src: url('../fonts/Fira-Sans/FiraSans-Regular.woff2') format('woff2'),
+    url('../fonts/Fira-Sans/FiraSans-Regular.ttf') format('truetype');
 }
 
 @font-face {
@@ -2178,7 +2179,8 @@ summary:hover::before {
     font-style: italic;
     font-weight: 400;
     font-display: swap;
-    src: url('../fonts/Fira-Sans/FiraSans-Italic.ttf') format('truetype');
+    src: url('../fonts/Fira-Sans/FiraSans-Italic.woff2') format('woff2'),
+    url('../fonts/Fira-Sans/FiraSans-Italic.ttf') format('truetype');
 }
 
 @font-face {
@@ -2186,7 +2188,8 @@ summary:hover::before {
     font-style: normal;
     font-weight: 600;
     font-display: swap;
-    src: url('../fonts/Fira-Sans/FiraSans-SemiBold.ttf') format('truetype');
+    src: url('../fonts/Fira-Sans/FiraSans-SemiBold.woff2') format('woff2'),
+    url('../fonts/Fira-Sans/FiraSans-SemiBold.ttf') format('truetype');
 }
 
 @font-face {
@@ -2194,7 +2197,8 @@ summary:hover::before {
     font-style: normal;
     font-weight: 400;
     font-display: swap;
-    src: url('../fonts/Fira-Code/FiraCode-Regular.ttf') format('truetype');
+    src: url('../fonts/Fira-Code/FiraCode-Regular.woff2') format('woff2'),
+    url('../fonts/Fira-Code/FiraCode-Regular.ttf') format('truetype');
 }
 
 @font-face {
@@ -2202,7 +2206,8 @@ summary:hover::before {
     font-style: normal;
     font-weight: 600;
     font-display: swap;
-    src: url('../fonts/Fira-Code/FiraCode-SemiBold.ttf') format('truetype');
+    src: url('../fonts/Fira-Code/FiraCode-SemiBold.woff2') format('woff2'),
+    url('../fonts/Fira-Code/FiraCode-SemiBold.ttf') format('truetype');
 }
 
 @font-face {

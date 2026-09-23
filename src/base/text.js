@@ -1154,10 +1154,9 @@ JXG.extend(
          * and center (x, y)
          *
          * An overlap occurs when either:
-         * <ol>
-         *   <li> For labels/points: Their bounding boxes intersect
-         *   <li> For other objects: The object contains the center point of the box
-         * </ol>
+         *
+         * 1) For labels/points: Their bounding boxes intersect
+         * 2) For other objects: The object contains the center point of the box
          *
          * @private
          * @param  {Number} x x-coordinate of the center (screen coordinates)

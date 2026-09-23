@@ -3,8 +3,8 @@ var data = obj;
 var self = this;
 ?>
 
-<div class="container-method">
 <?js if (data.kind !== 'module' && !data.hideconstructor && data.kind !== 'class') { ?>
+
     <?js if (data.kind === 'class' && data.classdesc) { ?>
     <h2>Constructor</h2>
     <?js } ?>
@@ -21,10 +21,28 @@ var self = this;
       }
     ?><?js= (data.signature || '') ?></h4>
 
+    <?js if (data.summary) { ?>
+        <!--<p class="summary usertext"><?js= summary
+            .trim()
+            .replace(/^<p>/, "")
+            .replace(/<\/p>$/, "") ?></p>-->
+    <?js } ?>
     <?js if (data.description) {?>
       <p class="tag-description"><?js= data.description ?></p>
     <?js } ?>
 <?js } ?>
+
+
+<?js
+// only shows signature in class (not in constructor-doclet)
+if (data.kind === 'class') {
+?>
+  <?js= this.partial('signatureblocks.tmpl', data) ?>
+<?js } ?>
+
+<!--
+<?js= this.partial('details.tmpl', data) ?>
+-->
 
 <?js if (data.augments && data.alias && data.alias.indexOf('module:') === 0) { ?>
     <h3 class="h3-extends">Extends</h3>
@@ -57,6 +75,8 @@ if (
   !data.isPseudo &&
   data.params &&
   params.length
+  // &&
+  // !(data.signatureBlocks && data.signatureBlocks.length)
 ) {
 ?>
   <h3 class="h3-parameters">Parameters</h3>
@@ -139,4 +159,3 @@ if (
         <?js= self.partial('returns.tmpl', r) ?>
     <?js });
 } } ?>
-</div>

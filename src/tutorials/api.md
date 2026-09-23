@@ -33,6 +33,21 @@
 - ~~Smartlabel: CSS of font color~~ (in main branch)
 - ~~IntersectionLine3D not dynamic, see example~~ (in main branch)
 
+__AI issues__
+
+- A1 Retire `signatureblocks.tmpl`
+- A2 fixed (see last block)
+- A2b
+- A3
+- C9 
+- C10: __no__
+- C11
+- C12
+- C13
+- D14
+- D15
+
+
 ## Attributes
 
 - Add `@attribute` to each attribute comment, in particular in `options.js` and `options3d.js`
