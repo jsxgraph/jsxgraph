@@ -6,7 +6,6 @@
   - `@augments ...`
   - `@type ...`
   - `@throws`
-- jsdoc: Often, @see doubles @extends 
 - check domains (i.e. params a, b) of curves
 - arcs, sectors: check signatures having lines
 - check what base/composition.js does
@@ -32,6 +31,7 @@
 - ~~Turtle: params and examples~~
 - ~~Smartlabel: CSS of font color~~ (in main branch)
 - ~~IntersectionLine3D not dynamic, see example~~ (in main branch)
+- jsdoc: Often, @see doubles @extends: Much improved
 
 __AI issues__
 
