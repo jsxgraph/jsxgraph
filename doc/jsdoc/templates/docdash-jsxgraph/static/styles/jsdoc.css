@@ -205,7 +205,6 @@ h1.page-title {
     top: 0;
     z-index: 4;
     font-size: 1.55rem;
-    font-size: 1.55rem;
     font-weight: 400;
     margin: 0 0 1.25rem;
     padding: 1.35rem 0 1.15rem 0;
@@ -952,7 +951,9 @@ summary.signature::before {
     margin-bottom: 0;
 }
 
-/* "Element" / "Class" vor dem Seitentitel: Etikett in Pillenform */
+/* "Element" / "Class" vor dem Seitentitel: Etikett in Pillenform.
+   Das Template gibt inzwischen einheitlich .container-main-type aus;
+   .main-type bleibt stehen, damit bereits erzeugte Seiten weiter passen. */
 .main-type,
 .container-main-type {
     display: inline-block;
@@ -1253,21 +1254,22 @@ nav::-webkit-scrollbar-thumb:hover {
 
 /* --------------------------------------------------------------------------
    Eingebettete JSXGraph-Konstruktionen auf die Optik der Codeblocke bringen.
-   Breite und Hoehe bleiben bei den Werten aus dem style-Attribut, die Konstruktion
-   wird also nicht mehr gedehnt; max-width verhindert nur das Ueberlaufen auf
-   schmalen Schirmen.
-   .jxgbox kommt aus jsxgraph.css, das im <head> NACH jsdoc.css eingebunden
-   wird, und das margin aus einem <style>-Block der Seite. Ohne !important
-   kaeme diese Regel dagegen nicht an.
+   Breite und Hoehe bleiben bei den Werten aus dem style-Attribut, die
+   Konstruktion wird also nicht gedehnt; max-width verhindert nur das
+   Ueberlaufen auf schmalen Schirmen.
+   Seit jsxgraph.css im <head> VOR jsdoc.css steht und der Inline-Block
+   .jxgbox { margin: auto } aus dem Layout entfallen ist, genuegt die normale
+   Kaskade - !important wird hier nicht mehr gebraucht.
+   JSXGraph liest den border-radius aus und schneidet das SVG passend zu.
    -------------------------------------------------------------------------- */
 .jxgbox {
-    max-width: 100% !important;
-    margin: 1.25em auto !important;
-    border: 1px solid #d7e0e8 !important;
-    border: 1px solid var(--jxg-border) !important;
-    border-radius: 0.6rem !important;
-    border-radius: var(--jxg-radius) !important;
-    background-color: #ffffff !important;
+    max-width: 100%;
+    margin: 1.25em auto;
+    border: 1px solid #d7e0e8;
+    border: 1px solid var(--jxg-border);
+    border-radius: 0.6rem;
+    border-radius: var(--jxg-radius);
+    background-color: #ffffff;
 }
 
 /* --------------------------------------------------------------------------

@@ -6,6 +6,43 @@ var self = this;
 
 <details class="signature">
     <summary class="signature" id="<?js= id ?>"><?js= data.attribs ?><?js
+      if (kind === 'class' && name.indexOf('module:') === 0) {
+        print('new (require("' + name.slice(7) + '"))' + (data.signature || ''));
+      } else if (kind === 'class') {
+        print('new ' + name + (data.signature || ''));
+      } else if (kind === 'event' && data.alias) {
+        print(data.alias + (data.signature || ''));
+      } else {
+        var parts = (data.params || [])
+          .filter(function (p) {
+            return p && p.name && p.name.indexOf('.') === -1;
+          })
+          .map(function (p) {
+            var attribs = [],
+                out = self.htmlsafe(p.name);
+
+            if (p.variable) { out = '...' + out; }
+            if (p.optional) { attribs.push('opt'); }
+            if (p.nullable) { attribs.push('nullable'); }
+
+            if (attribs.length) {
+              out += '<span class="signature-attributes">' +
+                     attribs.join(', ') + '</span>';
+            }
+            return '<span class="signature-param">' + out + '</span>';
+          });
+
+        print('<span class="signature">' +
+              'board.create(\'<span class="signature-element">' +
+              self.htmlsafe(String(memberof || '').toLowerCase()) +
+              '</span>\', [' + parts.join(', ') + ']);' +
+              '</span>');
+      }
+    ?></summary>
+
+<!--
+<details class="signature">
+    <summary class="signature" id="<?js= id ?>"><?js= data.attribs ?><?js
       if(kind === 'class' && name.indexOf('module:') === 0) {
         print('new (require("' + name.slice(7) + '"))');
       } else if(kind === 'class') {
@@ -21,7 +58,7 @@ var self = this;
       }
       // Extract params from data.signature:
     ?><?js= (data.signature.replace(/\(/, "[").replace(/\)/, "]").replace(/([\[,]\s*)([^,\[\]]+?)\s*(?=[,\]])/g, "$1<span class='signature-param'>$2</span>") + ");</span>" || '') ?></summary>
-
+-->
 <!--
     <?js if (data.summary) { ?>
         <p class="summary usertext"><?js= summary
