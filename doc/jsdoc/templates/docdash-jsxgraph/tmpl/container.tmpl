@@ -27,7 +27,7 @@
         <?js } ?>-->
         <?js if (doc.kind === 'namespace') { 
             /* print(doc.name); */ ?>
-            Namespace
+                <span class='container-main-type'>Namespace</span>
         <?js } else { ?>
             <?js if (doc.isPseudo) { print("<span class='container-main-type'>Element</span> "); }  else  { print("<span class='container-main-type'>Class</span> "); }?>
             <!--<?js= doc.name ?>-->
