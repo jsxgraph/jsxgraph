@@ -206,7 +206,7 @@ h1.page-title {
     z-index: 4;
     font-size: 1.55rem;
     font-weight: 400;
-    margin: 0 0 1.25rem;
+    margin: 0 0 .8rem;
     padding: 1.35rem 0 1.15rem 0;
     line-height: 1.1;
     word-wrap: break-word;
@@ -1071,6 +1071,23 @@ summary.signature::before {
     border: 0;
     border-radius: 0;
     background-color: transparent;
+}
+
+/* The wrapper is now the first child of .container-overview, so the rule
+   that strips the first margin no longer reaches the heading inside it. */
+.container-article-other .container-method > :first-child {
+    margin-top: 0;
+}
+
+.container-article-other .container-method > :last-child,
+.container-article-other .container-method > :last-child > :last-child {
+    margin-bottom: 0;
+}
+
+/* The type line of an exception closes the block - it needs less room above
+   it than a free-standing type annotation. */
+.container-article-other .param-type {
+    margin: .4rem 0 0;
 }
 
 .container-article-other .container-method h4.name {
@@ -2170,8 +2187,7 @@ summary:hover::before {
     font-style: normal;
     font-weight: 400;
     font-display: swap;
-    src: url('../fonts/Fira-Sans/FiraSans-Regular.woff2') format('woff2'),
-    url('../fonts/Fira-Sans/FiraSans-Regular.ttf') format('truetype');
+    src: url('../fonts/Fira-Sans/FiraSans-Regular.ttf') format('truetype');
 }
 
 @font-face {
@@ -2179,8 +2195,7 @@ summary:hover::before {
     font-style: italic;
     font-weight: 400;
     font-display: swap;
-    src: url('../fonts/Fira-Sans/FiraSans-Italic.woff2') format('woff2'),
-    url('../fonts/Fira-Sans/FiraSans-Italic.ttf') format('truetype');
+    src: url('../fonts/Fira-Sans/FiraSans-Italic.ttf') format('truetype');
 }
 
 @font-face {
@@ -2188,8 +2203,7 @@ summary:hover::before {
     font-style: normal;
     font-weight: 600;
     font-display: swap;
-    src: url('../fonts/Fira-Sans/FiraSans-SemiBold.woff2') format('woff2'),
-    url('../fonts/Fira-Sans/FiraSans-SemiBold.ttf') format('truetype');
+    src: url('../fonts/Fira-Sans/FiraSans-SemiBold.ttf') format('truetype');
 }
 
 @font-face {
@@ -2197,8 +2211,7 @@ summary:hover::before {
     font-style: normal;
     font-weight: 400;
     font-display: swap;
-    src: url('../fonts/Fira-Code/FiraCode-Regular.woff2') format('woff2'),
-    url('../fonts/Fira-Code/FiraCode-Regular.ttf') format('truetype');
+    src: url('../fonts/Fira-Code/FiraCode-Regular.ttf') format('truetype');
 }
 
 @font-face {
@@ -2206,8 +2219,7 @@ summary:hover::before {
     font-style: normal;
     font-weight: 600;
     font-display: swap;
-    src: url('../fonts/Fira-Code/FiraCode-SemiBold.woff2') format('woff2'),
-    url('../fonts/Fira-Code/FiraCode-SemiBold.ttf') format('truetype');
+    src: url('../fonts/Fira-Code/FiraCode-SemiBold.ttf') format('truetype');
 }
 
 @font-face {
