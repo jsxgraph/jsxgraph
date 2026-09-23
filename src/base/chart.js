@@ -1324,7 +1324,7 @@ JXG.registerElement("chart", JXG.createChart);
  * The Legend class is a basic class for legends.
  * @class Creates a new Legend object. Do not use this constructor to create a legend.
  * Use {@link JXG.Board#create} with type {@link Legend} instead.
- * <p>
+ *
  * The legend object consists of segements with labels. These lines can be
  * accessed with the property "lines" of the element.
  * @constructor

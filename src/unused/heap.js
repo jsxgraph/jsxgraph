@@ -37,7 +37,7 @@ import Mat from "./math.js";
 /**
  * Instantiate a new heap.
  * Elements of the heap are objects (node) with a property `v`.
- * <p>
+ * 
  * The heap nodes are stored in a JavaScript array.
  *
  * @name JXG.Math.Heap

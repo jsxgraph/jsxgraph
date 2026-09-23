@@ -653,9 +653,9 @@ JXG.Board = function (container, renderer, id,
      * Entries are objects of the form '{type, id, start, end}' notifying
      * the start time as well as the last time of a single event of type 'type'
      * on a JSXGraph element of id 'id'.
-     * <p> 'start' and 'end' contain the amount of milliseconds elapsed between 1 January 1970 00:00:00 UTC
+     *  'start' and 'end' contain the amount of milliseconds elapsed between 1 January 1970 00:00:00 UTC
      * and the time the event happened.
-     * <p>
+     *
      * For the time being (i.e. v1.5.0) the only supported type is 'drag'.
      * @type Array
      */
@@ -729,7 +729,7 @@ JXG.Board = function (container, renderer, id,
     /**
      * Array of length two of Boolean flags indicating if a pointer device (finger, mouse, pen) is
      * adding points to board.sketches[i] (i=0,1). i=1 is only used for multi-touch with fingers.
-     * <p>
+     *
      * User-supplied events might use this flag to test if sketching is active.
      * Usually, this flag is true starting with a down event and ends with the up event.
      * @type {Array}
@@ -1694,7 +1694,7 @@ JXG.extend(
 
         /**
          * Moves, rotates and scales a line or polygon with two fingers.
-         * <p>
+         *
          * If one vertex of the polygon snaps to the grid or to points or is not draggable,
          * two-finger-movement is cancelled.
          *
@@ -4157,13 +4157,13 @@ JXG.extend(
          * The selection of the element is done with the tab key. For this,
          * the attribute 'tabindex' of the element has to be set to some number (default=0).
          * tabindex corresponds to the HTML and SVG attribute of the same name.
-         * <p>
+         *
          * Panning of the construction is done with arrow keys
          * if the pan key (shift or ctrl - depending on the board attributes) is pressed.
-         * <p>
+         *
          * Zooming is triggered with the keys +, o, -, if
          * the pan key (shift or ctrl - depending on the board attributes) is pressed.
-         * <p>
+         *
          * Keyboard control (move, pan, and zoom) is disabled if an HTML element of type input or textarea has received focus.
          *
          * @param  {Event} evt The browser's event object
@@ -4405,7 +4405,7 @@ JXG.extend(
          * Update the width and height of the JSXGraph container div element.
          * If width and height are not supplied, read actual values with offsetWidth/Height,
          * and call board.resizeContainer() with this values.
-         * <p>
+         *
          * If necessary, also call setBoundingBox().
          * @param {Number} [width=this.containerObj.offsetWidth] Width of the container element
          * @param {Number} [height=this.containerObj.offsetHeight] Height of the container element
@@ -5804,7 +5804,7 @@ JXG.extend(
         showDependencies: function () {
             var el, t, c, f, i;
 
-            t = '<p>\n';
+            t = '\n';
             for (el in this.objects) {
                 if (this.objects.hasOwnProperty(el)) {
                     i = 0;
@@ -5827,7 +5827,7 @@ JXG.extend(
                                 ', ';
                         }
                     }
-                    t += '<p>\n';
+                    t += '\n';
                 }
             }
             t += '<' + '/p>\n';
@@ -6103,7 +6103,7 @@ JXG.extend(
         /**
          * Please use {@link JXG.Board.on} instead.
          * @param {Function} hook A function to be called by the board after an update occurred.
-         * @param {String} [m='update'] When the hook is to be called. Possible values are <i>mouseup</i>, <i>mousedown</i> and <i>update</i>.
+         * @param {String} [m='update'] When the hook is to be called. Possible values are `mouseup`, `mousedown` and `update`.
          * @param {Object} [context=board] Determines the execution context the hook is called. This parameter is optional, default is the
          * board object the hook is attached to.
          * @returns {Number} Id of the hook, required to remove the hook from the board.
@@ -7504,7 +7504,7 @@ JXG.extend(
         /**
          * Reset the sketchcurves in board.sketches[] to length 0 and add the position
          * of the event as first point of the sketch curve. Called at down events.
-         * <p>
+         *
          * Sets board.isSketching[i] = true where i depends on the finger (1st or 2nd).
          *
          * @private
@@ -7961,11 +7961,11 @@ JXG.extend(
          * In order to preserve the proportions of the JSXGraph element,
          * a wrapper div is created which is set to fullscreen.
          * This function is called when fullscreen mode is triggered
-         * <b>and</b> when it is closed.
-         * <p>
+         * __and__ when it is closed.
+         *
          * The wrapping div has the CSS class 'jxgbox_wrap_private' which is
          * defined in the file 'jsxgraph.css'
-         * <p>
+         *
          * This feature is not available on iPhones (as of December 2021).
          *
          * @param {String} id (Optional) id of the div element which is brought to fullscreen.

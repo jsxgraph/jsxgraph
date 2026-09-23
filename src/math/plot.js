@@ -958,11 +958,11 @@ Mat.Plot = {
     /**
      * For a curve c(t) defined on the interval [ta, tb] find the first point
      * which is in the visible area of the board (plus some outside margin).
-     * <p>
+     *
      * This method is necessary to restrict the recursive plotting algorithm
      * {@link JXG.Curve._plotRecursive} to the visible area and not waste
      * recursion to areas far outside of the visible area.
-     * <p>
+     *
      * This method can also be used to find the last visible point
      * by reversing the input parameters.
      *

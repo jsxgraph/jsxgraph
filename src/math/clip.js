@@ -596,7 +596,7 @@ Mat.Clip = {
      * Determine the delayed status of degenerated intersection points.
      * It is of the form
      *   ['on|left|right', 'on|left|right']
-     * <p>
+     *
      * If all four determinants are zero, we add random noise to the point.
      *
      * @param {JXG.Math.Clip.Vertex} P Start of path
@@ -1011,11 +1011,11 @@ Mat.Clip = {
     /**
      * Mark the intersection vertices of path1 as entry points or as exit points
      * in respect to path2.
-     * <p>
+     *
      * This is the simple algorithm as in
      * Greiner, Günther; Kai Hormann (1998). "Efficient clipping of arbitrary polygons".
      * ACM Transactions on Graphics. 17 (2): 71–83
-     * <p>
+     *
      * The algorithm handles also "delayed crossings" from
      * Erich, L. Foster, and Kai Hormann, Kai, and Romeo Traaian Popa (2019),
      * "Clipping simple polygons with degenerate intersections", Computers & Graphics:X, 2.
@@ -1674,21 +1674,21 @@ Mat.Clip = {
 
     /**
      * Determine the intersection, union or difference of two closed paths.
-     * <p>
+     *
      * This is an implementation of the Greiner-Hormann algorithm, see
      * Günther Greiner and Kai Hormann (1998).
      * "Efficient clipping of arbitrary polygons". ACM Transactions on Graphics. 17 (2): 71–83.
      * and
      * Erich, L. Foster, and Kai Hormann, Kai, and Romeo Traaian Popa (2019),
      * "Clipping simple polygons with degenerate intersections", Computers & Graphics:X, 2.
-     * <p>
+     *
      * It is assumed that the pathes are closed, whereby it does not matter if the last point indeed
      * equals the first point. In contrast to the original Greiner-Hormann algorithm,
      * this algorithm can cope with many degenerate cases. A degenerate case is a vertext of one path
      * which is contained in the other path.
-     * <p>
      *
-     * <p>Problematic are:
+     *
+     * Problematic are:
      * <ul>
      *   <li>degenerate cases where one path additionally has self-intersections
      *   <li>differences with one path having self-intersections.

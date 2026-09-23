@@ -2280,10 +2280,10 @@ JXG.extend(
         /**
          * Convert the SVG construction into an HTML canvas image.
          * This works for all SVG supporting browsers. Implemented as Promise.
-         * <p>
+         *
          * Might fail if any text element or foreign object element contains SVG. This
          * is the case e.g. for the default fullscreen symbol.
-         * <p>
+         *
          * For IE, it is realized as function.
          * It works from version 9, with the exception that HTML texts
          * are ignored on IE. The drawing is done with a delay of

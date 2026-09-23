@@ -231,9 +231,9 @@ JXG.extend(
                 /**
                  * Dynamically created function to update the content
                  * of a text. Can not be overwritten.
-                 * <p>
+                 *
                  * &lt;value&gt; tags will not be evaluated if text is provided by a function
-                 * <p>
+                 *
                  * Sets the property `plaintext` of the text element.
                  *
                  * @private
@@ -1072,7 +1072,7 @@ JXG.extend(
          * The method assumes that the lower left corner is at position [el.X(), el.Y()]
          * of the text element el, i.e. the attributes anchorX, anchorY are ignored.
          *
-         * <p>
+         *
          * <strong>Attention:</strong> for labels, [0, 0, 0, 0] is returned.
          *
          * @returns Array
@@ -1348,7 +1348,7 @@ JXG.extend(
         /**
          * Automatically positions the label by finding the optimal position.
          * Aims to minimize conflicts while maintaining readability.
-         * <p>
+         *
          * The method tests 60 different angles (0 to 2π) at 3 different distances (radii).
          * It evaluates each position using calculateScore(radius, angle) and chooses the position with the highest score.
          * Then the label's anchor points and offset are adjusted accordingly.

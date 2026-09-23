@@ -357,7 +357,7 @@ JXG.extend(
 
         /**
          * Determines the lightness of the face (in the HSL color scheme).
-         * <p>
+         *
          * Sets the fillColor of the adjoint 2D curve.
          * @name shader
          * @memberOf Face3D

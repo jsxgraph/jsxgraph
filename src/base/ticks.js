@@ -801,8 +801,8 @@ JXG.extend(
          * "ticksDistance" is returned. The attribute "minTicksDistance" is ignored in this case.
          * <li> If the attribute "insertTicks" is true, the attribute "ticksDistance" is ignored.
          * The distance between two major ticks is computed
-         * as <i>a 10<sup>i</sup></i>, where <i>a</i> is one of <i>{1, 2, 5}</i> and
-         * the number <i>a 10<sup>i</sup></i> is maximized such that there are approximately
+         * as \\(a 10^i\\), where \\(a\\) is one of \\(\{1, 2, 5\}\\) and
+         * the number \\(a 10^i\\) is maximized such that there are approximately
          * 6 major ticks and there are at least "minTicksDistance" pixel between minor ticks.
          * The latter restriction has priority over the number of major ticks.
          * </ul>
@@ -1632,7 +1632,7 @@ JXG.extend(
     }
 );
 
-//  * <p>
+//  *
 //  * Deprecated: Alternatively, a number defining the distance between two major ticks
 //  * can be specified. However, this is meanwhile ignored. Use attribute `ticksDistance` instead.
 /**

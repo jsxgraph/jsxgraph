@@ -1010,7 +1010,7 @@ JXG.extend(
          * The parent object is the clipping polygon, it expects as parameter a polygon to be clipped.
          * Both polygons have to be convex.
          * Calls the algorithm by Sutherland, Hodgman, {@link JXG.Polygon#sutherlandHodgman}.
-         * <p>
+         *
          * An alternative is to use the methods from {@link JXG.Math.Clip}, where the algorithm by Greiner and Hormann
          * is used.
          *

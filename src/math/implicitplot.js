@@ -42,9 +42,9 @@ import Quadtree from "./bqdt.js";
  *
  * The algorithm should be able to plot most implicit curves as long as the equations
  * are not too complex. We are aware of the paper by Oliver Labs,
- * <a href="https://link.springer.com/chapter/10.1007/978-1-4419-0999-2_6">A List of Challenges for Real Algebraic Plane Curve Visualization Software</a>
+ * {@link https://link.springer.com/chapter/10.1007/978-1-4419-0999-2_6 A List of Challenges for Real Algebraic Plane Curve Visualization Software}
  * which contains many equations where this algorithm may fail.
- * For example,  at the time being there is no attempt to detect <i>solitary points</i>.
+ * For example,  at the time being there is no attempt to detect *solitary points*.
  * Also, it is always a trade off to find all components of the curve and
  * keep the construction responsive.
  *
@@ -78,9 +78,9 @@ import Quadtree from "./bqdt.js";
  *      unitY: 10             // unitX of board
  *   };
  * </pre>
- * @param {function} f function from <b>R</b><sup>2</sup> to <b>R</b>
- * @param {function} [dfx] Optional partial derivative of <i>f</i> with regard to <i>x</i>
- * @param {function} [dfy] Optional partial derivative of <i>f</i> with regard to <i>y</i>
+ * @param {function} f function from \\({\mathbb R}^2 \to {\mathbb R}\\)
+ * @param {function} [dfx] Optional partial derivative of \\(f\\) with regard to \\(x\\)
+ * @param {function} [dfy] Optional partial derivative of \\(f\\) with regard to \\(y\\)
  *
  * @constructor
  * @example
@@ -523,17 +523,17 @@ Type.extend(
         },
 
         /**
-         * Starting at a point <i>u0</i>, this routine traces the curve <i>f(u)=0</i> until
+         * Starting at a point \\(u_0\\), this routine traces the curve \\(f(u)=0\\) until
          * a loop is detected, a critical point is reached, the curve leaves the bounding box,
          * or the maximum number of points is reached.
-         * <p>
+         *
          * The method is a predictor / corrector method consisting of Euler and Newton steps
          * together with step width adaption.
-         * <p>
-         * The algorithm is an adaption of the algorithm in
-         * Eugene L. Allgower, Kurt Georg: <i>Introduction to Numerical Continuation methods.</i>
          *
-         * @param {Array} u0 Starting point in homogenous coordinates  [1, x, y].
+         * The algorithm is an adaption of the algorithm in
+         * Eugene L. Allgower, Kurt Georg: *Introduction to Numerical Continuation methods.*
+         *
+         * @param {Array} u0 Starting point in homogenous coordinates  `[1, x, y]`.
          * @param {Number} direction 1 or -1
          * @returns Array [pathX, pathY, loop_closed] or []
          * @private

@@ -656,7 +656,7 @@ JXG.extend(Options, {
          * By default (i.e. type:'angle'), the angle between the camera axis and the normal of the
          * face determines the lightness value of the HSL color. Otherwise, the
          * zIndex of the face determines the lightness value of the HSL color.
-         * <p>
+         *
          * Note that shading needs a lot of computing resources, in particular for
          * SVG rendering. Setting `renderer:'canvas'` will allow to rotate the viewport
          * much faster.
@@ -1167,13 +1167,13 @@ JXG.extend(Options, {
          * In case of `tiling:'wireframe'`, a rectangular mesh is displayed, the number of steps is determined by
          * the attributes `stepsU` and `stepsV`. Further, the attributes `strokeWidth` and `strokeColor`, ...
          * determine the style of the mesh.
-         * <p>
+         *
          * In case of `tiling:'triangle'` or `tiling:'rectangle'` a polyhedron3d element is displayed, using the
          * attributes `stepsU` and `stepsV`. In case of `triangle`, equilateral triangles are created if stepsV==0.
-         * <p>
+         *
          * All other attributes of the polyhedron3d have to be set inside of `polyhedron`, including `strokeWidth`
          * and `strokeColor`. The wireframe settings for these attributes are ignored.
-         * <p>
+         *
          * At the time being (v1.13+), this attribute is immutable.
          *
          * @type String
@@ -1650,7 +1650,7 @@ JXG.extend(Options, {
          * When this attribute is enabled, elements closer to the screen are drawn
          * over elements further from the screen within the 3D layer. This affects
          * all elements which are in one of the layer specified in the sub-attribute 'layers'.
-         * <p>
+         *
          * For each layer this depth ordering is done independently.
          * Sub-attributes:
          *
@@ -1743,7 +1743,7 @@ JXG.extend(Options, {
          * - enabled: true
          * - key: 'shift'
          *
-         * Possible values for attribute <i>key</i>: 'shift' or 'ctrl'.
+         * Possible values for attribute `key`: 'shift' or 'ctrl'.
          *
          * @name View3D#verticalDrag
          * @attribute

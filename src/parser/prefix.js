@@ -178,10 +178,10 @@ JXG.PrefixParser = {
     /**
      * Determine the dimension of the resulting value, i.e. ['L', obj] as well as
      * ['+', ['L', obj1], ['L', obj2]] have dimension 1.
-     * <p>
+     *
      * ['+', ['Area', obj1], ['L', obj2]] will retrun NaN, because the two
      * operands have conflicting dimensions.
-     * <p>
+     *
      * If an element is a measurement element, then it's dimension can be set as attribute.
      * This overrules the computed dimension.
      *

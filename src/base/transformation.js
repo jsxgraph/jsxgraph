@@ -61,7 +61,7 @@ import Type from "../utils/type.js";
  * </ul>
  * @param {Object} params The parameters depend on the transformation type
  *
- * <p>
+ *
  * Translation matrix:
  * <pre>
  * ( 1  0  0)   ( z )
@@ -69,7 +69,7 @@ import Type from "../utils/type.js";
  * ( b  0  1)   ( y )
  * </pre>
  *
- * <p>
+ *
  * Scale matrix:
  * <pre>
  * ( 1  0  0)   ( z )
@@ -77,7 +77,7 @@ import Type from "../utils/type.js";
  * ( 0  0  b)   ( y )
  * </pre>
  *
- * <p>
+ *
  * A rotation matrix with angle a (in Radians)
  * <pre>
  * ( 1    0        0      )   ( z )
@@ -85,7 +85,7 @@ import Type from "../utils/type.js";
  * ( 0    sin(a)   cos(a) )   ( y )
  * </pre>
  *
- * <p>
+ *
  * Shear matrix:
  * <pre>
  * ( 1  0  0)   ( z )
@@ -93,28 +93,28 @@ import Type from "../utils/type.js";
  * ( 0  b  1)   ( y )
  * </pre>
  *
- * <p>Generic affine transformation (4 parameters):
+ * Generic affine transformation (4 parameters):
  * <pre>
  * ( 1  0  0 )   ( z )
  * ( 0  a  b ) * ( x )
  * ( 0  c  d )   ( y )
  * </pre>
  *
- * <p>Affine 2x2 matrix:
+ * Affine 2x2 matrix:
  * <pre>
  * ( 1  0  0 )   ( z )
  * ( 0  M    ) * ( x )
  * ( 0       )   ( y )
  * </pre>
  *
- * <p>Generic transformation (9 parameters):
+ * Generic transformation (9 parameters):
  * <pre>
  * ( a  b  c )   ( z )
  * ( d  e  f ) * ( x )
  * ( g  h  i )   ( y )
  * </pre>
  *
- * <p>3x3 Matrix:
+ * 3x3 Matrix:
  * <pre>
  * (         )   ( z )
  * (    M    ) * ( x )
@@ -191,7 +191,7 @@ JXG.extend(
          *                        'matrix'.
          * @param {Array} params Parameters for the various transformation types.
          *
-         * <p>A transformation with a generic matrix looks like:
+         * A transformation with a generic matrix looks like:
          * <pre>
          * ( a  b  c )   ( z )
          * ( d  e  f ) * ( x )
@@ -199,7 +199,7 @@ JXG.extend(
          * </pre>
          *
          * The transformation matrix then looks like:
-         * <p>
+         *
          * Translation matrix:
          * <pre>
          * ( 1  0  0)   ( z )
@@ -207,7 +207,7 @@ JXG.extend(
          * ( b  0  1)   ( y )
          * </pre>
          *
-         * <p>
+         *
          * Scale matrix:
          * <pre>
          * ( 1  0  0)   ( z )
@@ -215,7 +215,7 @@ JXG.extend(
          * ( 0  0  b)   ( y )
          * </pre>
          *
-         * <p>
+         *
          * A rotation matrix with angle a (in Radians)
          * <pre>
          * ( 1    0        0      )   ( z )
@@ -223,7 +223,7 @@ JXG.extend(
          * ( 0    sin(a)   cos(a) )   ( y )
          * </pre>
          *
-         * <p>
+         *
          * Shear matrix:
          * <pre>
          * ( 1  0  0)   ( z )
@@ -231,28 +231,28 @@ JXG.extend(
          * ( 0  b  1)   ( y )
          * </pre>
          *
-         * <p>Generic affine transformation (4 parameters):
+         * Generic affine transformation (4 parameters):
          * <pre>
          * ( 1  0  0 )   ( z )
          * ( 0  a  b ) * ( x )
          * ( 0  c  d )   ( y )
          * </pre>
          *
-         * <p>Affine 2x2 matrix:
+         * Affine 2x2 matrix:
          * <pre>
          * ( 1  0  0 )   ( z )
          * ( 0  M    ) * ( x )
          * ( 0       )   ( y )
          * </pre>
          *
-         * <p>Generic transformation (9 parameters):
+         * Generic transformation (9 parameters):
          * <pre>
          * ( a  b  c )   ( z )
          * ( d  e  f ) * ( x )
          * ( g  h  i )   ( y )
          * </pre>
          *
-         * <p>3x3 Matrix:
+         * 3x3 Matrix:
          * <pre>
          * (         )   ( z )
          * (    M    ) * ( x )
@@ -493,7 +493,7 @@ JXG.extend(
          *                         'matrix'.
          * @param {Array} params Parameters for the various transformation types.
          *
-         * <p>A transformation with a generic matrix looks like:
+         * A transformation with a generic matrix looks like:
          * <pre>
          * ( a  b  c  d)   ( w )
          * ( e  f  g  h) * ( x )
@@ -502,7 +502,7 @@ JXG.extend(
          * </pre>
          *
          * The transformation matrix then looks like:
-         * <p>
+         *
          * Translation matrix:
          * <pre>
          * ( 1  0  0  0)   ( w )
@@ -511,7 +511,7 @@ JXG.extend(
          * ( c  0  0  1)   ( z )
          * </pre>
          *
-         * <p>
+         *
          * Scale matrix:
          * <pre>
          * ( 1  0  0  0)   ( w )
@@ -520,7 +520,7 @@ JXG.extend(
          * ( 0  0  0  c)   ( z )
          * </pre>
          *
-         * <p>
+         *
          * rotateX: a rotation matrix with angle a (in Radians)
          * <pre>
          * ( 1    0        0             )   ( w )
@@ -529,7 +529,7 @@ JXG.extend(
          * ( 0    0      sin(a)   cos(a) )   ( z )
          * </pre>
          *
-         * <p>
+         *
          * rotateY: a rotation matrix with angle a (in Radians)
          * <pre>
          * ( 1      0       0           )   ( w )
@@ -538,7 +538,7 @@ JXG.extend(
          * ( 0    sin(a)    0    cos(a) )   ( z )
          * </pre>
          *
-         * <p>
+         *
          * rotateZ: a rotation matrix with angle a (in Radians)
          * <pre>
          * ( 1      0                0  )   ( w )
@@ -547,11 +547,11 @@ JXG.extend(
          * ( 0      0         0      1  )   ( z )
          * </pre>
          *
-         * <p>
-         * rotate: a rotation matrix with angle a (in Radians)
-         * and normal <i>n</i>.
          *
-         * <p>Generic affine transformation (9 parameters):
+         * rotate: a rotation matrix with angle *a* (in Radians)
+         * and normal *n*.
+         *
+         * Generic affine transformation (9 parameters):
          * <pre>
          * ( 1  0  0  0 )   ( w )
          * ( 0  a  b  c ) * ( x )
@@ -559,7 +559,7 @@ JXG.extend(
          * ( 0  g  h  i )   ( z )
          * </pre>
          *
-         * <p>Affine 3x3 matrix:
+         * Affine 3x3 matrix:
          * <pre>
          * ( 1  0  0  0 )   ( w )
          * ( 0          ) * ( x )
@@ -567,7 +567,7 @@ JXG.extend(
          * ( 0          )   ( z )
          * </pre>
          *
-         * <p>Generic transformation (16 parameters):
+         * Generic transformation (16 parameters):
          * <pre>
          * ( a  b  c  d )   ( w )
          * ( e  f  ...  ) * ( x )
@@ -575,7 +575,7 @@ JXG.extend(
          * (    ...   p )   ( z )
          * </pre>
          *
-         * <p>Generic 4x4 matrix:
+         * Generic 4x4 matrix:
          * <pre>
          * (            )   ( w )
          * (     M      ) * ( x )
@@ -774,7 +774,7 @@ JXG.extend(
         /**
          * Transform a point element, that are: {@link Point}, {@link Text}, {@link Image}, {@link Point3D}.
          * First, the transformation matrix is updated, then do the matrix-vector-multiplication.
-         * <p>
+         *
          * Restricted to 2D transformations.
          *
          * @private
@@ -826,7 +826,7 @@ JXG.extend(
          * Binds a transformation to a GeometryElement or an array of elements. In every update of the
          * GeometryElement(s), the transformation is executed. That means, in order to immediately
          * apply the transformation after calling bindTo, a call of board.update() has to follow.
-         * <p>
+         *
          * The transformation is simply appended to the existing list of transformations of the object.
          * It is not fused (melt) with an existing transformation.
          *
@@ -851,7 +851,7 @@ JXG.extend(
          * Binds a transformation to a GeometryElement or an array of elements. In every update of the
          * GeometryElement(s), the transformation is executed. That means, in order to immediately
          * apply the transformation after calling meltTo, a call of board.update() has to follow.
-         * <p>
+         *
          * In case the last transformation of the element and this transformation are static,
          * i.e. the transformation matrices do not depend on other elements,
          * the transformation will be fused into (multiplied with) the last transformation of
@@ -892,7 +892,7 @@ JXG.extend(
         /**
          * Create a copy of the transformation in case it is static, i.e.
          * if the transformation matrix does not depend on other elements.
-         * <p>
+         *
          * If the transformation matrix is not static, null will be returned.
          *
          * @returns {JXG.Transformation}

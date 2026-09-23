@@ -1490,7 +1490,7 @@ JXG.extend(
          * return an array of homogeneous coordinates.
          * The returned coordinates are in user coordinates. Finite homogeneous coordinates have the first value set to 1,
          * i.e. it can be ignored.
-         * <p>
+         *
          * The points of the curve are either the elements of the properties dataX and dataY or
          * the result of the plotting algorithm. In any case, the points are stored in the private
          * property "points".
@@ -1514,7 +1514,7 @@ JXG.extend(
 /**
  * @class  Curves can be defined by mappings or by discrete data sets.
  * In general, a curve is a mapping from R to R^2, where t maps to (x(t),y(t)). The graph is drawn for t in the interval [a,b].
- * <p>
+ *
  * The following types of curves can be plotted:
  *
  * - parametric curves: t mapsto (x(t),y(t)), where x() and y() are univariate functions.
@@ -2392,7 +2392,7 @@ JXG.registerElement("metapostspline", JXG.createMetapostSpline);
  * @class Visualize the Riemann sum which is an approximation of an integral by a finite sum.
  * It is realized as a special curve.
  * The returned element has the method Value() which returns the sum of the areas of the bars.
- * <p>
+ *
  * In case of type "simpson" and "trapezoidal", the horizontal line approximating the function value
  * is replaced by a parabola or a secant. IN case of "simpson",
  * the parabola is approximated visually by a polygonal chain of fixed step width.
@@ -3334,7 +3334,7 @@ JXG.registerElement("boxplot", JXG.createBoxPlot);
  * The partial derivatives for \\(f\\) are optional. If not given, numerical
  * derivatives are used instead. This is good enough for most practical use cases.
  * But if supplied, both partial derivatives must be supplied.
- * <p>
+ *
  * The most effective attributes to tinker with if the implicit curve algorithm fails are
  *
  * - {@link ImplicitCurve#resolution_outer},
@@ -3353,7 +3353,7 @@ JXG.registerElement("boxplot", JXG.createBoxPlot);
  */
 /**
  * @jsxgraphsignature ImplicitCurve
- * @param {Function|String} f Function of two variables for the left side of the equation <i>f(x,y)=0</i>.
+ * @param {Function|String} f Function of two variables for the left side of the equation \\(f(x,y)=0\\).
  * If f is supplied as string, it has to use the variables 'x' and 'y'.
  * @param {Function|String} [dfx=null] Optional partial derivative in respect to the first variable
  * If dfx is supplied as string, it has to use the variables 'x' and 'y'.
@@ -3523,7 +3523,7 @@ JXG.createImplicitCurve = function (board, parents, attributes) {
     c = board.create("curve", [[], []], attr);
 
     /**
-     * Function of two variables for the left side of the equation <i>f(x,y)=0</i>.
+     * Function of two variables for the left side of the equation \\(f(x,y)=0\\).
      *
      * @name f
      * @memberOf ImplicitCurve.prototype
@@ -3534,7 +3534,7 @@ JXG.createImplicitCurve = function (board, parents, attributes) {
 
     /**
      * Partial derivative in the first variable of
-     * the left side of the equation <i>f(x,y)=0</i>.
+     * the left side of the equation \(f(x,y)=0\\).
      * If null, then numerical derivative is used.
      *
      * @name dfx
@@ -3550,7 +3550,7 @@ JXG.createImplicitCurve = function (board, parents, attributes) {
 
     /**
      * Partial derivative in the second variable of
-     * the left side of the equation <i>f(x,y)=0</i>.
+     * the left side of the equation \\(f(x,y)=0\\).
      * If null, then numerical derivative is used.
      *
      * @name dfy

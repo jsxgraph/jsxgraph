@@ -49,7 +49,7 @@ import Const from "../base/constants.js";
  * @class An arc is a partial circumference line of a circle.
  * It is defined by a center, one point that
  * defines the radius, and a third point that defines the angle of the arc.
- * <p>
+ *
  * As a curve the arc has curve length 6.
  * @pseudo
  * @name Arc

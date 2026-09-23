@@ -2140,7 +2140,7 @@ JXG.registerElement("axis", JXG.createAxis);
  * @class The tangent line at a point on a line, circle, conic, turtle, or curve.
  * A tangent line is always constructed
  * by a point on a line, circle, or curve and describes the tangent in the point on that line, circle, or curve.
- * <p>
+ *
  * If the point is not on the object (line, circle, conic, curve, turtle) the output depends on the type of the object.
  * For conics and circles, the polar line will be constructed. For function graphs,
  * the tangent of the vertical projection of the point to the function graph is constructed. For all other objects, the tangent
@@ -3162,8 +3162,8 @@ JXG.createPolarLine = function (board, parents, attributes) {
  * @description Construct the tangent line through a point to a conic or a circle. There will be either two, one or no
  * such tangent, depending if the point is outside of the conic, on the conic, or inside of the conic.
  * Similar to the intersection of a line with a circle, the specific tangent can be chosen with a third (optional) parameter
- * <i>number</i>.
- * <p>
+ * `number`.
+ *
  * Attention: from a technical point of view, the point from which the tangent to the conic/circle is constructed is not an element of
  * the tangent line.
  * @name TangentTo

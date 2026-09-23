@@ -1576,10 +1576,10 @@ Mat.Numerics = {
      * c1(t1) = c2(t2), i.e.
      * <br>
      * (c1_x(t1) - c2_x(t2), c1_y(t1) - c2_y(t2)) = (0, 0).
-     * <p>
+     *
      * We set
      * (e, f) := (c1_x(t1) - c2_x(t2), c1_y(t1) - c2_y(t2))
-     * <p>
+     *
      * The Jacobian J is defined by
      * <pre>
      * J = (a, b)
@@ -1599,7 +1599,7 @@ Mat.Numerics = {
      * </pre>
      *
      * Then, (t1new, t2new) := (t1,t2) - J^(-1)*(e,f).
-     * <p>
+     *
      *
      * @param {JXG.Curve} c1 Curve, Line or Circle
      * @param {JXG.Curve} c2 Curve, Line or Circle
@@ -1661,7 +1661,7 @@ Mat.Numerics = {
      * Apply damped Newton-Raphson algorithm to determine the intersection
      * between the curve elements c1 and c2. Transformations of the curves
      * are already taken into regard.
-     * <p>
+     *
      * We use a very high accuracy: Mat.eps**3
      *
      * @deprecated
@@ -2073,7 +2073,7 @@ Mat.Numerics = {
      * Returns the Lagrange polynomials, see
      * Jean-Paul Berrut, Lloyd N. Trefethen: Barycentric Lagrange Interpolation,
      * SIAM Review, Vol 46, No 3, (2004) 501-517.
-     * <p>
+     *
      * It possesses the method getTerm() which returns the string containing the function term of the polynomial and
      * the method getCoefficients() which returns an array containing the coefficients of the polynomial.
      * @param {Array} p Array of JXG.Points
@@ -3108,7 +3108,7 @@ Mat.Numerics = {
     /**
      * Helper function to create curve which displays Riemann sums.
      * Compute coordinates for the rectangles showing the Riemann sum.
-     * <p>
+     *
      * In case of type "simpson" and "trapezoidal", the horizontal line approximating the function value
      * is replaced by a parabola or a secant. IN case of "simpson",
      * the parabola is approximated visually by a polygonal chain of fixed step width.
@@ -3273,7 +3273,7 @@ Mat.Numerics = {
     },
 
     /**
-     * Solve initial value problems numerically using <i>explicit</i> Runge-Kutta methods.
+     * Solve initial value problems numerically using *explicit* Runge-Kutta methods.
      * See {@link https://en.wikipedia.org/wiki/Runge-Kutta_methods} for more information on the algorithm.
      * @param {object|String} butcher Butcher tableau describing the Runge-Kutta method to use. This can be either a string describing
      * a Runge-Kutta method with a Butcher tableau predefined in JSXGraph like 'euler', 'heun', 'rk4' or an object providing the structure
@@ -3287,10 +3287,10 @@ Mat.Numerics = {
      * </pre>
      * which corresponds to the Butcher tableau structure
      * shown here: https://en.wikipedia.org/w/index.php?title=List_of_Runge%E2%80%93Kutta_methods&oldid=357796696 .
-     * <i>Default</i> is 'euler'.
+     * Default is 'euler'.
      * @param {Array} x0 Initial value vector. Even if the problem is one-dimensional, the initial value has to be given in an array.
      * @param {Array} I Interval on which to integrate.
-     * @param {Number} N Number of integration intervals, i.e. there are <i>N+1</i> evaluation points.
+     * @param {Number} N Number of integration intervals, i.e. there are \\(N+1\\) evaluation points.
      * @param {function} f Function describing the right hand side of the first order ordinary differential equation, i.e. if the ode
      * is given by the equation <pre>dx/dt = f(t, x(t))</pre>. So, f has to take two parameters, a number `t` and a
      * vector `x`, and has to return a vector of the same length as `x` has.
@@ -3808,7 +3808,7 @@ Mat.Numerics = {
     /**
      * Find a small enclosing interval of the domain of a function by
      * tightening the input interval x0.
-     * <p>
+     *
      * This is a helper function which is used in {@link JXG.Math.Numerics.fminbr},
      * {@link JXG.Math.Numerics.fzero}, and  {@link JXG.Curve.getLabelPosition}
      * to avoid search in an interval where the function is mostly undefined.
@@ -3907,7 +3907,7 @@ Mat.Numerics = {
     /**
      *
      * Find minimum of an univariate function f.
-     * <p>
+     *
      * Algorithm:
      *  G.Forsythe, M.Malcolm, C.Moler, Computer methods for mathematical
      *  computations. M., Mir, 1980, p.180 of the Russian edition
@@ -4305,9 +4305,9 @@ Mat.Numerics = {
      * Determine all roots of a polynomial with real or complex coefficients by using the
      * iterative method attributed to Weierstrass, Durand, Kerner, Aberth, and Ehrlich. In particular,
      * the iteration method with cubic convergence is used that is usually attributed to Ehrlich-Aberth.
-     * <p>
+     *
      * The returned roots are sorted with respect to their real values.
-     * <p> This method makes use of the JSXGraph classes {@link JXG.Complex} and {@link JXG.C} to handle
+     *  This method makes use of the JSXGraph classes {@link JXG.Complex} and {@link JXG.C} to handle
      * complex numbers.
      *
      * @param {Array} a Array of coefficients of the polynomial a[0] + a[1]*x+ a[2]*x**2...

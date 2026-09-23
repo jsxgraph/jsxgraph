@@ -440,7 +440,7 @@ JXG.Math = {
     },
 
     /**
-     * Compute the inverse of an <i>(n x n)</i>-matrix by Gauss elimination.
+     * Compute the inverse of an \\((n \times n)\\)-matrix by Gauss elimination.
      *
      * @param {Array} A matrix
      * @returns {Array} Inverse matrix of A or empty array (i.e. []) in case A is singular.
@@ -1295,7 +1295,7 @@ JXG.Math = {
      *
      * Convert a floating point number to sign + integer + fraction.
      * fraction is given as nominator and denominator.
-     * <p>
+     *
      * Algorithm: approximate the floating point number
      * by a continued fraction and simultaneously keep track
      * of its convergents.
@@ -1434,7 +1434,7 @@ JXG.Math = {
      * Theorem of Vieta: Given a set of simple zeroes x_0, ..., x_n
      * of a polynomial f, compute the coefficients s_k, (k=0,...,n-1)
      * of the polynomial of the form. See {@link https://de.wikipedia.org/wiki/Elementarsymmetrisches_Polynom}.
-     * <p>
+     *
      *  f(x) = (x-x_0)*...*(x-x_n) =
      *  x^n + sum_{k=1}^{n} (-1)^(k) s_{k-1} x^(n-k)
      * </p>

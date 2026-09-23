@@ -56,13 +56,13 @@ import Type from "../utils/type.js";
 import Env from "../utils/env.js";
 
 /**
- * <p>This class defines the interface to the graphics part of JSXGraph. This class is an abstract class, it
+ * This class defines the interface to the graphics part of JSXGraph. This class is an abstract class, it
  * actually does not render anything. This is up to the {@link JXG.SVGRenderer}, {@link JXG.VMLRenderer},
  * and {@link JXG.CanvasRenderer} classes. We strongly discourage you from using the methods in these classes
  * directly. Only the methods which are defined in this class and are not marked as private are guaranteed
  * to exist in any renderer instance you can access via {@link JXG.Board#renderer}. But not all methods may
  * work as expected.</p>
- * <p>The methods of this renderer can be divided into different categories:
+ * The methods of this renderer can be divided into different categories:
  * <dl>
  *     <dt>Draw basic elements</dt>
  *     <dd>In this category we find methods to draw basic elements like {@link JXG.Point}, {@link JXG.Line},
@@ -547,7 +547,7 @@ JXG.extend(
          * This method determines some data about the line endings of this element.
          * If there are arrow heads, the offset is determined so that no parts of the line stroke
          * lap over the arrow head.
-         * <p>
+         *
          * The returned object also contains the types of the arrow heads.
          *
          * @param {JXG.GeometryElement} el JSXGraph line or curve element
@@ -747,7 +747,7 @@ JXG.extend(
          * Shorten the length of a line element such that the arrow head touches
          * the start or end point and such that the arrow head ends exactly
          * at the start / end position of the line.
-         * <p>
+         *
          * The Coords objects c1 and c2 are changed in place. In object a, the Boolean properties
          * 'showFirst' and 'showLast' are set.
          *
@@ -1589,7 +1589,7 @@ JXG.extend(
         /**
          * Applies transformations on images and text elements. This method has to implemented in
          * all descendant classes where text and image transformations are to be supported.
-         * <p>
+         *
          * Only affine transformation are supported, no proper projective transformations. This means, the
          * respective entries of the transformation matrix are simply ignored.
          *
@@ -1916,7 +1916,7 @@ JXG.extend(
          * Set ARIA related properties of an element. The attribute "aria" of an element contains at least the
          * properties "enabled", "label", and "live". Additionally, all available properties from
          * {@link https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA} may be set.
-         * <p>
+         *
          * In JSXGraph, the available attributes are used without the leading 'aria-'.
          * For example, the value of the JSXGraph attribute 'aria.label' will be set to the
          * HTML attribute 'aria-label'.
@@ -2097,10 +2097,10 @@ JXG.extend(
         /**
          * The tiny zoom bar shown on the bottom of a board (if board attribute "showNavigation" is true).
          * It is a div element and gets the CSS class "JXG_navigation" and the id {board id}_navigationbar.
-         * <p>
+         *
          * The buttons get the CSS class "JXG_navigation_button" and the id {board_id}_name where name is
          * one of [top, down, left, right, out, 100, in, fullscreen, screenshot, reload, cleartraces].
-         * <p>
+         *
          * The symbols for zoom, navigation and reload are hard-coded.
          *
          * @param {JXG.Board} board Reference to a JSXGraph board.

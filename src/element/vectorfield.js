@@ -268,7 +268,7 @@ JXG.registerElement("vectorfield", JXG.createVectorField);
 /**
  * @class A slope field is a graphical representation of the solutions
  * to a first-order differential equation of a scalar function.
- * <p>
+ *
  * Plot a slope field given by a function f(x, y) returning a number.
  *
  * @pseudo

@@ -1198,7 +1198,7 @@ JXG.extend(
         /**
          * Recursively merges obj2 into obj1 in-place. Contrary to {@link JXG#deepCopy} this won't create a new object
          * but instead will overwrite obj1.
-         * <p>
+         *
          * In contrast to method JXG.mergeAttr, merge recurses into any kind of object, e.g. DOM object and JSXGraph objects.
          * So, please be careful.
          * @param {Object} obj1
@@ -1367,7 +1367,7 @@ JXG.extend(
 
         /**
          * In-place (deep) merging of attributes. Allows attributes like `{shadow: {enabled: true...}}`
-         * <p>
+         *
          * In contrast to method JXG.merge, mergeAttr does not recurse into DOM objects and JSXGraph objects. Instead
          * handles (pointers) to these objects are used.
          *
@@ -1996,7 +1996,7 @@ JXG.extend(
          * Uses push instead of JavaScript concat, which is much
          * faster.
          * The array dest is changed in place.
-         * <p><b>Attention:</b> if "dest" is an anonymous array, the correct result is returned from the function.
+         * <b>Attention:</b> if "dest" is an anonymous array, the correct result is returned from the function.
          *
          * @param {Array} dest
          * @param {Array} src
@@ -2053,7 +2053,7 @@ JXG.extend(
         /**
          * Convert a string containing a MAXIMA /STACK expression into a JSXGraph / JessieCode string
          * or an array of JSXGraph / JessieCode strings.
-         * <p>
+         *
          * This function is meanwhile superseded by stack_jxg.stack2jsxgraph.
          *
          * @deprecated

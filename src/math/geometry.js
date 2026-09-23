@@ -1044,12 +1044,12 @@ JXG.extend(
         //  */
         /**
          * Determine if a polygon or a path element is convex:
-         * <p>
+         *
          * A polygon is convex if for every pair of points, the line segment connecting them does not intersect
          * an edge of the polygon in one point.
          * A single line segment, a single point, or the empty set is considered as convex. A necessary condition for a polygon
          * to be convex that the angle sum of its interior angles equals &plusmn; 2 &pi;.
-         * <p>
+         *
          * A path  element might be specified as an array of coordinate arrays or {@link JXG.Coords}.
          * See the discussion at <a href="https://stackoverflow.com/questions/471962/how-do-i-efficiently-determine-if-a-polygon-is-convex-non-convex-or-complex">stackoverflow</a>.
          *
@@ -1616,7 +1616,7 @@ JXG.extend(
          * Determinant of three points in the Euclidean plane.
          * Zero, if the points are collinear. Used to determine of a point q is left or
          * right to a segment defined by points p1 and p2.
-         * <p>
+         *
          * Non-homogeneous version.
          *
          * @param  {Array|JXG.Point} p1 First point or its coordinates of the segment. Point object or array of length 3. First (homogeneous) coordinate is equal to 1.
@@ -2858,7 +2858,7 @@ JXG.extend(
          * This double loop, i.e. the outer loop runs along the red curve and the inner loop runs along the blue curve, defines
          * the n-th intersection point. The segments are either line segments or Bezier curves of degree 3. This depends on
          * the property bezierDegree of the curves.
-         * <p>
+         *
          * This method works also for transformed curves, since only the already
          * transformed points are used.
          *

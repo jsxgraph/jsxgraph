@@ -183,10 +183,10 @@ JXG.Options = {
          * see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/dblclick_event}.
          * In case of {@link JXG.Board#dblClickSuppressClick} being true, the JavaScript standard is ignored and
          * this time delay is used to suppress the two click events if they are followed by a double click event.
-         * <p>
+         *
          * In case of {@link JXG.Board#dblClickSuppressClick} being false, this attribute is used
          * to clear the list of clicked elements after the time specified by this attribute.
-         * <p>
+         *
          * Recommendation: if {@link JXG.Board#dblClickSuppressClick} is true, use a value of approx. 300,
          * otherwise stay with the default 600.
          *
@@ -211,7 +211,7 @@ JXG.Options = {
         /**
          * If false (default), JSXGraph follows the JavaScript standard and fires before a dblclick event two
          * click events.
-         * <p>
+         *
          * If true, the click events are suppressed if there is a dblclick event.
          * The consequence is that in this case any click event is fired with a delay specified by
          * {@link JXG.Board#clickDelay}.
@@ -478,10 +478,10 @@ JXG.Options = {
          * If set true and
          * hasPoint() is true for both an element and it's label,
          * the element (and not the label) is taken as drag element.
-         * <p>
+         *
          * If set false and hasPoint() is true for both an element and it's label,
          * the label is taken (if it is on a higher layer than the element)
-         * <p>
+         *
          * Meanwhile, this feature might be irrelevant.
          * @name JXG.Board#ignoreLabels
          * @attribute
@@ -684,13 +684,13 @@ JXG.Options = {
         /**
          * If set to true, the ratio between horizontal and vertical unit sizes
          * stays constant - independent of size changes of the hosting HTML div element.
-         * <p>
+         *
          * If the aspect ration of the hosting div changes, JSXGraphs will change
          * the user supplied bounding box accordingly.
          * This is necessary if circles should look like circles and not
          * like ellipses. It is recommended to set keepAspectRatio = true
          * for geometric applets.
-         * <p>
+         *
          * For function plotting keepAspectRatio = false
          * might be the better choice.
          *
@@ -824,10 +824,10 @@ JXG.Options = {
 
         /**
          * Change redraw strategy in SVG rendering engine.
-         * <p>
-         * This optimization seems to be <b>obsolete</b> in newer browsers (from 2021 on, at least)
+         *
+         * This optimization seems to be __obsolete__ in newer browsers (from 2021 on, at least)
          * and even slow down the constructions. Therefore, the default is set to 'none' since v1.2.4.
-         * <p>
+         *
          * If set to 'svg', before every redrawing of the JSXGraph construction
          * the SVG sub-tree of the DOM tree is taken out of the DOM.
          *
@@ -1061,7 +1061,7 @@ JXG.Options = {
         // /**
         //  * Listen to fullscreen event.
         //  *
-        //  * <p>This attribute is immutable. Please use
+        //  * This attribute is immutable. Please use
         //  * {@link JXG.Board#addFullscreenEventHandlers()} and
         //  * {@link JXG.Board#removeEventHandlers()} directly.
         //  *
@@ -1078,10 +1078,10 @@ JXG.Options = {
         //  * Listen to resize events, i.e. start "resizeObserver" or handle the resize event with
         //  * "resizeListener". This is independent from the mouse, touch, pointer events.
         //  *
-        //  * <p>This attribute is immutable. Please use
+        //  * This attribute is immutable. Please use
         //  * {@link JXG.Board#addResizeEventHandlers()} and
         //  * {@link JXG.Board#removeEventHandlers()} directly.
-        //  * <p>
+        //  *
         //  * This attribute just starts a resizeObserver. If the resizeObserver reacts
         //  * to size changed is controlled with {@link JXG.Board#resize}.
         //  *
@@ -1099,11 +1099,11 @@ JXG.Options = {
          * Default rendering engine. Possible values are 'svg', 'canvas', 'vml', 'no', or 'auto'.
          * If the rendering engine is not available JSXGraph tries to detect a different engine.
          *
-         * <p>
+         *
          * In case of 'canvas' it is advisable to call 'board.update()' after all elements have been
          * constructed. This ensures that all elements are drawn with their intended visual appearance.
          *
-         * <p>
+         *
          * This attribute is immutable.
          *
          * @name JXG.Board#renderer
@@ -1118,8 +1118,8 @@ JXG.Options = {
          * by the user / browser.
          * The attribute "throttle" determines the minimal time in msec between to
          * resize calls.
-         * <p>
-         * <b>Attention:</b> if the JSXGraph container has no CSS property like width or height and max-width or max-height set, but
+         *
+         * __Attention:__ if the JSXGraph container has no CSS property like width or height and max-width or max-height set, but
          * has a property like box-sizing:content-box, then the interplay between CSS and the resize attribute may result in an
          * infinite loop with ever increasing JSXGraph container.
          *
@@ -1190,9 +1190,9 @@ JXG.Options = {
          * Starting a selection event triggers the "startselecting" event.
          * When the mouse pointer is released, the "stopselecting" event is fired.
          * The "stopselecting" event is supplied by the user.
-         * <p>
+         *
          * So far it works in SVG renderer only.
-         * <p>
+         *
          * Possible sub-attributes with default values are:
          * <pre>
          * selection: {
@@ -1203,7 +1203,7 @@ JXG.Options = {
          *   fillColor: '#ffff00'
          * }
          * </pre>
-         * <p>
+         *
          * Board events triggered by selection manipulation:
          * 'startselecting', 'stopselecting', 'mousestartselecting', 'mousestopselecting',
          * 'pointerstartselecting', 'pointerstopselecting', 'touchstartselecting', 'touchstopselecting'.
@@ -1322,7 +1322,7 @@ JXG.Options = {
         /**
          * The JSXGraph logo in the top left corner of the board is shown as soon as
          * {@link JXG.Board#showCopyright} is true.
-         * <p>
+         *
          * If {@link JXG.Board#showCopyright} is false, the logo can be shown anyhow
          * by setting showLogo to true.
          *
@@ -1336,7 +1336,7 @@ JXG.Options = {
 
         /**
          * Display of navigation arrows and zoom buttons in the navigation bar.
-         * <p>
+         *
          * The navigation bar has the
          * the ID `"{board_id}_navigation"` and the CSS class
          * `JXG_navigation"`.
@@ -1390,7 +1390,7 @@ JXG.Options = {
         /**
          * Display of zoom buttons in the navigation bar. To show zoom buttons, additionally
          * showNavigation has to be set to true.
-         * <p>
+         *
          * The individual buttons can be accessed by JavaScript or CSS with
          * the ID `"{board_id}_navigation_button_{type}"` or by the CSS classes
          * `JXG_navigation_button"` or
@@ -1486,8 +1486,8 @@ JXG.Options = {
          * The title is implemented with the attribute 'aria-label' in the JSXGraph container.
          *
          * Content should be accessible to all users, not just to those with
-         * screen readers.  Consider instead adding a text element with the title and add the attribute
-         * <b>aria:{enable:true,label:"Your Title"}</b>
+         * screen readers. Consider instead adding a text element with the title and add the attribute
+         * `aria:{enable:true,label:"Your Title"}`
          *
          * @name JXG.Board#title
          * @attribute
@@ -1710,7 +1710,7 @@ JXG.Options = {
         /**
          * Apply CSS classes to an element in highlighted view. It is possible to supply one or more
          * CSS classes separated by blanks.
-         * <p>
+         *
          * For non-text and non-image elements, this feature is available for the SVG renderer, only.
          *
          * @name highlightCssClass
@@ -2345,13 +2345,13 @@ JXG.Options = {
         /**
          * Determines whether two-finger manipulation may rotate this object.
          * If set to false, the object can only be scaled and translated.
-         * <p>
+         *
          * In case the element is a polygon or line and it has the attribute "rotatable:false",
          * moving the element with two fingers results in a rotation or translation.
-         * <p>
+         *
          * If an element is set to be neither scalable nor rotatable, it can only be translated.
-         * <p>
-         * In case of a polygon, scaling is only possible if <i>no</i> vertex has snapToGrid or snapToPoints
+         *
+         * In case of a polygon, scaling is only possible if __no__ vertex has snapToGrid or snapToPoints
          * enabled and no vertex is fixed by some other constraint. Also, the polygon itself has to have
          * snapToGrid disabled.
          *
@@ -3921,10 +3921,10 @@ JXG.Options = {
 
         /**
          * Orientation of the angle: 'clockwise' or 'counterclockwise' (default).
-         * <p>
+         *
          * If the attribute 'selection' is set to 'minor' or 'major' and
          * "the other" angle sector is to be taken, the orientation of the angle switches, too.
-         * <p>
+         *
          * Apart from 'selection' having value 'minor' or 'major', the value of the angle
          * is always the (positive) angle value of the visible sector - independent of
          * orientation.
@@ -4113,7 +4113,7 @@ JXG.Options = {
 
         /**
          * Orientation of the arc: 'clockwise' or 'counterclockwise' (default).
-         * <p>
+         *
          * If the attribute 'selection' is set to 'minor' or 'major' and
          * "the other" arc is to be taken, the orientation of the arc switches, too.
          *
@@ -4190,7 +4190,7 @@ JXG.Options = {
          * p1 is still the radius point, p2 the angle point. The arc will be that part of the
          * the circle with center 'center' which starts at p1, ends at the ray between center
          * and p2, and passes p3.
-         * <p>
+         *
          * This attribute is immutable (by purpose).
          * This attribute is necessary for circumCircleArcs
          *
@@ -5374,10 +5374,10 @@ JXG.Options = {
          * The "smoothing" in the name is misleading, actually it does the contrary. But
          * for historical reasons we stay with it. A better name would be
          * RDPsimplification.
-         * <p>
+         *
          * In certain cases this attribute causes problems, like for
          * conic elements, curve intersection/union/difference
-         * <p>
+         *
          * Implements the Ramer-Douglas-Peucker algorithm.
          *
          * @name Curve#RDPsmoothing
@@ -5490,7 +5490,7 @@ JXG.Options = {
          * its appearance. In some cases this makes JSXGraph run much faster,
          * especially if this function graph has glider points or has dependent
          * curves like inequality or curve intersection/union/difference.
-         * <p>
+         *
          * Implements the Ramer-Douglas-Peucker algorithm.
          *
          * @name Functiongraph#RDPsmoothing
@@ -5614,7 +5614,7 @@ JXG.Options = {
          * Instead of one value you can provide two values as an array `[x, y]` here.
          * These are used as size in x- and y-direction.
          *
-         * <p><b><i>This attribute can be set individually for major and minor grid as a sub-entry of {@link Grid#major} or {@link Grid#minor}</i></b>,
+         * *This attribute can be set individually for major and minor grid as a sub-entry of {@link Grid#major} or {@link Grid#minor}*,
          * e.g. `major: {size: ...}`
          * For default values have a look there.</p>
          *
@@ -5648,7 +5648,7 @@ JXG.Options = {
          * <tr><td>regularPolygon, regpol</td><td>⬡</td><td>yes</td></tr>
          * </table>
          *
-         * <p><b><i>This attribute can be set individually for major and minor grid as a sub-entry of {@link Grid#major} or {@link Grid#minor}</i></b>,
+         * *This attribute can be set individually for major and minor grid as a sub-entry of {@link Grid#major} or {@link Grid#minor}*,
          * e.g. `major: {face: ...}`
          * For default values have a look there.</p>
          *
@@ -5664,7 +5664,7 @@ JXG.Options = {
          * ends exactly at the end, if negative there is a margin to the inside, if positive the line
          * ends outside of the canvas (which is invisible).
          *
-         * <p><b><i>This attribute can be set individually for major and minor grid as a sub-entry of {@link Grid#major} or {@link Grid#minor}</i></b>,
+         * *This attribute can be set individually for major and minor grid as a sub-entry of {@link Grid#major} or {@link Grid#minor}*,
          * e.g. `major: {margin: ...}`
          * For default values have a look there.</p>
          *
@@ -5686,7 +5686,7 @@ JXG.Options = {
          *     `{x: true|false, y: true|false, origin: true|false}`
          *
          *
-         * <p><b><i>This attribute can be set individually for major and minor grid as a sub-entry of {@link Grid#major} or {@link Grid#minor}</i></b>,
+         * *This attribute can be set individually for major and minor grid as a sub-entry of {@link Grid#major} or {@link Grid#minor}*,
          * e.g. `major: {drawZero: ...}`
          * For default values have a look there.</p>
          *
@@ -5700,7 +5700,7 @@ JXG.Options = {
         /**
          * Number of vertices for face 'polygon'.
          *
-         * <p><b><i>This attribute can be set individually for major and minor grid as a sub-entry of {@link Grid#major} or {@link Grid#minor}</i></b>,
+         * *This attribute can be set individually for major and minor grid as a sub-entry of {@link Grid#major} or {@link Grid#minor}*,
          * e.g. `major: {polygonVertices: ...}`
          * For default values have a look there.</p>
          *
@@ -6649,7 +6649,7 @@ JXG.Options = {
          * This flag sets the behaviour of intersection points of a segment with another object.
          * If true, the segment is treated as an (infinte) line. If false
          * the intersection point exists if the segment intersects the other object setwise.
-         * <p>
+         *
          * Here, JSXGraph distinguishes whether the object is a segment or a line wlement that
          * is displayed as a segment (with staightFirst = straightLast = true).
          * In the latter case, the object is always treated like an infinite line, regardless if
@@ -8206,7 +8206,7 @@ JXG.Options = {
         /**
          * If set to true, the point will snap to a grid of integer multiples of
          * {@link Point#snapSizeX} and {@link Point#snapSizeY} (in user coordinates).
-         * <p>
+         *
          * The coordinates of the grid points are either integer multiples of snapSizeX and snapSizeY
          * (given in user coordinates, not pixels) or are the intersection points
          * of the major ticks of the boards default axes in case that snapSizeX, snapSizeY are negative.
@@ -8376,7 +8376,7 @@ JXG.Options = {
          * By default, the strokewidths of the borders of a polygon are not changed during highlighting (only strokeColor and strokeOpacity are changed
          * to highlightStrokeColor, and highlightStrokeOpacity).
          * However, strokewidth is changed to highlightStrokewidth if an individual border gets the focus.
-         * <p>
+         *
          * With this attribute set to true, also the borders change strokeWidth if the polygon itself gets the focus.
          *
          * @type Boolean
@@ -8611,7 +8611,7 @@ JXG.Options = {
          * p1 is still the radius point, p2 the angle point. The sector will be that part of the
          * the circle with center 'center' which starts at p1, ends at the ray between center
          * and p2, and passes p3.
-         * <p>
+         *
          * This attribute is immutable (by purpose).
          * This attribute is necessary for circumCircleSectors
          *
@@ -10007,13 +10007,13 @@ JXG.Options = {
 
         /**
          * Internationalization support for texts consisting of a number only.
-         * <p>
+         *
          * Setting the local overwrites the board-wide locale set in the board attributes.
          * The JSXGraph attribute digits is overruled by the
          * Intl attributes "minimumFractionDigits" and "maximumFractionDigits".
          * See <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat">https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat</a>
          * for more information about possible options.
-         * <p>
+         *
          * See below for an example where the text is composed from a string and a locale formatted number.
          *
          * @name intl

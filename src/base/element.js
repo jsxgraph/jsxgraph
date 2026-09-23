@@ -947,7 +947,7 @@ JXG.extend(
         /**
          * Show the element or hide it. If hidden, it will still exist but not be
          * visible on the board.
-         * <p>
+         *
          * Sets also the display of the inherits elements. These can be
          * JSXGraph elements or arrays of JSXGraph elements.
          * However, deeper nesting than this is not supported.
@@ -1056,7 +1056,7 @@ JXG.extend(
          * this attribute value of the element is 'inherit'.
          * <li> being inside of the canvas
          * </ol>
-         * <p>
+         *
          * This method is called three times for most elements:
          * <ol>
          * <li> between {@link JXG.GeometryElement#update}
