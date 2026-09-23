@@ -50,8 +50,8 @@ import Geometry from "../math/geometry.js";
  * - `'pointRadius'` The sphere is defined by its center and its radius in user units.
  *
  * The parameters `p1`, `p2` and `radius` must be set according to this method parameter.
- * @param {JXG.Point3D} par1 The center of the sphere.
- * @param {JXG.Point3D} par2 Can be:
+ * @param {Point3D} par1 The center of the sphere.
+ * @param {Point3D} par2 Can be:
  * - A point on the sphere (if the construction method is `'twoPoints'`)
  * - A number or function (if the construction method is `'pointRadius'`)
  * @param {Object} attributes An object containing visual properties like in {@link JXG.Options#point3d} and

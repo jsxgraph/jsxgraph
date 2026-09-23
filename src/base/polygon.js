@@ -525,7 +525,7 @@ JXG.extend(
 
         /**
          * Finds the index to a given point reference.
-         * @param {JXG.Point} p Reference to an element of type {@link JXG.Point}
+         * @param Point} p Reference to an element of type {@link Point}
          * @returns {Number} Index of the point or -1.
          */
         findPoint: function (p) {
@@ -551,8 +551,8 @@ JXG.extend(
          * If new vertices are supplied by coordinates, the default attributes of polygon
          * vertices are taken as their attributes. Therefore, the visual attributes of
          * new vertices and borders may have to be adapted afterwards.
-         * @param {JXG.Point} p Arbitrary number of points or coordinate arrays
-         * @returns {JXG.Polygon} Reference to the polygon
+         * @param {Point} p Arbitrary number of points or coordinate arrays
+         * @returns {Polygon} Reference to the polygon
          * @example
          * var pg = board.create('polygon', [[1,2], [3,4], [-3,1]], {hasInnerPoints: true});
          * var newPoint = board.create('point', [-1, -1]);
@@ -596,8 +596,8 @@ JXG.extend(
          *
          * @param {Number} idx The position after which the new vertices are inserted.
          * Setting idx to -1 inserts the new points at the front, i.e. at position 0.
-         * @param {JXG.Point} p Arbitrary number of points or coordinate arrays to insert.
-         * @returns {JXG.Polygon} Reference to the polygon object
+         * @param {Point} p Arbitrary number of points or coordinate arrays to insert.
+         * @returns {Polygon} Reference to the polygon object
          *
          * @example
          * var pg = board.create('polygon', [[1,2], [3,4], [-3,1]], {hasInnerPoints: true});
@@ -694,8 +694,8 @@ JXG.extend(
 
         /**
          * Removes given set of vertices from the polygon
-         * @param {JXG.Point} p Arbitrary number of vertices as {@link JXG.Point} elements or index numbers
-         * @returns {JXG.Polygon} Reference to the polygon
+         * @param {Point} p Arbitrary number of vertices as {@link Point} elements or index numbers
+         * @returns {Polygon} Reference to the polygon
          */
         removePoints: function (p) {
             var i, j, idx,
@@ -930,7 +930,7 @@ JXG.extend(
          *
          * @private
          *
-         * @param {JXG.Polygon} polygon Polygon which will be clipped.
+         * @param {Polygon} polygon Polygon which will be clipped.
          *
          * @returns {Array} of (normalized homogeneous user) coordinates (i.e. [z, x, y], where z==1 in most cases,
          *   representing the vertices of the intersection polygon.
@@ -1014,7 +1014,7 @@ JXG.extend(
          * An alternative is to use the methods from {@link JXG.Math.Clip}, where the algorithm by Greiner and Hormann
          * is used.
          *
-         * @param {JXG.Polygon} polygon Polygon which will be clipped.
+         * @param {Polygon} polygon Polygon which will be clipped.
          *
          * @returns {Array} of (normalized homogeneous user) coordinates (i.e. [z, x, y], where z==1 in most cases,
          *   representing the vertices of the intersection polygon.

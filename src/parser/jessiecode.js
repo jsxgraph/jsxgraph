@@ -739,7 +739,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
 
     /**
      * Sets the property `what` of `o` to `value`
-     * @param {JXG.Point|JXG.Text} o
+     * @param {Point|Text} o
      * @param {String} what
      * @param value
      */
@@ -811,10 +811,11 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
      * manipulate the AST according to the second parameter "cmd".
      * @param  {String} code      JessieCode code to be parsed
      * @param  {String} cmd       Type of manipulation to be done with AST
-     * @param {Object} [options]  Object with attributes <ul>
-     *     <li>{Boolean} [geonext=false]     Geonext compatibility mode.</li>
-     *     <li>{Boolean} [dontstore=false]   If false, the code string is stored in this.code, i.e. in the JessieCode object, e.g. in board.jc.</li>
-     *     </ul>
+     * @param {Object} [options]  Object with attributes
+     *
+     * - {Boolean} [geonext=false]     Geonext compatibility mode.
+     * - {Boolean} [dontstore=false]   If false, the code string is stored in this.code, i.e. in the JessieCode object, e.g. in `board.jc`.
+     *    
      * @return {Object} Returns result of computation as directed in cmd.
      */
     _genericParse: function (code, cmd, options) {
@@ -1714,10 +1715,11 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
      * Compiles a parse tree back to JessieCode.
      * @param {Object} ast
      * @param {Boolean} [js=false] Compile either to JavaScript or back to JessieCode (required for the UI).
-     * @param {Object} [format] Options for formatting the output. Depending on some options, the function might return a not re-parsable string. This format options have only effect on JessieCode output.<ul>
-     *     <li>{Boolean} [minParentheses=false]               Use minimal amount of parentheses?</li>
-     *     <li>{Boolean|Number|Function} [constToFixed=false] Use this number or function to format constant values.</li>
-     *     <li>{Boolean} [printable=false]                    Adds additional signs or parentheses, e.g. x^0.5 --> x^{0.5}.</li>
+     * @param {Object} [format] Options for formatting the output. Depending on some options, the function might return a not re-parsable string. This format options have only effect on JessieCode output.
+     *
+     * - {Boolean} [minParentheses=false]               Use minimal amount of parentheses?
+     * - {Boolean|Number|Function} [constToFixed=false] Use this number or function to format constant values.
+     * - {Boolean} [printable=false]                    Adds additional signs or parentheses, e.g. x^0.5 --> x^{0.5}.
      *     </ul>
      * @returns Something
      * @private
@@ -2233,7 +2235,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
 
     /**
      * This is used as the global X() function.
-     * @param {JXG.Point|JXG.Text} e
+     * @param {Point|Text} e
      * @returns {Number}
      */
     X: function (e) {
@@ -2242,7 +2244,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
 
     /**
      * This is used as the global Y() function.
-     * @param {JXG.Point|JXG.Text} e
+     * @param {Point|Text} e
      * @returns {Number}
      */
     Y: function (e) {
@@ -2260,7 +2262,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
 
     /**
      * This is used as the global L() function.
-     * @param {JXG.Line} e
+     * @param {Line} e
      * @returns {Number}
      */
     L: function (e) {
@@ -2269,7 +2271,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
 
     /**
      * This is used as the global area() function.
-     * @param {JXG.Circle|JXG.Polygon} obj
+     * @param {Circle|Polygon} obj
      * @returns {Number}
      */
     area: function (obj) {
@@ -2282,7 +2284,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
 
     /**
      * This is used as the global perimeter() function.
-     * @param {JXG.Circle|JXG.Polygon} obj
+     * @param {Circle|Polygon} obj
      * @returns {Number}
      */
     perimeter: function (obj) {
@@ -2295,8 +2297,8 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
 
     /**
      * This is used as the global dist() function.
-     * @param {JXG.Point} p1
-     * @param {JXG.Point} p2
+     * @param {Point} p1
+     * @param {Point} p2
      * @returns {Number}
      */
     dist: function (p1, p2) {
@@ -2309,7 +2311,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
 
     /**
      * This is used as the global radius() function.
-     * @param {JXG.Circle|Sector} obj
+     * @param {Circle|Sector} obj
      * @returns {Number}
      */
     radius: function (obj) {
@@ -2322,7 +2324,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
 
     /**
      * This is used as the global slope() function.
-     * @param {JXG.Line} obj
+     * @param {Line} obj
      * @returns {Number}
      */
     slope: function (obj) {
@@ -2335,8 +2337,8 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
 
     /**
      * + operator implementation
-     * @param {Number|Array|JXG.Point} a
-     * @param {Number|Array|JXG.Point} b
+     * @param {Number|Array|Point} a
+     * @param {Number|Array|Point} b
      * @returns {Number|Array}
      */
     add: function (a, b) {
@@ -2367,8 +2369,8 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
 
     /**
      * - operator implementation
-     * @param {Number|Array|JXG.Point} a
-     * @param {Number|Array|JXG.Point} b
+     * @param {Number|Array|Point} a
+     * @param {Number|Array|Point} b
      * @returns {Number|Array}
      */
     sub: function (a, b) {
@@ -2397,7 +2399,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
 
     /**
      * unary - operator implementation
-     * @param {Number|Array|JXG.Point} a
+     * @param {Number|Array|Point} a
      * @returns {Number|Array}
      */
     neg: function (a) {

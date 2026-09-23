@@ -67,9 +67,9 @@ JXG.extend(
 
         /**
          * Calculates the angle defined by the points A, B, C.
-         * @param {JXG.Point|Array} A A point  or [x,y] array.
-         * @param {JXG.Point|Array} B Another point or [x,y] array.
-         * @param {JXG.Point|Array} C A circle - no, of course the third point or [x,y] array.
+         * @param {Point|Array} A A point  or [x,y] array.
+         * @param {Point|Array} B Another point or [x,y] array.
+         * @param {Point|Array} C A circle - no, of course the third point or [x,y] array.
          * @deprecated Use {@link JXG.Math.Geometry.rad} instead.
          * @see JXG.Math.Geometry.rad
          * @see JXG.Math.Geometry.trueAngle
@@ -119,9 +119,9 @@ JXG.extend(
 
         /**
          * Calculates the angle defined by the three points A, B, C if you're going from A to C around B counterclockwise.
-         * @param {JXG.Point|Array} A Point or [x,y] array
-         * @param {JXG.Point|Array} B Point or [x,y] array
-         * @param {JXG.Point|Array} C Point or [x,y] array
+         * @param {Point|Array} A Point or [x,y] array
+         * @param {Point|Array} B Point or [x,y] array
+         * @param {Point|Array} C Point or [x,y] array
          * @see JXG.Math.Geometry.rad
          * @returns {Number} The angle in degrees.
          */
@@ -131,9 +131,9 @@ JXG.extend(
 
         /**
          * Calculates the internal angle defined by the three points A, B, C if you're going from A to C around B counterclockwise.
-         * @param {JXG.Point|Array} A Point or [x,y] array
-         * @param {JXG.Point|Array} B Point or [x,y] array
-         * @param {JXG.Point|Array} C Point or [x,y] array
+         * @param {Point|Array} A Point or [x,y] array
+         * @param {Point|Array} B Point or [x,y] array
+         * @param {Point|Array} C Point or [x,y] array
          * @see JXG.Math.Geometry.trueAngle
          * @returns {Number} Angle in radians.
          */
@@ -178,9 +178,9 @@ JXG.extend(
          * As a result, the bisection line is defined by two points:
          * Parameter B and the point with the coordinates calculated in this function.
          * Does not work for ideal points.
-         * @param {JXG.Point} A Point
-         * @param {JXG.Point} B Point
-         * @param {JXG.Point} C Point
+         * @param {Point} A Point
+         * @param {Point} B Point
+         * @param {Point} C Point
          * @param [board=A.board] Reference to the board
          * @returns {JXG.Coords} Coordinates of the second point defining the bisection.
          */
@@ -235,9 +235,9 @@ JXG.extend(
         //  * The m-section generalizes the bisector to any real number.
         //  * For example, the trisectors of an angle are simply the 1/3-sector and the 2/3-sector.
         //  * Does not work for ideal points.
-        //  * @param {JXG.Point} A Point
-        //  * @param {JXG.Point} B Point
-        //  * @param {JXG.Point} C Point
+        //  * @param {Point} A Point
+        //  * @param {Point} B Point
+        //  * @param {Point} C Point
         //  * @param {Number} m Number
         //  * @param [board=A.board] Reference to the board
         //  * @returns {JXG.Coords} Coordinates of the second point defining the bisection.
@@ -282,8 +282,8 @@ JXG.extend(
 
         /**
          * Reflects the point along the line.
-         * @param {JXG.Line} line Axis of reflection.
-         * @param {JXG.Point} point Point to reflect.
+         * @param {Line} line Axis of reflection.
+         * @param {Point} point Point to reflect.
          * @param [board=point.board] Reference to the board
          * @returns {JXG.Coords} Coordinates of the reflected point.
          */
@@ -322,8 +322,8 @@ JXG.extend(
         /**
          * Computes the new position of a point which is rotated
          * around a second point (called rotpoint) by the angle phi.
-         * @param {JXG.Point} rotpoint Center of the rotation
-         * @param {JXG.Point} point point to be rotated
+         * @param {Point} rotpoint Center of the rotation
+         * @param {Point} point point to be rotated
          * @param {Number} phi rotation angle in arc length
          * @param {JXG.Board} [board=point.board] Reference to the board
          * @returns {JXG.Coords} Coordinates of the new position.
@@ -357,8 +357,8 @@ JXG.extend(
         /**
          * Calculates the coordinates of a point on the perpendicular to the given line through
          * the given point.
-         * @param {JXG.Line} line A line.
-         * @param {JXG.Point} point Point which is projected to the line.
+         * @param {Line} line A line.
+         * @param {Point} point Point which is projected to the line.
          * @param {JXG.Board} [board=point.board] Reference to the board
          * @returns {Array} Array of length two containing coordinates of a point on the perpendicular to the given line
          *                  through the given point and boolean flag "change".
@@ -448,9 +448,9 @@ JXG.extend(
 
         /**
          * Calculates the center of the circumcircle of the three given points.
-         * @param {JXG.Point} point1 Point
-         * @param {JXG.Point} point2 Point
-         * @param {JXG.Point} point3 Point
+         * @param {Point} point1 Point
+         * @param {Point} point2 Point
+         * @param {Point} point3 Point
          * @param {JXG.Board} [board=point1.board] Reference to the board
          * @returns {JXG.Coords} Coordinates of the center of the circumcircle of the given points.
          */
@@ -561,7 +561,7 @@ JXG.extend(
          * Sort vertices counter clockwise starting with the first point.
          * Used in Polygon.sutherlandHodgman, Geometry.signedPolygon.
          *
-         * @param {Array} p An array containing {@link JXG.Point}, {@link JXG.Coords}, and/or arrays.
+         * @param {Array} p An array containing {@link Point}, {@link JXG.Coords}, and/or arrays.
          *
          * @returns {Array}
          */
@@ -618,9 +618,9 @@ JXG.extend(
          * <li> If the return value is = 0, then the points p1, p2, p3 are collinear.
          * </ul>
          *
-         * @param {JXG.Point|JXG.Coords|Array} p1
-         * @param {JXG.Point|JXG.Coords|Array} p2
-         * @param {JXG.Point|JXG.Coords|Array} p3
+         * @param {Point|JXG.Coords|Array} p1
+         * @param {Point|JXG.Coords|Array} p2
+         * @param {Point|JXG.Coords|Array} p3
          *
          * @returns {Number}
          */
@@ -635,7 +635,7 @@ JXG.extend(
          * Determine the signed area of a non-self-intersecting polygon.
          * Surveyor's Formula
          *
-         * @param {Array} p An array containing {@link JXG.Point}, {@link JXG.Coords}, and/or arrays.
+         * @param {Array} p An array containing {@link Point}, {@link JXG.Coords}, and/or arrays.
          * @param {Boolean} [sort=true]
          *
          * @returns {Number}
@@ -670,7 +670,7 @@ JXG.extend(
         /**
          * Calculate the complex hull of a point cloud by the Graham scan algorithm.
          *
-         * @param {Array} points An array containing {@link JXG.Point}, {@link JXG.Coords}, and/or arrays.
+         * @param {Array} points An array containing {@link Point}, {@link JXG.Coords}, and/or arrays.
          *
          * @returns {Array} List of objects `{i: index, c: coords}` containing the convex hull points
          *  in form of the index in the original input array and a coords array.
@@ -908,7 +908,7 @@ JXG.extend(
         /**
          * Calculate the complex hull of a point cloud by the Graham scan algorithm.
          *
-         * @param {Array} points An array containing {@link JXG.Point}, {@link JXG.Coords}, and/or arrays.
+         * @param {Array} points An array containing {@link Point}, {@link JXG.Coords}, and/or arrays.
          * @param {Boolean} [returnCoords=false] If true, return an array of coords. Otherwise return a list of pointers
          * to the input list elements. That is, if the input is a list of {@link JXG.Point} elements, the returned list
          * will contain the points that form the convex hull.
@@ -1171,7 +1171,7 @@ JXG.extend(
          * A line can be a segment, a straight, or a ray. So it is not always delimited by point1 and point2
          * calcStraight determines the visual start point and end point of the line. A segment is only drawn
          * from start to end point, a straight line is drawn until it meets the boards boundaries.
-         * @param {JXG.Line} el Reference to a line object, that needs calculation of start and end point.
+         * @param {Line} el Reference to a line object, that needs calculation of start and end point.
          * @param {JXG.Coords} point1 Coordinates of the point where line drawing begins. This value is calculated and
          * set by this method.
          * @param {JXG.Coords} point2 Coordinates of the point where line drawing ends. This value is calculated and set
@@ -1341,7 +1341,7 @@ JXG.extend(
          * boards boundaries. However, if the line has infinite ticks, it will be delimited by the projection of
          * the boards vertices onto itself.
          *
-         * @param {JXG.Line} el Reference to a line object, that needs calculation of start and end point.
+         * @param {Line} el Reference to a line object, that needs calculation of start and end point.
          * @param {JXG.Coords} point1 Coordinates of the point where line drawing begins. This value is calculated and
          * set by this method.
          * @param {JXG.Coords} point2 Coordinates of the point where line drawing ends. This value is calculated and set
@@ -1619,9 +1619,9 @@ JXG.extend(
          *
          * Non-homogeneous version.
          *
-         * @param  {Array|JXG.Point} p1 First point or its coordinates of the segment. Point object or array of length 3. First (homogeneous) coordinate is equal to 1.
-         * @param  {Array|JXG.Point} p2 Second point or its coordinates of the segment. Point object or array of length 3. First (homogeneous) coordinate is equal to 1.
-         * @param  {Array|JXG.Point} q Point or its coordinates. Point object or array of length 3. First (homogeneous) coordinate is equal to 1.
+         * @param  {Array|Point} p1 First point or its coordinates of the segment. Point object or array of length 3. First (homogeneous) coordinate is equal to 1.
+         * @param  {Array|Point} p2 Second point or its coordinates of the segment. Point object or array of length 3. First (homogeneous) coordinate is equal to 1.
+         * @param  {Array|Point} q Point or its coordinates. Point object or array of length 3. First (homogeneous) coordinate is equal to 1.
          * @return {Number} Signed area of the triangle formed by these three points.
          *
          * @see JXG.Math.Geometry.windingNumber
@@ -2402,8 +2402,8 @@ JXG.extend(
          * Segment-wise search for the nr-th intersection of two curves.
          * testSegment is always assumed to be true.
          *
-         * @param {JXG.Curve} c1 Curve, Line or Circle
-         * @param {JXG.Curve} c2 Curve, Line or Circle
+         * @param {Curve|Line|Circle} c1 Curve, Line or Circle
+         * @param {Curve|Line|Circle} c2 Curve, Line or Circle
          * @param {Number} nr the nr-th intersection point will be returned
          * @param {JXG.Board} [board=c1.board] Reference to a board object
          * @returns {JXG.Coords} intersection as Coords object
@@ -2427,8 +2427,8 @@ JXG.extend(
          * Apply Newton-Raphson to search for an intersection of two curves
          * in a given range of the first curve.
          *
-         * @param {JXG.Curve} c1 Curve, Line or Circle
-         * @param {JXG.Curve} c2 Curve, Line or Circle
+         * @param {Curve|Line|Circle} c1 Curve, Line or Circle
+         * @param {Curve|Line|Circle} c2 Curve, Line or Circle
          * @param {Array} range Domain for the search of an intersection. The start value
          * for the search is chosen to be inside of that range.
          * @param {Boolean} testSegment If true require that t1 and t2 are inside of the allowed bounds.
@@ -2507,8 +2507,8 @@ JXG.extend(
          * Return a list of the (at most) first i intersection points of two curves.
          * Computed iteratively.
          *
-         * @param {JXG.Curve} c1 Curve, Line or Circle
-         * @param {JXG.Curve} c2 Curve, Line or Circle
+         * @param {Curve|Line|Circle} c1 Curve, Line or Circle
+         * @param {Curve|Line|Circle} c2 Curve, Line or Circle
          * @param {Number} low Lower bound of the search domain (between [0, 1])
          * @param {Number} up Upper bound of the search domain (between [0, 1])
          * @param {Number} i Return a list of the first i intersection points
@@ -2579,8 +2579,8 @@ JXG.extend(
          * Segment-wise intersection is more stable, but has problems with tangent points.
          * Damped Newton-Raphson converges very rapidly but sometimes behaves chaotic.
          *
-         * @param {JXG.Curve} c1 Curve, Line or Circle
-         * @param {JXG.Curve} c2 Curve, Line or Circle
+         * @param {Curve|Line|Circle} c1 Curve, Line or Circle
+         * @param {Curve|Line|Circle} c2 Curve, Line or Circle
          * @param {Number|Function} nr the nr-th intersection point will be returned. For backwards compatibility:
          * if method='newton' and nr is not an integer, {@link JXG.Math.Numerics.generalizedNewton} is called
          * directly with nr as start value (not recommended).
@@ -2642,8 +2642,8 @@ JXG.extend(
          * If higher precision is needed, {@link JXG.Math.Geometry.meetCurveLineContinuous}
          * has to be used.
          *
-         * @param {JXG.Curve|JXG.Line} el1 Curve or Line
-         * @param {JXG.Curve|JXG.Line} el2 Curve or Line
+         * @param {Curve|Line} el1 Curve or Line
+         * @param {Curve|Line} el2 Curve or Line
          * @param {Number|Function} nr the nr-th intersection point will be returned.
          * @param {JXG.Board} [board=el1.board] Reference to a board object.
          * @param {Boolean} alwaysIntersect If false just the segment between the two defining points are tested for intersection
@@ -2685,8 +2685,8 @@ JXG.extend(
          * Uses {@link JXG.Math.Geometry.meetCurveLineDiscrete} as a first approximation.
          * A more exact solution is then found with {@link JXG.Math.Numerics.root}.
          *
-         * @param {JXG.Curve} cu Curve
-         * @param {JXG.Line} li Line
+         * @param {Curve} cu Curve
+         * @param {Line} li Line
          * @param {NumberFunction} nr Will return the nr-th intersection point.
          * @param {JXG.Board} board
          * @param {Boolean} testSegment Test if intersection has to be inside of the segment or somewhere on the
@@ -2768,8 +2768,8 @@ JXG.extend(
          * Intersection of line and curve, discrete case.
          * Segments are treated as lines.
          * Finding the nr-th intersection point should work for all nr.
-         * @param {JXG.Curve} cu
-         * @param {JXG.Line} li
+         * @param {Curve} cu
+         * @param {Line} li
          * @param {Number|Function} nr
          * @param {JXG.Board} board
          * @param {Boolean} testSegment Test if intersection has to be inside of the segment or somewhere on the
@@ -2862,8 +2862,8 @@ JXG.extend(
          * This method works also for transformed curves, since only the already
          * transformed points are used.
          *
-         * @param {JXG.Curve} red
-         * @param {JXG.Curve} blue
+         * @param {Curve} red
+         * @param {Curve} blue
          * @param {Number|Function} nr
          */
         meetCurveRedBlueSegments: function (red, blue, nr) {
@@ -2973,8 +2973,8 @@ JXG.extend(
          * Find the n-th intersection point of two pathes, usually given by polygons. Uses parts of the
          * Greiner-Hormann algorithm in JXG.Math.Clip.
          *
-         * @param {JXG.Circle|JXG.Curve|JXG.Polygon} path1
-         * @param {JXG.Circle|JXG.Curve|JXG.Polygon} path2
+         * @param {Circle|Curve|Polygon} path1
+         * @param {Circle|Curve|Polygon} path2
          * @param {Number|Function} n
          * @param {JXG.Board} board
          *
@@ -3022,8 +3022,8 @@ JXG.extend(
 
         /**
          * Find the n-th intersection point between a polygon and a line.
-         * @param {JXG.Polygon} path
-         * @param {JXG.Line} line
+         * @param {Polygon} path
+         * @param {Line} line
          * @param {Number|Function} nr
          * @param {JXG.Board} board
          * @param {Boolean} alwaysIntersect If false just the segment between the two defining points of the line are tested for intersection.
@@ -3339,8 +3339,8 @@ JXG.extend(
 
         /**
          * Find the nr-th intersection point of two Bezier curves, i.e. curves with bezierDegree == 3.
-         * @param {JXG.Curve} red Curve with bezierDegree == 3
-         * @param {JXG.Curve} blue Curve with bezierDegree == 3
+         * @param {Curve} red Curve with bezierDegree == 3
+         * @param {Curve} blue Curve with bezierDegree == 3
          * @param {Number|Function} nr The number of the intersection point which should be returned.
          * @returns {Array} The homogeneous coordinates of the nr-th intersection point.
          */
@@ -3586,8 +3586,8 @@ JXG.extend(
          * Calculates the coordinates of the projection of a given point on a given circle. I.o.w. the
          * nearest one of the two intersection points of the line through the given point and the circles
          * center.
-         * @param {JXG.Point|JXG.Coords} point Point to project or coords object to project.
-         * @param {JXG.Circle} circle Circle on that the point is projected.
+         * @param {Point|JXG.Coords} point Point to project or coords object to project.
+         * @param {Circle} circle Circle on that the point is projected.
          * @param {JXG.Board} [board=point.board] Reference to the board
          * @returns {JXG.Coords} The coordinates of the projection of the given point on the given circle.
          */
@@ -3627,8 +3627,8 @@ JXG.extend(
         /**
          * Calculates the coordinates of the orthogonal projection of a given point on a given line. I.o.w. the
          * intersection point of the given line and its perpendicular through the given point.
-         * @param {JXG.Point|JXG.Coords} point Point to project.
-         * @param {JXG.Line} line Line on that the point is projected.
+         * @param {Point|JXG.Coords} point Point to project.
+         * @param {Line} line Line on that the point is projected.
          * @param {JXG.Board} [board=point.board|board=line.board] Reference to a board.
          * @returns {JXG.Coords} The coordinates of the projection of the given point on the given line.
          */
@@ -3689,7 +3689,7 @@ JXG.extend(
          * Finds the coordinates of the closest point on a Bezier segment of a
          * {@link JXG.Curve} to a given coordinate array.
          * @param {Array} pos Point to project in homogeneous coordinates.
-         * @param {JXG.Curve} curve Curve of type "plot" having Bezier degree 3.
+         * @param {Curve} curve Curve of type "plot" having Bezier degree 3.
          * @param {Number} start Number of the Bezier segment of the curve.
          * @returns {Array} The coordinates of the projection of the given point
          * on the given Bezier segment and the preimage of the curve which
@@ -3716,8 +3716,8 @@ JXG.extend(
          * Calculates the coordinates of the projection of a given point on a given curve.
          * Uses {@link JXG.Math.Geometry.projectCoordsToCurve}.
          *
-         * @param {JXG.Point} point Point to project.
-         * @param {JXG.Curve} curve Curve on that the point is projected.
+         * @param {Point} point Point to project.
+         * @param {Curve} curve Curve on that the point is projected.
          * @param {JXG.Board} [board=point.board] Reference to a board.
          * @see JXG.Math.Geometry.projectCoordsToCurve
          * @returns {Array} [JXG.Coords, position] The coordinates of the projection of the given
@@ -3749,7 +3749,7 @@ JXG.extend(
          * @param {Number} x coordinate to project.
          * @param {Number} y coordinate to project.
          * @param {Number} t start value for newtons method
-         * @param {JXG.Curve} curve Curve on that the point is projected.
+         * @param {Curve} curve Curve on that the point is projected.
          * @param {JXG.Board} [board=curve.board] Reference to a board.
          * @see JXG.Math.Geometry.projectPointToCurve
          * @returns {JXG.Coords} Array containing the coordinates of the projection of the given point on the given curve and
@@ -3927,7 +3927,7 @@ JXG.extend(
          * Calculates the coordinates of the closest orthogonal projection of a given coordinate array onto the
          * border of a polygon.
          * @param {Array} p Point to project.
-         * @param {JXG.Polygon} pol Polygon element
+         * @param {Polygon} pol Polygon element
          * @returns {Array} The coordinates of the closest projection of the given point to the border of the polygon.
          */
         projectCoordsToPolygon: function (p, pol) {
@@ -3967,8 +3967,8 @@ JXG.extend(
         /**
          * Calculates the coordinates of the projection of a given point on a given turtle. A turtle consists of
          * one or more curves of curveType 'plot'. Uses {@link JXG.Math.Geometry.projectPointToCurve}.
-         * @param {JXG.Point} point Point to project.
-         * @param {JXG.Turtle} turtle on that the point is projected.
+         * @param {Point} point Point to project.
+         * @param {Turtle} turtle on that the point is projected.
          * @param {JXG.Board} [board=point.board] Reference to a board.
          * @returns {Array} [JXG.Coords, position] Array containing the coordinates of the projection of the given point on the turtle and
          * the position on the turtle.
@@ -4023,8 +4023,8 @@ JXG.extend(
 
         /**
          * Trivial projection of a point to another point.
-         * @param {JXG.Point} point Point to project (not used).
-         * @param {JXG.Point} dest Point on that the point is projected.
+         * @param {Point} point Point to project (not used).
+         * @param {Point} dest Point on that the point is projected.
          * @returns {JXG.Coords} The coordinates of the projection of the given point on the given circle.
          */
         projectPointToPoint: function (point, dest) {
@@ -4033,7 +4033,7 @@ JXG.extend(
 
         /**
          *
-         * @param {JXG.Point|JXG.Coords} point
+         * @param {Point|JXG.Coords} point
          * @param {JXG.Board} [board]
          */
         projectPointToBoard: function (point, board) {
@@ -4315,7 +4315,7 @@ JXG.extend(
          * Given the 2D screen coordinates of a point, finds the nearest point on the given
          * parametric curve or surface, and returns its view-space coordinates.
          * @param {Array} p Homogeneous 3D coordinates for which the closest point on the curve point is searched.
-         * @param {JXG.Curve3D|JXG.Surface3D} target Parametric curve or surface to project to.
+         * @param {Curve3D|Surface3D} target Parametric curve or surface to project to.
          * @param {Number} n Dimension of the host element to which the coords are projected.
          * @param {Array} params New position of point on the target (i.e. it is a return value),
          * modified in place during the search, ending up at the nearest point.
@@ -4433,7 +4433,7 @@ JXG.extend(
          * given parametric curve or surface which is nearest in screen space,
          * and returns its view-space coordinates.
          * @param {Array} pScr Screen coordinates to project.
-         * @param {JXG.Plane3D|JXG.Curve3D|JXG.Surface3D} target Plane, parametric curve or surface to project to.
+         * @param {Plane3D|Curve3D|Surface3D} target Plane, parametric curve or surface to project to.
          * @param {Array} params Parameters of point on the target, initially specifying the starting point of
          * the search. The parameters are modified in place during the search, ending up at the nearest point.
          * @returns {Array} Array of length 4 containing the coordinates of the nearest point on the curve or surface.

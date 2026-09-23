@@ -1601,8 +1601,8 @@ Mat.Numerics = {
      * Then, (t1new, t2new) := (t1,t2) - J^(-1)*(e,f).
      *
      *
-     * @param {JXG.Curve} c1 Curve, Line or Circle
-     * @param {JXG.Curve} c2 Curve, Line or Circle
+     * @param {Curve|Line|Circle} c1 Curve, Line or Circle
+     * @param {Curve|Line|Circle} c2 Curve, Line or Circle
      * @param {Number} t1ini start value for t1
      * @param {Number} t2ini start value for t2
      * @returns {JXG.Coords} intersection point
@@ -1665,8 +1665,8 @@ Mat.Numerics = {
      * We use a very high accuracy: Mat.eps**3
      *
      * @deprecated
-     * @param {JXG.Curve} c1 Curve, Line or Circle
-     * @param {JXG.Curve} c2 Curve, Line or Circle
+     * @param {Curve|Line|Circle} c1 Curve, Line or Circle
+     * @param {Curve|Line|Circle} c2 Curve, Line or Circle
      * @param {Number} t1ini Start value for curve c1
      * @param {Number} t2ini Start value for curve c2
      * @param {Number} gamma Damping factor, should be in the open interval (0, 1)
@@ -1814,7 +1814,7 @@ Mat.Numerics = {
      * Jean-Paul Berrut, Lloyd N. Trefethen: Barycentric Lagrange Interpolation,
      * SIAM Review, Vol 46, No 3, (2004) 501-517.
      * The graph of the parametric curve [x(t),y(t)] runs through the given points.
-     * @param {Array} p Array of JXG.Points
+     * @param {Array} p Array of {@link Point}s
      * @returns {Array} An array consisting of two functions x(t), y(t) which define a parametric curve
      * f(t) = (x(t), y(t)), a number x1 (which equals 0) and a function x2 defining the curve's domain.
      * That means the curve is defined between x1 and x2(). x2 returns the (length of array p minus one).
@@ -2076,7 +2076,7 @@ Mat.Numerics = {
      *
      * It possesses the method getTerm() which returns the string containing the function term of the polynomial and
      * the method getCoefficients() which returns an array containing the coefficients of the polynomial.
-     * @param {Array} p Array of JXG.Points
+     * @param {Array} p Array of {@link Point}s
      * @returns {function} A function of one parameter which returns the value of the polynomial, whose graph runs through the given points.
      * @memberof JXG.Math.Numerics
      *
@@ -2278,7 +2278,7 @@ Mat.Numerics = {
      * Determine the Lagrange polynomial through an array of points and
      * return the term of the polynomial as string.
      *
-     * @param {Array} points Array of JXG.Points
+     * @param {Array} points Array of {@link Point}s
      * @param {Number} digits Number of decimal digits of the coefficients
      * @param {String} param Name of the parameter. Default: 'x'.
      * @param {String} dot Multiplication symbol. Default: ' * '.
@@ -2367,7 +2367,7 @@ Mat.Numerics = {
      * return the coefficients of the polynomial as array.
      * The leading coefficient is at position 0.
      *
-     * @param {Array} points Array of JXG.Points
+     * @param {Array} points Array of {@link Point}s
      * @returns {Function} returning the coefficients of the Lagrange polynomial through
      *    the supplied points.
      * @memberof JXG.Math.Numerics
@@ -2458,8 +2458,9 @@ Mat.Numerics = {
      * Two artificial control points at the beginning and the end are added.
      *
      * The implementation (especially the centripetal parametrization) is from
-     * https://stackoverflow.com/questions/9489736/catmull-rom-curve-with-no-cusps-and-no-self-intersections .
-     * @param {Array} points Array consisting of JXG.Points.
+     * {@link https://stackoverflow.com/questions/9489736/catmull-rom-curve-with-no-cusps-and-no-self-intersections}.
+     *
+     * @param {Array} points Array consisting of {@link Point}s
      * @param {Number|Function} tau The tension parameter, either a constant number or a function returning a number. This number is between 0 and 1.
      * tau=1/2 give Catmull-Rom splines.
      * @param {String} type (Optional) parameter which allows to choose between "uniform" (default) and
@@ -2645,7 +2646,7 @@ Mat.Numerics = {
      * Computes the cubic Catmull-Rom spline curve through a given set of points. The curve
      * is uniformly parametrized. The curve is the cardinal spline curve for tau=0.5.
      * Two artificial control points at the beginning and the end are added.
-     * @param {Array} points Array consisting of JXG.Points.
+     * @param {Array} points Array consisting of {@link Point}s
      * @param {String} type (Optional) parameter which allows to choose between "uniform" (default) and
      * "centripetal" parameterization. Thus the two possible values are "uniform" or "centripetal".
      * @returns {Array} An Array consisting of four components: Two functions each of one parameter t
@@ -2809,7 +2810,7 @@ Mat.Numerics = {
 
     /**
      * Computes the cubic Bezier curve through a given set of points.
-     * @param {Array} points Array consisting of 3*k+1 {@link JXG.Points}.
+     * @param {Array} points Array consisting of 3*k+1 {@link Point}s.
      * The points at position k with k mod 3 = 0 are the data points,
      * points at position k with k mod 3 = 1 or 2 are the control points.
      * @returns {Array} An array consisting of two functions of one parameter t which return the
@@ -2865,7 +2866,7 @@ Mat.Numerics = {
 
     /**
      * Computes the B-spline curve of order k (order = degree+1) through a given set of points.
-     * @param {Array} points Array consisting of JXG.Points.
+     * @param {Array} points Array consisting of {@link Point}s.
      * @param {Number} order Order of the B-spline curve.
      * @returns {Array} An Array consisting of four components: Two functions each of one parameter t
      * which return the x resp. y coordinates of the B-spline curve in t, a zero value, and a function simply

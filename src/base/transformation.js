@@ -801,7 +801,7 @@ JXG.extend(
          * Applies a transformation once to a point element, that are: {@link Point}, {@link Text}, {@link Image}, {@link Point3D} or to an array of such elements.
          * If it is a free 2D point, then it can be dragged around later
          * and will overwrite the transformed coordinates.
-         * @param {JXG.Point|Array} p
+         * @param {Point|Array} p
          */
         applyOnce: function (p) {
             var c, len, i;

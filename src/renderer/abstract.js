@@ -309,7 +309,7 @@ JXG.extend(
 
         /**
          * Draws a point on the {@link JXG.Board}.
-         * @param {JXG.Point} el Reference to a {@link JXG.Point} object that has to be drawn.
+         * @param {Point} el Reference to a {@link Point} object that has to be drawn.
          * @see Point
          * @see JXG.Point
          * @see JXG.AbstractRenderer#updatePoint
@@ -348,9 +348,9 @@ JXG.extend(
 
         /**
          * Updates visual appearance of the renderer element assigned to the given {@link JXG.Point}.
-         * @param {JXG.Point} el Reference to a {@link JXG.Point} object, that has to be updated.
+         * @param {Point} el Reference to a {@link Point} object, that has to be updated.
          * @see Point
-         * @see JXG.Point
+         * @see Point
          * @see JXG.AbstractRenderer#drawPoint
          * @see JXG.AbstractRenderer#changePointStyle
          */
@@ -402,13 +402,13 @@ JXG.extend(
         },
 
         /**
-         * Changes the style of a {@link JXG.Point}. This is required because the point styles differ in what
+         * Changes the style of a {@link Point}. This is required because the point styles differ in what
          * elements have to be drawn, e.g. if the point is marked by a "x" or a "+" two lines are drawn, if
          * it's marked by spot a circle is drawn. This method removes the old renderer element(s) and creates
          * the new one(s).
-         * @param {JXG.Point} el Reference to a {@link JXG.Point} object, that's style is changed.
+         * @param {Point} el Reference to a {@link Point} object, that's style is changed.
          * @see Point
-         * @see JXG.Point
+         * @see Point
          * @see JXG.AbstractRenderer#updatePoint
          * @see JXG.AbstractRenderer#drawPoint
          */
@@ -437,7 +437,7 @@ JXG.extend(
 
         /**
          * Draws a line on the {@link JXG.Board}.
-         * @param {JXG.Line} el Reference to a line object, that has to be drawn.
+         * @param {Line} el Reference to a line object, that has to be drawn.
          * @see Line
          * @see JXG.Line
          * @see JXG.AbstractRenderer#updateLine
@@ -453,7 +453,7 @@ JXG.extend(
 
         /**
          * Updates visual appearance of the renderer element assigned to the given {@link JXG.Line}.
-         * @param {JXG.Line} el Reference to the {@link JXG.Line} object that has to be updated.
+         * @param {Line} el Reference to the {@link Line} object that has to be updated.
          * @see Line
          * @see JXG.Line
          * @see JXG.AbstractRenderer#drawLine
@@ -679,7 +679,7 @@ JXG.extend(
          * the arrow ends exactly at the intended position.
          * Calls the renderer method to draw the line.
          *
-         * @param {JXG.Line} el Reference to a line object, that has to be drawn
+         * @param {Line} el Reference to a line object, that has to be drawn
          * @param {Object} arrowData Data concerning possible arrow heads
          *
          * @returns {JXG.AbstractRenderer} Reference to the renderer
@@ -751,7 +751,7 @@ JXG.extend(
          * The Coords objects c1 and c2 are changed in place. In object a, the Boolean properties
          * 'showFirst' and 'showLast' are set.
          *
-         * @param  {JXG.Line} el Reference to the line object that gets arrow heads.
+         * @param  {Line} el Reference to the line object that gets arrow heads.
          * @param  {JXG.Coords} c1  Coords of the first point of the line (after {@link JXG.Math.Geometry#calcStraight}).
          * @param  {JXG.Coords} c2  Coords of the second point of the line (after {@link JXG.Math.Geometry#calcStraight}).
          * @param  {Object}  a Object { evFirst: Boolean, evLast: Boolean} containing information about arrow heads.
@@ -900,7 +900,7 @@ JXG.extend(
          * Possible values for the attribute 'linecap' are: 'butt', 'round', 'square'.
          * The default value is 'butt'. Not available for VML renderer.
          *
-         * @param {JXG.Line} element A arbitrary line.
+         * @param {Line} element A arbitrary line.
          * @see Line
          * @see JXG.Line
          * @see JXG.AbstractRenderer#updateLine
@@ -911,7 +911,7 @@ JXG.extend(
 
         /**
          * Creates a rendering node for ticks added to a line.
-         * @param {JXG.Line} el A arbitrary line.
+         * @param {Line} el A arbitrary line.
          * @see Line
          * @see Ticks
          * @see JXG.Line
@@ -941,10 +941,10 @@ JXG.extend(
         /* ********* Circle related stuff *********** */
 
         /**
-         * Draws a {@link JXG.Circle}
-         * @param {JXG.Circle} el Reference to a {@link JXG.Circle} object that has to be drawn.
+         * Draws a {@link Circle}
+         * @param {Circle} el Reference to a {@link Circle} object that has to be drawn.
          * @see Circle
-         * @see JXG.Circle
+         * @see Circle
          * @see JXG.AbstractRenderer#updateEllipse
          */
         drawEllipse: function (el) {
@@ -957,8 +957,8 @@ JXG.extend(
         },
 
         /**
-         * Updates visual appearance of a given {@link JXG.Circle} on the {@link JXG.Board}.
-         * @param {JXG.Circle} el Reference to a {@link JXG.Circle} object, that has to be updated.
+         * Updates visual appearance of a given {@link Circle} on the {@link JXG.Board}.
+         * @param {Circle} el Reference to a {@link Circle} object, that has to be updated.
          * @see Circle
          * @see JXG.Circle
          * @see JXG.AbstractRenderer#drawEllipse
@@ -989,7 +989,7 @@ JXG.extend(
 
         /**
          * Draws a {@link JXG.Polygon} on the {@link JXG.Board}.
-         * @param {JXG.Polygon} el Reference to a Polygon object, that is to be drawn.
+         * @param {Polygon} el Reference to a Polygon object, that is to be drawn.
          * @see Polygon
          * @see JXG.Polygon
          * @see JXG.AbstractRenderer#updatePolygon
@@ -1005,7 +1005,7 @@ JXG.extend(
 
         /**
          * Updates properties of a {@link JXG.Polygon}'s rendering node.
-         * @param {JXG.Polygon} el Reference to a {@link JXG.Polygon} object, that has to be updated.
+         * @param {Polygon} el Reference to a {@link JXG.Polygon} object, that has to be updated.
          * @see Polygon
          * @see JXG.Polygon
          * @see JXG.AbstractRenderer#drawPolygon
@@ -1038,10 +1038,10 @@ JXG.extend(
         displayLogo: function (str, fontsize) { /* stub */ },
 
         /**
-         * An internal text is a {@link JXG.Text} element which is drawn using only
+         * An internal text is a {@link Text} element which is drawn using only
          * the given renderer but no HTML. This method is only a stub, the drawing
          * is done in the special renderers.
-         * @param {JXG.Text} el Reference to a {@link JXG.Text} object
+         * @param {Text} el Reference to a {@link JXG.Text} object
          * @see Text
          * @see JXG.Text
          * @see JXG.AbstractRenderer#updateInternalText
@@ -1052,8 +1052,8 @@ JXG.extend(
         drawInternalText: function (el) { /* stub */ },
 
         /**
-         * Updates visual properties of an already existing {@link JXG.Text} element.
-         * @param {JXG.Text} el Reference to an {@link JXG.Text} object, that has to be updated.
+         * Updates visual properties of an already existing {@link Text} element.
+         * @param {Text} el Reference to an {@link JXG.Text} object, that has to be updated.
          * @see Text
          * @see JXG.Text
          * @see JXG.AbstractRenderer#drawInternalText
@@ -1065,7 +1065,7 @@ JXG.extend(
 
         /**
          * Displays a {@link JXG.Text} on the {@link JXG.Board} by putting a HTML div over it.
-         * @param {JXG.Text} el Reference to an {@link JXG.Text} object, that has to be displayed
+         * @param {Text} el Reference to an {@link JXG.Text} object, that has to be displayed
          * @see Text
          * @see JXG.Text
          * @see JXG.AbstractRenderer#drawInternalText
@@ -1125,7 +1125,7 @@ JXG.extend(
          *
          * TODO clipping for transformed texts
          *
-         * @param {JXG.Text} el Reference to an {@link JXG.Text} object that has to be clipped.
+         * @param {Text} el Reference to an {@link JXG.Text} object that has to be clipped.
          * @param {Boolean} [val=undefined] Set an explicit value, overwrites the element's attribute 'clip'. This is useful for handling the value 'inherit'.
          * @see Text
          * @see JXG.Text
@@ -1169,8 +1169,8 @@ JXG.extend(
         },
 
         /**
-         * Updates visual properties of an already existing {@link JXG.Text} element.
-         * @param {JXG.Text} el Reference to an {@link JXG.Text} object that has to be updated.
+         * Updates visual properties of an already existing {@link Text} element.
+         * @param {Text} el Reference to an {@link JXG.Text} object that has to be updated.
          * @see Text
          * @see JXG.Text
          * @see JXG.AbstractRenderer#drawText
@@ -1389,9 +1389,9 @@ JXG.extend(
         },
 
         /**
-         * Updates font-size, color and opacity properties and CSS style properties of a {@link JXG.Text} node.
+         * Updates font-size, color and opacity properties and CSS style properties of a {@link Text} node.
          * This function is also called by highlight() and nohighlight().
-         * @param {JXG.Text} el Reference to the {@link JXG.Text} object, that has to be updated.
+         * @param {Text} el Reference to the {@link JXG.Text} object, that has to be updated.
          * @param {Boolean} doHighlight
          * @see Text
          * @see JXG.Text
@@ -1515,9 +1515,9 @@ JXG.extend(
         /* ********* Image related stuff *********** */
 
         /**
-         * Draws an {@link JXG.Image} on a board; This is just a template that has to be implemented by special
+         * Generates an {@link Image} on a board; This is just a template that has to be implemented by special
          * renderers.
-         * @param {JXG.Image} el Reference to the image object that is to be drawn
+         * @param {Image} el Reference to the image object that is to be drawn
          * @see Image
          * @see JXG.Image
          * @see JXG.AbstractRenderer#updateImage
@@ -1525,8 +1525,8 @@ JXG.extend(
         drawImage: function (el) { /* stub */ },
 
         /**
-         * Updates the properties of an {@link JXG.Image} element.
-         * @param {JXG.Image} el Reference to an {@link JXG.Image} object, that has to be updated.
+         * Updates the properties of an {@link Image} element.
+         * @param {Image} el Reference to an {@link JXG.Image} object, that has to be updated.
          * @see Image
          * @see JXG.Image
          * @see JXG.AbstractRenderer#drawImage
@@ -1593,7 +1593,7 @@ JXG.extend(
          * Only affine transformation are supported, no proper projective transformations. This means, the
          * respective entries of the transformation matrix are simply ignored.
          *
-         * @param {JXG.Image|JXG.Text} el A {@link JXG.Image} or {@link JXG.Text} object.
+         * @param {Image|Text} el A {@link JXG.Image} or {@link JXG.Text} object.
          * @param {Array} transformations An array of {@link JXG.Transformation} objects. This is usually the
          * transformations property of the given element `el`.
          */
@@ -1601,19 +1601,19 @@ JXG.extend(
 
         /**
          * If the URL of the image is provided by a function the URL has to be updated during updateImage()
-         * @param {JXG.Image} el Reference to an image object.
+         * @param {Image} el Reference to an image object.
          * @see JXG.AbstractRenderer#updateImage
          */
         updateImageURL: function (el) { /* stub */ },
 
         /**
-         * Updates CSS style properties of a {@link JXG.Image} node.
+         * Updates CSS style properties of a {@link Image} node.
          * In SVGRenderer opacity is the only available style element.
          * This function is called by highlight() and nohighlight().
          * This function works for VML.
          * It does not work for Canvas.
          * SVGRenderer overwrites this method.
-         * @param {JXG.Text} el Reference to the {@link JXG.Image} object, that has to be updated.
+         * @param {Text} el Reference to the {@link JXG.Image} object, that has to be updated.
          * @param {Boolean} doHighlight
          * @see Image
          * @see JXG.Image
@@ -1720,7 +1720,7 @@ JXG.extend(
          * the format of such a string usually depends on the renderer this method
          * is only an abstract method. Therefore, it has to be implemented in the descendant renderer itself unless
          * the renderer does not use the createPrim interface but the draw* interfaces to paint.
-         * @param {JXG.Point} el The point element
+         * @param {Point} el The point element
          * @param {Number} size A positive number describing the size. Usually the half of the width and height of
          * the drawn point.
          * @param {String} type A string describing the point's face. This method only accepts the shortcut version of
@@ -1748,7 +1748,7 @@ JXG.extend(
         /**
          * Update a polygon primitive.
          * @param {Node} node
-         * @param {JXG.Polygon} el A JSXGraph element of type {@link JXG.Polygon}
+         * @param {Polygon} el A JSXGraph element of type {@link JXG.Polygon}
          */
         updatePolygonPrim: function (node, el) { /* stub */ },
 

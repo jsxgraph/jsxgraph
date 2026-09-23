@@ -6985,8 +6985,8 @@ JXG.extend(
          * For example, a circle around the point src
          * receives the new center dest. The old center src
          * will be deleted.
-         * @param {JXG.Point} src Original point which will be deleted
-         * @param {JXG.Point} dest New point with the dependencies of src.
+         * @param {Point} src Original point which will be deleted
+         * @param {Point} dest New point with the dependencies of src.
          * @param {Boolean} copyName Flag which decides if the name of the src element is copied to the
          *  dest element.
          * @returns {JXG.Board} Reference to the board

@@ -1694,10 +1694,10 @@ Mat.Clip = {
      *   <li>differences with one path having self-intersections.
      * </ul>
      *
-     * @param  {JXG.Circle|JXG.Curve|JXG.Polygon} subject   First closed path, usually called 'subject'.
+     * @param  {Circle|Curve|Polygon} subject   First closed path, usually called 'subject'.
      * Maybe curve, arc, sector, circle, polygon, array of points, array of JXG.Coords,
      * array of coordinate pairs.
-     * @param  {JXG.Circle|JXG.Curve|JXG.Polygon} clip      Second closed path, usually called 'clip'.
+     * @param  {Circle|Curve|Polygon} clip      Second closed path, usually called 'clip'.
      * Maybe curve, arc, sector, circle, polygon, array of points, array of JXG.Coords,
      * array of coordinate pairs.
      * @param  {String} clip_type Determines the type of boolean operation on the two paths.
@@ -1992,8 +1992,8 @@ Mat.Clip = {
      * Union of two closed paths. The paths could be JSXGraph elements circle, curve, or polygon.
      * Computed by the Greiner-Hormann algorithm.
      *
-     * @param  {JXG.Circle|JXG.Curve|JXG.Polygon} subject   First closed path.
-     * @param  {JXG.Circle|JXG.Curve|JXG.Polygon} clip      Second closed path.
+     * @param  {Circle|Curve|Polygon} subject   First closed path.
+     * @param  {Circle|Curve|Polygon} clip      Second closed path.
      * @param  {JXG.Board} board   JSXGraph board object. It is needed to convert between
      * user coordinates and screen coordinates.
      * @return {Array}          Array consisting of two arrays containing the x-coordinates and the y-coordinates of
@@ -2059,8 +2059,8 @@ Mat.Clip = {
      * Intersection of two closed paths. The paths could be JSXGraph elements circle, curve, or polygon.
      * Computed by the Greiner-Hormann algorithm.
      *
-     * @param  {JXG.Circle|JXG.Curve|JXG.Polygon} subject   First closed path.
-     * @param  {JXG.Circle|JXG.Curve|JXG.Polygon} clip      Second closed path.
+     * @param  {Circle|Curve|Polygon} subject   First closed path.
+     * @param  {Circle|Curve|Polygon} clip      Second closed path.
      * @param  {JXG.Board} board   JSXGraph board object. It is needed to convert between
      * user coordinates and screen coordinates.
      * @return {Array}          Array consisting of two arrays containing the x-coordinates and the y-coordinates of
@@ -2138,8 +2138,8 @@ Mat.Clip = {
      * The paths could be JSXGraph elements circle, curve, or polygon.
      * Computed by the Greiner-Hormann algorithm.
      *
-     * @param  {JXG.Circle|JXG.Curve|JXG.Polygon} subject   First closed path.
-     * @param  {JXG.Circle|JXG.Curve|JXG.Polygon} clip      Second closed path.
+     * @param  {Circle|Curve|Polygon} subject   First closed path.
+     * @param  {Circle|Curve|Polygon} clip      Second closed path.
      * @param  {JXG.Board} board   JSXGraph board object. It is needed to convert between
      * user coordinates and screen coordinates.
      * @return {Array}          Array consisting of two arrays containing the x-coordinates and the y-coordinates of

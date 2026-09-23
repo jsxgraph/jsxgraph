@@ -459,7 +459,7 @@ JXG.extend(
 
         /**
          * Calculate the distance from one point to another. If one of the points is on the plane at infinity, return positive infinity.
-         * @param {JXG.Point3D} pt The point to which the distance is calculated.
+         * @param {Point3D} pt The point to which the distance is calculated.
          * @returns {Number} The distance
          */
         distance: function (pt) {

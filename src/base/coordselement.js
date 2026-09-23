@@ -963,7 +963,7 @@ JXG.extend(
         /**
          * Getter method for the distance to a second point, this is required for CAS-elements.
          * Here, function inlining seems to be worthwile (for plotting).
-         * @param {JXG.Point} point2 The point to which the distance shall be calculated.
+         * @param {Point} point2 The point to which the distance shall be calculated.
          * @returns {Number} Distance in user coordinate to the given point
          */
         Dist: function (point2) {
@@ -2500,7 +2500,7 @@ JXG.extend(
  * Generic method to create point, text or image.
  * Determines the type of the construction, i.e. free, or constrained by function,
  * transformation or of glider type.
- * @param {Object} Callback Object type, e.g. JXG.Point, JXG.Text or JXG.Image
+ * @param {Object} Callback Object type, e.g. {@link Point}, {@link Text} or {@link Image}
  * @param {Object} board Link to the board object
  * @param {Array} coords Array with coordinates. This may be: array of numbers, function
  * returning an array of numbers, array of functions returning a number, object and transformation.

@@ -45,7 +45,7 @@ import Type from "../utils/type.js";
  * @type JXG.Curve
  * @augments JXG.Curve
  * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {JXG.Point} p The constructed curve is the geometric locus of the given point.
+ * @param {Point} p The constructed curve is the geometric locus of the given point.
  *
  * @example
  *  // This examples needs JXG.Server up and running, otherwise it won't work.
