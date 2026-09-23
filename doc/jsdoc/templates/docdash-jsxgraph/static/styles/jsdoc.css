@@ -443,7 +443,7 @@ nav {
     border-right: 1px solid var(--jxg-border);
     overflow-y: auto;
     overscroll-behavior: contain;
-    padding: .6rem .6rem 3rem;
+    padding: .6rem .1rem 3rem 1rem;
     /* Reserve the scrollbar track on both sides, so the entries sit in exactly
        the same place whether the sidebar currently scrolls or not - with all
        groups collapsed the bar disappears and the content would otherwise
@@ -970,6 +970,7 @@ summary.signature::before {
     display: inline-block;
     vertical-align: middle;
     margin-right: .45em;
+    margin-left: -1.9em;
     padding: .2em .8em;
     border: 1px solid #d7e0e8;
     border: 1px solid var(--jxg-border);
@@ -982,6 +983,7 @@ summary.signature::before {
     font-family: var(--jxg-font-sans);
     font-size: 0.8rem;
     font-size: var(--jxg-fs-tiny);
+    font-size: var(--jxg-fs-base);
     font-weight: 600;
     line-height: 1.6;
     letter-spacing: .02em;
