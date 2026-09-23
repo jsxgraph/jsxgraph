@@ -63,8 +63,7 @@ import Point from "../base/point.js";
  * @param {Array} end `[x, y]`
  * @param {Array} range `[start, initial, end]`
  *
- * @example
- * // Create a slider with values between 1 and 10, initial position is 5.
+ * @example <caption>Slider with values between 1 and 10, initial position is 5</caption>
  * var s = board.create('slider', [[1, 2], [3, 2], [1, 5, 10]]);
  * </pre><div class="jxgbox" id="JXGcfb51cde-2603-4f18-9cc4-1afb452b374d" style="width: 200px; height: 200px;"></div>
  * <script type="text/javascript">
@@ -74,8 +73,7 @@ import Point from "../base/point.js";
  *   })();
  * </script><pre>
  *
- * @example
- * // Create a slider taking integer values between 1 and 5. Initial value is 3.
+ * @example <caption>Slider taking integer values between 1 and 5. Initial value is 3</caption>
  * var s = board.create('slider', [[1, 3], [3, 1], [0, 3, 5]], {
  *     snapWidth: 1,
  *     minTicksDistance: 60,
@@ -93,8 +91,7 @@ import Point from "../base/point.js";
  *   })();
  * </script><pre>
  *
- * @example
- *     // Draggable slider
+ * @example <caption>Draggable slider</caption>
  *     var s1 = board.create('slider', [[-3, 1], [2, 1],[-10, 1, 10]], {
  *         visible: true,
  *         snapWidth: 2,
@@ -120,8 +117,7 @@ import Point from "../base/point.js";
  *
  * </script><pre>
  *
- * @example
- *     // Set the slider by clicking on the base line: attribute 'moveOnUp'
+ * @example <caption>Set the slider value by clicking on the base line: attribute 'moveOnUp'</caption>
  *     var s1 = board.create('slider', [[-3,1], [2,1],[-10,1,10]], {
  *         snapWidth: 2,
  *         moveOnUp: true // default value
@@ -141,8 +137,7 @@ import Point from "../base/point.js";
  *
  * </script><pre>
  *
- * @example
- * // Set colors
+ * @example <caption>Set colors</caption>
  * var sl = board.create('slider', [[-3, 1], [1, 1], [-10, 1, 10]], {
  *
  *   baseline: { strokeColor: 'blue'},
@@ -176,8 +171,7 @@ import Point from "../base/point.js";
  *
  * </script><pre>
  *
- * @example
- * // Create a "frozen" slider
+ * @example <caption>Create a "frozen" slider</caption>
  * var sli = board.create('slider', [[-4, 4], [-1.5, 4], [-10, 1, 10]], {
  *     name:'a',
  *     frozen: true
@@ -197,8 +191,7 @@ import Point from "../base/point.js";
  *
  * </script><pre>
  *
- * @example
- * // Use MathJax for slider label (don't forget to load MathJax)
+ * @example <caption>Use MathJax for slider label (don't forget to load MathJax)</caption>
  * var s = board.create('slider', [[-3, 2], [2, 2], [-10, 1, 10]], {
  *     name: 'A^{(2)}',
  *     suffixLabel: '\\(A^{(2)} = ',
