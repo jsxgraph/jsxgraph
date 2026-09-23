@@ -61,7 +61,8 @@ JXG.Text3D = function (view, F, text, slide, attributes) {
      * @example
      *   p.coords;
      *
-     * @name Point3D#coords
+     * @name coords
+     * @memberOf Text3D
      * @type Array
      * @private
      */
@@ -70,7 +71,8 @@ JXG.Text3D = function (view, F, text, slide, attributes) {
     /**
      * Function or array of functions or array of numbers defining the coordinates of the point, used in {@link updateCoords}.
      *
-     * @name Point3D#F
+     * @name F
+     * @memberOf Text3D
      * @function
      * @private
      *
@@ -84,7 +86,8 @@ JXG.Text3D = function (view, F, text, slide, attributes) {
      * @example
      *   p.slide;
      *
-     * @name Point3D#slide
+     * @name slide
+     * @memberOf Text3D
      * @type JXG.GeometryElement3D
      * @default null
      * @private
@@ -96,7 +99,7 @@ JXG.Text3D = function (view, F, text, slide, attributes) {
      * Get x-coordinate of a 3D point.
      *
      * @name X
-     * @memberOf Point3D
+     * @memberOf Text3D
      * @function
      * @returns {Number}
      *
@@ -111,7 +114,7 @@ JXG.Text3D = function (view, F, text, slide, attributes) {
      * Get y-coordinate of a 3D point.
      *
      * @name Y
-     * @memberOf Point3D
+     * @memberOf Text3D
      * @function
      * @returns Number
      *
@@ -126,7 +129,7 @@ JXG.Text3D = function (view, F, text, slide, attributes) {
      * Get z-coordinate of a 3D point.
      *
      * @name Z
-     * @memberOf Point3D
+     * @memberOf Text3D
      * @function
      * @returns Number
      *
