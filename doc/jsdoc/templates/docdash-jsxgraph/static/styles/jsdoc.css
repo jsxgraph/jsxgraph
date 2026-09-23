@@ -1181,12 +1181,12 @@ summary.signature::before {
     list-style-type: none;
     padding-left: 0;
 }
+*/
 
-.details li li {
+.details li {
     list-style-type: disc;
     margin-left: 1.1rem;
 }
-*/
 
 .details pre.prettyprint {
     margin: 0;

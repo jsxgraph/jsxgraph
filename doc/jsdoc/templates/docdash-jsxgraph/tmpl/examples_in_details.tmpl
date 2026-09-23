@@ -4,7 +4,6 @@
 
     data.forEach(function(example) {
 ?>
-      <li>
         <?js
             if (example.caption) {
         ?>
@@ -15,8 +14,6 @@
                 .replace("</pre><div ", "</code></pre><div ")
                 .replace("</script><pre></code></pre>", "</script>")
         ?>
-
-      </li>
     <?js
         });
     ?>
