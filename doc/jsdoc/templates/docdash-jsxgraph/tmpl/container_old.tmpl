@@ -22,18 +22,15 @@
 
 <header class='container-section-header'>
     <?js if (!doc.longname || doc.kind !== 'module') { ?>
-<<<<<<< HEAD
-        <h2><?js if (doc.kind === 'namespace') { 
-=======
         <h2><!--<?js if (doc.ancestors && doc.ancestors.length) { ?>
             <span class="ancestors"><?js= doc.ancestors.join('') ?></span>
         <?js } ?>-->
         <?js if (doc.kind === 'namespace') {
->>>>>>> 3f02824ff67f021e796696ccd64e0115fba29e8e
             /* print(doc.name); */ ?>
                 <span class='container-main-type'>Namespace</span>
         <?js } else { ?>
             <?js if (doc.isPseudo) { print("<span class='container-main-type'>Element</span> "); }  else  { print("<span class='container-main-type'>Class</span> "); }?>
+            <!--<?js= doc.name ?>-->
         <?js } ?>
         <?js if (doc.variation) { ?>
             <sup class="variation"><?js= doc.variation ?></sup>
@@ -90,41 +87,35 @@
             });
         }
         if (attributes && attributes.length && attributes.forEach) {
-            var attributesOwn = attributes.filter(function(a) { return !a.inherits; });
-            var attributesInherited = attributes.filter(function(a) { return a.inherits; });
     ?>
         <details>
             <summary class="subsection-title collapsible" id="attributes">Attributes</summary>
 
-            <?js if (attributesOwn.length) { ?>
             <h4 class="subsection-title" id="attributes-own">Own</h4>
             <div class="list_container">
-                <?js attributesOwn.forEach(function(p) { ?>
+                <?js attributes
+                       .filter((self) => !self.inherits)
+                       .forEach(function(p) { ?>
                     <p class="columntext"><?js= self.partial('members_short.tmpl', p) ?></p>
                 <?js }); ?>
             </div>
 
-<<<<<<< HEAD
+            <!--<h4 class="subsection-title">Attributes details</h4>-->
+
             <?js attributes
                    .filter((self) => !self.inherits)
                    .forEach(function(p) { ?>
-=======
-            <!--<h4 class="subsection-title">Attributes details</h4>-->
-
-            <?js attributesOwn.forEach(function(p) { ?>
->>>>>>> 3f02824ff67f021e796696ccd64e0115fba29e8e
                 <?js= self.partial('members.tmpl', p) ?>
             <?js }); ?>
-            <?js } ?>
 
-            <?js if (attributesInherited.length) { ?>
             <h4 class="subsection-title" id="attributes-inherited">Inherited</h4>
             <div class="list_container">
-            <?js attributesInherited.forEach(function(p) { ?>
+            <?js attributes
+                   .filter((self) => self.inherits)
+                   .forEach(function(p) { ?>
                 <p class="columntext"><?js= self.linkto(p.inherits, p.name) ?></p>
             <?js }); ?>
             </div>
-            <?js } ?>
         </details>
     <?js } ?>
 
@@ -142,41 +133,35 @@
             });
         }
         if (members && members.length && members.forEach) {
-            var membersOwn = members.filter(function(m) { return !m.inherited; });
-            var membersInherited = members.filter(function(m) { return m.inherited; });
     ?>
         <details>
             <summary class="subsection-title collapsible" id="members">Members</summary>
 
-        <?js if (membersOwn.length) { ?>
         <h4 class="subsection-title" id="members-own">Own</h4>
         <div class="list_container">
-        <?js membersOwn.forEach(function(p) { ?>
+        <?js members
+               .filter((self) => !self.inherited)
+               .forEach(function(p) { ?>
             <p class="columntext"><?js= self.partial('members_short.tmpl', p) ?></p>
         <?js }); ?>
         </div>
 
-<<<<<<< HEAD
+        <!--<h4 class="subsection-title">Details:</h4>-->
+
         <?js members
                .filter((self) => !self.inherited)
                .forEach(function(p) { ?>
-=======
-        <!--<h4 class="subsection-title">Details:</h4>-->
-
-        <?js membersOwn.forEach(function(p) { ?>
->>>>>>> 3f02824ff67f021e796696ccd64e0115fba29e8e
             <?js= self.partial('members.tmpl', p) ?>
         <?js }); ?>
-        <?js } ?>
 
-        <?js if (membersInherited.length) { ?>
         <h4 class="subsection-title" id="members-inherited">Inherited</h4>
         <div class="list_container">
-        <?js membersInherited.forEach(function(p) { ?>
+        <?js members
+               .filter((self) => self.inherited)
+               .forEach(function(p) { ?>
             <p class="columntext"><?js= self.linkto(p.inherits, p.name) ?></p>
         <?js }); ?>
         </div>
-        <?js } ?>
         </details>
     <?js } ?>
 
@@ -185,41 +170,35 @@
     <?js
         var methods = self.find({kind: 'function', memberof: isGlobalPage ? {isUndefined: true} : doc.longname});
         if (methods && methods.length && methods.forEach) {
-            var methodsOwn = methods.filter(function(m) { return !m.inherited; });
-            var methodsInherited = methods.filter(function(m) { return m.inherited; });
     ?>
         <details>
             <summary class="subsection-title collapsible" id="methods">Methods</summary>
 
-        <?js if (methodsOwn.length) { ?>
         <h4 class="subsection-title" id="methods-own">Own</h4>
         <div class="list_container">
-        <?js methodsOwn.forEach(function(m) { ?>
+        <?js methods
+               .filter((self) => !self.inherited)
+               .forEach(function(m) { ?>
             <p class="columntext"><?js= self.partial('members_short.tmpl', m) ?></p>
         <?js }); ?>
         </div>
 
-<<<<<<< HEAD
+        <!--<h4 class="subsection-title">Details:</h4>-->
+
         <?js methods
                .filter((self) => !self.inherited)
                .forEach(function(m) { ?>
-=======
-        <!--<h4 class="subsection-title">Details:</h4>-->
-
-        <?js methodsOwn.forEach(function(m) { ?>
->>>>>>> 3f02824ff67f021e796696ccd64e0115fba29e8e
             <?js= self.partial('method.tmpl', m) ?>
         <?js }); ?>
-        <?js } ?>
 
-        <?js if (methodsInherited.length) { ?>
         <h4 class="subsection-title" id="methods-inherited">Inherited</h4>
         <div class="list_container">
-        <?js methodsInherited.forEach(function(p) { ?>
+        <?js methods
+               .filter((self) => self.inherited)
+               .forEach(function(p) { ?>
             <p class="columntext"><?js= self.linkto(p.inherits, p.name) ?></p>
         <?js }); ?>
         </div>
-        <?js } ?>
         </details>
     <?js } ?>
 
@@ -228,41 +207,35 @@
     <?js
         var events = self.find({kind: 'event', memberof: isGlobalPage ? {isUndefined: true} : doc.longname});
         if (events && events.length && events.forEach) {
-            var eventsOwn = events.filter(function(e) { return !e.inherited; });
-            var eventsInherited = events.filter(function(e) { return e.inherited; });
     ?>
         <details>
             <summary class="subsection-title collapsible" id="events">Events</summary>
 
-        <?js if (eventsOwn.length) { ?>
         <h4 class="subsection-title" id="events-own">Own</h4>
         <div class="list_container">
-        <?js eventsOwn.forEach(function(e) { ?>
+        <?js events
+            .filter((self) => !self.inherited)
+            .forEach(function(e) { ?>
             <p class="columntext"><?js= self.partial('members_short.tmpl', e) ?></p>
         <?js }); ?>
         </div>
 
-<<<<<<< HEAD
+        <!--<h4 class="subsection-title">Details:</h4>-->
+
         <?js events
             .filter((self) => !self.inherited)
             .forEach(function(e) { ?>
-=======
-        <!--<h4 class="subsection-title">Details:</h4>-->
-
-        <?js eventsOwn.forEach(function(e) { ?>
->>>>>>> 3f02824ff67f021e796696ccd64e0115fba29e8e
             <?js= self.partial('method.tmpl', e) ?>
         <?js }); ?>
-        <?js } ?>
 
-        <?js if (eventsInherited.length) { ?>
         <h4 class="subsection-title" id="events-inherited">Inherited</h4>
         <div class="list_container">
-        <?js eventsInherited.forEach(function(e) { ?>
+        <?js events
+            .filter((self) => self.inherited)
+            .forEach(function(e) { ?>
             <p class="columntext"><?js= self.linkto(e.inherits, e.name) ?></p>
         <?js }); ?>
         </div>
-        <?js } ?>
         </details>
 
     <?js } ?>
