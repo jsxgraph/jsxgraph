@@ -5629,24 +5629,24 @@ JXG.Options = {
          * Appearance of grid elements.
          * There are different styles which differ in appearance.
          * Possible values are (comparing to {@link Point#face}):
-         * <table>
-         * <tr><th>Input</th><th>Output</th><th>Fillable by fillColor,...</th></tr>
-         * <tr><td>point, .</td><td>.</td><td>no</td></tr>
-         * <tr><td>line</td><td>&minus;</td><td>no</td></tr>
-         * <tr><td>cross, x</td><td>x</td><td>no</td></tr>
-         * <tr><td>circle, o</td><td>o</td><td>yes</td></tr>
-         * <tr><td>square, []</td><td>[]</td><td>yes</td></tr>
-         * <tr><td>plus, +</td><td>+</td><td>no</td></tr>
-         * <tr><td>minus, -</td><td>-</td><td>no</td></tr>
-         * <tr><td>divide, |</td><td>|</td><td>no</td></tr>
-         * <tr><td>diamond, &lt;&gt;</td><td>&lt;&gt;</td><td>yes</td></tr>
-         * <tr><td>diamond2, &lt;&lt;&gt;&gt;</td><td>&lt;&gt; (bigger)</td><td>yes</td></tr>
-         * <tr><td>triangleup, ^, a, A</td><td>^</td><td>no</td></tr>
-         * <tr><td>triangledown, v</td><td>v</td><td>no</td></tr>
-         * <tr><td>triangleleft, &lt;</td><td> &lt;</td><td>no</td></tr>
-         * <tr><td>triangleright, &gt;</td><td>&gt;</td><td>no</td></tr>
-         * <tr><td>regularPolygon, regpol</td><td>⬡</td><td>yes</td></tr>
-         * </table>
+         *
+         * | Input                      | Output            | Fillable by fillColor,... |
+         * |----------------------------|-------------------|---------------------------|
+         * | point, .                   | .                 | no                        |
+         * | line                       | &minus;           | no                        |
+         * | cross, x                   | x                 | no                        |
+         * | circle, o                  | o                 | yes                       |
+         * | square, []                 | []                | yes                       |
+         * | plus, +                    | +                 | no                        |
+         * | minus, -                   | -                 | no                        |
+         * | divide, &#x7c;             | &#x7c;            | no                        |
+         * | diamond, &lt;&gt;          | &lt;&gt;          | yes                       |
+         * | diamond2, &lt;&lt;&gt;&gt; | &lt;&gt; (bigger) | yes                       |
+         * | triangleup, ^, a, A        | ^                 | no                        |
+         * | triangledown, v            | v                 | no                        |
+         * | triangleleft, &lt;         |  &lt;             | no                        |
+         * | triangleright, &gt;        | &gt;              | no                        |
+         * | regularPolygon, regpol     | ⬡                 | yes                       |
          *
          * *This attribute can be set individually for major and minor grid as a sub-entry of {@link Grid#major} or {@link Grid#minor}*,
          * e.g. `major: {face: ...}`
@@ -8032,21 +8032,21 @@ JXG.Options = {
         /**
          * There are different point styles which differ in appearance.
          * Posssible values are
-         * <table>
-         * <tr><th>Input</th><th>Output</th></tr>
-         * <tr><td>cross</td><td>x</td></tr>
-         * <tr><td>circle</td><td>o</td></tr>
-         * <tr><td>square, []</td><td>[]</td></tr>
-         * <tr><td>plus</td><td>+</td></tr>
-         * <tr><td>minus</td><td>-</td></tr>
-         * <tr><td>divide</td><td>|</td></tr>
-         * <tr><td>diamond</td><td>&lt;&gt;</td></tr>
-         * <tr><td>diamond2</td><td>&lt;&gt; (bigger)</td></tr>
-         * <tr><td>triangleup</td><td>^, a, A</td></tr>
-         * <tr><td>triangledown</td><td>v</td></tr>
-         * <tr><td>triangleleft</td><td>&lt;</td></tr>
-         * <tr><td>triangleright</td><td>&gt;</td></tr>
-         * </table>
+         *
+         * | Input         | Output            |
+         * |---------------|-------------------|
+         * | cross         | x                 |
+         * | circle        | o                 |
+         * | square, []    | []                |
+         * | plus          | +                 |
+         * | minus         | -                 |
+         * | divide &#x7c; | &#x7c;            |
+         * | diamond       | &lt;&gt;          |
+         * | diamond2      | &lt;&gt; (bigger) |
+         * | triangleup    | ^, a, A           |
+         * | triangledown  | v                 |
+         * | triangleleft  | &lt;              |
+         * | triangleright | &gt;              |
          *
          * @name Point#face
          * @attribute
@@ -11089,20 +11089,22 @@ JXG.Options = {
      * All point faces can be defined with more than one name, e.g. a cross faced point can be given
      * by face equal to 'cross' or equal to 'x'. This method maps all possible values to fixed ones to
      * simplify if- and switch-clauses regarding point faces. The translation table is as follows:
-     * <table>
-     * <tr><th>Input</th><th>Output</th></tr>
-     * <tr><td>cross</td><td>x</td></tr>
-     * <tr><td>circle</td><td>o</td></tr>
-     * <tr><td>square, []</td><td>[]</td></tr>
-     * <tr><td>plus</td><td>+</td></tr>
-     * <tr><td>minus</td><td>-</td></tr>
-     * <tr><td>divide</td><td>|</td></tr>
-     * <tr><td>diamond</td><td>&lt;&gt;</td></tr>
-     * <tr><td>triangleup</td><td>^, a, A</td></tr>
-     * <tr><td>triangledown</td><td>v</td></tr>
-     * <tr><td>triangleleft</td><td>&lt;</td></tr>
-     * <tr><td>triangleright</td><td>&gt;</td></tr>
-     * </table>
+     *
+     * | Input         | Output            |
+     * |---------------|-------------------|
+     * | cross         | x                 |
+     * | circle        | o                 |
+     * | square, []    | []                |
+     * | plus          | +                 |
+     * | minus         | -                 |
+     * | divide &#x7c; | &#x7c;            |
+     * | diamond       | &lt;&gt;          |
+     * | diamond2      | &lt;&gt; (bigger) |
+     * | triangleup    | ^, a, A           |
+     * | triangledown  | v                 |
+     * | triangleleft  | &lt;              |
+     * | triangleright | &gt;              |
+     *
      * @param {String} s A string which should determine a valid point face.
      * @returns {String} Returns a normalized string or undefined if the given string is not a valid
      * point face.
