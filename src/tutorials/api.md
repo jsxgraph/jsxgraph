@@ -32,6 +32,10 @@
 - ~~Turtle: params and examples~~
 - ~~Smartlabel: CSS of font color~~ (in main branch)
 - ~~IntersectionLine3D not dynamic, see example~~ (in main branch)
+- A1 Retire `signatureblocks.tmpl`
+- A2 fixed (see last block)
+- A2b done
+
 
 ## Attributes
 

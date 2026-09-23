@@ -3,8 +3,7 @@ var data = obj;
 var self = this;
 ?>
 <?js if (data.kind !== 'module' && !data.hideconstructor && data.kind === 'jsxgraphsignature') { ?>
-
-<details class="signature">
+  <details class="signature">
     <summary class="signature" id="<?js= id ?>"><?js= data.attribs ?><?js
       if (kind === 'class' && name.indexOf('module:') === 0) {
         print('new (require("' + name.slice(7) + '"))' + (data.signature || ''));
@@ -39,36 +38,6 @@ var self = this;
               '</span>');
       }
     ?></summary>
-
-<!--
-<details class="signature">
-    <summary class="signature" id="<?js= id ?>"><?js= data.attribs ?><?js
-      if(kind === 'class' && name.indexOf('module:') === 0) {
-        print('new (require("' + name.slice(7) + '"))');
-      } else if(kind === 'class') {
-        print('new ' + name);
-      } else if(kind === 'event' && data.alias) {
-        print(data.alias);
-      } else {
-        // print(name);
-
-        // Build up string like "board.create('element' [a, b, c])"
-        let name_str = `<span class="signature">board.create('<span class="signature-element">${memberof.toLowerCase()}</span>', `;
-        print(name_str);
-      }
-      // Extract params from data.signature:
-    ?><?js= (data.signature.replace(/\(/, "[").replace(/\)/, "]").replace(/([\[,]\s*)([^,\[\]]+?)\s*(?=[,\]])/g, "$1<span class='signature-param'>$2</span>") + ");</span>" || '') ?></summary>
--->
-<!--
-    <?js if (data.summary) { ?>
-        <p class="summary usertext"><?js= summary
-            .trim()
-            .replace(/^<p>/, "")
-            .replace(/<\/p>$/, "")
-        ?></p>
-    <?js } ?>
--->
-
 <?js } ?>
 
 <?js if (data.description) { ?>
@@ -186,4 +155,7 @@ if (
         <?js= self.partial('returns.tmpl', r) ?>
     <?js });
 } } ?>
-</details>
+
+<?js if (data.kind !== 'module' && !data.hideconstructor && data.kind === 'jsxgraphsignature') { ?>
+  </details>
+<?js } ?>
