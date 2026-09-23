@@ -1258,6 +1258,97 @@ nav::-webkit-scrollbar-thumb:hover {
 }
 
 /* --------------------------------------------------------------------------
+   Copy button on code blocks.
+
+   The .code-wrap wrapper and the button itself are created by
+   scripts/copycode.js - .prettyprint scrolls horizontally, so a button
+   placed inside it would scroll away with the content.
+
+   The button is always visible rather than appearing on hover: on touch
+   devices there is no hover state, so a hidden control would be unreachable.
+   It carries two inline SVG icons, sheets and a check mark; only one of them
+   is shown at a time. Both are stroked in currentColor, so they follow the
+   button colour without extra rules.
+   -------------------------------------------------------------------------- */
+.code-wrap {
+    position: relative;
+    margin: 0 0 1.25em;
+}
+
+.code-wrap .prettyprint {
+    margin: 0;
+}
+
+.copy-button {
+    position: absolute;
+    top: .4rem;
+    right: .4rem;
+    z-index: 1;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    width: 1.9rem;
+    height: 1.9rem;
+    padding: 0;
+    border: 1px solid #d7e0e8;
+    border: 1px solid var(--jxg-border);
+    border-radius: 0.6rem;
+    border-radius: var(--jxg-radius);
+    background-color: #ffffff;
+    background-color: var(--jxg-bg);
+    color: #5d6b7a;
+    color: var(--jxg-text-muted);
+    cursor: pointer;
+    transition: color .15s ease, border-color .15s ease, background-color .15s ease;
+}
+
+.copy-button svg {
+    width: .95rem;
+    height: .95rem;
+    display: block;
+}
+
+.copy-button .copy-icon-done {
+    display: none;
+}
+
+.copy-button:hover {
+    color: #08648f;
+    color: var(--jxg-secondary);
+    border-color: #08648f;
+    border-color: var(--jxg-secondary);
+}
+
+.copy-button.is-done {
+    color: #0b7a5a;
+    color: var(--jxg-element);
+    border-color: #0b7a5a;
+    border-color: var(--jxg-element);
+}
+
+.copy-button.is-done .copy-icon-copy {
+    display: none;
+}
+
+.copy-button.is-done .copy-icon-done {
+    display: block;
+}
+
+/* Clipboard access refused - the title attribute explains what to do */
+.copy-button.is-failed {
+    color: #a3231b;
+    color: var(--jxg-danger);
+    border-color: #a3231b;
+    border-color: var(--jxg-danger);
+}
+
+/* --------------------------------------------------------------------------
    Bring embedded JSXGraph constructions in line with the code blocks.
    Width and height stay at the values from the style attribute, so the
    construction is not stretched; max-width only prevents overflow on narrow
