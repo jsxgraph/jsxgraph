@@ -122,7 +122,7 @@ function updateItemName(item) {
         itemName = util.format( '%s<span class="signature-attributes">%s</span>', itemName,
             attributes.join(', ') );
     }
-
+    itemName = util.format('<span class="signature-param">%s</span>', itemName);
     return itemName;
 }
 
