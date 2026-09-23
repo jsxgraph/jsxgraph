@@ -1540,20 +1540,19 @@ JXG.extend(
  *                     returning this number.
  * @param {Function|Number} [a=-Infinity] left interval border
  * @param {Function|Number} [b=Infinity] right interval border
- * @example
- * // Parametric curve
+ * @example  <caption>Parametric curve</caption>
  * // Create a curve of the form (t-sin(t), 1-cos(t), i.e.
  * // the cycloid curve.
  *   var graph = board.create('curve',
- *                        [function(t){ return t-Math.sin(t);},
- *                         function(t){ return 1-Math.cos(t);},
- *                         0, 2*Math.PI]
- *                     );
+ *         [(t) => t-Math.sin(t),
+ *          (t) => 1-Math.cos(t),
+ *          0, 2*Math.PI]
+ *      );
  * </pre><div class="jxgbox" id="JXGaf9f818b-f3b6-4c4d-8c4c-e4a4078b726d" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
  * (function() {
  *   var board = JXG.JSXGraph.initBoard('JXGaf9f818b-f3b6-4c4d-8c4c-e4a4078b726d', {boundingbox: [-1, 5, 7, -1], axis: true, showcopyright: false, shownavigation: false});
- *   var graph1 = board.create('curve', [function(t){ return t-Math.sin(t);},function(t){ return 1-Math.cos(t);},0, 2*Math.PI]);
+ *   var graph1 = board.create('curve', [(t) => t-Math.sin(t), (t)=> 1-Math.cos(t),0, 2*Math.PI]);
  * })();
  * </script><pre>
  *
@@ -1567,14 +1566,13 @@ JXG.extend(
  * if additionally the second parameter y is a function term the data plot evaluates.
  * @param {Array} x
  * @param {Array|Number|Function} y
- * @example
- * // Data plots
+ * @example <caption>Data plots</caption>
  * // Connect a set of points given by coordinates with dashed line segments.
  * // The x- and y-coordinates of the points are given in two separate
  * // arrays.
- *   var x = [0,1,2,3,4,5,6,7,8,9];
- *   var y = [9.2,1.3,7.2,-1.2,4.0,5.3,0.2,6.5,1.1,0.0];
- *   var graph = board.create('curve', [x,y], {dash:2});
+ * var x = [0,1,2,3,4,5,6,7,8,9];
+ * var y = [9.2,1.3,7.2,-1.2,4.0,5.3,0.2,6.5,1.1,0.0];
+ * var graph = board.create('curve', [x,y], {dash:2});
  * </pre><div class="jxgbox" id="JXG7dcbb00e-b6ff-481d-b4a8-887f5d8c6a83" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
  * (function() {
@@ -1582,11 +1580,10 @@ JXG.extend(
  *   var x = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
  *   var y = [9.2, 1.3, 7.2, -1.2, 4.0, 5.3, 0.2, 6.5, 1.1, 0.0];
  *   var graph3 = board.create('curve', [x,y], {dash:2});
- * });
+ * })();
  * </script><pre>
  *
- * @example
- *  // Draggable Bezier curve
+ * @example <caption>Draggable Bezier curve</caption>
  *  var col, p, c;
  *  col = 'blue';
  *  p = [];
@@ -1610,8 +1607,9 @@ JXG.extend(
  *  p.push(board.create('point',[-1, -2.5 ], {size: 5, strokeColor:col, fillColor:col}));
  *  p.push(board.create('point',[2, -2], {size: 5, strokeColor:col, fillColor:col}));
  *
+ *  // Draggable curve
  *  c = board.create('curve', JXG.Math.Numerics.bezier(p),
- *              {strokeColor:'red', name:"curve", strokeWidth:5, fixed: false}); // Draggable curve
+ *       {strokeColor:'red', name:"curve", strokeWidth:5, fixed: false});
  *  c.addParents(p);
  * })();
  * </script><pre>
@@ -1625,24 +1623,24 @@ JXG.extend(
  *                     an array containing numbers or functions describing the offset. Default value is the origin [0,0].
  * @param {Number|Function} [a] Left interval border a of the domain of r
  * @param {Number|Function} [b] Right interval border a of the domain of r
- * @example
- * // Polar plot
+ *
+ * @example <caption>Polar plot</caption>
  * // Create a curve with the equation r(phi)= a*(1+phi), i.e.
  * // a cardioid.
  *   var a = board.create('slider',[[0,2],[2,2],[0,1,2]]);
  *   var graph = board.create('curve',
- *                        [function(phi){ return a.Value()*(1-Math.cos(phi));},
- *                         [1,0],
- *                         0, 2*Math.PI],
- *                         {curveType: 'polar'}
- *                     );
+ *        [(phi) => a.Value()*(1-Math.cos(phi)),
+ *         [1,0],
+ *         0, 2*Math.PI],
+ *         {curveType: 'polar'}
+ *     );
  * </pre><div class="jxgbox" id="JXGd0bc7a2a-8124-45ca-a6e7-142321a8f8c2" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
  * (function() {
  *   var board = JXG.JSXGraph.initBoard('JXGd0bc7a2a-8124-45ca-a6e7-142321a8f8c2', {boundingbox: [-3,3,3,-3], axis: true, showcopyright: false, shownavigation: false});
  *   var a = board.create('slider',[[0,2],[2,2],[0,1,2]]);
- *   var graph2 = board.create('curve', [function(phi){ return a.Value()*(1-Math.cos(phi));}, [1,0], 0, 2*Math.PI], {curveType: 'polar'});
- * });
+ *   var graph2 = board.create('curve', [(phi) => a.Value()*(1-Math.cos(phi)), [1,0], 0, 2*Math.PI], {curveType: 'polar'});
+ * })();
  * </script><pre>
  */
 /**
@@ -1652,11 +1650,11 @@ JXG.extend(
  * @param {Curve} c
  * @param {Transformation} t
  * @example
- *         // The curve cu2 is the reflection of cu1 against line li
- *         var li = board.create('line', [1,1,1], {strokeColor: '#aaaaaa'});
- *         var reflect = board.create('transform', [li], {type: 'reflect'});
- *         var cu1 = board.create('curve', [[-1, -1, -0.5, -1, -1, -0.5], [-3, -2, -2, -2, -2.5, -2.5]]);
- *         var cu2 = board.create('curve', [cu1, reflect], {strokeColor: 'red'});
+ * // The curve cu2 is the reflection of cu1 against line li
+ * var li = board.create('line', [1,1,1], {strokeColor: '#aaaaaa'});
+ * var reflect = board.create('transform', [li], {type: 'reflect'});
+ * var cu1 = board.create('curve', [[-1, -1, -0.5, -1, -1, -0.5], [-3, -2, -2, -2, -2.5, -2.5]]);
+ * var cu2 = board.create('curve', [cu1, reflect], {strokeColor: 'red'});
  *
  * </pre><div id="JXG866dc7a2-d448-11e7-93b3-901b0e1b8723" class="jxgbox" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">

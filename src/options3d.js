@@ -89,7 +89,7 @@ JXG.extend(Options, {
          * @name View3D#xAxisBorder
          * @attribute
          * @see View3D#axesPosition
-         * @default <pre>{
+         * @default {
          *   name: 'x',
          *   withLabel: false,
          *   label: {
@@ -105,8 +105,7 @@ JXG.extend(Options, {
          *           anchorY: 'middle'
          *       }
          *   }
-         *}
-         *</pre>
+         * }
          */
         xAxisBorder: {
             name: 'x',
@@ -136,7 +135,7 @@ JXG.extend(Options, {
          * @name View3D#yAxisBorder
          * @attribute
          * @see View3D#axesPosition
-         * @default <pre>{
+         * @default <{
          *   name: 'x',
          *   withLabel: false,
          *   label: {
@@ -151,8 +150,7 @@ JXG.extend(Options, {
          *           anchorX: 'middle',
          *       }
          *   }
-         *}
-         *</pre>
+         * }
          */
         yAxisBorder: {
             name: 'y',
@@ -180,7 +178,7 @@ JXG.extend(Options, {
          * @name View3D#zAxisBorder
          * @attribute
          * @see View3D#axesPosition
-         * @default <pre>{
+         * @default {
          *   name: 'z',
          *   withLabel: false,
          *   label: {
@@ -196,8 +194,8 @@ JXG.extend(Options, {
          *           anchorY: 'middle'
          *       }
          *   }
-         *}
-         *</pre>
+         * }
+         *
          */
         zAxisBorder: {
             name: 'z',
@@ -665,7 +663,7 @@ JXG.extend(Options, {
          * @name Face3D#shader
          * @attribute
          * @see View3D#depthOrder
-         * @default <pre>shader: {
+         * @default shader: {
          *   enabled: false,
          *   fixed: true,    // If false, update shading during rotation of viewport
          *   type: 'angle',  // 'angle', otherwise zIndex
@@ -683,7 +681,7 @@ JXG.extend(Options, {
          *       bank: 0, // TODO use radians, ignored for type==1, type==3
          *       dir: -1  // -1 (reverse), 0 (use abs), 1. Default: -1
          *   }
-         * }</pre>
+         * }
          *
          * @example
          *   var view = board.create(
@@ -862,7 +860,7 @@ JXG.extend(Options, {
          * @type Point3D
          * @name Line3D#point
          * @attribute
-         * @default <pre>visible: false, name: ""</pre>
+         * @default { visible: false, name: ""}
          */
         point: { visible: false, name: "" }, // Used in cases of point/direction/range
 
@@ -871,7 +869,7 @@ JXG.extend(Options, {
          * @type Point3D
          * @name Line3D#point1
          * @attribute
-         * @default <pre>visible: false, name: ""</pre>
+         * @default {visible: false, name: ""}
          */
         point1: { visible: false, name: "" }, // Used in point/point
 
@@ -880,7 +878,7 @@ JXG.extend(Options, {
          * @type Point3D
          * @name Line3D#point2
          * @attribute
-         * @default <pre>visible: false, name: ""</pre>
+         * @default {visible: false, name: ""}
          */
         point2: { visible: false, name: "" },
 
@@ -1035,7 +1033,7 @@ JXG.extend(Options, {
          * @type Point3D
          * @name Plane3D#point
          * @attribute
-         * @default <pre>visible: false, name: "", fixed: true</pre>
+         * @default {visible: false, name: "", fixed: true}
          */
         point: { visible: false, name: "", fixed: true },
 
@@ -1044,7 +1042,7 @@ JXG.extend(Options, {
          * @type Point3D
          * @name Plane3D#point1
          * @attribute
-         * @default <pre>visible: false, name: ""</pre>
+         * @default {visible: false, name: ""}
          */
         point1: { visible: false, name: "" }, // Used in point/point/point
 
@@ -1053,7 +1051,7 @@ JXG.extend(Options, {
          * @type Point3D
          * @name Plane3D#point2
          * @attribute
-         * @default <pre>visible: false, name: ""</pre>
+         * @default {visible: false, name: ""}
          */
         point2: { visible: false, name: "" }, // Used in point/point/point
 
@@ -1062,7 +1060,7 @@ JXG.extend(Options, {
          * @type Point3D
          * @name Plane3D#point3
          * @attribute
-         * @default <pre>visible: false, name: ""</pre>
+         * @default {visible: false, name: ""}
          */
         point3: { visible: false, name: "" } // Used in point/point/point
 
@@ -1376,12 +1374,12 @@ JXG.extend(Options, {
          * @type {object}
          * @name ParametricSurface3D#colormap
          * @attribute
-         * @default <pre>{
+         * @default {
          *   min: [-5, 190],
          *   max: [5, 0],
          *   s: 0.9,
          *   v: 0.9
-         * }</pre>
+         * }
          */
         colormap: {
             min: [-5, 190],
@@ -1400,7 +1398,7 @@ JXG.extend(Options, {
          * @type {object}
          * @name ParametricSurface3D#polyhedron
          * @attribute
-         * @default <pre>{strokewidth: 0, fillColorArray: ['white', 'black'] }</pre>
+         * @default { strokewidth: 0, fillColorArray: ['white', 'black'] }
          * @see ParametricSurface3D#style
          *
          * @example
@@ -1627,7 +1625,7 @@ JXG.extend(Options, {
          * @attribute
          * @memberOf Vectorfield3D.prototype
          * @type {Object}
-         * @default `{enabled: true, size: 5, angle: Math.PI * 0.125}`
+         * @default {enabled: true, size: 5, angle: Math.PI * 0.125}
          */
         arrowhead: {
             enabled: true,
@@ -1661,11 +1659,10 @@ JXG.extend(Options, {
          * @name View3D#depthOrder
          * @attribute
          * @type Object
-         * @default <pre>{
+         * @default {
          *   enabled: false,
          *   layers: [12, 13]
          * }
-         * </pre>
          */
         depthOrder: {
             enabled: true,
@@ -1748,7 +1745,7 @@ JXG.extend(Options, {
          * @name View3D#verticalDrag
          * @attribute
          * @type Object
-         * @default `{enabled: true, key: 'shift'}`
+         * @default {enabled: true, key: 'shift'}
          */
         verticalDrag: {
             enabled: true,
@@ -1781,7 +1778,7 @@ JXG.extend(Options, {
          * @name View3D#az
          * @attribute
          * @type Object
-         * @default <pre>{
+         * @default {
          *      pointer: {enabled: true, speed: 1, outside: true, button: -1, key: 'none'},
          *      keyboard: {enabled: true, step: 10, key: 'ctrl'},
          *      continuous: true,
@@ -1800,7 +1797,7 @@ JXG.extend(Options, {
          *          max: 2 * Math.PI,
          *          start: 1.0
          *      },
-         * }</pre>
+         * }
          *
          * @example
          *  var bound = [-4, 6];
@@ -1893,7 +1890,7 @@ JXG.extend(Options, {
          * @name View3D#el
          * @attribute
          * @type Object
-         * @default <pre>{
+         * @default {
          *      pointer: {enabled: true, speed: 1, outside: true, button: -1, key: 'none'},
          *      keyboard: {enabled: true, step: 10, key: 'ctrl'},
          *      continuous: true,
@@ -1912,7 +1909,8 @@ JXG.extend(Options, {
          *          max: 2 * Math.PI,
          *          start: 0.3
          *      },
-         * }<pre>
+         * }
+         *
          * @example
          *  var bound = [-4, 6];
          *  var view = board.create('view3d',
@@ -2002,7 +2000,7 @@ JXG.extend(Options, {
          * @name View3D#bank
          * @attribute
          * @type Object
-         * @default <pre>{
+         * @default {
          *      pointer: {enabled: true, speed: 1, outside: true, button: -1, key: 'none'},
          *      keyboard: {enabled: true, step: 10, key: 'ctrl'},
          *      continuous: true,
@@ -2021,7 +2019,8 @@ JXG.extend(Options, {
          *          max: 2 * Math.PI,
          *          start: 0.3
          *      },
-         * }<pre>
+         * }
+         *
          * @example
          *  var bound = [-4, 6];
          *  var view = board.create('view3d',
@@ -2120,13 +2119,13 @@ JXG.extend(Options, {
          * @name View3D#trackball
          * @attribute
          * @type Object
-         * @default ```{
+         * @default {
          *   enabled: false,
          *   outside: true,
          *   button: -1,
          *   key: 'none'
          * }
-         * ```
+         *
          */
         trackball: {
             enabled: false,
@@ -2136,7 +2135,8 @@ JXG.extend(Options, {
         },
 
         /**
-         * Field of View defines the angle of view (in radians) of the camera, determining how much of the scene is captured within the frame.
+         * Field of View defines the angle of view (in radians) of the camera,
+         * determining how much of the scene is captured within the frame.
          *
          * @type Number
          * @default 2/5*Math.PI
@@ -2150,7 +2150,7 @@ JXG.extend(Options, {
          * @name View3D#values
          * @attribute
          * @type Array
-         * @default `{[[0, 1.57], [0.78, 0.62], [0, 0], [5.49, 0.62], [4.71, 0], [3.93, 0.62], [3.14, 0], [2.36, 0.62], [1.57, 1.57]]}`
+         * @default [[0, 1.57], [0.78, 0.62], [0, 0], [5.49, 0.62], [4.71, 0], [3.93, 0.62], [3.14, 0], [2.36, 0.62], [1.57, 1.57]]
          */
         values: [
             [0, 1.57],

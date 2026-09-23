@@ -271,13 +271,13 @@ JXG.createArc = function (board, parents, attributes) {
      * @name Value
      * @function
      * @param {String} [unit='length'] Unit of the returned values. Possible units are
-     * <ul>
-     * <li> 'length' (default): length of the arc line
-     * <li> 'radians': angle spanned by the arc in radians
-     * <li> 'degrees': angle spanned by the arc in degrees
-     * <li> 'semicircle': angle spanned by the arc in radians as a multiple of &pi;, e.g. if the angle is 1.5&pi;, 1.5 will be returned.
-     * <li> 'circle': angle spanned by the arc in radians as a multiple of 2&pi;
-     * </ul>
+     * 
+     * - 'length' (default): length of the arc line
+     * - 'radians': angle spanned by the arc in radians
+     * - 'degrees': angle spanned by the arc in degrees
+     * - 'semicircle': angle spanned by the arc in radians as a multiple of &pi;, e.g. if the angle is 1.5&pi;, 1.5 will be returned.
+     * - 'circle': angle spanned by the arc in radians as a multiple of 2&pi;
+     *
      * It is sufficient to supply the first three characters of the unit, e.g. 'len'.
      * @param {Number} [rad=undefined] Value of angle which can be used instead of the generic one.
      * @returns {Number} The arc length or the angle value in various units.
