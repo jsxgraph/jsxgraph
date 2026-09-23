@@ -52,7 +52,7 @@ import Type from "../utils/type.js";
  * Creates ticks for an axis.
  * @class Ticks provides methods for creation and management
  * of ticks on an axis.
- * @param {JXG.Line} line Reference to the axis the ticks are drawn on.
+ * @param {Line} line Reference to the axis the ticks are drawn on.
  * @param {Number|Array} ticks Number defining the distance between two major ticks or an array defining static ticks.
  * @param {Object} attributes Attributes
  * @see JXG.Line#addTicks

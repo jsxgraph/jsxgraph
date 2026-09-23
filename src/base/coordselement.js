@@ -963,7 +963,7 @@ JXG.extend(
         /**
          * Getter method for the distance to a second point, this is required for CAS-elements.
          * Here, function inlining seems to be worthwile (for plotting).
-         * @param {JXG.Point} point2 The point to which the distance shall be calculated.
+         * @param {Point} point2 The point to which the distance shall be calculated.
          * @returns {Number} Distance in user coordinate to the given point
          */
         Dist: function (point2) {

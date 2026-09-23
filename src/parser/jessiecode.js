@@ -2260,7 +2260,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
 
     /**
      * This is used as the global L() function.
-     * @param {JXG.Line} e
+     * @param {Line} e
      * @returns {Number}
      */
     L: function (e) {
@@ -2295,8 +2295,8 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
 
     /**
      * This is used as the global dist() function.
-     * @param {JXG.Point} p1
-     * @param {JXG.Point} p2
+     * @param {Point} p1
+     * @param {Point} p2
      * @returns {Number}
      */
     dist: function (p1, p2) {
@@ -2322,7 +2322,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
 
     /**
      * This is used as the global slope() function.
-     * @param {JXG.Line} obj
+     * @param {Line} obj
      * @returns {Number}
      */
     slope: function (obj) {
@@ -2335,8 +2335,8 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
 
     /**
      * + operator implementation
-     * @param {Number|Array|JXG.Point} a
-     * @param {Number|Array|JXG.Point} b
+     * @param {Number|Array|Point} a
+     * @param {Number|Array|Point} b
      * @returns {Number|Array}
      */
     add: function (a, b) {
@@ -2367,8 +2367,8 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
 
     /**
      * - operator implementation
-     * @param {Number|Array|JXG.Point} a
-     * @param {Number|Array|JXG.Point} b
+     * @param {Number|Array|Point} a
+     * @param {Number|Array|Point} b
      * @returns {Number|Array}
      */
     sub: function (a, b) {
@@ -2397,7 +2397,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
 
     /**
      * unary - operator implementation
-     * @param {Number|Array|JXG.Point} a
+     * @param {Number|Array|Point} a
      * @returns {Number|Array}
      */
     neg: function (a) {

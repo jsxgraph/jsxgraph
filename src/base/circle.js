@@ -247,7 +247,7 @@ JXG.extend(
 
         // /**
         //  * Used to generate a polynomial for a point p that lies on this circle.
-        //  * @param {JXG.Point} p The point for which the polynomial is generated.
+        //  * @param {Point} p The point for which the polynomial is generated.
         //  * @returns {Array} An array containing the generated polynomial.
         //  * @private
         //  */

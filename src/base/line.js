@@ -483,7 +483,7 @@ JXG.extend(
         //  * Used to generate a polynomial for a point p that lies on this line, i.e. p is collinear to
         //  * {@link JXG.Line#point1} and {@link JXG.Line#point2}.
         //  *
-        //  * @param {JXG.Point} p The point for that the polynomial is generated.
+        //  * @param {Point} p The point for that the polynomial is generated.
         //  * @returns {Array} An array containing the generated polynomial.
         //  * @private
         //  */
@@ -2514,8 +2514,8 @@ JXG.createTangent = function (board, parents, attributes) {
  * @jsxgraphsignature Normal
  * The constructed line contains p which lies on the object o and is orthogonal
  * to the tangent to the object in the given point.
- * @param {JXG.Line | JXG.Circle | JXG.Curve | JXG.Turtle} o
- * @param {JXG.Point} p
+ * @param {Line | Circle | Curve | Turtle} o
+ * @param {Point} p
  *
  * @example
  * // Create a normal to a circle.
@@ -3055,8 +3055,8 @@ JXG.createRadicalAxis = function (board, parents, attributes) {
 /**
  * @jsxgraphsignature PolarLine
  * The result will be the polar line of the point with respect to the conic or the circle. The order of the parameters does not matter.
- * @param {JXG.Conic | JXG.Circle} conic
- * @param {JXG.Point} point
+ * @param {Conic | Circle} conic
+ * @param {Point} point
  *
  * @example
  * // Create the polar line of a point with respect to a conic
@@ -3177,8 +3177,8 @@ JXG.createPolarLine = function (board, parents, attributes) {
 /**
  * @jsxgraphsignature TangentTo
  * The result will be the tangent line through the point with respect to the conic or circle.
- * @param {JXG.Conic | JXG.Circle} conic
- * @param {JXG.Point} point
+ * @param {Conic | Circle} conic
+ * @param {Point} point
  * @param {Number} [number=0]
  *
  * @example
