@@ -1,28 +1,29 @@
 /* ==========================================================================
-   JSXGraph API documentation – docdash / JSDoc stylesheet
+   JSXGraph API documentation - docdash / JSDoc stylesheet
    --------------------------------------------------------------------------
-   Farb- und Typografie-Schema orientiert an jsxgraph.org
+   Colour and typography scheme follow jsxgraph.org
      primary   #10427C   secondary #08648f   accent  #aedcef
      Fonts     Fira Sans (400/400i/600) + Fira Code (400/600)
-     Radius    0.7rem 0 0.7rem 0  (asymmetrisch, wie Buttons/Inputs der Website)
+     Radius    0.7rem 0 0.7rem 0  (asymmetric, like the buttons and inputs
+                                   on the website)
 
-   Es werden ausschliesslich die bereits vorhandenen Selektoren/Klassen
-   verwendet – keine neuen Klassennamen, keine Aenderung am HTML noetig.
+   Only selectors and classes that already exist in the generated markup are
+   used - no new class names, no changes to the HTML required.
 
-   Robustheit: jede Deklaration, die eine CSS-Variable nutzt, steht doppelt –
-   zuerst mit dem festen Wert, danach mit var(). Umgebungen ohne Unterstuetzung
-   fuer Custom Properties (alte Engines, HTML-nach-PDF-Konverter, Mail- und
-   Vorschau-Renderer) zeigen dadurch trotzdem das richtige Farb- und
-   Schriftbild. Aus demselben Grund kommen clamp() und inset() nicht vor.
+   Robustness: every declaration that uses a custom property appears twice -
+   first with a literal value, then with var(). Environments without support
+   for custom properties (old engines, HTML-to-PDF converters, mail and
+   preview renderers) therefore still get the intended colours and fonts.
+   For the same reason clamp() and inset() are avoided.
    ========================================================================== */
 
 /* --------------------------------------------------------------------------
-   1. Design-Tokens
+   1. Design tokens
    -------------------------------------------------------------------------- */
 :root {
     color-scheme: light dark;
 
-    /* Marken- und Flaechenfarben */
+    /* Brand and surface colours */
     --jxg-primary:        #10427c;
     --jxg-primary-dark:   #0a2c54;
     --jxg-primary-light:  #2a6bb5;
@@ -46,12 +47,12 @@
     --jxg-element:        #0b7a5a;
     --jxg-link-hover:     var(--jxg-secondary);
 
-    /* Linien, Signale */
+    /* Lines and signal colours */
     --jxg-border:         #d7e0e8;
     --jxg-border-strong:  #b6c6d4;
     --jxg-danger:         #a3231b;
 
-    /* Typografie */
+    /* Typography */
     --jxg-font-sans:  'Fira Sans', 'Source Sans Pro', -apple-system, BlinkMacSystemFont,
     'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
     --jxg-font-head:  var(--jxg-font-sans);
@@ -62,7 +63,7 @@
     --jxg-fs-tiny:     0.8rem;
     --jxg-lh:          1.6;
 
-    /* Form, Abstand, Tiefe */
+    /* Shape, spacing, depth */
     --jxg-radius:        0.6rem;
     --jxg-radius-brand:  0.7rem 0 0.7rem 0;
     --jxg-shadow-sm:     0 1px 2px rgba(16, 66, 124, 0.08);
@@ -75,7 +76,7 @@
 }
 
 /* --------------------------------------------------------------------------
-   2. Grundgeruest
+   2. Foundation
    -------------------------------------------------------------------------- */
 * {
     box-sizing: border-box;
@@ -153,7 +154,7 @@ article .description a {
 }
 
 /* --------------------------------------------------------------------------
-   4. Typografie
+   4. Typography
    -------------------------------------------------------------------------- */
 p, ul, ol, blockquote {
     margin-block: 0 1em;
@@ -197,11 +198,10 @@ h1 {
 h1.page-title {
     position: -webkit-sticky;
     position: sticky;
-    /* #main hat oben keinen Innenabstand mehr, der Titel sitzt also von Haus
-       aus auf 0 - beim Anheften bewegt er sich dadurch kein Stueck. Die
-       Polsterung von 1.25rem mittet die Zeile so aus, dass die Trennlinie
-       genau auf der Oberkante des Suchfelds liegt (1rem Rand + 2.5rem Logo
-       + 1.1rem Abstand). */
+    /* #main no longer has top padding, so the title naturally sits at 0 and
+       does not shift when it becomes stuck. The symmetric padding centres the
+       line so that the rule below it lines up exactly with the top edge of the
+       search field (nav padding + logo height + gap). */
     top: 0;
     z-index: 4;
     font-size: 1.55rem;
@@ -234,7 +234,7 @@ h4 {
     color: var(--jxg-text);
 }
 
-/* Signatur-Kopfzeile eines Members / einer Methode */
+/* Signature heading of a member or method */
 h4.name {
     display: block;
     color: #10427c;
@@ -258,8 +258,8 @@ h4.name {
     overflow-wrap: anywhere;
 }
 
-/* Signaturkopf wird zur Kopfzeile der Detailtabelle:
-   unten eckig, kein Abstand - die Trennlinie liefert sein border-bottom */
+/* The signature heading becomes the header row of the detail table:
+   square at the bottom, no gap - its border-bottom is the separator */
 h4.name:has(+ .details) {
     margin-bottom: 0;
     border-bottom-left-radius: 0;
@@ -285,8 +285,8 @@ h4.name a:hover {
     border-bottom: 0;
 }
 
-/* h5 = "Parameters:", "Returns:", "Example", "Type:" ...
-   sowie die Zwischenueberschriften der Uebersicht */
+/* h5 = "Parameters", "Returns", "Example", "Type" ...
+   plus the sub-headings of the overview lists */
 h5,
 .h3-parameters,
 .h3-returns,
@@ -321,8 +321,8 @@ h6 {
 tt, code, kbd, samp, pre {
     font-family: 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
     font-family: var(--jxg-font-mono);
-    /* gleiche Groesse wie der umgebende Text - Fira Code hat nahezu dieselbe
-       x-Hoehe wie Fira Sans, eine Verkleinerung braucht es hier nicht */
+    /* same size as the surrounding text - Fira Code has almost the same
+       x-height as Fira Sans, so no reduction is needed here */
     font-size: 1em;
     background: #eaf1f5;
     background: var(--jxg-bg-inline-code);
@@ -346,7 +346,7 @@ pre {
 }
 
 /* --------------------------------------------------------------------------
-   6. Layout: Hauptbereich, Sektionen
+   6. Layout: main area and sections
    -------------------------------------------------------------------------- */
 #main {
     float: none;
@@ -423,7 +423,7 @@ article {
 }
 
 /* --------------------------------------------------------------------------
-   7. Navigation (Sidebar)
+   7. Navigation (sidebar)
    -------------------------------------------------------------------------- */
 nav {
     float: none;
@@ -449,9 +449,9 @@ nav {
     scrollbar-color: var(--jxg-border-strong) transparent;
 }
 
-/* Logo ueber dem Suchfeld. Als Pseudoelement der Navigation, damit am
-   HTML nichts zu aendern ist. Es ist reine Marke, kein Link - zum Verlinken
-   muesste ein <a> ins Template. */
+/* Logo above the search field, as a pseudo element of the navigation so
+   that no markup change is needed. It is pure branding, not a link - making
+   it clickable would require an <a> in the template. */
 nav::before {
     content: "";
     display: block;
@@ -462,9 +462,9 @@ nav::before {
     position: sticky;
     top: 0;
     z-index: 3;
-    /* Hoehe und Abstand darunter ergeben zusammen immer 3.6rem - dadurch
-       bleibt die Oberkante des Suchfelds bei 4.6rem und die Trennlinie unter
-       dem Seitentitel weiterhin auf gleicher Hoehe. */
+    /* Height and the gap below always add up to 3.6rem, which keeps the top
+       edge of the search field at 4.6rem and the rule below the page title on
+       the same line. */
     height: 3.2rem;
     margin: 0 0 .8rem;
     background-color: #f3f6f8;
@@ -614,11 +614,11 @@ nav ul ul a:active {
 }
 
 /* --------------------------------------------------------------------------
-   7b. Aufklappbare Gruppen IN der Navigation
-   Die obersten Gruppen (ELEMENTS, CLASSES, NAMESPACES ...) behalten die
-   Kastenoptik des Hauptbereichs, nur kompakter. Die verschachtelten Gruppen
-   mit .nav_element_class sind flach und wirken als Zwischenueberschrift.
-   Alle Regeln sind mit "nav " praefixiert, der Hauptbereich bleibt unberuehrt.
+   7b. Collapsible groups INSIDE the navigation
+   The top-level groups (ELEMENTS, CLASSES, NAMESPACES ...) keep the boxed
+   look of the main area, only more compact. The nested groups carrying
+   .nav_element_class are flat and read as sub-headings.
+   Every rule is prefixed with "nav ", so the main area is untouched.
    -------------------------------------------------------------------------- */
 nav details {
     margin: .75rem 0;
@@ -674,8 +674,8 @@ nav summary:hover {
     color: var(--jxg-primary);
 }
 
-/* Verschachtelte Gruppen: keine Kastenoptik.
-   Die Klasse kann am <details> oder am <summary> haengen - beides abgedeckt. */
+/* Nested groups: no box. The class may sit on the <details> or on the
+   <summary> - both cases are covered. */
 nav .nav_element_class,
 nav details:has(> summary.nav_element_class) {
     margin: .1rem 0;
@@ -690,8 +690,8 @@ nav details[open]:has(> summary.nav_element_class) {
     padding-bottom: 0;
 }
 
-/* ... dafuer deutlich staerker gesetzt als die einfachen Eintraege:
-   Primaerfarbe, halbfett und eine feine Trennlinie darunter. */
+/* ... but set noticeably stronger than the plain entries: primary colour,
+   semibold, and a hairline below. */
 nav .nav_element_class > summary,
 nav summary.nav_element_class {
     margin: .5rem -.5rem .1rem 0;
@@ -699,9 +699,9 @@ nav summary.nav_element_class {
     background-color: transparent;
     border-radius: 0;
     border-bottom: 0;
-    /* Trennlinie als Hintergrundbild statt als Rahmen: so laesst sie sich
-       beidseitig gleich weit einruecken, ohne die Box - und damit den
-       Plus-Kreis - zu verschieben. */
+    /* The separator is a background image rather than a border: that way it
+       can be inset equally on both sides without moving the box - and with it
+       the plus circle. */
     background-image: -webkit-linear-gradient(#d7e0e8, #d7e0e8);
     background-image: linear-gradient(#d7e0e8, #d7e0e8);
     background-image: linear-gradient(var(--jxg-border), var(--jxg-border));
@@ -738,7 +738,7 @@ nav summary.nav_element_class:hover {
     color: var(--jxg-secondary);
 }
 
-/* Verschachtelte Gruppen und ihre Eintraege einruecken */
+/* Indent nested groups and their entries */
 nav details details {
     margin-left: .6rem;
 }
@@ -748,13 +748,12 @@ nav details details ul a:active {
     padding-left: .95rem;
 }
 
-/* Marker: derselbe Kreis wie im Hauptbereich. Masse und Position stehen in
-   rem statt em, damit die unterschiedlichen Schriftgroessen der beiden Ebenen
-   ihn nicht mitskalieren - so sind alle Kreise gleich gross.
-   Beide Ebenen reichen dank ihrer negativen Seitenmargen bis an den Rahmen
-   der Gruppe, deshalb genuegt ein gemeinsamer Wert: die Kreise liegen damit
-   automatisch untereinander und haben rechts denselben Abstand wie oben
-   und unten. */
+/* Marker: the same circle as in the main area. Size and position are given
+   in rem rather than em so that the differing font sizes of the two levels
+   do not scale it - all circles end up identical.
+   Thanks to their negative side margins both levels reach the group border,
+   so a single value is enough: the circles line up vertically and keep the
+   same distance to the right as to the top and bottom. */
 nav summary::after {
     right: .53rem;
     width: 1.15rem;
@@ -769,7 +768,7 @@ nav summary::before {
 }
 
 /* --------------------------------------------------------------------------
-   8. Fusszeile
+   8. Footer
    -------------------------------------------------------------------------- */
 footer {
     color: #5d6b7a;
@@ -789,14 +788,20 @@ footer {
 }
 
 /* --------------------------------------------------------------------------
-   9. Signaturen / Typangaben
+   9. Signatures and type annotations
    -------------------------------------------------------------------------- */
+/* "opt" / "nullable" following a parameter name. Superscript instead of
+   italic and glued on, otherwise "startopt" reads as a single word.
+   line-height: 0 keeps the line height of the signature unchanged. */
 .signature-attributes {
-    font-size: .8em;
+    font-size: .7em;
+    font-style: normal;
+    font-weight: 400;
+    vertical-align: super;
+    line-height: 0;
+    margin-left: .15em;
     color: #08648f;
     color: var(--jxg-secondary);
-    font-style: italic;
-    font-weight: 400;
 }
 
 .type-signature {
@@ -815,10 +820,10 @@ footer {
     font-family: var(--jxg-font-mono);
 }
 
-/* wie .signature, aber in eigener Farbe - fuer die Parameter innerhalb einer
-   Signatur und fuer dieselben Namen in der Parametertabelle darunter.
-   Der zweite Selektor ist noetig, weil .name code aus der Tabellenregel
-   sonst spezifischer waere. */
+/* Like .signature but in its own colour - for the parameters inside a
+   signature and for the same names in the parameter table below.
+   The second selector is required because .name code from the table rule
+   would otherwise be more specific. */
 .signature-param,
 .name code.signature-param {
     font-family: 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
@@ -829,8 +834,8 @@ footer {
     color: var(--jxg-param);
 }
 
-/* Signaturbloecke im Usage-Abschnitt: keine Kastenoptik, sondern flache
-   Zeilen, die nur durch eine feine Linie voneinander getrennt sind. */
+/* Signature blocks in the usage section: no box, just flat rows separated
+   by a hairline. */
 details.signature {
     margin: 0;
     padding: 0;
@@ -867,6 +872,8 @@ summary.signature {
     font-family: var(--jxg-font-mono);
     font-size: 1rem;
     font-weight: 600;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
     color: #10427c;
     color: var(--jxg-primary);
 }
@@ -877,7 +884,7 @@ summary.signature:hover {
     color: var(--jxg-secondary);
 }
 
-/* Elementtyp innerhalb der Signatur, also der Name in board.create('...') */
+/* Element type inside the signature, i.e. the name in board.create('...') */
 .signature-element {
     font-family: 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
     font-family: var(--jxg-font-mono);
@@ -897,20 +904,19 @@ summary.signature:hover .signature-element {
     color: var(--jxg-element);
 }
 
-/* Der Inhalt wird ueber das padding des details eingerueckt, die Kopfzeile
-   holt sich diesen Einzug mit negativem Rand wieder zurueck - so bleibt sie
-   in beiden Zustaenden an derselben Stelle. */
+/* The content is indented via the padding of the details element; the
+   header pulls that indent back with a negative margin, so it stays in the
+   same place in both states. */
 details.signature[open] > summary {
     border-radius: 0;
     border-bottom: 0;
     margin: 0 0 .6rem -.9rem;
 }
 
-/* Marker: Groesse kommt aus der Basisregel, nur dezenter im Rand.
-   Die Signaturzeilen enden 1.1rem weiter innen als die Kopfzeile des
-   Usage-Kastens (dessen padding). Damit die Kreise beider Ebenen exakt
-   untereinander liegen, ragt der innere um genau diesen Betrag nach
-   aussen - daher der negative Wert. */
+/* Marker: the size comes from the base rule, only the border is quieter.
+   The signature rows end 1.1rem further in than the header of the usage box
+   (its padding). To line the circles of both levels up exactly, the inner
+   one sticks out by precisely that amount - hence the negative value. */
 summary.signature::after {
     right: -.4rem;
     border-color: #d7e0e8;
@@ -922,10 +928,10 @@ summary.signature::before {
 }
 
 /* --------------------------------------------------------------------------
-   9b. Seitenkopf und Abschlussblock der neuen Container-Struktur
+   9b. Page header and trailing block of the container structure
    -------------------------------------------------------------------------- */
 
-/* Seitenkopf: derselbe Kasten wie der Abschlussblock am Artikelende */
+/* Page header: the same box as the trailing block at the end of the article */
 .container-section-header {
     margin: 0 0 1.5rem;
     padding: 0.9rem;
@@ -951,9 +957,9 @@ summary.signature::before {
     margin-bottom: 0;
 }
 
-/* "Element" / "Class" vor dem Seitentitel: Etikett in Pillenform.
-   Das Template gibt inzwischen einheitlich .container-main-type aus;
-   .main-type bleibt stehen, damit bereits erzeugte Seiten weiter passen. */
+/* "Element" / "Class" in front of the page title: a pill-shaped badge.
+   The template now emits .container-main-type consistently; .main-type is
+   kept so that already generated pages still look right. */
 .main-type,
 .container-main-type {
     display: inline-block;
@@ -977,8 +983,8 @@ summary.signature::before {
     white-space: nowrap;
 }
 
-/* Sammelblock am Ende des Artikels (Throws, Extends, Parameters ...):
-   derselbe Kasten wie die Detailtabellen darueber. */
+/* Trailing block of the article (Throws, Extends, Parameters ...):
+   the same box as the detail tables above. */
 .container-article-other {
     margin: 1.75rem 0 0;
     padding: 0.9rem;
@@ -990,9 +996,9 @@ summary.signature::before {
     background-color: var(--jxg-bg);
 }
 
-/* "Throws", "Extends", "Parameters" darin sind vollwertige Abschnitts-
-   ueberschriften, keine Rubriken - also im Stil und in der Groesse der
-   Summary-Kopfzeilen darueber. */
+/* "Throws", "Extends", "Parameters" in here are proper section headings,
+   not labels - so they use the style and size of the summary headers
+   above them. */
 .container-article-other h3,
 .container-article-other .container-overview h3 {
     font-family: 'Fira Sans', 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
@@ -1015,8 +1021,7 @@ summary.signature::before {
     margin-bottom: 0;
 }
 
-/* Auf manchen Seiten bleibt der Wrapper leer - dann keinen leeren
-   Rahmen stehen lassen. */
+/* On some pages the wrapper stays empty - do not leave an empty box behind. */
 .container-article-other:not(:has(h3, h4, table, p)) {
     display: none;
 }
@@ -1026,7 +1031,7 @@ summary.signature::before {
 }
 
 /* --------------------------------------------------------------------------
-   10. Detail-Listen (Description / Type / Source / See / Default ...)
+   10. Detail lists (Description / Type / Source / See / Default ...)
    -------------------------------------------------------------------------- */
 .details {
     display: grid;
@@ -1045,7 +1050,7 @@ summary.signature::before {
     line-height: 1.6;
 }
 
-/* Beschriftungsspalte der "Tabelle" */
+/* Label column of the "table" */
 .details dt {
     width: auto;
     float: none;
@@ -1070,17 +1075,17 @@ summary.signature::before {
     color: var(--jxg-text);
 }
 
-/* Werte, die so im Quelltext stehen wuerden, in Monospace: Vorgabewerte
-   (false, null, 0, '#0000ff') und ueberschriebene Member. Source und See
-   bleiben in der Grundschrift - dort steht mal ein Bezeichner, mal ein
-   erklaerender Satz, und der Link traegt die Auszeichnung schon. */
+/* Values that would appear verbatim in source code are set in monospace:
+   default values (false, null, 0, '#0000ff') and overridden members. Source
+   and See stay in the body font - they hold sometimes an identifier and
+   sometimes a sentence, and the link already carries the emphasis. */
 .details dd.tag-default,
 .details dd.tag-overrides {
     font-family: 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
     font-family: var(--jxg-font-mono);
 }
 
-/* erste Zeile ohne Trennlinie, sonst doppelt mit dem Rahmen */
+/* first row without a separator, otherwise it doubles up with the border */
 .details dt:first-of-type,
 .details dd:first-of-type {
     border-top: 0;
@@ -1117,7 +1122,7 @@ summary.signature::before {
 }
 
 /* --------------------------------------------------------------------------
-   11. Beispiele / Quelltext
+   11. Examples and source code
    -------------------------------------------------------------------------- */
 .code-caption {
     font-style: normal;
@@ -1148,7 +1153,7 @@ summary.signature::before {
     scrollbar-color: var(--jxg-border-strong) transparent;
 }
 
-/* dezente Scrollbars fuer Codeblocke und Navigation (WebKit/Blink) */
+/* discreet scrollbars for code blocks and the navigation (WebKit/Blink) */
 .prettyprint::-webkit-scrollbar,
 nav::-webkit-scrollbar {
     width: 10px;
@@ -1253,14 +1258,14 @@ nav::-webkit-scrollbar-thumb:hover {
 }
 
 /* --------------------------------------------------------------------------
-   Eingebettete JSXGraph-Konstruktionen auf die Optik der Codeblocke bringen.
-   Breite und Hoehe bleiben bei den Werten aus dem style-Attribut, die
-   Konstruktion wird also nicht gedehnt; max-width verhindert nur das
-   Ueberlaufen auf schmalen Schirmen.
-   Seit jsxgraph.css im <head> VOR jsdoc.css steht und der Inline-Block
-   .jxgbox { margin: auto } aus dem Layout entfallen ist, genuegt die normale
-   Kaskade - !important wird hier nicht mehr gebraucht.
-   JSXGraph liest den border-radius aus und schneidet das SVG passend zu.
+   Bring embedded JSXGraph constructions in line with the code blocks.
+   Width and height stay at the values from the style attribute, so the
+   construction is not stretched; max-width only prevents overflow on narrow
+   screens.
+   Since jsxgraph.css is loaded BEFORE jsdoc.css in the <head> and the inline
+   .jxgbox { margin: auto } block has been removed from the layout, the normal
+   cascade is enough - !important is no longer needed here.
+   JSXGraph reads the border-radius and clips the SVG accordingly.
    -------------------------------------------------------------------------- */
 .jxgbox {
     max-width: 100%;
@@ -1273,11 +1278,11 @@ nav::-webkit-scrollbar-thumb:hover {
 }
 
 /* --------------------------------------------------------------------------
-   Syntaxfarben fuer das helle Codeschema.
-   Diese Klassen stammen aus styles/prettify.css, das auf dunklen Grund
-   ausgelegt ist. jsdoc.css wird spaeter eingebunden und ueberschreibt sie.
-   Wer die Trennung sauber halten will, verschiebt diesen Block nach
-   prettify.css - inhaltlich aendert sich dadurch nichts.
+   Syntax colours for the light code scheme.
+   These classes come from styles/prettify.css, which is built for a dark
+   background. jsdoc.css is loaded later and overrides them. To keep the
+   separation clean, this block can be moved into prettify.css - nothing
+   changes in terms of output.
    -------------------------------------------------------------------------- */
 .pln {
     color: #24303d;
@@ -1318,7 +1323,7 @@ nav::-webkit-scrollbar-thumb:hover {
 }
 
 /* --------------------------------------------------------------------------
-   12. Tabellen (Parameter, Properties)
+   12. Tables (parameters, properties)
    -------------------------------------------------------------------------- */
 table {
     border-spacing: 0;
@@ -1411,7 +1416,7 @@ span.param-type, .params td .param-type, .param-type dd {
 }
 
 /* --------------------------------------------------------------------------
-   13. Mobile Navigation (Burger-Button, Overlay)
+   13. Mobile navigation (burger button, overlay)
    -------------------------------------------------------------------------- */
 .navicon-button {
     display: none;
@@ -1492,7 +1497,7 @@ span.param-type, .params td .param-type, .param-type dd {
     top: -.42rem;
 }
 
-/* geoeffneter Zustand */
+/* open state */
 .nav-trigger:checked + label:not(.steps) .navicon:before,
 .nav-trigger:checked + label:not(.steps) .navicon:after {
     top: 0 !important;
@@ -1565,7 +1570,7 @@ span.param-type, .params td .param-type, .param-type dd {
     z-index: 3;
 }
 
-/* Suchmodus der Navigation */
+/* search mode of the navigation */
 .level-hide {
     display: none;
 }
@@ -1575,7 +1580,7 @@ html[data-search-mode] .level-hide {
 }
 
 /* --------------------------------------------------------------------------
-   14. Aufklappbare Abschnitte (Attributes / Members / Methods)
+   14. Collapsible sections (Attributes / Members / Methods)
    -------------------------------------------------------------------------- */
 details {
     margin: 1.5rem 0;
@@ -1609,10 +1614,10 @@ summary {
     margin: 0 -1.1rem;
     position: -webkit-sticky;
     position: sticky;
-    /* Knapp unter die Unterkante des Seitentitels, absichtlich ein paar
-       Hundertstel darueber: der Titel hat den hoeheren z-index und deckt die
-       Ueberlappung ab. Bei exakt gleichem Wert bliebe durch Rundung auf
-       Geraetepixel eine haarfeine Luecke, durch die Text durchscrollt. */
+    /* Just below the bottom edge of the page title, deliberately a few
+       hundredths above it: the title has the higher z-index and covers the
+       overlap. At exactly the same value, rounding to device pixels would
+       leave a hairline gap for text to scroll through. */
     top: 4.15rem;
     z-index: 2;
     cursor: pointer;
@@ -1625,7 +1630,7 @@ summary:hover {
     background-color: var(--jxg-accent-soft);
 }
 
-/* aufgeklappt: Kopfzeile verschmilzt mit dem Rahmen darunter */
+/* open: the header merges with the box below it */
 details[open] > summary {
     border-radius: 0.6rem 0.6rem 0 0;
     border-radius: var(--jxg-radius) var(--jxg-radius) 0 0;
@@ -1634,7 +1639,7 @@ details[open] > summary {
     margin-bottom: 1.1rem;
 }
 
-/* Standard-Klappdreieck ausblenden (WebKit/Blink bzw. Gecko) */
+/* hide the default disclosure triangle (WebKit/Blink and Gecko) */
 summary::-webkit-details-marker {
     display: none;
 }
@@ -1643,9 +1648,9 @@ summary::marker {
     content: "";
 }
 
-/* ... und rechts durch ein Plus im Kreis ersetzt, dessen senkrechter Balken
-   beim Aufklappen in die Waagerechte dreht (wie beim Burger-Menue).
-   ::after = Kreis + waagerechter Balken, ::before = drehender Balken. */
+/* ... and replace it on the right with a plus inside a circle whose
+   vertical bar rotates into the horizontal when opened (like the burger
+   menu). ::after = circle plus horizontal bar, ::before = rotating bar. */
 summary::after {
     content: "";
     box-sizing: border-box;
@@ -1706,7 +1711,7 @@ summary:hover::before {
 }
 
 /* --------------------------------------------------------------------------
-   15. Mehrspaltige Kurzlisten (Attribute, Members, Methods)
+   15. Multi-column index lists (attributes, members, methods)
    -------------------------------------------------------------------------- */
 .list_container {
     max-width: 100%;
@@ -1732,7 +1737,7 @@ summary:hover::before {
     break-inside: avoid;
 }
 
-/* Raute vor statischen Members in der Navigation */
+/* hash in front of static members in the navigation */
 [data-type="member"] a::before {
     content: '#';
     display: inline-block;
@@ -1747,10 +1752,10 @@ summary:hover::before {
 }
 
 /* --------------------------------------------------------------------------
-   16. Responsivitaet
+   16. Responsiveness
    -------------------------------------------------------------------------- */
 
-/* Grosse Bildschirme: etwas mehr Luft und groessere Basisschrift */
+/* Large screens: a little more room and a larger base font */
 @media only screen and (min-width: 1600px) {
     :root {
         --jxg-nav-width: 19rem;
@@ -1758,14 +1763,14 @@ summary:hover::before {
     }
 }
 
-/* Kleinere Desktops / Tablets quer: schmalere Sidebar */
+/* Smaller desktops and landscape tablets: narrower sidebar */
 @media only screen and (max-width: 1100px) {
     :root {
         --jxg-nav-width: 14.5rem;
     }
 }
 
-/* Tablets hoch und Smartphones: Sidebar wird zum Off-Canvas-Menue */
+/* Portrait tablets and phones: the sidebar becomes an off-canvas menu */
 @media only screen and (max-width: 880px) {
     body {
         overflow-x: hidden;
@@ -1831,7 +1836,7 @@ summary:hover::before {
         margin-left: 0;
     }
 
-    /* Beschriftung als eigene Zeile ueber dem Wert */
+    /* label on its own line above the value */
     .details {
         grid-template-columns: minmax(0, 1fr);
     }
@@ -1846,10 +1851,10 @@ summary:hover::before {
         padding: .7rem .75rem;
     }
 
-    /* Tabellen bleiben Tabellen und brechen um.
-       display: block waere hier falsch: die Zeilengruppen bekommen dann eine
-       anonyme Tabelle als Elternbox, die sich auf ihren Inhalt zusammenzieht -
-       rechts bliebe die halbe Flaeche leer. */
+    /* Tables stay tables and wrap.
+       display: block would be wrong here: the row groups then get an anonymous
+       table as their parent box, which shrinks to fit its content - leaving
+       half the width empty on the right. */
     table {
         display: table;
         width: 100%;
@@ -1879,7 +1884,7 @@ summary:hover::before {
     }
 }
 
-/* Sehr schmale Geraete */
+/* Very narrow devices */
 @media only screen and (max-width: 420px) {
     :root {
         --jxg-fs-base: .95rem;
@@ -1900,7 +1905,7 @@ summary:hover::before {
     }
 }
 
-/* Bewegungsreduktion respektieren */
+/* Respect reduced motion */
 @media (prefers-reduced-motion: reduce) {
     * {
         transition: none !important;
@@ -1908,7 +1913,7 @@ summary:hover::before {
     }
 }
 
-/* Druckausgabe */
+/* Print */
 @media print {
     nav, .navicon-button, .overlay {
         display: none !important;
@@ -1928,18 +1933,18 @@ summary:hover::before {
 }
 
 /* --------------------------------------------------------------------------
-   16b. Dunkles Farbschema
+   16b. Dark colour scheme
 
-   Umgeschaltet wird allein ueber die Systemeinstellung. Es werden nur die
-   Tokens neu belegt - kein einziger Baustein des Layouts aendert sich. Die
-   festen Werte, die im uebrigen Stylesheet vor jedem var() stehen, sind
-   reine Notnagel fuer Umgebungen ohne Custom Properties; wo var() greift,
-   gewinnen die Werte von hier.
+   Switched purely by the system setting. Only the tokens are reassigned -
+   not a single building block of the layout changes. The literal values that
+   precede every var() in the rest of the stylesheet are a fallback for
+   environments without custom properties; wherever var() works, the values
+   from here win.
 
-   Zwei Stellen brauchen Sonderbehandlung: die Syntaxfarben, die auf hellen
-   Grund gerechnet waren, und die JSXGraph-Konstruktionen - die behalten
-   ihren weissen Grund, weil die Bibliothek Achsen und Beschriftungen in
-   dunklen Farben zeichnet.
+   Two things need special treatment: the syntax colours, which were computed
+   for a light background, and the JSXGraph constructions - those keep their
+   white background, because the library draws axes and labels in dark
+   colours.
    -------------------------------------------------------------------------- */
 @media (prefers-color-scheme: dark) {
     :root {
@@ -1972,7 +1977,7 @@ summary:hover::before {
         --jxg-shadow-lg:      0 10px 30px rgba(0, 0, 0, .55);
     }
 
-    /* Syntaxfarben mit genuegend Kontrast auf dunklem Grund */
+    /* Syntax colours with enough contrast on a dark background */
     .str, .atv {
         color: #86d2a8;
     }
@@ -1985,7 +1990,7 @@ summary:hover::before {
         color: #e3a874;
     }
 
-    /* Logo mit hellem Schriftzug */
+    /* Logo with the light wordmark */
     nav::before {
         background-image: url('../images/jsxgraph-api-logo_white-text-solid-250.png');
         background-image: -webkit-image-set(
@@ -1996,26 +2001,26 @@ summary:hover::before {
                 url('../images/jsxgraph-api-logo_white-text-solid-500.png') 2x);
     }
 
-    /* Der Schleier ueber der mobilen Navigation darf dunkler ausfallen */
+    /* The scrim over the mobile navigation may be darker */
     .overlay {
         background: rgba(0, 0, 0, .55);
     }
 }
 
 /* --------------------------------------------------------------------------
-   17. Schriften
+   17. Fonts
 
-   Bewusst knapp gehalten: zwei Familien, fuenf Dateien. Ueberschriften und
-   Fliesstext teilen sich Fira Sans und unterscheiden sich nur ueber Groesse,
-   Farbe und Gewicht - das beruhigt das Schriftbild und spart zwei Downloads
-   gegenueber der vorherigen Fassung mit Fira Sans Condensed.
+   Deliberately lean: two families, five files. Headings and body text share
+   Fira Sans and differ only in size, colour and weight - that calms the
+   typography and saves two downloads compared with the earlier version that
+   used Fira Sans Condensed.
 
-     Fira Sans  400, 400 kursiv, 600   -> fonts/Fira-Sans/
+     Fira Sans  400, 400 italic, 600   -> fonts/Fira-Sans/
      Fira Code  400, 600               -> fonts/Fira-Code/
 
-   Source Sans Pro bleibt als Ersatz in der Kette. Ein Browser laedt eine
-   Ersatzschrift nur, wenn die vorherige ausfaellt - die Datei kostet im
-   Normalfall also nichts.
+   Source Sans Pro remains as a fallback in the stack. A browser only
+   downloads a fallback font if the preceding one fails, so in normal
+   operation the file costs nothing.
    -------------------------------------------------------------------------- */
 @font-face {
     font-family: 'Fira Sans';
