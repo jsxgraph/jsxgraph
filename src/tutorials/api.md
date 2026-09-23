@@ -86,6 +86,17 @@ __Example__
  *
  */
 ```
+- See {@link JXG.Board} for the list of attributes.
+  - Another link: {@link JXG.Board#animationDelay}
+- Create a line like in {@link Line}
+  - just a test: {@link JXG.Line#getSlope}
+- MathJax
+  1. Test: $\int_{-1}^1$
+  1. Test: $$\int_{-1}^1$$
+  1. Test: \\(\\int_{-1}^1\\)
+  1. Test: \\(\int_{-1}^1\\)
+  1. Test: \\[\int_{-1}^1\\]
+
 
 Old:
 
