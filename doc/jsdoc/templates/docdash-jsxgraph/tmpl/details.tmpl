@@ -6,13 +6,13 @@ var self = this;
 var defaultObjectClass = '';
 
 // Check if the default value is an object or array; if so, apply code highlighting
-if (data.defaultvalue && (data.defaultvaluetype === 'object' || data.defaultvaluetype === 'array')) {
+if (data.defaultvalue && (defaultvaluemultiline || data.defaultvaluetype === 'object' || data.defaultvaluetype === 'array')) {
     try {
         var indentedValues = JSON.stringify(JSON.parse(data.defaultvalue), null, '  ');
         data.defaultvalue = indentedValues;
     } catch (e) {}
     data.defaultvalue = "<pre class=\"prettyprint\"><code>" + data.defaultvalue + "</code></pre>";
-    defaultObjectClass = ' class="object-value"';
+    // defaultObjectClass = ' class="object-value"';
 }
 ?>
 

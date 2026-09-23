@@ -667,12 +667,12 @@ JXG.Options = {
          * @type {Object}
          * @name JXG.Board#jxgbox
          * @attribute
-         * @default <pre>{
+         * @default {
          *   id: 'jxgbox',
          *   outerbox: null,
          *   cssStyle: 'width: 500px;  aspect-ratio: 1/1; overflow: visible',
          *   cssClass: 'jxgbox'
-         * }</pre>
+         * }
          */
         jxgbox: {
             id: 'jxgbox',
@@ -1248,11 +1248,11 @@ JXG.Options = {
          * @name JXG.Board#sketches
          * @attribute
          * @type Object
-         * @default <pre>{
+         * @default {
          *   enabled: false,
          *   0: {visible: true},
          *   1: {visible: true}
-         * }</pre>
+         * }
          *
          * @see SketchCurve
          */
@@ -1642,11 +1642,11 @@ JXG.Options = {
          * @attribute
          * @memberOf JXG.GeometryElement.prototype
          * @type Object
-         * @default <pre>{
+         * @default {
          *   enabled: false,
          *   label: '',
          *   live: 'assertive'
-         *  }</pre>
+         *  }
          */
         aria: {
             enabled: false,
@@ -2898,11 +2898,11 @@ JXG.Options = {
          * @name Ticks#label
          * @attribute
          * @type Object
-         * @default <pre>{
+         * @default {
          *   tabindex: null,
          *   layer: 7, // line
          *   highlight: false
-         *   }</pre>
+         * }
          *
          */
         label: {
@@ -3673,10 +3673,10 @@ JXG.Options = {
          * @name intl
          * @attribute
          * @memberOf Ticks.prototype
-         * @default <pre>{
+         * @default {
          *    enabled: 'inherit',
          *    options: {}
-         * }</pre>
+         * }
          * @see JXG.Board#intl
          * @see Text#intl
          *
@@ -4745,10 +4745,10 @@ JXG.Options = {
          * @type Object
          * @name Boxplot#outlier
          * @attribute
-         * @default <pre>{
+         * @default {
          *   size: 3,
          *   face: 'o'
-         *  }</pre>
+         * }
          */
         outlier: {
             size: 3,
@@ -5728,14 +5728,13 @@ JXG.Options = {
          * - {@link Grid#drawZero}
          * - {@link Grid#polygonVertices}
          *
-         * Default values are:
-         * <pre>{
-         *      size: 5,
-         *      face: 'line',
-         *      margin: 0,
-         *      drawZero: true,
-         *      polygonVertices: 6
-         *  }</pre>
+         * @default {
+         *   size: 5,
+         *   face: 'line',
+         *   margin: 0,
+         *   drawZero: true,
+         *   polygonVertices: 6
+         * }
          *
          * @name Grid#major
          * @attribute
@@ -5789,14 +5788,13 @@ JXG.Options = {
          * - {@link Grid#drawZero}
          * - {@link Grid#polygonVertices}
          *
-         * Default values are:
-         * <pre>{
-         *      size: 3,
-         *      face: 'point',
-         *      margin: 0,
-         *      drawZero: true,
-         *      polygonVertices: 6
-         *  }</pre>
+         * @default {
+         *    size: 3,
+         *    face: 'point',
+         *    margin: 0,
+         *    drawZero: true,
+         *    polygonVertices: 6
+         *  }
          *
          * @name Grid#minor
          * @attribute
@@ -6471,10 +6469,10 @@ JXG.Options = {
          * @name JXG.Board.infobox#intl
          * @attribute
          * @type object
-         * @default <pre>{
+         * @default {
          *    enabled: 'inherit',
          *    options: {}
-         * }</pre>
+         * }
          * @visprop
          * @see JXG.Board#intl
          * @see Text#intl
@@ -6590,14 +6588,14 @@ JXG.Options = {
          * @type Label
          * @name Integral#label
          * @attribute
-         * @default <pre>{
+         * @default {
          *      fontSize: 20,
          *      digits: 4,
          *      intl: {
          *          enabled: false,
          *          options: {}
          *      }
-         *    }</pre>
+         *  }
          */
         label: {
             fontSize: 20,
@@ -8970,10 +8968,10 @@ JXG.Options = {
          * @attribute
          * @memberOf Slider.prototype
          * @type object
-         * @default <pre>{
+         * @default {
          *    enabled: 'inherit',
          *    options: {}
-         * }</pre>
+         * }
          * @see JXG.Board#intl
          * @see Text#intl
          *
@@ -10027,13 +10025,13 @@ JXG.Options = {
          * @attribute
          * @memberOf Text.prototype
          * @type object
-         * @default <pre>{
+         * @default {
          *    enabled: 'inherit',
          *    options: {
          *      minimumFractionDigits: 0,
          *      maximumFractionDigits: 2
          *    }
-         * }</pre>
+         * }
          * @see JXG.Board#intl
          *
          * @example

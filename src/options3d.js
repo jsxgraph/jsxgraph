@@ -135,7 +135,7 @@ JXG.extend(Options, {
          * @name View3D#yAxisBorder
          * @attribute
          * @see View3D#axesPosition
-         * @default <{
+         * @default {
          *   name: 'x',
          *   withLabel: false,
          *   label: {

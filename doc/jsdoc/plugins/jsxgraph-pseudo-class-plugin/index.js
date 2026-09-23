@@ -37,7 +37,11 @@ exports.defineTags = function (dictionary) {
 exports.handlers = {
     newDoclet: function (e) {
         var d = e.doclet;
-        // console.log(d)
+        // console.log(d.default)
+        d.defaultvaluemultiline = false;
+        if (d.defaultvalue && d.defaultvalue.indexOf('\n') > 0) {
+            d.defaultvaluemultiline = true;
+        }
         // if (d.kind === 'class') {
         //     // console.log(d)
         // }
