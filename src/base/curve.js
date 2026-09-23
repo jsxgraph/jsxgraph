@@ -897,7 +897,7 @@ JXG.extend(
         },
 
         /**
-         * Applies the transformations of the curve to the given point <tt>p</tt>.
+         * Applies the transformations of the curve to the given point `p`.
          * Before using it, {@link JXG.Curve#updateTransformMatrix} has to be called.
          * @param {JXG.Point} p
          * @returns {JXG.Point} The given point.

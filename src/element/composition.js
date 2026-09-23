@@ -1108,7 +1108,7 @@ JXG.createParallel = function (board, parents, attributes) {
 
     /**
      * Helper point used to create the parallel line. This point lies on the line at infinity, hence it's not visible,
-     * not even with visible set to <tt>true</tt>. Creating another line through this point would make that other line
+     * not even with visible set to `true`. Creating another line through this point would make that other line
      * parallel to the create parallel.
      * @memberOf Parallel.prototype
      * @name point
@@ -1458,8 +1458,8 @@ JXG.createAngularBisectorsOfTwoLines = function (board, parents, attributes) {
 //  * @type JXG.Line
 //  * @augments JXG.Line
 //  * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
-//  * @param {JXG.Point_JXG.Point_JXG.Point} p1,p2,p3 The angle described by <tt>p1</tt>, <tt>p2</tt> and <tt>p3</tt> will
-//  * be divided into two angles according to the value of <tt>m</tt>.
+//  * @param {JXG.Point_JXG.Point_JXG.Point} p1,p2,p3 The angle described by `p1`, `p2` and `p3` will
+//  * be divided into two angles according to the value of `m`.
 //  * @example
 //  * var p1 = board.create('point', [6.0, 4.0]);
 //  * var p2 = board.create('point', [3.0, 2.0]);

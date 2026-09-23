@@ -234,7 +234,7 @@ JXG.extend(
                  * <p>
                  * &lt;value&gt; tags will not be evaluated if text is provided by a function
                  * <p>
-                 * Sets the property <tt>plaintext</tt> of the text element.
+                 * Sets the property `plaintext` of the text element.
                  *
                  * @private
                  */

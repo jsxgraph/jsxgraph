@@ -310,7 +310,7 @@ JXG.extend(
          * Handle default parameters.
          * @param v Given value
          * @param d Default value
-         * @returns <tt>d</tt>, if <tt>v</tt> is undefined or null.
+         * @returns `d`, if `v` is undefined or null.
          */
         def: function (v, d) {
             if (this.exists(v)) {
@@ -425,7 +425,7 @@ JXG.extend(
          * by a JessieCode string, thus it must be a valid reference only in case one of the param
          * values is of type string.
          * @param {Array} param An array containing strings, numbers, or functions.
-         * @param {Number} n Length of <tt>param</tt>.
+         * @param {Number} n Length of `param`.
          * @returns {Function} A function taking one parameter k which specifies the index of the param element
          * to evaluate.
          */
@@ -663,11 +663,11 @@ JXG.extend(
         },
 
         /**
-         * If <tt>val</tt> is a function, it will be evaluated without giving any parameters, else the input value
+         * If `val` is a function, it will be evaluated without giving any parameters, else the input value
          * is just returned.
          * @param val Could be anything. Preferably a number or a function. If it is an array, evaluate() recurses
          * into the elements.
-         * @returns If <tt>val</tt> is a function, it is evaluated and the result is returned. Otherwise <tt>val</tt> is returned.
+         * @returns If `val` is a function, it is evaluated and the result is returned. Otherwise `val` is returned.
          */
         evaluate: function (val) {
             var i, le, arr;
@@ -693,7 +693,7 @@ JXG.extend(
          * @param value
          * @param {String} [sub] Use this property if the elements of the array are objects.
          * @returns {Number} The index of the first appearance of the given value, or
-         * <tt>-1</tt> if the value was not found.
+         * `-1` if the value was not found.
          */
         indexOf: function (array, value, sub) {
             var i,
@@ -845,7 +845,7 @@ JXG.extend(
         },
 
         /**
-         * Checks if an array contains an element equal to <tt>val</tt> but does not check the type!
+         * Checks if an array contains an element equal to `val` but does not check the type!
          * @param {Array} arr
          * @param val
          * @returns {Boolean}
@@ -885,7 +885,7 @@ JXG.extend(
          * Compare two arrays.
          * @param {Array} a1
          * @param {Array} a2
-         * @returns {Boolean} <tt>true</tt>, if the arrays coefficients are of same type and value.
+         * @returns {Boolean} `true`, if the arrays coefficients are of same type and value.
          */
         cmpArrays: function (a1, a2) {
             var i;
@@ -932,7 +932,7 @@ JXG.extend(
         },
 
         /**
-         * Truncate a number <tt>n</tt> after <tt>p</tt> decimals.
+         * Truncate a number `n` after `p` decimals.
          * @param {Number} n
          * @param {Number} p
          * @returns {Number}
@@ -1034,7 +1034,7 @@ JXG.extend(
         },
 
         /**
-         * Truncate a number <tt>val</tt> automatically.
+         * Truncate a number `val` automatically.
          * @memberOf JXG
          * @param val
          * @returns {Number}
@@ -1097,9 +1097,9 @@ JXG.extend(
         /**
          * Parse a string for label positioning of the form 'left pos' or 'pos right'
          * and return e.g.
-         * <tt>{ side: 'left', pos: 'pos' }</tt>.
+         * `{ side: 'left', pos: 'pos' }`.
          * @param {String} str
-         * @returns {Obj}  <tt>{ side, pos }</tt>
+         * @returns {Obj}  `{ side, pos }`
          */
         parsePosition: function(str) {
             var a, i,
@@ -1156,7 +1156,7 @@ JXG.extend(
          * you need a copy of an e.g. attributes object and want to overwrite some of the attributes
          * without changing the original object.
          * @param {Object} obj Object to be embedded.
-         * @returns {Object} An object with a base class reference to <tt>obj</tt>.
+         * @returns {Object} An object with a base class reference to `obj`.
          */
         clone: function (obj) {
             var cObj = {};
@@ -2038,7 +2038,7 @@ JXG.extend(
         },
 
         /**
-         * If <tt>s</tt> is a slider, it returns the sliders value, otherwise it just returns the given value.
+         * If `s` is a slider, it returns the sliders value, otherwise it just returns the given value.
          * @param {*} s
          * @returns {*} s.Value() if s is an element of type slider, s otherwise
          */

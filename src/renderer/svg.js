@@ -107,7 +107,7 @@ JXG.SVGRenderer = function (container, dim) {
     this.container.appendChild(this.svgRoot);
 
     /**
-     * The <tt>defs</tt> element is a container element to reference reusable SVG elements.
+     * The `defs` element is a container element to reference reusable SVG elements.
      * @type Node
      * @see https://www.w3.org/TR/SVG2/struct.html#DefsElement
      */
@@ -556,7 +556,7 @@ JXG.extend(
         /**
          * Updates color of an arrow DOM node.
          * @param {Node} node The arrow node.
-         * @param {String} color Color value in a HTML compatible format, e.g. <tt>#00ff00</tt> or <tt>green</tt> for green.
+         * @param {String} color Color value in a HTML compatible format, e.g. `#00ff00` or `green` for green.
          * @param {Number} opacity
          * @param {JXG.GeometryElement} el The element the arrows are to be attached to
          */

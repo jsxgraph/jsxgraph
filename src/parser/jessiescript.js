@@ -816,8 +816,10 @@ JXG.Board.prototype.construct = function (string, mode, params, paraIn, macroNam
 };
 
 /**
- * Parses a string like<br />
- * <tt>&lt;macro-name&gt; = Macro(A, B, C) { <Command in JSXGraph Construction syntax>; ...<Command in JXG-Construct syntax>; }</tt><br />
+ * Parses a string like
+ * ```
+ * &lt;macro-name&gt; = Macro(A, B, C) { <Command in JSXGraph Construction syntax>; ...<Command in JXG-Construct syntax>; }
+ * ```
  * and adds it as a macro so it can be used in the JSXGraph Construction Syntax.
  * @param {String} string A string like the one in the methods description.
  * @see #construct

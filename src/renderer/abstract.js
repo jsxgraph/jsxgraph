@@ -124,9 +124,9 @@ JXG.AbstractRenderer = function () {
     this.vOffsetText = 0;
 
     /**
-     * If this property is set to <tt>true</tt> the visual properties (attributes) of the elements are updated
+     * If this property is set to `true` the visual properties (attributes) of the elements are updated
      * on every update. Visual properties means: All the stuff stored in the
-     * {@link JXG.GeometryElement#visProp} property won't be set if enhancedRendering is <tt>false</tt>
+     * {@link JXG.GeometryElement#visProp} property won't be set if enhancedRendering is `false`
      * @type Boolean
      * @default true
      */
@@ -197,10 +197,10 @@ JXG.extend(
         /* ********* Private methods *********** */
 
         /**
-         * Update visual properties, but only if {@link JXG.AbstractRenderer#enhancedRendering} or <tt>enhanced</tt> is set to true.
+         * Update visual properties, but only if {@link JXG.AbstractRenderer#enhancedRendering} or `enhanced` is set to true.
          * @param {JXG.GeometryElement} el The element to update
-         * @param {Object} [not={}] Select properties you don't want to be updated: <tt>{fill: true, dash: true}</tt> updates
-         * everything except for fill and dash. Possible values are <tt>stroke, fill, dash, shadow, gradient</tt>.
+         * @param {Object} [not={}] Select properties you don't want to be updated: `{fill: true, dash: true}` updates
+         * everything except for fill and dash. Possible values are `stroke, fill, dash, shadow, gradient`.
          * @param {Boolean} [enhanced=false] If true, {@link JXG.AbstractRenderer#enhancedRendering} is assumed to be true.
          * @private
          */
@@ -1547,7 +1547,7 @@ JXG.extend(
 
         /**
          * Multiplication of transformations without updating. That means, at that point it is expected that the
-         * matrices contain numbers only. First, the origin in user coords is translated to <tt>(0,0)</tt> in screen
+         * matrices contain numbers only. First, the origin in user coords is translated to `(0,0)` in screen
          * coords. Then, the stretch factors are divided out. After the transformations in user coords, the stretch
          * factors are multiplied in again, and the origin in user coords is translated back to its position. This
          * method does not have to be implemented in a new renderer.
@@ -1595,7 +1595,7 @@ JXG.extend(
          *
          * @param {JXG.Image|JXG.Text} el A {@link JXG.Image} or {@link JXG.Text} object.
          * @param {Array} transformations An array of {@link JXG.Transformation} objects. This is usually the
-         * transformations property of the given element <tt>el</tt>.
+         * transformations property of the given element `el`.
          */
         transformRect: function (el, transformations) { /* stub */ },
 
@@ -1636,16 +1636,16 @@ JXG.extend(
 
         /**
          * Appends a node to a specific layer level. This is just an abstract method and has to be implemented
-         * in all renderers that want to use the <tt>createPrim</tt> model to draw.
+         * in all renderers that want to use the `createPrim` model to draw.
          * @param {Node} node A DOM tree node.
          * @param {Number} level The layer the node is attached to. This is the index of the layer in
-         * {@link JXG.SVGRenderer#layer} or the <tt>z-index</tt> style property of the node in VMLRenderer.
+         * {@link JXG.SVGRenderer#layer} or the `z-index` style property of the node in VMLRenderer.
          */
         appendChildPrim: function (node, level) { /* stub */ },
 
         /**
          * Stores the rendering nodes. This is an abstract method which has to be implemented in all renderers that use
-         * the <tt>createPrim</tt> method.
+         * the `createPrim` method.
          * @param {JXG.GeometryElement} el A JSXGraph element.
          * @param {String} type The XML node name. Only used in VMLRenderer.
          */
@@ -1684,7 +1684,7 @@ JXG.extend(
 
         /**
          * Updates an ellipse node primitive. This is an abstract method which has to be implemented in all renderers
-         * that use the <tt>createPrim</tt> method.
+         * that use the `createPrim` method.
          * @param {Node} node Reference to the node.
          * @param {Number} x Centre X coordinate
          * @param {Number} y Centre Y coordinate
@@ -1695,7 +1695,7 @@ JXG.extend(
 
         /**
          * Refreshes a line node. This is an abstract method which has to be implemented in all renderers that use
-         * the <tt>createPrim</tt> method.
+         * the `createPrim` method.
          * @param {Node} node The node to be refreshed.
          * @param {Number} p1x The first point's x coordinate.
          * @param {Number} p1y The first point's y coordinate.
@@ -1707,7 +1707,7 @@ JXG.extend(
 
         /**
          * Updates a path element. This is an abstract method which has to be implemented in all renderers that use
-         * the <tt>createPrim</tt> method.
+         * the `createPrim` method.
          * @param {Node} node The path node.
          * @param {String} pathString A string formatted like e.g. <em>'M 1,2 L 3,1 L5,5'</em>. The format of the string
          * depends on the rendering engine.
@@ -1724,7 +1724,7 @@ JXG.extend(
          * @param {Number} size A positive number describing the size. Usually the half of the width and height of
          * the drawn point.
          * @param {String} type A string describing the point's face. This method only accepts the shortcut version of
-         * each possible face: <tt>x, +, |, -, [], <>, <<>>,^, v, >, < </tt>
+         * each possible face: `x, +, |, -, [], <>, <<>>,^, v, >, < `
          */
         updatePathStringPoint: function (el, size, type) { /* stub */ },
 

@@ -110,7 +110,7 @@ JXG.extend(
     JXG.VMLRenderer.prototype,
     /** @lends JXG.VMLRenderer.prototype */ {
         /**
-         * Sets attribute <tt>key</tt> of node <tt>node</tt> to <tt>value</tt>.
+         * Sets attribute `key` of node `node` to `value`.
          * @param {Node} node A DOM node.
          * @param {String} key Name of the attribute.
          * @param {String} val New value of the attribute.

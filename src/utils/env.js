@@ -615,8 +615,8 @@ JXG.extend(
          * Cross browser mouse / pointer / touch coordinates retrieval relative to the documents's top left corner.
          * This method might be a bit outdated today, since pointer events and clientX/Y are omnipresent.
          *
-         * @param {Object} [e] The browsers event object. If omitted, <tt>window.event</tt> will be used.
-         * @param {Number} [index] If <tt>e</tt> is a touch event, this provides the index of the touch coordinates, i.e. it determines which finger.
+         * @param {Object} [e] The browsers event object. If omitted, `window.event` will be used.
+         * @param {Number} [index] If `e` is a touch event, this provides the index of the touch coordinates, i.e. it determines which finger.
          * @param {Object} [doc] The document object.
          * @returns {Array} Contains the position as x,y-coordinates in the first resp. second component.
          */
@@ -723,7 +723,7 @@ JXG.extend(
          * Access CSS style sheets.
          * @param {Object} obj A DOM element
          * @param {String} stylename The CSS property to read.
-         * @returns The value of the CSS property and <tt>undefined</tt> if it is not set.
+         * @returns The value of the CSS property and `undefined` if it is not set.
          */
         getStyle: function (obj, stylename) {
             var r,
@@ -750,7 +750,7 @@ JXG.extend(
 
         /**
          * Reads css style sheets of a given element. This method is a getStyle wrapper and
-         * defaults the read value to <tt>0</tt> if it can't be parsed as an integer value.
+         * defaults the read value to `0` if it can't be parsed as an integer value.
          * @param {DOMElement} el
          * @param {string} css
          * @returns {number}

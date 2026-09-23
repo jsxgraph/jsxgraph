@@ -329,8 +329,8 @@ Mat.Statistics = {
     /**
      * Extracts the maximum value from the array.
      * @param {Array} arr
-     * @returns {Number} The highest number from the array. It returns <tt>NaN</tt> if not every element could be
-     * interpreted as a number and <tt>-Infinity</tt> if an empty array is given or no element could be interpreted
+     * @returns {Number} The highest number from the array. It returns `NaN` if not every element could be
+     * interpreted as a number and `-Infinity` if an empty array is given or no element could be interpreted
      * as a number.
      * @memberof JXG.Math.Statistics
      */
@@ -341,8 +341,8 @@ Mat.Statistics = {
     /**
      * Extracts the minimum value from the array.
      * @param {Array} arr
-     * @returns {Number} The lowest number from the array. It returns <tt>NaN</tt> if not every element could be
-     * interpreted as a number and <tt>Infinity</tt> if an empty array is given or no element could be interpreted
+     * @returns {Number} The lowest number from the array. It returns `NaN` if not every element could be
+     * interpreted as a number and `Infinity` if an empty array is given or no element could be interpreted
      * as a number.
      * @memberof JXG.Math.Statistics
      */
@@ -486,7 +486,7 @@ Mat.Statistics = {
      * match the shortest length is taken.
      * @param {Array|Number} arr1 Dividend
      * @param {Array|Number} arr2 Divisor
-     * @param {Boolean} [math=false] Mathematical mod or symmetric mod? Default is symmetric, the JavaScript <tt>%</tt> operator.
+     * @param {Boolean} [math=false] Mathematical mod or symmetric mod? Default is symmetric, the JavaScript `%` operator.
      * @returns {Array|Number}
      * @memberof JXG.Math.Statistics
      */

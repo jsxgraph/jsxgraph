@@ -1634,7 +1634,7 @@ JXG.extend(
 
 //  * <p>
 //  * Deprecated: Alternatively, a number defining the distance between two major ticks
-//  * can be specified. However, this is meanwhile ignored. Use attribute <tt>ticksDistance</tt> instead.
+//  * can be specified. However, this is meanwhile ignored. Use attribute `ticksDistance` instead.
 /**
  * @class Ticks are used as distance markers on a line or curve.
  * They are mainly used for axis elements and slider elements. Ticks may stretch infinitely

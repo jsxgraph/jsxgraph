@@ -587,7 +587,7 @@ JXG.extend(
         },
 
         /**
-         * Insert points to the vertex list of the polygon after index <tt>idx</tt>.
+         * Insert points to the vertex list of the polygon after index `idx`.
          * The attributes of new border segments are set to the same values
          * as those used when the polygon was created.
          * If new vertices are supplied by coordinates, the default attributes of polygon

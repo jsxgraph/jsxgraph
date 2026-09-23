@@ -165,7 +165,7 @@ JXG.extend(
         },
 
         /**
-         * Rotates a point around <tt>(0, 0)</tt> by a given angle.
+         * Rotates a point around `(0, 0)` by a given angle.
          * @param {Number} angle An angle, given in rad.
          * @param {Number} x X coordinate of the point.
          * @param {Number} y Y coordinate of the point.
@@ -180,7 +180,7 @@ JXG.extend(
         },
 
         /**
-         * Rotates an array of points around <tt>(0, 0)</tt>.
+         * Rotates an array of points around `(0, 0)`.
          * @param {Array} shape An array of array of point coordinates.
          * @param {Number} angle The angle in rad the points are rotated by.
          * @returns {Array} Array of array of two dimensional point coordinates.
@@ -337,7 +337,7 @@ JXG.extend(
          * @param {JXG.GeometryElement} el Any JSXGraph element.
          * @param {String} [type='stroke'] Either <em>fill</em> or <em>stroke</em>.
          * @param {String} [targetType=type] (optional) Either <em>fill</em> or <em>stroke</em>.
-         * @returns {Boolean} If the color could be set, <tt>true</tt> is returned.
+         * @returns {Boolean} If the color could be set, `true` is returned.
          * @private
          */
         _setColor: function (el, type, targetType) {

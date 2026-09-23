@@ -73,7 +73,7 @@ var priv = {
 
 /**
  * A JessieCode object provides an interface to the parser and stores all variables and objects used within a JessieCode script.
- * The optional argument <tt>code</tt> is interpreted after initializing. To evaluate more code after initializing a JessieCode instance
+ * The optional argument `code` is interpreted after initializing. To evaluate more code after initializing a JessieCode instance
  * please use {@link JXG.JessieCode#parse}. For code snippets like single expressions use {@link JXG.JessieCode#snippet}.
  * @constructor
  * @param {String} [code] Code to parse.
@@ -146,7 +146,7 @@ JXG.JessieCode = function (code, geonext) {
     this.isLHS = false;
 
     /**
-     * The id of an HTML node in which innerText all warnings are stored (if no <tt>console</tt> object is available).
+     * The id of an HTML node in which innerText all warnings are stored (if no `console` object is available).
      * @type String
      * @default 'jcwarn'
      */
@@ -433,7 +433,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
      *
      * @param {String} vname Name of the variable
      * @param {Boolean} [local=false] Only look up the internal symbol table and don't look for
-     * the <tt>vname</tt> in Math or the element list.
+     * the `vname` in Math or the element list.
      * @param {Boolean} [isFunctionName=false] Lookup function of type builtIn, Math.*, creator.
      *
      * @see JXG.JessieCode#resolveType
@@ -601,7 +601,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
     },
 
     /**
-     * Adds the property <tt>isMap</tt> to a function and sets it to true.
+     * Adds the property `isMap` to a function and sets it to true.
      * @param {function} f
      * @returns {function}
      */
@@ -631,7 +631,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
     },
 
     /**
-     * Converts a node type <tt>node_op</tt> and value <tt>op_map</tt> or <tt>op_function</tt> into a executable
+     * Converts a node type `node_op` and value `op_map` or `op_function` into a executable
      * function. Does a simple type inspection.
      * @param {Object} node
      * @returns {function}
@@ -738,7 +738,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
     },
 
     /**
-     * Sets the property <tt>what</tt> of <tt>o</tt> to <tt>value</tt>
+     * Sets the property `what` of `o` to `value`
      * @param {JXG.Point|JXG.Text} o
      * @param {String} what
      * @param value
@@ -1136,7 +1136,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
     },
 
     /**
-     * Search the parse tree below <tt>node</tt> for <em>stationary</em> dependencies, i.e. dependencies hard coded into
+     * Search the parse tree below `node` for <em>stationary</em> dependencies, i.e. dependencies hard coded into
      * the function.
      * @param {Object} node
      * @param {Array} varnames List of variable names of the function

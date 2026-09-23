@@ -54,9 +54,9 @@ import AbstractRenderer from "./abstract.js";
  */
 JXG.NoRenderer = function () {
     /**
-     * If this property is set to <tt>true</tt> the visual properties of the elements are updated
+     * If this property is set to `true` the visual properties of the elements are updated
      * on every update. Visual properties means: All the stuff stored in the
-     * {@link JXG.GeometryElement#visProp} property won't be set if enhancedRendering is <tt>false</tt>
+     * {@link JXG.GeometryElement#visProp} property won't be set if enhancedRendering is `false`
      * @type Boolean
      * @default true
      */
