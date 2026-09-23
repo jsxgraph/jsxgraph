@@ -160,15 +160,15 @@ JXG.AbstractRenderer = function () {
     /**
      * Defines dash patterns. Sizes are in pixel.
      * Defined styles are:
-     * <ol>
-     * <li> 2 dash, 2 space</li>
-     * <li> 5 dash, 5 space</li>
-     * <li> 10 dash, 10 space</li>
-     * <li> 20 dash, 20 space</li>
-     * <li> 20 dash, 10 space, 10 dash, 10 space</li>
-     * <li> 20 dash, 5 space, 10 dash, 5 space</li>
-     * <li> 0 dash, 5 space (dotted line)</li>
-     * </ol>
+     *
+     * - `1`: 2 dash, 2 space
+     * - `2`: 5 dash, 5 space
+     * - `3`: 10 dash, 10 space
+     * - `4`: 20 dash, 20 space
+     * - `5`: 20 dash, 10 space, 10 dash, 10 space
+     * - `6`: 20 dash, 5 space, 10 dash, 5 space
+     * - `7`: 0 dash, 5 space (dotted line)
+     *
      * This means, the numbering is <b>1-based</b>.
      * Solid lines are set with dash:0.
      * If the object's attribute "dashScale:true" the dash pattern is multiplied by
