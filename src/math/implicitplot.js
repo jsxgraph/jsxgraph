@@ -35,7 +35,7 @@ import Numerics from "./numerics.js";
 import Quadtree from "./bqdt.js";
 
 /**
- * Plotting of curves which are given implicitly as the set of points solving an equation
+ * @class Plotting of curves which are given implicitly as the set of points solving an equation
  * $f(x,y) = 0$.
  *
  * The main class initializes a new implicit plot instance.
@@ -52,9 +52,8 @@ import Quadtree from "./bqdt.js";
  * @exports Mat.ImplicitPlot as JXG.Math.ImplicitPlot
  * @param {Array} bbox Bounding box of the area in which solutions of the equation
  * are determined.
- * @param {Object} config Configuration object. Default:
- * <pre>
- *  {
+ * @param {Object} config Configuration object.
+ * @default {
  *      resolution_out: 5,    // Horizontal resolution: distance between vertical lines to search for components
  *      resolution_in: 5,     // Vertical resolution to search for components
  *      max_steps: 1024,      // Max number of points in one call of tracing
@@ -76,8 +75,7 @@ import Quadtree from "./bqdt.js";
  *      loop_detection: true, // Use Gosper's loop detector
  *      unitX: 10,            // unitX of board
  *      unitY: 10             // unitX of board
- *   };
- * </pre>
+ *   }
  * @param {function} f function from \\({\mathbb R}^2 \to {\mathbb R}\\)
  * @param {function} [dfx] Optional partial derivative of \\(f\\) with regard to \\(x\\)
  * @param {function} [dfy] Optional partial derivative of \\(f\\) with regard to \\(y\\)
@@ -155,7 +153,6 @@ import Quadtree from "./bqdt.js";
  *                 this.dataY = ret[1];
  *             };
  *             board.update();
- *
  *     })();
  *
  * </script><pre>
