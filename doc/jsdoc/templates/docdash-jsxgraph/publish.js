@@ -822,7 +822,7 @@ exports.publish = function(taffyData, opts, tutorials) {
     generate('', 'Home',
         packages.concat(
             [{kind: 'mainpage', readme: opts.readme, longname: (opts.mainpagetitle) ? opts.mainpagetitle : 'Main Page'}]
-        ).concat(files),
+        ),//.concat(files),
     indexUrl);
 
     // common nav generation, no need for templating here, we already have full html
