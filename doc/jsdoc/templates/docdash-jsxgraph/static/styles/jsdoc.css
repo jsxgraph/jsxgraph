@@ -443,7 +443,12 @@ nav {
     border-right: 1px solid var(--jxg-border);
     overflow-y: auto;
     overscroll-behavior: contain;
-    padding: .6rem 1.1rem 3rem;
+    padding: .6rem .6rem 3rem;
+    /* Reserve the scrollbar track on both sides, so the entries sit in exactly
+       the same place whether the sidebar currently scrolls or not - with all
+       groups collapsed the bar disappears and the content would otherwise
+       shift sideways. */
+    scrollbar-gutter: stable both-edges;
     scrollbar-width: thin;
     scrollbar-color: #b6c6d4 transparent;
     scrollbar-color: var(--jxg-border-strong) transparent;
@@ -1096,10 +1101,13 @@ summary.signature::before {
     background-color: transparent;
 }
 
-/* The type line of an exception closes the block - it needs less room above
-   it than a free-standing type annotation. */
+/* The type line of an exception needs less room above it than a free-standing
+   type annotation, but it still has to keep its distance to whatever section
+   follows - "Extends" and "See" come right after it on many pages. Where it
+   really is the last thing in the box, the :last-child chain above removes
+   the bottom margin again. */
 .container-article-other .param-type {
-    margin: .4rem 0 0;
+    margin: .4rem 0 1em;
 }
 
 .container-article-other .container-method h4.name {
@@ -1174,12 +1182,12 @@ summary.signature::before {
 
 /*
 .details ul {
-    margin: 0;
+  margin: 0;
 }
 
 .details ul {
-    list-style-type: none;
-    padding-left: 0;
+  list-style-type: none;
+  padding-left: 0;
 }
 */
 
@@ -1909,6 +1917,15 @@ summary:hover::before {
     font-family: var(--jxg-font-mono);
     -webkit-column-break-inside: avoid;
     break-inside: avoid;
+}
+
+/* Placeholder shown when an "Own" or "Inherited" list has no entries */
+.columntext.no-items {
+    font-family: 'Fira Sans', 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-family: var(--jxg-font-sans);
+    font-style: italic;
+    color: #5d6b7a;
+    color: var(--jxg-text-muted);
 }
 
 /* hash in front of static members in the navigation */
