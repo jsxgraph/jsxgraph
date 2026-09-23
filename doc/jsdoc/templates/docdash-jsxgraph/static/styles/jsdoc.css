@@ -1010,15 +1010,38 @@ summary.signature::before {
     text-transform: none;
     color: #10427c;
     color: var(--jxg-primary);
-    margin: 1.5em 0 .5em;
+    /* No top margin: inside the trailing block the spacing comes entirely from
+       the bottom margins of the preceding part. Keeping it here would beat the
+       reset below on specificity, since that rule matches through the
+       universal selector. */
+    margin: 0 0 .5em;
 }
 
-.container-article-other .container-overview > :first-child {
+/* Uniform rhythm inside the trailing block: no top margins at all, the
+   spacing comes from the bottom margins alone, and the last part has none.
+
+   The nesting varies with the page. "Extends", "See" and "Requires" are
+   direct children of .container-article-other, while "Throws" and the
+   parameter tables sit two or three levels down inside .container-overview
+   and .container-method - hence the three selector levels. The deepest one
+   also has to out-specify the heading rule further down, which sets its top
+   margin through the margin shorthand. */
+.container-article-other > *,
+.container-article-other .container-overview > *,
+.container-article-other .container-overview .container-method > * {
     margin-top: 0;
 }
 
-.container-article-other .container-overview > :last-child {
+.container-article-other > :last-child,
+.container-article-other > :last-child > :last-child,
+.container-article-other > :last-child > :last-child > :last-child {
     margin-bottom: 0;
+}
+
+/* method.tmpl always emits its wrapper, even when there is nothing to show.
+   An empty one would still contribute its margin. */
+.container-article-other .container-method:not(:has(*)) {
+    display: none;
 }
 
 /* On some pages the wrapper stays empty - do not leave an empty box behind. */
@@ -1071,17 +1094,6 @@ summary.signature::before {
     border: 0;
     border-radius: 0;
     background-color: transparent;
-}
-
-/* The wrapper is now the first child of .container-overview, so the rule
-   that strips the first margin no longer reaches the heading inside it. */
-.container-article-other .container-method > :first-child {
-    margin-top: 0;
-}
-
-.container-article-other .container-method > :last-child,
-.container-article-other .container-method > :last-child > :last-child {
-    margin-bottom: 0;
 }
 
 /* The type line of an exception closes the block - it needs less room above
