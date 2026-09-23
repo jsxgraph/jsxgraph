@@ -252,7 +252,7 @@ JXG.extend(
          *
          * @name Line3D#setPosition2D
          * @function
-         * @param {JXG.Transformation} t projective 2D transformation
+         * @param {Transformation} t projective 2D transformation
          * @private
          */
         setPosition2D: function (t) {

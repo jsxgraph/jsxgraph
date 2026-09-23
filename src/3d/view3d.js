@@ -1201,7 +1201,7 @@ JXG.extend(
      * Project a 2D coordinate to the plane defined by point "foot"
      * and the normal vector `normal`.
      *
-     * @param  {JXG.Point} point2d
+     * @param  {Point} point2d
      * @param  {Array} normal Normal of plane
      * @param  {Array} foot Foot point of plane
      * @returns {Array} of length 4 containing the projected
@@ -1346,7 +1346,7 @@ JXG.extend(
      * the 3D x, y coordinates and changing only the z coordinate.
      * All horizontal moves of the 2D point are ignored.
      *
-     * @param {JXG.Point} point2d
+     * @param {Point} point2d
      * @param {Array} base_c3d
      * @returns {Array} of length 4 containing the projected
      * point in homogeneous coordinates.
@@ -1450,8 +1450,8 @@ JXG.extend(
 
     /**
      *
-     * @param {JXG.Plane3D} plane1
-     * @param {JXG.Plane3D} plane2
+     * @param {Plane3D} plane1
+     * @param {Plane3D} plane2
      * @param {Number} d Right hand side of Hesse normal for plane2 (it can be adjusted)
      * @returns {Array} of length 2 containing the coordinates of the defining points of
      * of the intersection segment, or false if there is no intersection

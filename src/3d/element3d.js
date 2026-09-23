@@ -193,7 +193,7 @@ JXG.extend(JXG.GeometryElement3D.prototype, {
     // /**
     //  * Add transformations to this element.
     //  * @param {JXG.GeometryElement} el
-    //  * @param {JXG.Transformation|Array} transform Either one {@link JXG.Transformation}
+    //  * @param {Transformation|Array} transform Either one {@link Transformation}
     //  * or an array of {@link JXG.Transformation}s.
     //  * @returns {JXG.CoordsElement} Reference to itself.
     //  */
@@ -240,7 +240,7 @@ JXG.extend(JXG.GeometryElement3D.prototype, {
     /**
      * Set position of the 2D element. This is a
      * callback function, executed in {@link JXG.GeometryElement#setPosition}.
-     * @param {JXG.Transform} t transformation
+     * @param {Transformation} t transformation
      * @memberof JXG.GeometryElement3D
      * @private
      * @see JXG.GeometryElement#setPosition

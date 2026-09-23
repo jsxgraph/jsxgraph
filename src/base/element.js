@@ -622,7 +622,7 @@ JXG.extend(
 
         /**
          * Add transformations to this element.
-         * @param {JXG.Transformation|Array} transform Either one {@link JXG.Transformation}
+         * @param {Transformation|Array} transform Either one {@link Transformation}
          * or an array of {@link JXG.Transformation}s.
          * @returns {JXG.GeometryElement} Reference to the element.
          */
@@ -632,7 +632,7 @@ JXG.extend(
 
         /**
          * Remove transformations of this element.
-         * @param {JXG.Transformation|Array} transform Either one {@link JXG.Transformation}
+         * @param {Transformation|Array} transform Either one {@link Transformation}
          * or an array of {@link JXG.Transformation}s.
          * @returns {JXG.GeometryElement} Reference to the element.
          */

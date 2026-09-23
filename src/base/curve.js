@@ -899,7 +899,7 @@ JXG.extend(
         /**
          * Applies the transformations of the curve to the given point `p`.
          * Before using it, {@link JXG.Curve#updateTransformMatrix} has to be called.
-         * @param {JXG.Point} p
+         * @param {Point} p
          * @returns {JXG.Point} The given point.
          */
         updateTransform: function (p) {
@@ -3037,8 +3037,8 @@ JXG.registerElement("curveunion", JXG.createCurveUnion);
 //  * @pseudo
 //  * @name CurveConcat
 // * @elementclass curve
-//  * @param {JXG.Curve} curve1 First curve element.
-//  * @param {JXG.Curve} curve2 Second curve element.
+//  * @param {Curve} curve1 First curve element.
+//  * @param {Curve} curve2 Second curve element.
 //  * @augments JXG.Curve
 //  * @constructor
 //  * @type JXG.Curve

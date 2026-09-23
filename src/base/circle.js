@@ -63,8 +63,8 @@ import Type from "../utils/type.js";
  * - __'pointCircle'__ which means the circle is defined by its center and its radius given by the radius of another circle
  *
  * The parameters p1, p2 and radius must be set according to this method parameter.
- * @param {JXG.Point} par1 center of the circle.
- * @param {JXG.Point|JXG.Line|JXG.Circle} par2 Can be
+ * @param {Point} par1 center of the circle.
+ * @param {Point|Line|Circle} par2 Can be
  *
  * - a point on the circle if method is 'twoPoints'
  * - a line if the method is 'pointLine'

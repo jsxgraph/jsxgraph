@@ -43,8 +43,8 @@ import Geometry from '../math/geometry.js';
  * @constructor
  * @augments JXG.Curve3D
  * @augments JXG.GeometryElement
- * @param {JXG.View3D} view The 3D view the circle is drawn on.
- * @param {JXG.Point} center The center of the circle.
+ * @param {View3D} view The 3D view the circle is drawn on.
+ * @param {Point3D} center The center of the circle.
  * @param {Array} normal A normal vector of the plane the circle lies in. Must be either an array of three numbers or an array of three functions returning numbers.
  * @param {Number|Function} radius The radius of the circle.
  * @param {Object} attributes
