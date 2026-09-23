@@ -22,14 +22,10 @@
 
 <header class='container-section-header'>
     <?js if (!doc.longname || doc.kind !== 'module') { ?>
-<<<<<<< HEAD
-        <h2><?js if (doc.kind === 'namespace') { 
-=======
         <h2><!--<?js if (doc.ancestors && doc.ancestors.length) { ?>
             <span class="ancestors"><?js= doc.ancestors.join('') ?></span>
         <?js } ?>-->
         <?js if (doc.kind === 'namespace') {
->>>>>>> 3f02824ff67f021e796696ccd64e0115fba29e8e
             /* print(doc.name); */ ?>
                 <span class='container-main-type'>Namespace</span>
         <?js } else { ?>
@@ -104,15 +100,9 @@
                 <?js }); ?>
             </div>
 
-<<<<<<< HEAD
-            <?js attributes
-                   .filter((self) => !self.inherits)
-                   .forEach(function(p) { ?>
-=======
             <!--<h4 class="subsection-title">Attributes details</h4>-->
 
             <?js attributesOwn.forEach(function(p) { ?>
->>>>>>> 3f02824ff67f021e796696ccd64e0115fba29e8e
                 <?js= self.partial('members.tmpl', p) ?>
             <?js }); ?>
             <?js } ?>
@@ -156,15 +146,9 @@
         <?js }); ?>
         </div>
 
-<<<<<<< HEAD
-        <?js members
-               .filter((self) => !self.inherited)
-               .forEach(function(p) { ?>
-=======
         <!--<h4 class="subsection-title">Details:</h4>-->
 
         <?js membersOwn.forEach(function(p) { ?>
->>>>>>> 3f02824ff67f021e796696ccd64e0115fba29e8e
             <?js= self.partial('members.tmpl', p) ?>
         <?js }); ?>
         <?js } ?>
@@ -199,15 +183,9 @@
         <?js }); ?>
         </div>
 
-<<<<<<< HEAD
-        <?js methods
-               .filter((self) => !self.inherited)
-               .forEach(function(m) { ?>
-=======
         <!--<h4 class="subsection-title">Details:</h4>-->
 
         <?js methodsOwn.forEach(function(m) { ?>
->>>>>>> 3f02824ff67f021e796696ccd64e0115fba29e8e
             <?js= self.partial('method.tmpl', m) ?>
         <?js }); ?>
         <?js } ?>
@@ -242,15 +220,9 @@
         <?js }); ?>
         </div>
 
-<<<<<<< HEAD
-        <?js events
-            .filter((self) => !self.inherited)
-            .forEach(function(e) { ?>
-=======
         <!--<h4 class="subsection-title">Details:</h4>-->
 
         <?js eventsOwn.forEach(function(e) { ?>
->>>>>>> 3f02824ff67f021e796696ccd64e0115fba29e8e
             <?js= self.partial('method.tmpl', e) ?>
         <?js }); ?>
         <?js } ?>
