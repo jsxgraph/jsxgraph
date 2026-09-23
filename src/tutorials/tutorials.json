@@ -1,6 +1,11 @@
 {
     "first_steps": {
-        "title": "First Steps"
+        "title": "First Steps",
+        "children": {
+            "animations": {
+                "title": "Animations with JSXGraph"
+            }
+        }
     },
     "api": {
         "title": "API documentation HOWTO"

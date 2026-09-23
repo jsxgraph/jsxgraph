@@ -825,6 +825,14 @@ jxg.extend(
             return board;
         },
 
+        /**
+         * @class Collection of themes
+         *
+         * @name JXG.themes
+         * @elementclass themes
+         * @type Object
+         *
+         */
         themes: {}
     }
 );
