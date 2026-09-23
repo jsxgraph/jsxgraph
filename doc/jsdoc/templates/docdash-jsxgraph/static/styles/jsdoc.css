@@ -970,7 +970,6 @@ summary.signature::before {
     display: inline-block;
     vertical-align: middle;
     margin-right: .45em;
-    margin-left: -1.9em;
     padding: .2em .8em;
     border: 1px solid #d7e0e8;
     border: 1px solid var(--jxg-border);
