@@ -65,7 +65,7 @@
              * @param {Object} node The Node that contains the data we want to get.
              * @param {String} tag The Name of the tag we are looking for.
              * @param {Number} [idx=0] getElementsByTagName returns an array; This parameter decides which element to use.
-             * @param {Boolean} [fc=true] If True, the result will be the <tt>data</tt> of <tt>firstChild</tt> instead of the result node.
+             * @param {Boolean} [fc=true] If True, the result will be the `data` of `firstChild` instead of the result node.
              * @returns {Object|Array|String} The gathered data
              */
             gEBTN: function (node, tag, idx, fc) {

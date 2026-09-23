@@ -404,7 +404,7 @@ Mat.Numerics = {
      *   return x*x;
      * }
      *
-     * // calculates integral of <tt>f</tt> from 0 to 2.
+     * // calculates integral of `f` from 0 to 2.
      * var area1 = JXG.Math.Numerics.NewtonCotes([0, 2], f);
      *
      * // the same with an anonymous function
@@ -518,7 +518,7 @@ Mat.Numerics = {
      *   return x*x;
      * }
      *
-     * // calculates integral of <tt>f</tt> from 0 to 2.
+     * // calculates integral of `f` from 0 to 2.
      * var area1 = JXG.Math.Numerics.Romberg([0, 2], f);
      *
      * // the same with an anonymous function
@@ -592,7 +592,7 @@ Mat.Numerics = {
      *   return x*x;
      * }
      *
-     * // calculates integral of <tt>f</tt> from 0 to 2.
+     * // calculates integral of `f` from 0 to 2.
      * var area1 = JXG.Math.Numerics.GaussLegendre([0, 2], f);
      *
      * // the same with an anonymous function
@@ -1289,7 +1289,7 @@ Mat.Numerics = {
      *   return x*x;
      * }
      *
-     * // calculates integral of <tt>f</tt> from 0 to 2.
+     * // calculates integral of `f` from 0 to 2.
      * var area1 = JXG.Math.Numerics.Qag([0, 2], f);
      *
      * // the same with an anonymous function
@@ -2664,7 +2664,7 @@ Mat.Numerics = {
      * Either
      * @param {Array} dataX Array containing either the x-coordinates of the data set or both coordinates in
      * an array of {@link JXG.Point}s or {@link JXG.Coords}.
-     * In the latter case, the <tt>dataY</tt> parameter will be ignored.
+     * In the latter case, the `dataY` parameter will be ignored.
      * @param {Array} dataY Array containing the y-coordinates of the data set,
      * @returns {function} A function of one parameter which returns the value of the regression polynomial of the given degree.
      * It possesses the method getTerm() which returns the string containing the function term of the polynomial.
@@ -3292,8 +3292,8 @@ Mat.Numerics = {
      * @param {Array} I Interval on which to integrate.
      * @param {Number} N Number of integration intervals, i.e. there are <i>N+1</i> evaluation points.
      * @param {function} f Function describing the right hand side of the first order ordinary differential equation, i.e. if the ode
-     * is given by the equation <pre>dx/dt = f(t, x(t))</pre>. So, f has to take two parameters, a number <tt>t</tt> and a
-     * vector <tt>x</tt>, and has to return a vector of the same length as <tt>x</tt> has.
+     * is given by the equation <pre>dx/dt = f(t, x(t))</pre>. So, f has to take two parameters, a number `t` and a
+     * vector `x`, and has to return a vector of the same length as `x` has.
      * @returns {Array} An array of vectors describing the solution of the ode on the given interval I.
      * @example
      * // A very simple autonomous system dx(t)/dt = x(t);
@@ -4756,7 +4756,7 @@ Mat.Numerics = {
      * @param {Array} pts Array of {@link JXG.Coords}
      * @param {Number} i Index of an element of pts
      * @param {Number} j Index of an element of pts
-     * @param {Number} eps If the absolute value of a given number <tt>x</tt> is smaller than <tt>eps</tt> it is considered to be equal <tt>0</tt>.
+     * @param {Number} eps If the absolute value of a given number `x` is smaller than `eps` it is considered to be equal `0`.
      * @param {Array} newPts Array of {@link JXG.Coords}
      * @param {Boolean} [usr=false] Search minimal distance in user coords
      *
@@ -4800,7 +4800,7 @@ Mat.Numerics = {
      * pts. The computation is done in screen coordinates.
      * Average runtime is O(nlog(n)), worst case runtime is O(n^2), where n is the number of points.
      * @param {Array} pts Array of {@link JXG.Coords}
-     * @param {Number} eps If the absolute value of a given number <tt>x</tt> is smaller than <tt>eps</tt> it is considered to be equal <tt>0</tt>.
+     * @param {Number} eps If the absolute value of a given number `x` is smaller than `eps` it is considered to be equal `0`.
      * @param {Boolean} [usr=false] Minimize number of points using user coords
      * @returns {Array} An array containing points which represent an apparently identical curve as the points of pts do, but contains fewer points.
      * @memberof JXG.Math.Numerics

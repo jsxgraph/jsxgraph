@@ -1627,7 +1627,7 @@ JXG.extend(Options, {
          * @attribute
          * @memberOf Vectorfield3D.prototype
          * @type {Object}
-         * @default <tt>{enabled: true, size: 5, angle: Math.PI * 0.125}</tt>
+         * @default `{enabled: true, size: 5, angle: Math.PI * 0.125}`
          */
         arrowhead: {
             enabled: true,
@@ -1748,7 +1748,7 @@ JXG.extend(Options, {
          * @name View3D#verticalDrag
          * @attribute
          * @type Object
-         * @default <tt>{enabled: true, key: 'shift'}</tt>
+         * @default `{enabled: true, key: 'shift'}`
          */
         verticalDrag: {
             enabled: true,
@@ -1758,26 +1758,26 @@ JXG.extend(Options, {
         /**
          * Specify the user handling of the azimuth.
          * <ul>
-         *  <li><tt>pointer</tt> sub-attributes:
+         *  <li>`pointer` sub-attributes:
          *      <ul>
-         *          <li><tt>enabled</tt>: Boolean that specifies whether pointer navigation is allowed by azimuth.
-         *          <li><tt>speed</tt>: Number indicating how many passes the range of the az_slider makes when the cursor crosses the entire board once in the horizontal direction.
-         *          <li><tt>outside</tt>: Boolean that specifies whether the pointer navigation is continued when the cursor leaves the board.
-         *          <li><tt>button</tt>: Which button of the pointer should be used? (<tt>'-1'</tt> (=no button), <tt>'0'</tt> or <tt>'2'</tt>)
-         *          <li><tt>key</tt>: Should an additional key be pressed? (<tt>'none'</tt>, <tt>'shift'</tt> or <tt>'ctrl'</tt>)
+         *          <li>`enabled`: Boolean that specifies whether pointer navigation is allowed by azimuth.
+         *          <li>`speed`: Number indicating how many passes the range of the az_slider makes when the cursor crosses the entire board once in the horizontal direction.
+         *          <li>`outside`: Boolean that specifies whether the pointer navigation is continued when the cursor leaves the board.
+         *          <li>`button`: Which button of the pointer should be used? (`'-1'` (=no button), `'0'` or `'2'`)
+         *          <li>`key`: Should an additional key be pressed? (`'none'`, `'shift'` or `'ctrl'`)
          *      </ul>
-         *  <li><tt>keyboard</tt> sub-attributes:
+         *  <li>`keyboard` sub-attributes:
          *      <ul>
-         *          <li><tt>enabled</tt>: Boolean that specifies whether the keyboard (left/right arrow keys) can be used to navigate the board.
-         *          <li><tt>step</tt>: Size of the step per keystroke.
-         *          <li><tt>key</tt>: Should an additional key be pressed? (<tt>'none'</tt>, <tt>'shift'</tt> or <tt>'ctrl'</tt>)
+         *          <li>`enabled`: Boolean that specifies whether the keyboard (left/right arrow keys) can be used to navigate the board.
+         *          <li>`step`: Size of the step per keystroke.
+         *          <li>`key`: Should an additional key be pressed? (`'none'`, `'shift'` or `'ctrl'`)
          *      </ul>
-         *  <li><tt>continuous</tt>: Boolean that specifies whether the az_slider starts again from the beginning when its end is reached.
-         *  <li><tt>slider</tt> attributes of the az_slider ({@link Slider}) with additional
+         *  <li>`continuous`: Boolean that specifies whether the az_slider starts again from the beginning when its end is reached.
+         *  <li>`slider` attributes of the az_slider ({@link Slider}) with additional
          *      <ul>
-         *          <li><tt>min</tt>: Minimum value.
-         *          <li><tt>max</tt>: Maximum value.
-         *          <li><tt>start</tt>: Start value.
+         *          <li>`min`: Minimum value.
+         *          <li>`max`: Maximum value.
+         *          <li>`start`: Start value.
          *      </ul>
          *      'min' and 'max' are used only if trackball is not enabled.
          *     Additionally, the attributes 'slider.point1.pos' and 'slider.point2.pos' control the position of the slider. Possible

@@ -481,8 +481,8 @@ JXG.extend(
 
 
         /**
-        * Starts an animated point movement towards the given coordinates <tt>where</tt>.
-        * The animation is done after <tt>time</tt> milliseconds.
+        * Starts an animated point movement towards the given coordinates `where`.
+        * The animation is done after `time` milliseconds.
         * If the second parameter is not given or is equal to 0, coordinates are changed without animation.
         * @param {Array} where Array containing the target coordinate in cartesian or homogenous form.
         * @param {Number} [time] Number of milliseconds the animation should last.

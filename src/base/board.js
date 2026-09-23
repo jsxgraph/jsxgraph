@@ -1138,14 +1138,13 @@ JXG.extend(
         },
 
         /**
-         * This function divides the board into 9 sections and returns an array <tt>[u,v]</tt> which symbolizes the location of <tt>position</tt>.
-         * Optional a <tt>margin</tt> to the inner of the board is respected.<br>
+         * This function divides the board into 9 sections and returns an array `[u,v]` which symbolizes the location of `position`.
+         * Optional a `margin` to the inner of the board is respected.<br>
          *
-         * @name Board#getPointLoc
-         * @param {Array} position Array of requested position <tt>[x, y]</tt> or <tt>[w, x, y]</tt>.
-         * @param {Array|Number} [margin] Optional margin for the inner of the board: <tt>[top, right, bottom, left]</tt>. A single number <tt>m</tt> is interpreted as <tt>[m, m, m, m]</tt>.
+         * @param {Array} position Array of requested position `[x, y]` or `[w, x, y]`.
+         * @param {Array|Number} [margin] Optional margin for the inner of the board: `[top, right, bottom, left]`. A single number `m` is interpreted as `[m, m, m, m]`.
          * @returns {Array} [u,v] with the following meanings:
-         * <pre>
+         * ```
          *     v    u > |   -1    |    0   |    1   |
          * ------------------------------------------
          *     1        | [-1,1]  |  [0,1] |  [1,1] |
@@ -1153,8 +1152,8 @@ JXG.extend(
          *     0        | [-1,0]  |  Board |  [1,0] |
          * ------------------------------------------
          *    -1        | [-1,-1] | [0,-1] | [1,-1] |
-         * </pre>
-         * Positions inside the board (minus margin) return the value <tt>[0,0]</tt>.
+         * ```
+         * Positions inside the board (minus margin) return the value `[0,0]`.
          *
          * @example
          *      var point1, point2, point3, point4, margin,
@@ -1319,10 +1318,10 @@ JXG.extend(
 
         /**
          * This function calculates where the origin is located (@link Board#getPointLoc).
-         * Optional a <tt>margin</tt> to the inner of the board is respected.<br>
+         * Optional a `margin` to the inner of the board is respected.<br>
          *
          * @name Board#getLocationOrigin
-         * @param {Array|Number} [margin] Optional margin for the inner of the board: <tt>[top, right, bottom, left]</tt>. A single number <tt>m</tt> is interpreted as <tt>[m, m, m, m]</tt>.
+         * @param {Array|Number} [margin] Optional margin for the inner of the board: `[top, right, bottom, left]`. A single number `m` is interpreted as `[m, m, m, m]`.
          * @returns {Array} [u,v] which shows where the origin is located (@link Board#getPointLoc).
          */
         getLocationOrigin: function (margin) {
@@ -5507,7 +5506,7 @@ JXG.extend(
         },
 
         /**
-         * Sets the zoom level to <tt>fX</tt> resp <tt>fY</tt>.
+         * Sets the zoom level to `fX` resp `fY`.
          * @param {Number} fX
          * @param {Number} fY
          * @returns {JXG.Board} Reference to the board.
@@ -5649,9 +5648,9 @@ JXG.extend(
          * <ul>
          *   <li> remove the whole array if the elements are contained in an array instead
          *    of looping through the array OR
-         *   <li> call <tt>board.suspendUpdate()</tt>
+         *   <li> call `board.suspendUpdate()`
          * before looping through the elements to be removed and call
-         * <tt>board.unsuspendUpdate()</tt> after the loop. Further, it is advisable to loop
+         * `board.unsuspendUpdate()` after the loop. Further, it is advisable to loop
          * in reverse order, i.e. remove the object in reverse order of their creation time.
          * </ul>
          * @param {JXG.GeometryElement|Array} object The object to remove or array of objects to be removed.
@@ -6520,7 +6519,7 @@ JXG.extend(
         },
 
         /**
-         * Sets the value of attribute <tt>key</tt> to <tt>value</tt>.
+         * Sets the value of attribute `key` to `value`.
          * @param {String} key The attribute's name.
          * @param value The new value
          * @private
@@ -7212,7 +7211,7 @@ JXG.extend(
         /**
          * Checks if the given point is inside the boundingbox.
          * @param {Number|JXG.Coords} x User coordinate or {@link JXG.Coords} object.
-         * @param {Number} [y] User coordinate. May be omitted in case <tt>x</tt> is a {@link JXG.Coords} object.
+         * @param {Number} [y] User coordinate. May be omitted in case `x` is a {@link JXG.Coords} object.
          * @returns {Boolean}
          */
         hasPoint: function (x, y) {

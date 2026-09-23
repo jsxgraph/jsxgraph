@@ -868,7 +868,7 @@ JXG.extend(
          * <li>'none': no truncation
          * <li>number: truncate after "number digits" with JXG.toFixed()
          * </ul>
-         * @param {Boolean} [withZ=false] If set to true the return value will be <tt>(x | y | z)</tt> instead of <tt>(x, y)</tt>.
+         * @param {Boolean} [withZ=false] If set to true the return value will be `(x | y | z)` instead of `(x, y)`.
          * @returns {String} User coordinates of point.
          */
         Coords: function (withZ) {
@@ -1169,7 +1169,7 @@ JXG.extend(
          * Sets coordinates and calls the elements's update() method.
          * @param {Number} method The type of coordinates used here.
          * Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
-         * @param {Array} coords coordinates <tt>([z], x, y)</tt> in screen/user units
+         * @param {Array} coords coordinates `([z], x, y)` in screen/user units
          * @returns {JXG.CoordsElement} this element
          */
         setPositionDirectly: function (method, coords) {
@@ -1240,7 +1240,7 @@ JXG.extend(
         },
 
         /**
-         * Translates the point by <tt>tv = (x, y)</tt>.
+         * Translates the point by `tv = (x, y)`.
          * @param {Number} method The type of coordinates used here.
          * Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
          * @param {Array} tv (x, y)
@@ -1888,7 +1888,7 @@ JXG.extend(
          * @param {Number} time The time in milliseconds in which to finish the animation
          * @param {Object} [options] Optional settings for the animation.
          * @param {function} [options.callback] A function that is called as soon as the animation is finished.
-         * @param {Boolean} [options.interpolate=true] If <tt>path</tt> is an array moveAlong()
+         * @param {Boolean} [options.interpolate=true] If `path` is an array moveAlong()
          * will interpolate the path
          * using {@link JXG.Math.Numerics.Neville}. Set this flag to false if you don't want to use interpolation.
          * @returns {JXG.CoordsElement} Reference to itself.
@@ -1979,8 +1979,8 @@ JXG.extend(
         },
 
         /**
-         * Starts an animated point movement towards the given coordinates <tt>where</tt>.
-         * The animation is done after <tt>time</tt> milliseconds.
+         * Starts an animated point movement towards the given coordinates `where`.
+         * The animation is done after `time` milliseconds.
          * If the second parameter is not given or is equal to 0, setPosition() is called, see
          * {@link JXG.CoordsElement#setPosition},
          * i.e. the coordinates are changed without animation.
@@ -2113,8 +2113,8 @@ JXG.extend(
         },
 
         /**
-         * Starts an animated point movement towards the given coordinates <tt>where</tt>. After arriving at
-         * <tt>where</tt> the point moves back to where it started. The animation is done after <tt>time</tt>
+         * Starts an animated point movement towards the given coordinates `where`. After arriving at
+         * `where` the point moves back to where it started. The animation is done after `time`
          * milliseconds.
          * @param {Array} where Array containing the x and y coordinate of the target location.
          * @param {Number} time Number of milliseconds the animation should last.

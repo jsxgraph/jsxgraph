@@ -1539,13 +1539,13 @@ JXG.extend(
         },
 
         /**
-         * The vectors <tt>p2-p1</tt> and <tt>i2-i1</tt> are supposed to be collinear. If their cosine is positive
+         * The vectors `p2-p1` and `i2-i1` are supposed to be collinear. If their cosine is positive
          * they point into the same direction otherwise they point in opposite direction.
          * @param {JXG.Coords} p1
          * @param {JXG.Coords} p2
          * @param {JXG.Coords} i1
          * @param {JXG.Coords} i2
-         * @returns {Boolean} True, if <tt>p2-p1</tt> and <tt>i2-i1</tt> point into the same direction
+         * @returns {Boolean} True, if `p2-p1` and `i2-i1` point into the same direction
          */
         isSameDir: function (p1, p2, i1, i2) {
             var dpx = p2.usrCoords[1] - p1.usrCoords[1],

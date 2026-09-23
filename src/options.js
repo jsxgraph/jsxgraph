@@ -232,7 +232,7 @@ JXG.Options = {
          * @name JXG.Board#defaultAxes
          * @attribute
          * @type Object
-         * @default <tt>{x: {name:'x'}, y: {name: 'y'}}</tt>
+         * @default `{x: {name:'x'}, y: {name: 'y'}}`
          *
          * @example
          * const board = JXG.JSXGraph.initBoard('id', {
@@ -413,7 +413,7 @@ JXG.Options = {
          * @name JXG.Board#drag
          * @attribute
          * @type Object
-         * @default <tt>{enabled: true}</tt>
+         * @default `{enabled: true}`
          */
         drag: {
             enabled: true
@@ -754,7 +754,7 @@ JXG.Options = {
          * @name JXG.Board#keyboard
          * @attribute
          * @type Object
-         * @default <tt>{enabled: true, dx: 10, dy:10, panShift: true, panCtrl: false}</tt>
+         * @default `{enabled: true, dx: 10, dy:10, panShift: true, panCtrl: false}`
          */
         keyboard: {
             enabled: true,
@@ -1129,7 +1129,7 @@ JXG.Options = {
          * @name JXG.Board#resize
          * @attribute
          * @type Object
-         * @default <tt>{enabled: true, throttle: 10}</tt>
+         * @default `{enabled: true, throttle: 10}`
          *
          * @example
          * var board = JXG.JSXGraph.initBoard('jxgbox', {
@@ -1265,9 +1265,9 @@ JXG.Options = {
         /**
          * Show a button which allows to clear all traces of a board.
          * This button can be accessed by JavaScript or CSS with
-         * the ID <tt>"{board_id}_navigation_button_cleartraces"</tt> or by the CSS classes
-         * <tt>JXG_navigation_button"</tt> or
-         * <tt>JXG_navigation_button_cleartraces"</tt>.
+         * the ID `"{board_id}_navigation_button_cleartraces"` or by the CSS classes
+         * `JXG_navigation_button"` or
+         * `JXG_navigation_button_cleartraces"`.
          *
          * @name JXG.Board#showClearTraces
          * @attribute
@@ -1291,9 +1291,9 @@ JXG.Options = {
         /**
          * Show a button in the navigation bar to start fullscreen mode.
          * This button can be accessed by JavaScript or CSS with
-         * the ID <tt>"{board_id}_navigation_button_fullscreen"</tt> or by the CSS classes
-         * <tt>JXG_navigation_button"</tt> or
-         * <tt>JXG_navigation_button_fullscreen"</tt>.
+         * the ID `"{board_id}_navigation_button_fullscreen"` or by the CSS classes
+         * `JXG_navigation_button"` or
+         * `JXG_navigation_button_fullscreen"`.
          *
          * @name JXG.Board#showFullscreen
          * @attribute
@@ -1338,15 +1338,15 @@ JXG.Options = {
          * Display of navigation arrows and zoom buttons in the navigation bar.
          * <p>
          * The navigation bar has the
-         * the ID <tt>"{board_id}_navigation"</tt> and the CSS class
-         * <tt>JXG_navigation"</tt>.
+         * the ID `"{board_id}_navigation"` and the CSS class
+         * `JXG_navigation"`.
          * The individual buttons can be accessed by JavaScript or CSS with
-         * the ID <tt>"{board_id}_navigation_button_{type}"</tt> or by the CSS classes
-         * <tt>JXG_navigation_button"</tt> or
-         * <tt>JXG_navigation_button_{type}"</tt>, where <tt>{type}</tt>
-         * is one of <tt>left</tt>, <tt>right</tt>, or <tt>up</tt>, <tt>down</tt>,
-         * <tt>in</tt>, <tt>100</tt>, or <tt>out</tt>,
-         * <tt>fullscreen</tt>, <tt>screenshot</tt>, <tt>cleartraces</tt>, <tt>reload</tt>.
+         * the ID `"{board_id}_navigation_button_{type}"` or by the CSS classes
+         * `JXG_navigation_button"` or
+         * `JXG_navigation_button_{type}"`, where `{type}`
+         * is one of `left`, `right`, or `up`, `down`,
+         * `in`, `100`, or `out`,
+         * `fullscreen`, `screenshot`, `cleartraces`, `reload`.
          *
          * @name JXG.Board#showNavigation
          * @attribute
@@ -1360,9 +1360,9 @@ JXG.Options = {
          * Show a button in the navigation bar to force reload of a construction.
          * Works only with the JessieCode tag.
          * This button can be accessed by JavaScript or CSS with
-         * the ID <tt>"{board_id}_navigation_button_reload"</tt> or by the CSS classes
-         * <tt>JXG_navigation_button"</tt> or
-         * <tt>JXG_navigation_button_reload"</tt>.
+         * the ID `"{board_id}_navigation_button_reload"` or by the CSS classes
+         * `JXG_navigation_button"` or
+         * `JXG_navigation_button_reload"`.
          *
          * @name JXG.Board#showReload
          * @attribute
@@ -1375,9 +1375,9 @@ JXG.Options = {
         /**
          * Show a button in the navigation bar to enable screenshots.
          * This button can be accessed by JavaScript or CSS with
-         * the ID <tt>"{board_id}_navigation_button_screenshot"</tt> or by the CSS classes
-         * <tt>JXG_navigation_button"</tt> or
-         * <tt>JXG_navigation_button_screenshot"</tt>.
+         * the ID `"{board_id}_navigation_button_screenshot"` or by the CSS classes
+         * `JXG_navigation_button"` or
+         * `JXG_navigation_button_screenshot"`.
          *
          * @name JXG.Board#showScreenshot
          * @attribute
@@ -1392,10 +1392,10 @@ JXG.Options = {
          * showNavigation has to be set to true.
          * <p>
          * The individual buttons can be accessed by JavaScript or CSS with
-         * the ID <tt>"{board_id}_navigation_button_{type}"</tt> or by the CSS classes
-         * <tt>JXG_navigation_button"</tt> or
-         * <tt>JXG_navigation_button_{type}"</tt>, where <tt>{type}</tt>
-         * is <tt>in</tt>, <tt>100</tt>, or <tt>out</tt>.
+         * the ID `"{board_id}_navigation_button_{type}"` or by the CSS classes
+         * `JXG_navigation_button"` or
+         * `JXG_navigation_button_{type}"`, where `{type}`
+         * is `in`, `100`, or `out`.
          *
          * @name JXG.Board#showZoom
          * @attribute
@@ -1767,7 +1767,7 @@ JXG.Options = {
          * @name JXG.GeometryElement#draft
          * @attribute
          * @type Object
-         * @default <tt>{@link JXG.Options.elements.draft#draft}</tt>
+         * @default `{@link JXG.Options.elements.draft#draft}`
          */
         draft: {
             draft: false,
@@ -2583,7 +2583,7 @@ JXG.Options = {
          * @see JXG.GeometryElement#trace
          * @name JXG.GeometryElement#traceAttributes
          * @attribute
-         * @default <tt>{}</tt>
+         * @default `{}`
          *
          * @example
          * JXG.Options.elements.traceAttributes = {
@@ -3136,9 +3136,9 @@ JXG.Options = {
 
         /**
          * Let JSXGraph determine the distance between ticks automatically.
-         * If <tt>true</tt>, the attribute <tt>ticksDistance</tt> is ignored.
+         * If `true`, the attribute `ticksDistance` is ignored.
          * The distance between ticks is affected by the size of the board and
-         * the attribute <tt>minTicksDistance</tt> (in pixel).
+         * the attribute `minTicksDistance` (in pixel).
          *
          * @type Boolean
          * @name Ticks#insertTicks
@@ -3462,7 +3462,7 @@ JXG.Options = {
 
         /**
          * If a label exceeds {@link Ticks#maxLabelLength} this determines the precision used to shorten the tick label.
-         * Deprecated! Replaced by the attribute <tt>digits</tt>.
+         * Deprecated! Replaced by the attribute `digits`.
          *
          * @type Number
          * @name Ticks#precision
@@ -4059,7 +4059,7 @@ JXG.Options = {
          * @name Angle#dot
          * @attribute
          * @type Object
-         * @default <tt>{face: 'o', size: 2}</tt>
+         * @default `{face: 'o', size: 2}`
          */
         dot: {
             visible: false,
@@ -4164,7 +4164,7 @@ JXG.Options = {
         orientation: 'counterclockwise',
 
         /**
-         * If <tt>true</tt>, moving the mouse over inner points triggers hasPoint.
+         * If `true`, moving the mouse over inner points triggers hasPoint.
          *
          * @see JXG.GeometryElement#hasPoint
          * @name Arc#hasInnerPoints
@@ -4295,9 +4295,9 @@ JXG.Options = {
          * Settings in this attribute only have an effect if the axis is exactly horizontal or vertical.
          * Possible values are:
          * <ul>
-         *     <li><tt>'static'</tt>: Standard behavior of the axes as know in JSXGraph.
-         *     <li><tt>'fixed'</tt>: The axis is placed in a fixed position. Depending on the attribute <tt>anchor</tt>, it is positioned to the right or left of the edge of the board as seen from the axis with a distance defined in <tt>distanceBoarder</tt>. The axis will stay at the given position, when the user navigates through the board.
-         *     <li><tt>'sticky'</tt>: This mixes the two settings <tt>static</tt> and <tt>fixed</tt>. When the user navigates in the board, the axis remains in the visible area (taking into account <tt>anchor</tt> and <tt>anchorDist</tt>). If the axis itself is in the visible area, the axis can be moved by navigation.
+         *     <li>`'static'`: Standard behavior of the axes as know in JSXGraph.
+         *     <li>`'fixed'`: The axis is placed in a fixed position. Depending on the attribute `anchor`, it is positioned to the right or left of the edge of the board as seen from the axis with a distance defined in `distanceBoarder`. The axis will stay at the given position, when the user navigates through the board.
+         *     <li>`'sticky'`: This mixes the two settings `static` and `fixed`. When the user navigates in the board, the axis remains in the visible area (taking into account `anchor` and `anchorDist`). If the axis itself is in the visible area, the axis can be moved by navigation.
          * </ul>
          *
          * @type {String}
@@ -4384,8 +4384,8 @@ JXG.Options = {
         position: 'static',
 
         /**
-         * Position is used in cases: <tt>position=='sticky'</tt> or <tt>position=='fixed'</tt>.
-         * Possible values are <tt>'right'</tt>, <tt>'left'</tt>, <tt>'right left'</tt>. Left and right indicate the side as seen from the axis.
+         * Position is used in cases: `position=='sticky'` or `position=='fixed'`.
+         * Possible values are `'right'`, `'left'`, `'right left'`. Left and right indicate the side as seen from the axis.
          * It is used in combination with the attribute position to decide on which side of the board the axis should stick or be fixed.
          *
          * @type {String}
@@ -4473,7 +4473,7 @@ JXG.Options = {
 
         /**
          * Used to define at which distance to the edge of the board the axis should stick or be fixed.
-         * This only has an effect if <tt>position=='sticky'</tt> or <tt>position=='fixed'</tt>.
+         * This only has an effect if `position=='sticky'` or `position=='fixed'`.
          * There are the following possibilities:
          * <ul>
          *     <li>Numbers or strings which are numbers (e.g. '10') are interpreted as usrCoords.
@@ -4491,7 +4491,7 @@ JXG.Options = {
         /**
          * If set to true, the tick labels of the axis are automatically positioned in the narrower area between the axis and the side of the board.
          * Settings in this attribute only have an effect if the axis is exactly horizontal or vertical.
-         * This option overrides <tt>offset</tt>, <tt>anchorX</tt> and <tt>anchorY</tt> of axis tick labels.
+         * This option overrides `offset`, `anchorX` and `anchorY` of axis tick labels.
          *
          * @type {Boolean}
          * @name Axis#ticksAutoPos
@@ -4539,7 +4539,7 @@ JXG.Options = {
         ticksAutoPos: false,
 
         /**
-         * Defines, when <tt>ticksAutoPos</tt> takes effect.
+         * Defines, when `ticksAutoPos` takes effect.
          * There are the following possibilities:
          * <ul>
          *     <li>Numbers or strings which are numbers (e.g. '10') are interpreted as usrCoords.
@@ -4907,7 +4907,7 @@ JXG.Options = {
          */
 
         /**
-         * If <tt>true</tt>, moving the mouse over inner points triggers hasPoint.
+         * If `true`, moving the mouse over inner points triggers hasPoint.
          *
          * @see JXG.GeometryElement#hasPoint
          * @name Circle#hasInnerPoints
@@ -5555,7 +5555,7 @@ JXG.Options = {
          *     <li>Strings with the unit 'px' are interpreted as distance in screen pixels.
          *     <li>Strings with the unit '%' or 'fr' are interpreted as a ratio to the width/height of the board. (e.g. 50% = 0.5fr)
          * </ul>
-         * Instead of one value you can provide two values as an array <tt>[x, y]</tt> here.
+         * Instead of one value you can provide two values as an array `[x, y]` here.
          * These are used as distance in x- and y-direction.
          *
          * @type {Number|String|Array}
@@ -5572,7 +5572,7 @@ JXG.Options = {
          *     <li>If set to 'auto', the number minor elements is equal to the number of minorTicks of the corresponding axis.
          *     <li>Numbers or strings which are numbers (e.g. '10') are interpreted as quantity.
          * </ul>
-         * Instead of one value you can provide two values as an array <tt>[x, y]</tt> here.
+         * Instead of one value you can provide two values as an array `[x, y]` here.
          * These are used as number in x- and y-direction.
          *
          * @type {Number|String|Array}
@@ -5584,8 +5584,8 @@ JXG.Options = {
 
         /**
          * To print a quadratic grid with same distance of major grid elements in x- and y-direction.
-         * <tt>'min'</tt> or <tt>true</tt> will set both distances of major grid elements in x- and y-direction to the primarily lesser value,
-         * <tt>'max'</tt> to the primarily greater value.
+         * `'min'` or `true` will set both distances of major grid elements in x- and y-direction to the primarily lesser value,
+         * `'max'` to the primarily greater value.
          *
          * @type {Boolean|String}
          * @name Grid#forceSquare
@@ -5611,11 +5611,11 @@ JXG.Options = {
          *     <li>Strings with additional '%' (e.g. '95%') are interpreted as the ratio of used space for one element.
          * </ul>
          * Unused for 'line' which will use the value of strokeWidth.
-         * Instead of one value you can provide two values as an array <tt>[x, y]</tt> here.
+         * Instead of one value you can provide two values as an array `[x, y]` here.
          * These are used as size in x- and y-direction.
          *
          * <p><b><i>This attribute can be set individually for major and minor grid as a sub-entry of {@link Grid#major} or {@link Grid#minor}</i></b>,
-         * e.g. <tt>major: {size: ...}</tt>
+         * e.g. `major: {size: ...}`
          * For default values have a look there.</p>
          *
          * @type {Number|String|Array}
@@ -5649,7 +5649,7 @@ JXG.Options = {
          * </table>
          *
          * <p><b><i>This attribute can be set individually for major and minor grid as a sub-entry of {@link Grid#major} or {@link Grid#minor}</i></b>,
-         * e.g. <tt>major: {face: ...}</tt>
+         * e.g. `major: {face: ...}`
          * For default values have a look there.</p>
          *
          * @type {String}
@@ -5665,7 +5665,7 @@ JXG.Options = {
          * ends outside of the canvas (which is invisible).
          *
          * <p><b><i>This attribute can be set individually for major and minor grid as a sub-entry of {@link Grid#major} or {@link Grid#minor}</i></b>,
-         * e.g. <tt>major: {margin: ...}</tt>
+         * e.g. `major: {margin: ...}`
          * For default values have a look there.</p>
          *
          * @name Grid#margin
@@ -5676,18 +5676,18 @@ JXG.Options = {
         margin: undefined,
 
         /**
-         * This attribute determines whether the grid elements located at <tt>x=0</tt>, <tt>y=0</tt>
-         * and (for major grid only) at <tt>(0, 0)</tt> are displayed.
+         * This attribute determines whether the grid elements located at `x=0`, `y=0`
+         * and (for major grid only) at `(0, 0)` are displayed.
          * The main reason to set this attribute to "false", might be in combination with axes.
          * <ul>
-         *     <li>If <tt>false</tt>, then all these elements are hidden.
-         *     <li>If <tt>true</tt>, all these elements are shown.
+         *     <li>If `false`, then all these elements are hidden.
+         *     <li>If `true`, all these elements are shown.
          *     <li>If an object of the following form is given, the three cases can be distinguished individually:<br>
-         *     <tt>{x: true|false, y: true|false, origin: true|false}</tt>
+         *     `{x: true|false, y: true|false, origin: true|false}`
          * </ul>
          *
          * <p><b><i>This attribute can be set individually for major and minor grid as a sub-entry of {@link Grid#major} or {@link Grid#minor}</i></b>,
-         * e.g. <tt>major: {drawZero: ...}</tt>
+         * e.g. `major: {drawZero: ...}`
          * For default values have a look there.</p>
          *
          * @type {Boolean|Object}
@@ -5701,7 +5701,7 @@ JXG.Options = {
          * Number of vertices for face 'polygon'.
          *
          * <p><b><i>This attribute can be set individually for major and minor grid as a sub-entry of {@link Grid#major} or {@link Grid#minor}</i></b>,
-         * e.g. <tt>major: {polygonVertices: ...}</tt>
+         * e.g. `major: {polygonVertices: ...}`
          * For default values have a look there.</p>
          *
          * @type {Number}
@@ -6134,7 +6134,7 @@ JXG.Options = {
          * Defines together with {@link Image#snapSizeY} the grid the image snaps on to.
          * The image will only snap on user coordinates which are
          * integer multiples to snapSizeX in x and snapSizeY in y direction.
-         * If this value is equal to or less than <tt>0</tt>, it will use the grid displayed by the major ticks
+         * If this value is equal to or less than `0`, it will use the grid displayed by the major ticks
          * of the default ticks of the default x axes of the board.
          *
          * @name Image#snapSizeX
@@ -6151,7 +6151,7 @@ JXG.Options = {
         /**
          * Defines together with {@link Image#snapSizeX} the grid the image snaps on to.
          * The image will only snap on integer multiples to snapSizeX in x and snapSizeY in y direction.
-         * If this value is equal to or less than <tt>0</tt>, it will use the grid displayed by the major ticks
+         * If this value is equal to or less than `0`, it will use the grid displayed by the major ticks
          * of the default ticks of the default y axes of the board.
          *
          * @name Image#snapSizeY
@@ -6418,7 +6418,7 @@ JXG.Options = {
         strokeColor: 'none',
 
         /**
-         * By default an inequality is less (or equal) than. Set inverse to <tt>true</tt> will consider the inequality
+         * By default an inequality is less (or equal) than. Set inverse to `true` will consider the inequality
          * greater (or equal) than.
          *
          * @type Boolean
@@ -6703,7 +6703,7 @@ JXG.Options = {
          * <li> 'lrt'
          * </ul>
          * <li> the second (preferred) possibility (since v1.9.0) is:
-         * with <tt>position: 'len side'</tt> the label can be positioned exactly along the
+         * with `position: 'len side'` the label can be positioned exactly along the
          * element's path. Here,
          * <ul>
          * <li> 'len' is an expression of the form
@@ -7399,7 +7399,7 @@ JXG.Options = {
         /**
          * Defines together with {@link Point#snapSizeY} the grid the point snaps on to.
          * The point will only snap on integer multiples to snapSizeX in x and snapSizeY in y direction.
-         * If this value is equal to or less than <tt>0</tt>, it will use the grid displayed by the major ticks
+         * If this value is equal to or less than `0`, it will use the grid displayed by the major ticks
          * of the default ticks of the default x axes of the board.
          *
          * @see Point#snapToGrid
@@ -7415,7 +7415,7 @@ JXG.Options = {
         /**
          * Defines together with {@link Point#snapSizeX} the grid the point snaps on to.
          * The point will only snap on integer multiples to snapSizeX in x and snapSizeY in y direction.
-         * If this value is equal to or less than <tt>0</tt>, it will use the grid displayed by the major ticks
+         * If this value is equal to or less than `0`, it will use the grid displayed by the major ticks
          * of the default ticks of the default y axes of the board.
          *
          * @see Point#snapToGrid
@@ -8267,7 +8267,7 @@ JXG.Options = {
          * Defines together with {@link Point#snapSizeY} the grid the point snaps on to.
          * It is given in user coordinates, not in pixels.
          * The point will only snap on integer multiples to snapSizeX in x and snapSizeY in y direction.
-         * If this value is equal to or less than <tt>0</tt>, it will use the grid displayed by the major ticks
+         * If this value is equal to or less than `0`, it will use the grid displayed by the major ticks
          * of the default ticks of the default x axes of the board.
          *
          * @name Point#snapSizeX
@@ -8285,7 +8285,7 @@ JXG.Options = {
          * Defines together with {@link Point#snapSizeX} the grid the point snaps on to.
          * It is given in user coordinates, not in pixels.
          * The point will only snap on integer multiples to snapSizeX in x and snapSizeY in y direction.
-         * If this value is equal to or less than <tt>0</tt>, it will use the grid displayed by the major ticks
+         * If this value is equal to or less than `0`, it will use the grid displayed by the major ticks
          * of the default ticks of the default y axes of the board.
          *
          * @name Point#snapSizeY
@@ -8332,7 +8332,7 @@ JXG.Options = {
          */
 
         /**
-         * If <tt>true</tt>, moving the mouse over inner points triggers hasPoint.
+         * If `true`, moving the mouse over inner points triggers hasPoint.
          *
          * @see JXG.GeometryElement#hasPoint
          * @name Polygon#hasInnerPoints
@@ -8512,7 +8512,7 @@ JXG.Options = {
          */
 
         /**
-         * If <tt>true</tt>, moving the mouse over inner points triggers hasPoint.
+         * If `true`, moving the mouse over inner points triggers hasPoint.
          * @see JXG.GeometryElement#hasPoint
          *
          * @name RegularPolygon#hasInnerPoints
@@ -8861,8 +8861,8 @@ JXG.Options = {
          */
 
         /**
-         * The slider only returns integer multiples of this value, e.g. for discrete values set this property to <tt>1</tt>. For
-         * continuous results set this to <tt>-1</tt>.
+         * The slider only returns integer multiples of this value, e.g. for discrete values set this property to `1`. For
+         * continuous results set this to `-1`.
          *
          * @memberOf Slider.prototype
          * @name snapWidth
@@ -9266,7 +9266,7 @@ JXG.Options = {
          * @attribute
          * @memberOf Slopefield.prototype
          * @type {Object}
-         * @default <tt>{enabled: false, size: 5, angle: Math.PI * 0.125}</tt>
+         * @default `{enabled: false, size: 5, angle: Math.PI * 0.125}`
          */
         arrowhead: {
             enabled: false,
@@ -10196,7 +10196,7 @@ JXG.Options = {
          * then this property should be removed here.
          *
          * The reason, why this attribute should be kept to its default value at all,
-         * is that screen dumps of SVG boards with <tt>board.renderer.dumpToCanvas()</tt>
+         * is that screen dumps of SVG boards with `board.renderer.dumpToCanvas()`
          * will ignore the font-family if it is set in a CSS class.
          * It has to be set explicitly as style attribute.
          *
@@ -10627,7 +10627,7 @@ JXG.Options = {
          * @name katexMacros
          * @attribute
          * @memberOf Text.prototype
-         * @default <tt>{}</tt>
+         * @default `{}`
          * @type Object
          *
          * @example <caption>Globally apply macros to all text elements</caption>
@@ -10673,7 +10673,7 @@ JXG.Options = {
 
         /**
          * Determines the rendering method of the text. Possible values
-         * include <tt>'html'</tt> and <tt>'internal'</tt>.
+         * include `'html'` and `'internal'`.
          *
          * @name display
          * @attribute
@@ -10715,8 +10715,8 @@ JXG.Options = {
         anchor: null,
 
         /**
-         * The horizontal alignment of the text. Possible values include <tt>'auto'</tt>, <tt>'left'</tt>,
-         * <tt>'middle'</tt>, and <tt>'right'</tt>.
+         * The horizontal alignment of the text. Possible values include `'auto'`, `'left'`,
+         * `'middle'`, and `'right'`.
          *
          * @name anchorX
          * @attribute
@@ -10727,8 +10727,8 @@ JXG.Options = {
         anchorX: 'left',
 
         /**
-         * The vertical alignment of the text. Possible values include <tt>'auto</tt>, <tt>'top'</tt>, <tt>'middle'</tt>, and
-         * <tt>'bottom'</tt>.
+         * The vertical alignment of the text. Possible values include `'auto`, `'top'`, `'middle'`, and
+         * `'bottom'`.
          * For MathJax or KaTeX, 'top' is recommended.
          *
          * @name anchorY
@@ -10806,7 +10806,7 @@ JXG.Options = {
         /**
          * Defines together with {@link Text#snapSizeY} the grid the text snaps on to.
          * The text will only snap on integer multiples to snapSizeX in x and snapSizeY in y direction.
-         * If this value is equal to or less than <tt>0</tt>, it will use the grid displayed by the major ticks
+         * If this value is equal to or less than `0`, it will use the grid displayed by the major ticks
          * of the default ticks of the default x axes of the board.
          *
          * @name snapSizeX
@@ -10824,7 +10824,7 @@ JXG.Options = {
         /**
          * Defines together with {@link Text#snapSizeX} the grid the text snaps on to.
          * The text will only snap on integer multiples to snapSizeX in x and snapSizeY in y direction.
-         * If this value is equal to or less than <tt>0</tt>, it will use the grid displayed by the major ticks
+         * If this value is equal to or less than `0`, it will use the grid displayed by the major ticks
          * of the default ticks of the default y axes of the board.
          *
          * @name snapSizeY
@@ -10935,7 +10935,7 @@ JXG.Options = {
          * @attribute
          * @memberOf Vectorfield.prototype
          * @type {Object}
-         * @default <tt>{enabled: true, size: 5, angle: Math.PI * 0.125}</tt>
+         * @default `{enabled: true, size: 5, angle: Math.PI * 0.125}`
          */
         arrowhead: {
             enabled: true,

@@ -103,7 +103,7 @@ JXG.Math = {
      * mod and "%" are both identical if a >= 0 and m >= 0 but the results differ if a or m < 0.
      * @param {Number} a
      * @param {Number} m
-     * @returns {Number} Mathematical modulo <tt>a mod m</tt>
+     * @returns {Number} Mathematical modulo \\(a \bmod m\\)
      */
     mod: function (a, m) {
         return a - Math.floor(a / m) * m;
@@ -152,10 +152,10 @@ JXG.Math = {
     },
 
     /**
-     * Initializes a vector of size <tt>n</tt> wih coefficients set to the init value (default 0)
+     * Initializes a vector of size `n` wih coefficients set to the init value (default 0)
      * @param {Number} n Length of the vector
      * @param {Number} [init=0] Initial value for each coefficient
-     * @returns {Array} An array of length <tt>n</tt>
+     * @returns {Array} An array of length `n`
      */
     vector: function (n, init) {
         var r, i;
@@ -175,7 +175,7 @@ JXG.Math = {
      * @param {Number} n Number of rows
      * @param {Number} [m=n] Number of columns
      * @param {Number} [init=0] Initial value for each coefficient
-     * @returns {Array} A <tt>n</tt> times <tt>m</tt>-matrix represented by a
+     * @returns {Array} A `n` times `m`-matrix represented by a
      * two-dimensional array. The inner arrays hold the columns, the outer array holds the rows.
      */
     matrix: function (n, m, init) {
@@ -201,8 +201,8 @@ JXG.Math = {
      * if n and m are both numbers, an nxm matrix is generated.
      * @param {Number} n Number of rows
      * @param {Number} [m=n] Number of columns
-     * @returns {Array} A square matrix of length <tt>n</tt> with all coefficients equal to 0 except a_(i,i), i out of (1, ..., n), if <tt>m</tt> is undefined or not a number
-     * or a <tt>n</tt> times <tt>m</tt>-matrix with a_(i,j) = 0 and a_(i,i) = 1 if m is a number.
+     * @returns {Array} A square matrix of length `n` with all coefficients equal to 0 except a_(i,i), i out of (1, ..., n), if `m` is undefined or not a number
+     * or a `n` times `m`-matrix with a_(i,j) = 0 and a_(i,i) = 1 if m is a number.
      */
     identity: function (n, m) {
         var r, i;

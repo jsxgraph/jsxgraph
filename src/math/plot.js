@@ -74,7 +74,7 @@ Mat.Plot = {
     // Plot algorithm v0
     //----------------------------------------------------------------------
     /**
-     * Updates the data points of a parametric curve. This version is used if {@link JXG.Curve#doadvancedplot} is <tt>false</tt>.
+     * Updates the data points of a parametric curve. This version is used if {@link JXG.Curve#doadvancedplot} is `false`.
      * @param {JXG.Curve} curve JSXGraph curve element
      * @param {Number} mi Left bound of curve
      * @param {Number} ma Right bound of curve
@@ -105,7 +105,7 @@ Mat.Plot = {
     // Plot algorithm v1
     //----------------------------------------------------------------------
     /**
-     * Crude and cheap test if the segment defined by the two points <tt>(x0, y0)</tt> and <tt>(x1, y1)</tt> is
+     * Crude and cheap test if the segment defined by the two points `(x0, y0)` and `(x1, y1)` is
      * outside the viewport of the board. All parameters have to be given in screen coordinates.
      *
      * @private
@@ -115,7 +115,7 @@ Mat.Plot = {
      * @param {Number} x1
      * @param {Number} y1
      * @param {JXG.Board} board
-     * @returns {Boolean} <tt>true</tt> if the given segment is outside the visible area.
+     * @returns {Boolean} `true` if the given segment is outside the visible area.
      */
     isSegmentOutside: function (x0, y0, x1, y1, board) {
         return (
@@ -127,8 +127,8 @@ Mat.Plot = {
     },
 
     /**
-     * Compares the absolute value of <tt>dx</tt> with <tt>MAXX</tt> and the absolute value of <tt>dy</tt>
-     * with <tt>MAXY</tt>.
+     * Compares the absolute value of `dx` with `MAXX` and the absolute value of `dy`
+     * with `MAXY`.
      *
      * @private
      * @deprecated
@@ -136,7 +136,7 @@ Mat.Plot = {
      * @param {Number} dy
      * @param {Number} MAXX
      * @param {Number} MAXY
-     * @returns {Boolean} <tt>true</tt>, if <tt>|dx| &lt; MAXX</tt> and <tt>|dy| &lt; MAXY</tt>.
+     * @returns {Boolean} `true`, if `|dx| &lt; MAXX` and `|dy| &lt; MAXY`.
      */
     isDistOK: function (dx, dy, MAXX, MAXY) {
         return Math.abs(dx) < MAXX && Math.abs(dy) < MAXY && !isNaN(dx + dy);
@@ -151,8 +151,8 @@ Mat.Plot = {
     },
 
     /**
-     * Updates the data points of a parametric curve. This version is used if {@link JXG.Curve#doadvancedplot} is <tt>true</tt>.
-     * Since 0.99 this algorithm is deprecated. It still can be used if {@link JXG.Curve#doadvancedplotold} is <tt>true</tt>.
+     * Updates the data points of a parametric curve. This version is used if {@link JXG.Curve#doadvancedplot} is `true`.
+     * Since 0.99 this algorithm is deprecated. It still can be used if {@link JXG.Curve#doadvancedplotold} is `true`.
      *
      * @deprecated
      * @param {JXG.Curve} curve JSXGraph curve element
@@ -631,7 +631,7 @@ Mat.Plot = {
     },
 
     /**
-     * Updates the data points of a parametric curve. This version is used if {@link JXG.Curve#plotVersion} is <tt>3</tt>.
+     * Updates the data points of a parametric curve. This version is used if {@link JXG.Curve#plotVersion} is `3`.
      *
      * @param {JXG.Curve} curve JSXGraph curve element
      * @param {Number} mi Left bound of curve
@@ -1382,7 +1382,7 @@ Mat.Plot = {
     },
 
     /**
-     * Updates the data points of a parametric curve. This version is used if {@link JXG.Curve#plotVersion} is <tt>3</tt>.
+     * Updates the data points of a parametric curve. This version is used if {@link JXG.Curve#plotVersion} is `3`.
      * This is an experimental plot version, <b>not recommended</b> to be used.
      * @param {JXG.Curve} curve JSXGraph curve element
      * @param {Number} mi Left bound of curve
@@ -2538,7 +2538,7 @@ Mat.Plot = {
     },
 
     /**
-     * Updates the data points of a parametric curve, plotVersion 4. This version is used if {@link JXG.Curve#plotVersion} is <tt>4</tt>.
+     * Updates the data points of a parametric curve, plotVersion 4. This version is used if {@link JXG.Curve#plotVersion} is `4`.
      * @param {JXG.Curve} curve JSXGraph curve element
      * @param {Number} mi Left bound of curve
      * @param {Number} ma Right bound of curve

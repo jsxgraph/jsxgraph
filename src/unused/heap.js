@@ -36,7 +36,7 @@ import Mat from "./math.js";
 
 /**
  * Instantiate a new heap.
- * Elements of the heap are objects (node) with a property <tt>v</tt>.
+ * Elements of the heap are objects (node) with a property `v`.
  * <p>
  * The heap nodes are stored in a JavaScript array.
  *
@@ -59,7 +59,7 @@ Mat.Heap.prototype.empty = function () {
 };
 
 /**
- * Insert element <tt>node</tt>into heap. An element is an object having at least the property <tt>v</tt>.
+ * Insert element `node`into heap. An element is an object having at least the property `v`.
  * @param {Object} node
  */
 Mat.Heap.prototype.insert = function (node) {
@@ -71,7 +71,7 @@ Mat.Heap.prototype.insert = function (node) {
 /**
  * Remove and return largest node in heap.
  *
- * @returns largest (in respect to property <tt>v</tt>) node
+ * @returns largest (in respect to property `v`) node
  */
 Mat.Heap.prototype.delmax = function () {
     this.exchange(0, this.N - 1);

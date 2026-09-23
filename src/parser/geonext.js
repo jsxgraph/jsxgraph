@@ -237,7 +237,7 @@ JXG.GeonextParser = {
      * Replace an element's name in terms by an element's id.
      * @param {String} term Term containing names of elements.
      * @param {JXG.Board} board Reference to the board the elements are on.
-     * @param {Boolean} [jc=false] If true, all id's will be surrounded by <tt>$('</tt> and <tt>')</tt>.
+     * @param {Boolean} [jc=false] If true, all id's will be surrounded by `$('` and `')`.
      * @returns {String} The same string with names replaced by ids.
      **/
     replaceNameById: function (term, board, jc) {
