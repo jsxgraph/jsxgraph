@@ -1608,7 +1608,7 @@ JXG.extend(Options, {
          * @attribute
          * @memberOf Vectorfield3D.prototype
          * @type {Number|Function}
-         * @see Slopefield.scale
+         * @see Slopefield#scale
          * @default 1
          */
         scale: 1,

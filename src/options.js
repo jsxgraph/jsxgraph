@@ -232,7 +232,7 @@ JXG.Options = {
          * @name JXG.Board#defaultAxes
          * @attribute
          * @type Object
-         * @default `{x: {name:'x'}, y: {name: 'y'}}`
+         * @default {x: {name:'x'}, y: {name: 'y'}}
          *
          * @example
          * const board = JXG.JSXGraph.initBoard('id', {
@@ -413,7 +413,7 @@ JXG.Options = {
          * @name JXG.Board#drag
          * @attribute
          * @type Object
-         * @default `{enabled: true}`
+         * @default {enabled: true}
          */
         drag: {
             enabled: true
@@ -512,7 +512,7 @@ JXG.Options = {
          * @name JXG.Board#intl
          * @attribute
          * @type Object
-         * @default `{enabled: false}`
+         * @default {enabled: false}
          * @see Integral#label
          * @see Slider#intl
          * @see Text#intl
@@ -754,7 +754,7 @@ JXG.Options = {
          * @name JXG.Board#keyboard
          * @attribute
          * @type Object
-         * @default `{enabled: true, dx: 10, dy:10, panShift: true, panCtrl: false}`
+         * @default {enabled: true, dx: 10, dy:10, panShift: true, panCtrl: false}
          */
         keyboard: {
             enabled: true,
@@ -770,7 +770,7 @@ JXG.Options = {
          * @name JXG.Board#logging
          * @attribute
          * @type Object
-         * @default `{enabled: false}`
+         * @default {enabled: false}
          *
          * @example
          * var board = JXG.JSXGraph.initBoard(BOARDID,
@@ -858,7 +858,7 @@ JXG.Options = {
          * @attribute
          * @type Array
          * @see JXG.Board#boundingBox
-         * @default `[-Infinity, Infinity, Infinity, -Infinity]`
+         * @default [-Infinity, Infinity, Infinity, -Infinity]
          *
          * @example
          * var board = JXG.JSXGraph.initBoard('jxgbox', {
@@ -1129,7 +1129,7 @@ JXG.Options = {
          * @name JXG.Board#resize
          * @attribute
          * @type Object
-         * @default `{enabled: true, throttle: 10}`
+         * @default {enabled: true, throttle: 10}
          *
          * @example
          * var board = JXG.JSXGraph.initBoard('jxgbox', {
@@ -1767,7 +1767,14 @@ JXG.Options = {
          * @name JXG.GeometryElement#draft
          * @attribute
          * @type Object
-         * @default `{@link JXG.Options.elements.draft#draft}`
+         * @default {
+         *   draft: false,
+         *   strokeColor: '#565656',
+         *   fillColor: '#565656',
+         *   strokeOpacity: 0.8,
+         *   fillOpacity: 0.8,
+         *   strokeWidth: 1
+         * }
          */
         draft: {
             draft: false,
@@ -2583,7 +2590,7 @@ JXG.Options = {
          * @see JXG.GeometryElement#trace
          * @name JXG.GeometryElement#traceAttributes
          * @attribute
-         * @default `{}`
+         * @default {}
          *
          * @example
          * JXG.Options.elements.traceAttributes = {
@@ -4059,7 +4066,7 @@ JXG.Options = {
          * @name Angle#dot
          * @attribute
          * @type Object
-         * @default `{face: 'o', size: 2}`
+         * @default {face: 'o', size: 2}
          */
         dot: {
             visible: false,
@@ -9243,7 +9250,7 @@ JXG.Options = {
          * @attribute
          * @memberOf Slopefield.prototype
          * @type {Number|Function}
-         * @see Vectorfield.scale
+         * @see Vectorfield#scale
          * @default 1
          */
         scale: 1,
@@ -9260,7 +9267,7 @@ JXG.Options = {
          * @attribute
          * @memberOf Slopefield.prototype
          * @type {Object}
-         * @default `{enabled: false, size: 5, angle: Math.PI * 0.125}`
+         * @default {enabled: false, size: 5, angle: Math.PI * 0.125}
          */
         arrowhead: {
             enabled: false,
@@ -10621,7 +10628,7 @@ JXG.Options = {
          * @name katexMacros
          * @attribute
          * @memberOf Text.prototype
-         * @default `{}`
+         * @default {}
          * @type Object
          *
          * @example <caption>Globally apply macros to all text elements</caption>
@@ -10907,12 +10914,14 @@ JXG.Options = {
         highlightStrokeOpacity: 0.8,
 
         /**
-         * Scaling factor of the vectors. This in contrast to slope fields, where this attribute sets the vector to the given length.
+         * Scaling factor of the vectors. This in contrast to slope fields,
+         * where this attribute sets the vector to the given length.
+         *
          * @name scale
          * @attribute
          * @memberOf Vectorfield.prototype
          * @type {Number|Function}
-         * @see Slopefield.scale
+         * @see Slopefield#scale
          * @default 1
          */
         scale: 1,
@@ -10929,7 +10938,7 @@ JXG.Options = {
          * @attribute
          * @memberOf Vectorfield.prototype
          * @type {Object}
-         * @default `{enabled: true, size: 5, angle: Math.PI * 0.125}`
+         * @default {enabled: true, size: 5, angle: Math.PI * 0.125}
          */
         arrowhead: {
             enabled: true,
