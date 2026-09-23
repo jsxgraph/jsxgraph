@@ -55,7 +55,7 @@
         <th>Default</th>
         <?js } ?>
 
-        <th class="last">Description</th>
+        <th>Description</th>
     </tr>
     </thead>
 
@@ -97,7 +97,7 @@
                 </td>
             <?js } ?>
 
-            <td class="description last"><?js= prop.description ?><?js if (prop.subprops) { ?>
+            <td class="description"><?js= prop.description ?><?js if (prop.subprops) { ?>
                 <h6>Properties</h6><?js= self.partial('properties.tmpl', prop) ?>
             <?js } ?></td>
         </tr>
