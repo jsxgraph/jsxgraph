@@ -38,9 +38,9 @@
 import Mat from "./math.js";
 
 /**
- * The JXG.Math.Tiling namespace.
+ * The JXG.Math.Tiling namespace. Used to prepare tilings used to plot {@link Surface3D} with {@link Polyhedron3D}.
  * @name JXG.Math.Tiling
- * @exports Mat.Numerics as JXG.Math.Tiling
+ * @exports Mat.Tiling as JXG.Math.Tiling
  * @namespace
  */
 Mat.Tiling = {

@@ -45,7 +45,7 @@ import Mat from "../math/math.js";
 import Const from "../base/constants.js";
 
 /**
- * Prefix expression parser, i.e. a poor man's parser.
+ * JXG.PrefixParser namespace provides a prefix expression parser, i.e. a poor man's parser.
  * This is a simple prefix parser for measurements and expressions of measurements,
  * see {@link Measurement}.
  * An expression is given as

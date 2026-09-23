@@ -22,12 +22,9 @@
 
 <header class='container-section-header'>
     <?js if (!doc.longname || doc.kind !== 'module') { ?>
-        <h2><!--<?js if (doc.ancestors && doc.ancestors.length) { ?>
-            <span class="ancestors"><?js= doc.ancestors.join('') ?></span>
-        <?js } ?>-->
-        <?js if (doc.kind === 'namespace') {
+        <h2><?js if (doc.kind === 'namespace') {
             /* print(doc.name); */ ?>
-                <span class='container-main-type'>Namespace</span>
+            <span class='container-main-type'>Namespace</span>
         <?js } else { ?>
             <?js if (doc.isPseudo) { print("<span class='container-main-type'>Element</span> "); }  else  { print("<span class='container-main-type'>Class</span> "); }?>
         <?js } ?>
@@ -36,6 +33,9 @@
         <?js } ?></h2>
         <?js if (doc.classdesc) { ?>
             <div class="class-description usertext"><?js= doc.classdesc ?></div>
+        <?js } ?>
+        <?js if (doc.kind === 'namespace' && doc.description) { ?>
+            <div class="class-description usertext"><?js= doc.description ?></div>
         <?js } ?>
     <?js } else if (doc.kind === 'module' && doc.modules) { ?>
         <?js doc.modules.forEach(function(module) { ?>

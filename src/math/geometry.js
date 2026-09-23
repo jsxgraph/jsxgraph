@@ -48,8 +48,7 @@ import Type from "../utils/type.js";
 import Expect from "../utils/expect.js";
 
 /**
- * Math.Geometry namespace definition. This namespace holds geometrical algorithms,
- * especially intersection algorithms.
+ * JXG.Math.Geometry namespace. This namespace holds geometrical algorithms, in particular intersection algorithms.
  * @name JXG.Math.Geometry
  * @exports Mat.Geometry as JXG.Math.Geometry
  * @namespace

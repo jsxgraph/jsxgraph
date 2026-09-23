@@ -20,7 +20,7 @@ var uuidCharsStr = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwx
     uuidChars = uuidCharsStr.split("");
 
 /**
- * General utility routines
+ * JXG.Util namespace providing general utility routines.
  * @namespace
  */
 JXG.Util = JXG.Util || {};

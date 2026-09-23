@@ -35,13 +35,15 @@ import Mat from "./math.js";
 import Type from "../utils/type.js";
 
 /**
- * Probability functions, e.g. error function,
- * see: https://en.wikipedia.org/wiki/Error_function
+ * The JXG.Math.ProbFuncs namespace bundles various probability functions, e.g. error function,
+ * see {@link https://en.wikipedia.org/wiki/Error_function}.
  * Ported from
- * by https://github.com/jeremybarnes/cephes/blob/master/cprob/ndtr.c,
+ * by {@link https://github.com/jeremybarnes/cephes/blob/master/cprob/ndtr.c}
  *
+ * ```
  * Cephes Math Library Release 2.9:  November, 2000
  * Copyright 1984, 1987, 1988, 1992, 2000 by Stephen L. Moshier
+ * ```
  *
  * @name JXG.Math.ProbFuncs
  * @exports Mat.ProbFuncs as JXG.Math.ProbFuncs

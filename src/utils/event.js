@@ -40,7 +40,7 @@ import JXG from "../jxg.js";
 import Type from "./type.js";
 
 /**
- * Event namespace
+ * JXG.EventEmitter namespace handles custom event emitters.
  * @namespace
  */
 JXG.EventEmitter = {

@@ -42,7 +42,7 @@ var alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/
 JXG.Util = JXG.Util || {};
 
 /**
- * Base64 routines
+ * The JXG.Util.Base64 namespace provides Base64 routines.
  * @namespace
  */
 JXG.Util.Base64 = {

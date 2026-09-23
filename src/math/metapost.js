@@ -68,7 +68,7 @@ import Type from "../utils/type.js";
 import Mat from "./math.js";
 
 /**
- * The JXG.Math.Metapost namespace holds algorithms translated from Metapost by D.E. Knuth and J.D. Hobby.
+ * The JXG.Math.Metapost namespace holds algorithms converted from Metapost by D.E. Knuth and J.D. Hobby.
  *
  * @name JXG.Math.Metapost
  * @exports Mat.Metapost as JXG.Math.Metapost

@@ -37,7 +37,7 @@ import Const from "../base/constants.js";
 import Type from "../utils/type.js";
 
 /**
- * Parser helper routines. The methods in here are for parsing expressions in Geonext Syntax.
+ * JXG.GeonextParser namespce with Parser helper routines. The methods in here are for parsing expressions in Geonext syntax.
  * @namespace
  */
 JXG.GeonextParser = {

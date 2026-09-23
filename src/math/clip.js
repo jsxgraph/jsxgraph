@@ -46,7 +46,7 @@ import Geometry from "./geometry.js";
 import Type from "../utils/type.js";
 
 /**
- * Math.Clip namespace definition. This namespace contains algorithms for Boolean operations on paths, i.e.
+ * JXG.Math.Clip namespace. This namespace contains algorithms for Boolean operations on paths, i.e.
  * intersection, union and difference of paths. Base is the Greiner-Hormann algorithm.
  * @name JXG.Math.Clip
  * @exports Mat.Clip as JXG.Math.Clip
