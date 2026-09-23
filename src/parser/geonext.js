@@ -42,8 +42,8 @@ import Type from "../utils/type.js";
  */
 JXG.GeonextParser = {
     /**
-     * Converts expression of the form <i>leftop^rightop</i> into <i>Math.pow(leftop,rightop)</i>.
-     * @param {String} te Expression of the form <i>leftop^rightop</i>
+     * Converts expression of the form `leftop^rightop` into `Math.pow(leftop,rightop)`.
+     * @param {String} te Expression of the form `leftop^rightop`
      * @returns {String} Converted expression.
      */
     replacePow: function (te) {
@@ -146,8 +146,8 @@ JXG.GeonextParser = {
     },
 
     /**
-     * Converts expression of the form <i>If(a,b,c)</i> into <i>(a)?(b):(c)/i>.
-     * @param {String} te Expression of the form <i>If(a,b,c)</i>
+     * Converts expression of the form `If(a,b,c)` into `(a)?(b):(c)`.
+     * @param {String} te Expression of the form `If(a,b,c)`
      * @returns {String} Converted expression.
      */
     replaceIf: function (te) {

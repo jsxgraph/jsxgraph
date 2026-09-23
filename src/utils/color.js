@@ -746,7 +746,7 @@ JXG.rgb2bw = function (color) {
  * Converts a color into how a colorblind human approximately would see it.
  * @param {String} color HTML string containing the HTML color code.
  * @param {String} deficiency The type of color blindness. Possible
- * options are <i>protanopia</i>, <i>deuteranopia</i>, and <i>tritanopia</i>.
+ * options are *protanopia*, *deuteranop*i>, and *tritanopia*.
  * @returns {String} Returns a HTML color string
  */
 JXG.rgb2cb = function (color, deficiency) {

@@ -110,8 +110,8 @@ JXG.Math = {
     },
 
     /**
-     * Translate <code>x</code> into the interval <code>[a, b)</code> by adding
-     * a multiple of <code>b - a</code>.
+     * Translate `x` into the interval `[a, b)` by adding
+     * a multiple of `b - a`.
      * @param {Number} x
      * @param {Number} a
      * @param {Number} b
@@ -121,20 +121,20 @@ JXG.Math = {
     },
 
     /**
-     * Clamp <code>x</code> within the interval <code>[a, b]</code>. If
-     * <code>x</code> is below <code>a</code>, increase it to <code>a</code>. If
-     * it's above <code>b</code>, decrease it to <code>b</code>.
+     * Clamp `x` within the interval `[a, b]`. If
+     * `x` is below `a`, increase it to `a`. If
+     * it's above `b`, decrease it to `b`.
      */
     clamp: function (x, a, b) {
         return Math.min(Math.max(x, a), b);
     },
 
     /**
-     * A way of clamping a periodic variable. If <code>x</code> is congruent mod
-     * <code>period</code> to a point in <code>[a, b]</code>, return that point.
-     * Otherwise, wrap it into <code>[mid - period/2, mid + period/2]</code>,
-     * where <code>mid</code> is the mean of <code>a</code> and <code>b</code>,
-     * and then clamp it to <code>[a, b]</code> from there.
+     * A way of clamping a periodic variable. If `x` is congruent mod
+     * `period` to a point in `[a, b]`, return that point.
+     * Otherwise, wrap it into `[mid - period/2, mid + period/2]`,
+     * where `mid` is the mean of `a` and `b`,
+     * and then clamp it to `[a, b]` from there.
      */
     wrapAndClamp: function (x, a, b, period) {
         var mid = 0.5 * (a + b),

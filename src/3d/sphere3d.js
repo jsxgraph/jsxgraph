@@ -106,7 +106,7 @@ JXG.Sphere3D = function (view, method, par1, par2, attributes) {
     this.aux2D = [];
 
     /**
-     * The type of projection (<code>'parallel'</code> or <code>'central'</code>) that the sphere is currently drawn in.
+     * The type of projection (`'parallel'` or `'central'`) that the sphere is currently drawn in.
      * @type String
      */
     this.projectionType = view.projectionType;
