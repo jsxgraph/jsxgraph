@@ -91,7 +91,7 @@
         <details>
             <summary class="subsection-title collapsible" id="attributes">Attributes</summary>
 
-            <h4 class="subsection-title">Own</h4>
+            <h4 class="subsection-title" id="attributes-own">Own</h4>
             <div class="list_container">
                 <?js attributes
                        .filter((self) => !self.inherits)
@@ -108,7 +108,7 @@
                 <?js= self.partial('members.tmpl', p) ?>
             <?js }); ?>
 
-            <h4 class="subsection-title">Inherited</h4>
+            <h4 class="subsection-title" id="attributes-inherited">Inherited</h4>
             <div class="list_container">
             <?js attributes
                    .filter((self) => self.inherits)
@@ -137,7 +137,7 @@
         <details>
             <summary class="subsection-title collapsible" id="members">Members</summary>
 
-        <h4 class="subsection-title">Own</h4>
+        <h4 class="subsection-title" id="members-own">Own</h4>
         <div class="list_container">
         <?js members
                .filter((self) => !self.inherited)
@@ -154,7 +154,7 @@
             <?js= self.partial('members.tmpl', p) ?>
         <?js }); ?>
 
-        <h4 class="subsection-title">Inherited</h4>
+        <h4 class="subsection-title" id="members-inherited">Inherited</h4>
         <div class="list_container">
         <?js members
                .filter((self) => self.inherited)
@@ -174,7 +174,7 @@
         <details>
             <summary class="subsection-title collapsible" id="methods">Methods</summary>
 
-        <h4 class="subsection-title">Own</h4>
+        <h4 class="subsection-title" id="methods-own">Own</h4>
         <div class="list_container">
         <?js methods
                .filter((self) => !self.inherited)
@@ -191,7 +191,7 @@
             <?js= self.partial('method.tmpl', m) ?>
         <?js }); ?>
 
-        <h4 class="subsection-title">Inherited</h4>
+        <h4 class="subsection-title" id="methods-inherited">Inherited</h4>
         <div class="list_container">
         <?js methods
                .filter((self) => self.inherited)
@@ -211,7 +211,7 @@
         <details>
             <summary class="subsection-title collapsible" id="events">Events</summary>
 
-        <h4 class="subsection-title">Own</h4>
+        <h4 class="subsection-title" id="events-own">Own</h4>
         <div class="list_container">
         <?js events
             .filter((self) => !self.inherited)
@@ -228,7 +228,7 @@
             <?js= self.partial('method.tmpl', e) ?>
         <?js }); ?>
 
-        <h4 class="subsection-title">Inherited</h4>
+        <h4 class="subsection-title" id="events-inherited">Inherited</h4>
         <div class="list_container">
         <?js events
             .filter((self) => self.inherited)
