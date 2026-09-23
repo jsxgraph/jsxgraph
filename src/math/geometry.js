@@ -3927,7 +3927,7 @@ JXG.extend(
          * Calculates the coordinates of the closest orthogonal projection of a given coordinate array onto the
          * border of a polygon.
          * @param {Array} p Point to project.
-         * @param {JXG.Polygon} pol Polygon element
+         * @param {Polygon} pol Polygon element
          * @returns {Array} The coordinates of the closest projection of the given point to the border of the polygon.
          */
         projectCoordsToPolygon: function (p, pol) {

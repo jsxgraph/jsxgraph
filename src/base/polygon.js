@@ -930,7 +930,7 @@ JXG.extend(
          *
          * @private
          *
-         * @param {JXG.Polygon} polygon Polygon which will be clipped.
+         * @param {Polygon} polygon Polygon which will be clipped.
          *
          * @returns {Array} of (normalized homogeneous user) coordinates (i.e. [z, x, y], where z==1 in most cases,
          *   representing the vertices of the intersection polygon.
@@ -1014,7 +1014,7 @@ JXG.extend(
          * An alternative is to use the methods from {@link JXG.Math.Clip}, where the algorithm by Greiner and Hormann
          * is used.
          *
-         * @param {JXG.Polygon} polygon Polygon which will be clipped.
+         * @param {Polygon} polygon Polygon which will be clipped.
          *
          * @returns {Array} of (normalized homogeneous user) coordinates (i.e. [z, x, y], where z==1 in most cases,
          *   representing the vertices of the intersection polygon.

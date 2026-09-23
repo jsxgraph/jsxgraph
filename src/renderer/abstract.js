@@ -989,7 +989,7 @@ JXG.extend(
 
         /**
          * Draws a {@link JXG.Polygon} on the {@link JXG.Board}.
-         * @param {JXG.Polygon} el Reference to a Polygon object, that is to be drawn.
+         * @param {Polygon} el Reference to a Polygon object, that is to be drawn.
          * @see Polygon
          * @see JXG.Polygon
          * @see JXG.AbstractRenderer#updatePolygon
@@ -1005,7 +1005,7 @@ JXG.extend(
 
         /**
          * Updates properties of a {@link JXG.Polygon}'s rendering node.
-         * @param {JXG.Polygon} el Reference to a {@link JXG.Polygon} object, that has to be updated.
+         * @param {Polygon} el Reference to a {@link JXG.Polygon} object, that has to be updated.
          * @see Polygon
          * @see JXG.Polygon
          * @see JXG.AbstractRenderer#drawPolygon
@@ -1038,10 +1038,10 @@ JXG.extend(
         displayLogo: function (str, fontsize) { /* stub */ },
 
         /**
-         * An internal text is a {@link JXG.Text} element which is drawn using only
+         * An internal text is a {@link Text} element which is drawn using only
          * the given renderer but no HTML. This method is only a stub, the drawing
          * is done in the special renderers.
-         * @param {JXG.Text} el Reference to a {@link JXG.Text} object
+         * @param {Text} el Reference to a {@link JXG.Text} object
          * @see Text
          * @see JXG.Text
          * @see JXG.AbstractRenderer#updateInternalText
@@ -1052,8 +1052,8 @@ JXG.extend(
         drawInternalText: function (el) { /* stub */ },
 
         /**
-         * Updates visual properties of an already existing {@link JXG.Text} element.
-         * @param {JXG.Text} el Reference to an {@link JXG.Text} object, that has to be updated.
+         * Updates visual properties of an already existing {@link Text} element.
+         * @param {Text} el Reference to an {@link JXG.Text} object, that has to be updated.
          * @see Text
          * @see JXG.Text
          * @see JXG.AbstractRenderer#drawInternalText
@@ -1065,7 +1065,7 @@ JXG.extend(
 
         /**
          * Displays a {@link JXG.Text} on the {@link JXG.Board} by putting a HTML div over it.
-         * @param {JXG.Text} el Reference to an {@link JXG.Text} object, that has to be displayed
+         * @param {Text} el Reference to an {@link JXG.Text} object, that has to be displayed
          * @see Text
          * @see JXG.Text
          * @see JXG.AbstractRenderer#drawInternalText
@@ -1125,7 +1125,7 @@ JXG.extend(
          *
          * TODO clipping for transformed texts
          *
-         * @param {JXG.Text} el Reference to an {@link JXG.Text} object that has to be clipped.
+         * @param {Text} el Reference to an {@link JXG.Text} object that has to be clipped.
          * @param {Boolean} [val=undefined] Set an explicit value, overwrites the element's attribute 'clip'. This is useful for handling the value 'inherit'.
          * @see Text
          * @see JXG.Text
@@ -1169,8 +1169,8 @@ JXG.extend(
         },
 
         /**
-         * Updates visual properties of an already existing {@link JXG.Text} element.
-         * @param {JXG.Text} el Reference to an {@link JXG.Text} object that has to be updated.
+         * Updates visual properties of an already existing {@link Text} element.
+         * @param {Text} el Reference to an {@link JXG.Text} object that has to be updated.
          * @see Text
          * @see JXG.Text
          * @see JXG.AbstractRenderer#drawText
@@ -1389,9 +1389,9 @@ JXG.extend(
         },
 
         /**
-         * Updates font-size, color and opacity properties and CSS style properties of a {@link JXG.Text} node.
+         * Updates font-size, color and opacity properties and CSS style properties of a {@link Text} node.
          * This function is also called by highlight() and nohighlight().
-         * @param {JXG.Text} el Reference to the {@link JXG.Text} object, that has to be updated.
+         * @param {Text} el Reference to the {@link JXG.Text} object, that has to be updated.
          * @param {Boolean} doHighlight
          * @see Text
          * @see JXG.Text
@@ -1515,9 +1515,9 @@ JXG.extend(
         /* ********* Image related stuff *********** */
 
         /**
-         * Draws an {@link JXG.Image} on a board; This is just a template that has to be implemented by special
+         * Generates an {@link Image} on a board; This is just a template that has to be implemented by special
          * renderers.
-         * @param {JXG.Image} el Reference to the image object that is to be drawn
+         * @param {Image} el Reference to the image object that is to be drawn
          * @see Image
          * @see JXG.Image
          * @see JXG.AbstractRenderer#updateImage
@@ -1525,8 +1525,8 @@ JXG.extend(
         drawImage: function (el) { /* stub */ },
 
         /**
-         * Updates the properties of an {@link JXG.Image} element.
-         * @param {JXG.Image} el Reference to an {@link JXG.Image} object, that has to be updated.
+         * Updates the properties of an {@link Image} element.
+         * @param {Image} el Reference to an {@link JXG.Image} object, that has to be updated.
          * @see Image
          * @see JXG.Image
          * @see JXG.AbstractRenderer#drawImage
@@ -1593,7 +1593,7 @@ JXG.extend(
          * Only affine transformation are supported, no proper projective transformations. This means, the
          * respective entries of the transformation matrix are simply ignored.
          *
-         * @param {JXG.Image|JXG.Text} el A {@link JXG.Image} or {@link JXG.Text} object.
+         * @param {Image|Text} el A {@link JXG.Image} or {@link JXG.Text} object.
          * @param {Array} transformations An array of {@link JXG.Transformation} objects. This is usually the
          * transformations property of the given element `el`.
          */
@@ -1601,19 +1601,19 @@ JXG.extend(
 
         /**
          * If the URL of the image is provided by a function the URL has to be updated during updateImage()
-         * @param {JXG.Image} el Reference to an image object.
+         * @param {Image} el Reference to an image object.
          * @see JXG.AbstractRenderer#updateImage
          */
         updateImageURL: function (el) { /* stub */ },
 
         /**
-         * Updates CSS style properties of a {@link JXG.Image} node.
+         * Updates CSS style properties of a {@link Image} node.
          * In SVGRenderer opacity is the only available style element.
          * This function is called by highlight() and nohighlight().
          * This function works for VML.
          * It does not work for Canvas.
          * SVGRenderer overwrites this method.
-         * @param {JXG.Text} el Reference to the {@link JXG.Image} object, that has to be updated.
+         * @param {Text} el Reference to the {@link JXG.Image} object, that has to be updated.
          * @param {Boolean} doHighlight
          * @see Image
          * @see JXG.Image
@@ -1748,7 +1748,7 @@ JXG.extend(
         /**
          * Update a polygon primitive.
          * @param {Node} node
-         * @param {JXG.Polygon} el A JSXGraph element of type {@link JXG.Polygon}
+         * @param {Polygon} el A JSXGraph element of type {@link JXG.Polygon}
          */
         updatePolygonPrim: function (node, el) { /* stub */ },
 
