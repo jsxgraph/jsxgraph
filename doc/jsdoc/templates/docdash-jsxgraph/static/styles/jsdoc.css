@@ -1575,6 +1575,7 @@ thead tr, thead tr {
 }
 
 .params td.description > p:last-child,
+.params td.description,
 .props td.description > p:last-child {
     margin-bottom: 0;
     padding-bottom: 0;
