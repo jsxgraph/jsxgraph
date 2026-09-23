@@ -67,7 +67,7 @@ import Env from "../utils/env.js";
  *
  * - __Draw basic elements__
  *     In this category we find methods to draw basic elements like {@link Point}, {@link Line},
- *     and {@link JXG.Curve} as well as assisting methods tightly bound to these basic painters. You do not
+ *     and {@link Curve} as well as assisting methods tightly bound to these basic painters. You do not
  *     need to implement these methods in a descendant renderer but instead implement the primitive drawing
  *     methods described below. This approach is encouraged when you're using a XML based rendering engine
  *     like VML and SVG. If you want to use a bitmap based rendering technique you are supposed to override
