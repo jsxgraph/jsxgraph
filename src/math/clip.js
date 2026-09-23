@@ -1689,10 +1689,10 @@ Mat.Clip = {
      *
      *
      * Problematic are:
-     * <ul>
-     *   <li>degenerate cases where one path additionally has self-intersections
-     *   <li>differences with one path having self-intersections.
-     * </ul>
+     *
+     * - degenerate cases where one path additionally has self-intersections
+     * - differences with one path having self-intersections.
+     *
      *
      * @param  {Circle|Curve|Polygon} subject   First closed path, usually called 'subject'.
      * Maybe curve, arc, sector, circle, polygon, array of points, array of JXG.Coords,

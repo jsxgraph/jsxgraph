@@ -160,12 +160,12 @@ Type.extend(
         /**
          * Insert an array of items into the box quadtree. An item is an object
          * containing at least the properties
-         * <ul>
-         *  <li> xlb: lower bound on x
-         *  <li> xub: upper bound on x
-         *  <li> ylb: lower bound on y
-         *  <li> yub: upper bound on y
-         * </ul>
+         *
+         * - xlb: lower bound on x
+         * - xub: upper bound on x
+         * - ylb: lower bound on y
+         * - yub: upper bound on y
+         *
          * which define the axis-aligned bounding box (AABB) of that item. Additionally,
          * more properties can be given.
          *
@@ -246,12 +246,11 @@ Type.extend(
          * Insert an item into the box quadtree, where an item is an object
          * containing at least the properties
          *
-         * <ul>
-         *  <li> xlb: lower bound on x
-         *  <li> xub: upper bound on x
-         *  <li> ylb: lower bound on y
-         *  <li> yub: upper bound on y
-         * </ul>
+         * - xlb: lower bound on x
+         * - xub: upper bound on x
+         * - ylb: lower bound on y
+         * - yub: upper bound on y
+         *
          * which define the axis-aligned bounding box (AABB) of that item. Additionally,
          * more properties can be given.
          *

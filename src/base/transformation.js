@@ -49,16 +49,17 @@ import Type from "../utils/type.js";
  * @constructor
  * @param {JXG.Board} board The board the transformation is part of.
  * @param {String} type Can be
- * <ul><li> 'translate'
- * <li> 'scale'
- * <li> 'reflect'
- * <li> 'rotate'
- * <li> 'shear'
- * <li> 'affine'
- * <li> 'affinematrix'
- * <li> 'generic'
- * <li> 'matrix'
- * </ul>
+ *
+ * - 'translate'
+ * - 'scale'
+ * - 'reflect'
+ * - 'rotate'
+ * - 'shear'
+ * - 'affine'
+ * - 'affinematrix'
+ * - 'generic'
+ * - 'matrix'
+ *
  * @param {Object} params The parameters depend on the transformation type
  *
  *

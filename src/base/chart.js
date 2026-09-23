@@ -212,12 +212,11 @@ JXG.extend(
         /**
          * Create bar chart defined by two data arrays.
          * Attributes to change the layout of the bar chart are:
-         * <ul>
-         * <li> width (optional)
-         * <li> dir: 'horizontal' or 'vertical'
-         * <li> colors: array of colors
-         * <li> labels: array of labels
-         * </ul>
+         *
+         * - width (optional)
+         * - dir: 'horizontal' or 'vertical'
+         * - colors: array of colors
+         * - labels: array of labels
          *
          * @param  {String|JXG.Board} board      The board the chart is drawn on
          * @param  {Array} x          Array of x-coordinates
@@ -331,10 +330,9 @@ JXG.extend(
         /**
          * Create chart consisting of JSXGraph points.
          * Attributes to change the layout of the point chart are:
-         * <ul>
-         * <li> fixed (Boolean)
-         * <li> infoboxArray (Array): Texts for the infobox
-         * </ul>
+         *
+         * - fixed (Boolean)
+         * - infoboxArray (Array): Texts for the infobox
          *
          * @param  {String|JXG.Board} board      The board the chart is drawn on
          * @param  {Array} x          Array of x-coordinates
@@ -363,14 +361,13 @@ JXG.extend(
         /**
          * Create pie chart.
          * Attributes to change the layout of the pie chart are:
-         * <ul>
-         * <li> labels: array of labels
-         * <li> colors: (Array)
-         * <li> highlightColors (Array)
-         * <li> radius
-         * <li> center (coordinate array)
-         * <li> highlightOnSector (Boolean)
-         * </ul>
+         *
+         * - labels: array of labels
+         * - colors: (Array)
+         * - highlightColors (Array)
+         * - radius
+         * - center (coordinate array)
+         * - highlightOnSector (Boolean)
          *
          * @param  {String|JXG.Board} board      The board the chart is drawn on
          * @param  {Array} y          Array of x-coordinates
@@ -520,27 +517,27 @@ JXG.extend(
         /**
          * Create radar chart.
          * Attributes to change the layout of the pie chart are:
-         * <ul>
-         * <li> paramArray: labels for axes, [ paramx, paramy, paramz ]
-         * <li> startShiftRatio: 0 <= offset from chart center <=1
-         * <li> endShiftRatio:  0 <= offset from chart radius <=1
-         * <li> startShiftArray: Adjust offsets per each axis
-         * <li> endShiftArray: Adjust offsets per each axis
-         * <li> startArray: Values for inner circle. Default values: minimums
-         * <li> start: one value to overwrite all startArray values
-         * <li> endArray: Values for outer circle, maximums by default
-         * <li> end: one value to overwrite all endArray values
-         * <li> labelArray
-         * <li> polyStrokeWidth
-         * <li> colors
-         * <li> highlightcolors
-         * <li> labelArray: [ row1, row2, row3 ]
-         * <li> radius
-         * <li> legendPosition
-         * <li> showCircles
-         * <li> circleLabelArray
-         * <li> circleStrokeWidth
-         * </ul>
+         *
+         * - paramArray: labels for axes, [ paramx, paramy, paramz ]
+         * - startShiftRatio: 0 <= offset from chart center <=1
+         * - endShiftRatio:  0 <= offset from chart radius <=1
+         * - startShiftArray: Adjust offsets per each axis
+         * - endShiftArray: Adjust offsets per each axis
+         * - startArray: Values for inner circle. Default values: minimums
+         * - start: one value to overwrite all startArray values
+         * - endArray: Values for outer circle, maximums by default
+         * - end: one value to overwrite all endArray values
+         * - labelArray
+         * - polyStrokeWidth
+         * - colors
+         * - highlightcolors
+         * - labelArray: [ row1, row2, row3 ]
+         * - radius
+         * - legendPosition
+         * - showCircles
+         * - circleLabelArray
+         * - circleStrokeWidth
+         *
          *
          * @param  {String|JXG.Board} board      The board the chart is drawn on
          * @param  {Array} parents    Array of coordinates, e.g. [[x1, y1, z1], [x2, y2, z2], [x3, y3, z3]]

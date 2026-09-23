@@ -41,14 +41,14 @@ import Mat from "../math/math.js";
 import Numerics from "../math/numerics.js";
 
 /**
- * Uses VML to implement the rendering methods defined in {@link JXG.AbstractRenderer}.
+ * @class Uses VML to implement the rendering methods defined in {@link JXG.AbstractRenderer}.
  * VML was used in very old Internet Explorer versions upto IE 8.
  *
- *
- * @class JXG.VMLRenderer
  * @augments JXG.AbstractRenderer
  * @param {Node} container Reference to a DOM node containing the board.
- * @see JXG.AbstractRenderer
+ * @see JXG.CanvasRenderer
+ * @see JXG.NoRenderer
+ * @see JXG.SVGRenderer
  * @deprecated
  */
 JXG.VMLRenderer = function (container) {

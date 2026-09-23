@@ -1069,31 +1069,27 @@ JXG.extend(
          * optimized for various type
          * of color blindness.
          * It contains values for
-         * <ul>
-         * <li> 'black'
-         * <li> 'orange'
-         * <li> 'skyblue'
-         * <li> 'bluishgreen'
-         * <li> 'yellow'
-         * <li> 'darkblue'
-         * <li> 'vermillion'
-         * <li> 'reddishpurple'
-         * </ul>
+         *
+         * - 'black'
+         * - 'orange'
+         * - 'skyblue'
+         * - 'bluishgreen'
+         * - 'yellow'
+         * - 'darkblue'
+         * - 'vermillion'
+         * - 'reddishpurple'
          *
          * As substitutes for standard colors, it contains the following aliases:
          *
-         * <ul>
-         * <li> black (= #000000)
-         * <li> blue (= darkblue)
-         * <li> green (= bluishgreen)
-         * <li> purple (= reddishpurple)
-         * <li> red (= vermillion)
-         * <li> white (= #ffffff)
-         * </ul>
+         * - black (= #000000)
+         * - blue (= darkblue)
+         * - green (= bluishgreen)
+         * - purple (= reddishpurple)
+         * - red (= vermillion)
+         * - white (= #ffffff)
          *
-         * See <a href="https://www.nature.com/articles/nmeth.1618">Bang Wong: "Points of view: Color blindness"</a>
-         * and
-         * <a href="https://davidmathlogic.com/colorblind/">https://davidmathlogic.com/colorblind/</a>.
+         * See {@link https://www.nature.com/articles/nmeth.1618 Bang Wong: "Points of view: Color blindness"}
+         * and {@link https://davidmathlogic.com/colorblind/}.
          *
          * @name JXG.paletteWong
          * @type Object
@@ -1123,15 +1119,14 @@ JXG.extend(
 /**
  * Default color palette.
  * Contains at least color values for
- * <ul>
- * <li> black
- * <li> blue
- * <li> green
- * <li> purple
- * <li> red
- * <li> white
- * <li> yellow
- * </ul>
+ *
+ * - black
+ * - blue
+ * - green
+ * - purple
+ * - red
+ * - white
+ * - yellow
  *
  * @name JXG.palette
  * @type Object

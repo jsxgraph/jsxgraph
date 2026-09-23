@@ -573,10 +573,10 @@ JXG.Math = {
     /**
      * Calculates the cross product of two vectors both of length three.
      * In case of homogeneous coordinates this is either
-     * <ul>
-     * <li>the intersection of two lines</li>
-     * <li>the line through two points</li>
-     * </ul>
+     *
+     * - the intersection of two lines
+     * - the line through two points
+     *
      * @param {Array} c1 Homogeneous coordinates of line or point 1
      * @param {Array} c2 Homogeneous coordinates of line or point 2
      * @returns {Array} vector of length 3: homogeneous coordinates of the resulting point / line.

@@ -56,34 +56,34 @@ import Type from "../utils/type.js";
 import Env from "../utils/env.js";
 
 /**
- * This class defines the interface to the graphics part of JSXGraph. This class is an abstract class, it
+ * @class This class defines the interface to the graphics part of JSXGraph. This class is an abstract class, it
  * actually does not render anything. This is up to the {@link JXG.SVGRenderer}, {@link JXG.VMLRenderer},
  * and {@link JXG.CanvasRenderer} classes. We strongly discourage you from using the methods in these classes
  * directly. Only the methods which are defined in this class and are not marked as private are guaranteed
  * to exist in any renderer instance you can access via {@link JXG.Board#renderer}. But not all methods may
- * work as expected.</p>
+ * work as expected.
+ *
  * The methods of this renderer can be divided into different categories:
- * <dl>
- *     <dt>Draw basic elements</dt>
- *     <dd>In this category we find methods to draw basic elements like {@link JXG.Point}, {@link JXG.Line},
+ *
+ * - __Draw basic elements__
+ *     In this category we find methods to draw basic elements like {@link Point}, {@link Line},
  *     and {@link JXG.Curve} as well as assisting methods tightly bound to these basic painters. You do not
  *     need to implement these methods in a descendant renderer but instead implement the primitive drawing
  *     methods described below. This approach is encouraged when you're using a XML based rendering engine
  *     like VML and SVG. If you want to use a bitmap based rendering technique you are supposed to override
- *     these methods instead of the primitive drawing methods.</dd>
- *     <dt>Draw primitives</dt>
- *     <dd>This category summarizes methods to handle primitive nodes. As creation and management of these nodes
+ *     these methods instead of the primitive drawing methods.
+ * - __Draw primitives__
+ *     This category summarizes methods to handle primitive nodes. As creation and management of these nodes
  *     is different among different the rendering techniques most of these methods are purely virtual and need
- *     proper implementation if you choose to not overwrite the basic element drawing methods.</dd>
- *     <dt>Attribute manipulation</dt>
- *     <dd>In XML based renders you have to manipulate XML nodes and their attributes to change the graphics.
+ *     proper implementation if you choose to not overwrite the basic element drawing methods.
+ * - __Attribute manipulation__
+ *     In XML based renders you have to manipulate XML nodes and their attributes to change the graphics.
  *     For that purpose attribute manipulation methods are defined to set the color, opacity, and other things.
  *     Please note that some of these methods are required in bitmap based renderers, too, because some elements
- *     like {@link JXG.Text} can be HTML nodes floating over the construction.</dd>
- *     <dt>Renderer control</dt>
- *     <dd>Methods to clear the drawing board or to stop and to resume the rendering engine.</dd>
- * </dl></p>
- * @class JXG.AbstractRenderer
+ *     like {@link Text} can be HTML nodes floating over the construction.
+ * - __Renderer control__
+ *     Methods to clear the drawing board or to stop and to resume the rendering engine.
+ *
  * @constructor
  * @see JXG.SVGRenderer
  * @see JXG.VMLRenderer

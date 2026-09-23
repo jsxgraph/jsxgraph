@@ -194,16 +194,17 @@ JXG.FileReader = {
      * Parses a given string according to the file format given in format.
      * @param {String} str Contents of the file.
      * @param {JXG.Board} board The board the construction in the file should be loaded in.
-     * @param {String} format Possible values are <dl>
-     * <dt>raw</dt><dd>Raw text file. In this case `board` has to be a callback function.</dd>
-     * <dt>geonext</dt><dd>Geonext File <a href="https://www.geonext.de">https://www.geonext.de</a></dd>
-     * <dt>intergeo</dt><dd>Intergeo file format <a href="https://www.i2geo.net">https://www.i2geo.net</a></dd>
-     * <dt>tracenpoche</dt><dd>Tracenpoche construction <a href="https://tracenpoche.sesamath.net/">https://tracenpoche.sesamath.net/</a></dd>
-     * <dt>graph</dt><dd>Graph file</dd>
-     * <dt>digraph</dt><dd>DiGraph file</dd>
-     * <dt>geogebra</dt><dd>Geogebra File <a href="https://www.geogebra.org">https://www.geogebra.org</a></dd>
-     * <dl><dt>cdy or cinderella</dt><dd>Cinderella (<a href="https://www.cinderella.de/">https://www.cinderella.de</a></dd>
-     * </dl>
+     * @param {String} format Possible values are
+     *
+     * - raw: Raw text file. In this case `board` has to be a callback function.
+     * - geonext: Geonext File {@link https://www.geonext.de}
+     * - intergeo: Intergeo file format {@link https://www.i2geo.net}
+     * - tracenpoche: Tracenpoche construction {@link https://tracenpoche.sesamath.net/}
+     * - graph: Graph file
+     * - digraph: DiGraph file
+     * - geogebra: Geogebra File {@link https://www.geogebra.org}
+     * - cdy or cinderella: Cinderella ({@link https://www.cinderella.de}
+     *
      * @param {function} callback
      */
     parseString: function (str, board, format, callback) {

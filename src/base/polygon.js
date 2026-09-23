@@ -1119,11 +1119,11 @@ JXG.extend(
  * @class A polygon is a plane figure made up of line segments (the borders) connected
  * to form a closed polygonal chain.
  * It is determined by
- * <ul>
- *    <li> a list of points or
- *    <li> a list of coordinate arrays or
- *    <li> a function returning a list of coordinate arrays.
- * </ul>
+ *
+ * - a list of points or
+ * - a list of coordinate arrays or
+ * - a function returning a list of coordinate arrays.
+ *
  * Each two consecutive points of the list define a line.
  * @pseudo
  * @constructor
@@ -1416,11 +1416,11 @@ JXG.createRegularPolygon = function (board, parents, attributes) {
 /**
  * @class  A polygonal chain is a connected series of line segments (borders).
  * It is determined by
- * <ul>
- *    <li> a list of points or
- *    <li> a list of coordinate arrays or
- *    <li> a function returning a list of coordinate arrays.
- * </ul>
+ *
+ * - a list of points or
+ * - a list of coordinate arrays or
+ * - a function returning a list of coordinate arrays.
+ *
  * Each two consecutive points of the list define a line.
  * In JSXGraph, a polygonal chain is simply realized as polygon without the last - closing - point.
  * This may lead to unexpected results. Polygonal chains can be distinguished from polygons by the attribute 'elType' which

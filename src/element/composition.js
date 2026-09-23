@@ -36,22 +36,23 @@
  * @fileoverview This file contains our composition elements, i.e. these elements are mostly put together
  * from one or more {@link JXG.GeometryElement} but with a special meaning. E.g. the midpoint element is contained here
  * and this is just a {@link JXG.Point} with coordinates dependent from two other points. Currently in this file the
- * following compositions can be found: <ul>
- *   <li>{@link Arrowparallel} (currently private)</li>
- *   <li>{@link Bisector}</li>
- *   <li>{@link Msector}</li>
- *   <li>{@link Circumcircle}</li>
- *   <li>{@link Circumcirclemidpoint}</li>
- *   <li>{@link Integral}</li>
- *   <li>{@link Midpoint}</li>
- *   <li>{@link Mirrorpoint}</li>
- *   <li>{@link Normal}</li>
- *   <li>{@link Orthogonalprojection}</li>
- *   <li>{@link Parallel}</li>
- *   <li>{@link Perpendicular}</li>
- *   <li>{@link Perpendicularpoint}</li>
- *   <li>{@link Perpendicularsegment}</li>
- *   <li>{@link Reflection}</li></ul>
+ * following compositions can be found:
+ *
+ * - {@link Arrowparallel}
+ * - {@link Bisector}
+ * - {@link Msector}
+ * - {@link Circumcircle}
+ * - {@link Circumcirclemidpoint}
+ * - {@link Integral}
+ * - {@link Midpoint}
+ * - {@link Mirrorpoint}
+ * - {@link Normal}
+ * - {@link Orthogonalprojection}
+ * - {@link Parallel}
+ * - {@link Perpendicular}
+ * - {@link Perpendicularpoint}
+ * - {@link Perpendicularsegment}
+ * - {@link Reflection}
  */
 
 import JXG from "../jxg.js";

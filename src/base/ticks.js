@@ -796,16 +796,17 @@ JXG.extend(
 
         /**
          * Calculates the distance between two major ticks in user units.
-         * <ul>
-         * <li> If the attribute "insertTicks" is false, the value of the attribute
-         * "ticksDistance" is returned. The attribute "minTicksDistance" is ignored in this case.
-         * <li> If the attribute "insertTicks" is true, the attribute "ticksDistance" is ignored.
+         *
+         * - If the attribute {@link Ticks#insertTicks} is false, the value of the attribute
+         *  {@link Ticks#ticksDistance} is returned. The attribute {@link Ticks#minTicksDistance} is ignored in this case.
+         * - If the attribute  {@link Ticks#insertTicks} is true, the attribute {@link Ticks#ticksDistance} is ignored.
+         *
          * The distance between two major ticks is computed
          * as \\(a 10^i\\), where \\(a\\) is one of \\(\{1, 2, 5\}\\) and
          * the number \\(a 10^i\\) is maximized such that there are approximately
-         * 6 major ticks and there are at least "minTicksDistance" pixel between minor ticks.
+         * 6 major ticks and there are at least {@link Ticks#minTicksDistance} pixel between minor ticks.
          * The latter restriction has priority over the number of major ticks.
-         * </ul>
+         *
          * @returns Number
          * @private
          */
