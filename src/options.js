@@ -1163,13 +1163,13 @@ JXG.Options = {
         /**
          * Attributes to control the screenshot function.
          * The following attributes can be set:
-         * <ul>
-         *  <li>scale: scaling factor (default=1.0)
-         *  <li>type: format of the screenshot image. Default: png
-         *  <li>symbol: Unicode symbol which is shown in the navigation bar. Default: '\u2318'
-         *  <li>css: CSS rules to format the div element containing the screen shot image
-         *  <li>cssButton: CSS rules to format the close button of the div element containing the screen shot image
-         * </ul>
+         *
+         * - scale: scaling factor (default=1.0)
+         * - type: format of the screenshot image. Default: png
+         * - symbol: Unicode symbol which is shown in the navigation bar. Default: '\u2318'
+         * - css: CSS rules to format the div element containing the screen shot image
+         * - cssButton: CSS rules to format the close button of the div element containing the screen shot image
+         *
          * The screenshot will fail if the board contains text elements or foreign objects
          * containing SVG again.
          *
@@ -1428,10 +1428,9 @@ JXG.Options = {
         /**
          * Set a visual theme for a board. At the moment this attribute is immutable.
          * Available themes are
-         * <ul>
-         * <li> 'default'
-         * <li> 'mono_thin': a black / white theme using thin strokes. Restricted to 2D.
-         * </ul>
+         *
+         * - 'default'
+         * - 'mono_thin': a black / white theme using thin strokes. Restricted to 2D.
          *
          * @name JXG.Board#theme
          * @attribute
@@ -1727,15 +1726,16 @@ JXG.Options = {
         /**
          * Determines the elements border-style.
          * Possible values are:
-         * <ul><li>0 for a solid line</li>
-         * <li>1 for a dotted line</li>
-         * <li>2 for a line with small dashes</li>
-         * <li>3 for a line with medium dashes</li>
-         * <li>4 for a line with big dashes</li>
-         * <li>5 for a line with alternating medium and big dashes and large gaps</li>
-         * <li>6 for a line with alternating medium and big dashes and small gaps</li>
-         * <li>7 for a dotted line. Needs {@link JXG.GeometryElement#linecap} set to "round" for round dots.</li>
-         * </ul>
+         *
+         * - 0 for a solid line
+         * - 1 for a dotted line
+         * - 2 for a line with small dashes
+         * - 3 for a line with medium dashes
+         * - 4 for a line with big dashes
+         * - 5 for a line with alternating medium and big dashes and large gaps
+         * - 6 for a line with alternating medium and big dashes and small gaps
+         * - 7 for a dotted line. Needs {@link JXG.GeometryElement#linecap} set to "round" for round dots.
+         *
          * The dash patterns are defined in {@link JXG.AbstractRenderer#dashArray}.
          *
          * @type Number
@@ -2238,11 +2238,11 @@ JXG.Options = {
         /**
          * Line endings (linecap) of a stroke element, i.e. line, circle, curve.
          * Possible values are:
-         * <ul>
-         * <li> 'butt',
-         * <li> 'round',
-         * <li> 'square'.
-         * </ul>
+         *
+         * - 'butt',
+         * - 'round',
+         * - 'square'.
+         *
          * Not available for VML renderer.
          *
          * @name JXG.GeometryElement#lineCap
@@ -4294,11 +4294,11 @@ JXG.Options = {
          * Is used to define the behavior of the axis.
          * Settings in this attribute only have an effect if the axis is exactly horizontal or vertical.
          * Possible values are:
-         * <ul>
-         *     <li>`'static'`: Standard behavior of the axes as know in JSXGraph.
-         *     <li>`'fixed'`: The axis is placed in a fixed position. Depending on the attribute `anchor`, it is positioned to the right or left of the edge of the board as seen from the axis with a distance defined in `distanceBoarder`. The axis will stay at the given position, when the user navigates through the board.
-         *     <li>`'sticky'`: This mixes the two settings `static` and `fixed`. When the user navigates in the board, the axis remains in the visible area (taking into account `anchor` and `anchorDist`). If the axis itself is in the visible area, the axis can be moved by navigation.
-         * </ul>
+         *
+         * - `'static'`: Standard behavior of the axes as know in JSXGraph.
+         * - `'fixed'`: The axis is placed in a fixed position. Depending on the attribute `anchor`, it is positioned to the right or left of the edge of the board as seen from the axis with a distance defined in `distanceBoarder`. The axis will stay at the given position, when the user navigates through the board.
+         * - `'sticky'`: This mixes the two settings `static` and `fixed`. When the user navigates in the board, the axis remains in the visible area (taking into account `anchor` and `anchorDist`). If the axis itself is in the visible area, the axis can be moved by navigation.
+         *
          *
          * @type {String}
          * @name Axis#position
@@ -4475,11 +4475,11 @@ JXG.Options = {
          * Used to define at which distance to the edge of the board the axis should stick or be fixed.
          * This only has an effect if `position=='sticky'` or `position=='fixed'`.
          * There are the following possibilities:
-         * <ul>
-         *     <li>Numbers or strings which are numbers (e.g. '10') are interpreted as usrCoords.
-         *     <li>Strings with the unit 'px' are interpreted as screen pixels.
-         *     <li>Strings with the unit '%' or 'fr' are interpreted as a ratio to the width/height of the board. (e.g. 50% = 0.5fr)
-         * </ul>
+         *
+         * - Numbers or strings which are numbers (e.g. '10') are interpreted as usrCoords.
+         * - Strings with the unit 'px' are interpreted as screen pixels.
+         * - Strings with the unit '%' or 'fr' are interpreted as a ratio to the width/height of the board. (e.g. 50% = 0.5fr)
+         *
          *
          * @type {Number|String}
          * @name Axis#anchorDist
@@ -4541,11 +4541,10 @@ JXG.Options = {
         /**
          * Defines, when `ticksAutoPos` takes effect.
          * There are the following possibilities:
-         * <ul>
-         *     <li>Numbers or strings which are numbers (e.g. '10') are interpreted as usrCoords.
-         *     <li>Strings with the unit 'px' are interpreted as screen pixels.
-         *     <li>Strings with the unit '%' or 'fr' are interpreted as a ratio to the width/height of the board. (e.g. 50% = 0.5fr)
-         * </ul>
+         *
+         * - Numbers or strings which are numbers (e.g. '10') are interpreted as usrCoords.
+         * - Strings with the unit 'px' are interpreted as screen pixels.
+         * - Strings with the unit '%' or 'fr' are interpreted as a ratio to the width/height of the board. (e.g. 50% = 0.5fr)
          *
          * @type {Number|String}
          * @name Axis#ticksAutoPosThreshold
@@ -5223,13 +5222,15 @@ JXG.Options = {
 
         /**
          * The curveType is set in {@link JXG.Curve#generateTerm} and used in {@link JXG.Curve#updateCurve}.
-         * Possible values are <ul>
-         * <li>'none'</li>
-         * <li>'plot': Data plot</li>
-         * <li>'parameter': we can not distinguish function graphs and parameter curves</li>
-         * <li>'functiongraph': function graph</li>
-         * <li>'polar'</li>
-         * <li>'implicit' (not yet)</li></ul>
+         * Possible values are
+         *
+         * - 'none'
+         * - 'plot': Data plot
+         * - 'parameter': we can not distinguish function graphs and parameter curves
+         * - 'functiongraph': function graph
+         * - 'polar'
+         * - 'implicit' (not yet)
+         *
          * Only parameter and plot are set directly. Polar is set with {@link JXG.GeometryElement#setAttribute} only.
          * @name Curve#curveType
          * @attribute
@@ -5309,11 +5310,10 @@ JXG.Options = {
         /**
          * Line endings (linecap) of a curve stroke.
          * Possible values are:
-         * <ul>
-         * <li> 'butt',
-         * <li> 'round',
-         * <li> 'square'.
-         * </ul>
+         *
+         * - 'butt',
+         * - 'round',
+         * - 'square'.
          *
          * @name JXG.Curve#lineCap
          * @attribute
@@ -5350,12 +5350,12 @@ JXG.Options = {
 
         /**
          * Select the version of the plot algorithm.
-         * <ul>
-         * <li> Version 1 is very outdated
-         * <li> Version 2 is the default version in JSXGraph v0.99.*, v1.0, and v1.1, v1.2.0
-         * <li> Version 3 is an internal version that was never published in  a stable version.
-         * <li> Version 4 is available since JSXGraph v1.2.0
-         * </ul>
+         *
+         * - Version 1 is very outdated
+         * - Version 2 is the default version in JSXGraph v0.99.*, v1.0, and v1.1, v1.2.0
+         * - Version 3 is an internal version that was never published in  a stable version.
+         * - Version 4 is available since JSXGraph v1.2.0
+         *
          * Version 4 plots correctly logarithms if the function term is supplied as string (i.e. as JessieCode)
          *
          * @example
@@ -5549,12 +5549,12 @@ JXG.Options = {
 
         /**
          * Distance of major grid elements. There are three possibilities:
-         * <ul>
-         *     <li>If it is set to 'auto' the distance of the major grid equals the distance of majorTicks of the corresponding axis.
-         *     <li>Numbers or strings which are numbers (e.g. '10') are interpreted as distance in usrCoords.
-         *     <li>Strings with the unit 'px' are interpreted as distance in screen pixels.
-         *     <li>Strings with the unit '%' or 'fr' are interpreted as a ratio to the width/height of the board. (e.g. 50% = 0.5fr)
-         * </ul>
+         *
+         * - If it is set to 'auto' the distance of the major grid equals the distance of majorTicks of the corresponding axis.
+         * - Numbers or strings which are numbers (e.g. '10') are interpreted as distance in usrCoords.
+         * - Strings with the unit 'px' are interpreted as distance in screen pixels.
+         * - Strings with the unit '%' or 'fr' are interpreted as a ratio to the width/height of the board. (e.g. 50% = 0.5fr)
+         *
          * Instead of one value you can provide two values as an array `[x, y]` here.
          * These are used as distance in x- and y-direction.
          *
@@ -5568,10 +5568,10 @@ JXG.Options = {
 
         /**
          * Number of elements in minor grid between elements of the major grid. There are three possibilities:
-         * <ul>
-         *     <li>If set to 'auto', the number minor elements is equal to the number of minorTicks of the corresponding axis.
-         *     <li>Numbers or strings which are numbers (e.g. '10') are interpreted as quantity.
-         * </ul>
+         *
+         * - If set to 'auto', the number minor elements is equal to the number of minorTicks of the corresponding axis.
+         * - Numbers or strings which are numbers (e.g. '10') are interpreted as quantity.
+         *
          * Instead of one value you can provide two values as an array `[x, y]` here.
          * These are used as number in x- and y-direction.
          *
@@ -5606,10 +5606,10 @@ JXG.Options = {
 
         /**
          * Size of grid elements. There are the following possibilities:
-         * <ul>
-         *     <li>Numbers or strings which are numbers (e.g. '10') are interpreted as size in pixels.
-         *     <li>Strings with additional '%' (e.g. '95%') are interpreted as the ratio of used space for one element.
-         * </ul>
+         *
+         * - Numbers or strings which are numbers (e.g. '10') are interpreted as size in pixels.
+         * - Strings with additional '%' (e.g. '95%') are interpreted as the ratio of used space for one element.
+         *
          * Unused for 'line' which will use the value of strokeWidth.
          * Instead of one value you can provide two values as an array `[x, y]` here.
          * These are used as size in x- and y-direction.
@@ -5679,12 +5679,12 @@ JXG.Options = {
          * This attribute determines whether the grid elements located at `x=0`, `y=0`
          * and (for major grid only) at `(0, 0)` are displayed.
          * The main reason to set this attribute to "false", might be in combination with axes.
-         * <ul>
-         *     <li>If `false`, then all these elements are hidden.
-         *     <li>If `true`, all these elements are shown.
-         *     <li>If an object of the following form is given, the three cases can be distinguished individually:<br>
+         *
+         * - If `false`, then all these elements are hidden.
+         * - If `true`, all these elements are shown.
+         * - If an object of the following form is given, the three cases can be distinguished individually:<br>
          *     `{x: true|false, y: true|false, origin: true|false}`
-         * </ul>
+         *
          *
          * <p><b><i>This attribute can be set individually for major and minor grid as a sub-entry of {@link Grid#major} or {@link Grid#minor}</i></b>,
          * e.g. `major: {drawZero: ...}`
@@ -5714,13 +5714,13 @@ JXG.Options = {
         /**
          * This object contains the attributes for major grid elements.
          * You can override the following grid attributes individually here:
-         * <ul>
-         *     <li>{@link Grid#size}
-         *     <li>{@link Grid#face}
-         *     <li>{@link Grid#margin}
-         *     <li>{@link Grid#drawZero}
-         *     <li>{@link Grid#polygonVertices}
-         * </ul>
+         *
+         * - {@link Grid#size}
+         * - {@link Grid#face}
+         * - {@link Grid#margin}
+         * - {@link Grid#drawZero}
+         * - {@link Grid#polygonVertices}
+         *
          * Default values are:
          * <pre>{
          *      size: 5,
@@ -5775,13 +5775,13 @@ JXG.Options = {
         /**
          * This object contains the attributes for minor grid elements.
          * You can override the following grid attributes individually here:
-         * <ul>
-         *     <li>{@link Grid#size}
-         *     <li>{@link Grid#face}
-         *     <li>{@link Grid#margin}
-         *     <li>{@link Grid#drawZero}
-         *     <li>{@link Grid#polygonVertices}
-         * </ul>
+         *
+         * - {@link Grid#size}
+         * - {@link Grid#face}
+         * - {@link Grid#margin}
+         * - {@link Grid#drawZero}
+         * - {@link Grid#polygonVertices}
+         *
          * Default values are:
          * <pre>{
          *      size: 3,
@@ -6682,49 +6682,44 @@ JXG.Options = {
         tabindex: null,
 
         /**
-         * Point labels are positioned by setting {@link Point#anchorX}, {@link Point#anchorY}
+         * Point labels are positioned by setting {@link Text#anchorX}, {@link Text#anchorY}
          * and {@link Label#offset}.
          * For line, circle and curve elements (and their derived objects)
          * there are two possibilities to position labels.
-         * <ul>
-         * <li> The first (old) possibility uses the <a href="https://www.tug.org/metapost.html">MetaPost</a> system:
+         *
+         * - The first (old) possibility uses the <a href="https://www.tug.org/metapost.html">MetaPost</a> system:
          * Possible string values for the position of a label for
          * label anchor points are:
-         * <ul>
-         * <li> 'first' (lines only)
-         * <li> 'last' (lines only)
-         * <li> 'lft'
-         * <li> 'rt'
-         * <li> 'top'
-         * <li> 'bot'
-         * <li> 'ulft'
-         * <li> 'urt'
-         * <li> 'llft'
-         * <li> 'lrt'
-         * </ul>
-         * <li> the second (preferred) possibility (since v1.9.0) is:
+         *   - 'first' (lines only)
+         *   - 'last' (lines only)
+         *   - 'lft'
+         *   - 'rt'
+         *   - 'top'
+         *   - 'bot'
+         *   - 'ulft'
+         *   - 'urt'
+         *   - 'llft'
+         *   - 'lrt'
+         * - the second (preferred) possibility (since v1.9.0) is:
          * with `position: 'len side'` the label can be positioned exactly along the
          * element's path. Here,
-         * <ul>
-         * <li> 'len' is an expression of the form
-         *   <ul>
-         *     <li> xfr, denoting a fraction of the whole. x is expected to be a number between 0 and 1.
-         *     <li> x%, a percentage. x is expected to be a number between 0 and 100.
-         *     <li> x, a number: only possible for line elements and circles. For lines, the label is positioned x
+         *   - 'len' is an expression of the form
+         *     -  xfr, denoting a fraction of the whole. x is expected to be a number between 0 and 1.
+         *     -  x%, a percentage. x is expected to be a number between 0 and 100.
+         *     -  x, a number: only possible for line elements and circles. For lines, the label is positioned x
          *          user units from the starting point. For circles, the number is interpreted as degree, e.g. 45°.
          *          For everything else, 0 is taken instead.
-         *     <li> xpx, a pixel value: only possible for line elements.
+         *     -  xpx, a pixel value: only possible for line elements.
          *          The label is positioned x pixels from the starting point.
          *          For non-lines, 0% is taken instead.
-         *   </ul>
-         *   If the domain of a curve is not connected, a position of the label close to the line
-         *   between the first and last point of the curve is chosen.
-         * <li> 'side' is either 'left' or 'right'. The label is positioned to the left or right of the path, when moving from the
+         *
+         *     If the domain of a curve is not connected, a position of the label close to the line
+         *     between the first and last point of the curve is chosen.
+         *   - 'side' is either 'left' or 'right'. The label is positioned to the left or right of the path, when moving from the
          * first point to the last. For circles, 'left' means inside of the circle, 'right' means outside of the circle.
          * The distance of the label from the path can be controlled by {@link Label#distance}.
-         * </ul>
+         *
          * Recommended for this second possibility is to use anchorX: 'middle' and 'anchorY: 'middle'.
-         * </ul>
          *
          * @example
          * var l1 = board.create('segment', [[-3, 2], [3, 2]], {
@@ -8135,11 +8130,10 @@ JXG.Options = {
 
         /**
          * Truncating rule for the digits in the infobox.
-         * <ul>
-         * <li>'auto': done automatically by JXG.autoDigits()
-         * <li>'none': no truncation
-         * <li>number: truncate after "number digits" with JXG.toFixed()
-         * </ul>
+         *
+         * - 'auto': done automatically by JXG.autoDigits()
+         * - 'none': no truncation
+         * - number: truncate after "number digits" with JXG.toFixed()
          *
          * @name Point#infoboxDigits
          * @attribute
@@ -9257,11 +9251,11 @@ JXG.Options = {
         /**
          * Customize arrow heads of vectors. Be careful! If enabled this will slow down the performance.
          * Fields are:
-         * <ul>
-         *  <li> enabled: Boolean
-         *  <li> size: length of the arrow head legs (in pixel)
-         *  <li> angle: angle of the arrow head legs In radians.
-         * </ul>
+         *
+         * - enabled: Boolean
+         * - size: length of the arrow head legs (in pixel)
+         * - angle: angle of the arrow head legs In radians.
+         *
          * @name arrowhead
          * @attribute
          * @memberOf Slopefield.prototype
@@ -9486,11 +9480,11 @@ JXG.Options = {
          * @name Smartlabel#cssClass
          * @attribute
          * @see Smartlabel#highlightCssClass
-         * @default <ul>
-         *  <li> 'smart-label-solid smart-label-circle' for circles</li>
-         *  <li> 'smart-label-solid smart-label-point' for points</li>
-         *  <li> ...</li>
-         * </ul>
+         * @default
+         *  - 'smart-label-solid smart-label-circle' for circles
+         *  - 'smart-label-solid smart-label-point' for points
+         *  - ...
+         *
          */
         cssClass: 'smart-label-solid',
 
@@ -9501,11 +9495,11 @@ JXG.Options = {
          * @name Smartlabel#highlightCssClass
          * @attribute
          * @see Smartlabel#cssClass
-         * @default <ul>
-         *  <li> 'smart-label-solid smart-label-circle' for circles</li>
-         *  <li> 'smart-label-solid smart-label-point' for points</li>
-         *  <li> ...</li>
-         * </ul>
+         * @default
+         *  - 'smart-label-solid smart-label-circle' for circles
+         *  - 'smart-label-solid smart-label-point' for points
+         *  - ...
+         *
          */
         highlightCssClass: 'smart-label-solid',
 
@@ -9607,24 +9601,24 @@ JXG.Options = {
         /**
          * Type of measurement.
          * Available values are:
-         *  <ul>
-         *  <li> 'deg', 'rad' for angles</li>
-         *  <li> 'area', 'perimeter', 'radius' for circles</li>
-         *  <li> 'length', 'slope' for lines</li>
-         *  <li> 'area', 'perimeter' for polygons</li>
-         * </ul>
+         *
+         * - 'deg', 'rad' for angles
+         * - 'area', 'perimeter', 'radius' for circles
+         * - 'length', 'slope' for lines
+         * - 'area', 'perimeter' for polygons
+         *
          * Dependent on this value, i.e. the type of measurement, the label is
          * positioned differently on the object.
          *
          * @type String
          * @name Smartlabel#measure
          * @attribute
-         * @default <ul>
-         *   <li> 'radius' for circles</li>
-         *   <li> 'length' for lines</li>
-         *   <li> 'area' for polygons</li>
-         *   <li> 'deg' for angles</li>
-         * </ul>
+         * @default
+         *   - 'radius' for circles
+         *   - 'length' for lines
+         *   - 'area' for polygons
+         *   - 'deg' for angles
+         *
          */
         measure: '',
 
@@ -9667,13 +9661,13 @@ JXG.Options = {
         /**
          * Orientation of the smartlabel relative to the line.
          * Available values are:
-         *  <ul>
-         *  <li> 'parallel' (default)</li>
-         *  <li> 'parallel-inverted' / 'inverted'</li>
-         *  <li> 'orthogonal'</li>
-         *  <li> 'orthogonal-inverted'</li>
-         *  <li> 'none' (smartlabe is always horizontal)</li>
-         * </ul>
+         *
+         * - 'parallel' (default)
+         * - 'parallel-inverted' / 'inverted'
+         * - 'orthogonal'
+         * - 'orthogonal-inverted'
+         * - 'none' (smartlabe is always horizontal)
+         *
          * Dependent on this value the label is positioned differently on the line.
          *
          * @type String
@@ -9691,10 +9685,10 @@ JXG.Options = {
          * @type String
          * @name Smartlabel#visibleThreshold
          * @attribute
-         * @default <ul>
-         *     <li>0.7 for lines</li>
-         *     <li>0.6 for angles</li>
-         * </ul>
+         * @default
+         *   - 0.7 for lines
+         *   - 0.6 for angles
+         *
          */
         visibleThreshold: 0.7
 
@@ -10926,11 +10920,11 @@ JXG.Options = {
         /**
          * Customize arrow heads of vectors. Be careful! If enabled this will slow down the performance.
          * Fields are:
-         * <ul>
-         *  <li> enabled: Boolean
-         *  <li> size: length of the arrow head legs (in pixel)
-         *  <li> angle: angle of the arrow head legs In radians.
-         * </ul>
+         *
+         * - enabled: Boolean
+         * - size: length of the arrow head legs (in pixel)
+         * - angle: angle of the arrow head legs In radians.
+         *
          * @name arrowhead
          * @attribute
          * @memberOf Vectorfield.prototype

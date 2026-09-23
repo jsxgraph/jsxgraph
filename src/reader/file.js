@@ -168,8 +168,8 @@ JXG.FileReader = {
      * Opens a file using the given URL and passes the contents to {@link JXG.FileReader#parseString}
      * @param {String} url
      * @param {JXG.Board|function} board Either a board or in case `format` equals 'raw' this has to be a callback function.
-     * @param {String} format The expected file format. Possible values are 
-     * 
+     * @param {String} format The expected file format. Possible values are
+     *
      * - raw: Raw text file. In this case `board` has to be a callback function.
      * - geonext: Geonext File {@link https://www.geonext.de">https://www.geonext.de}
      * - intergeo: Intergeo file format {@link https://www.i2geo.net">https://www.i2geo.net}
@@ -178,7 +178,7 @@ JXG.FileReader = {
      * - digraph: DiGraph file
      * - geogebra: Geogebra File {@link https://www.geogebra.org">https://www.geogebra.org}
      * - cdy or cinderella: Cinderella ({@link https://www.cinderella.de/">https://www.cinderella.de}
-     * 
+     *
      * @param {Boolean} async Call ajax asynchonously.
      * @param {function} callback A function that is run when the board is ready.
      */

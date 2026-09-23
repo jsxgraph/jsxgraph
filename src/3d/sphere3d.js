@@ -67,8 +67,10 @@ JXG.Sphere3D = function (view, method, par1, par2, attributes) {
     /**
      * The construction method.
      * Can be:
-     * <ul><li><b><code>'twoPoints'</code></b> &ndash; The sphere is defined by its center and a point on the sphere.</li>
-     * <li><b><code>'pointRadius'</code></b> &ndash; The sphere is defined by its center and its radius in user units.</li></ul>
+     *
+     * - `'twoPoints'` - The sphere is defined by its center and a point on the sphere.
+     * - `'pointRadius'` - The sphere is defined by its center and its radius in user units.
+     *
      * @type String
      * @see JXG.Sphere3D#center
      * @see JXG.Sphere3D#point2

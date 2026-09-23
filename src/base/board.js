@@ -1386,12 +1386,12 @@ JXG.extend(
 
         /**
          * Collects all elements below the current mouse pointer and fulfilling the following constraints:
-         * <ul>
-         * <li>isDraggable</li>
-         * <li>visible</li>
-         * <li>not fixed</li>
-         * <li>not frozen</li>
-         * </ul>
+         *
+         * - isDraggable
+         * - visible
+         * - not fixed
+         * - not frozen
+         *
          * @param {Number} x Current mouse/touch coordinates
          * @param {Number} y current mouse/touch coordinates
          * @param {Object} evt An event object
@@ -5642,17 +5642,17 @@ JXG.extend(
 
         /**
          * Removes object from board and from the renderer object.
-         * <p>
-         * <b>Performance hints:</b> It is recommended to use the JSXGraph object's id.
+         *
+         * __Performance hints:__ It is recommended to use the JSXGraph object's id.
          * If many elements are removed, it is best to either
-         * <ul>
-         *   <li> remove the whole array if the elements are contained in an array instead
+         *
+         * - remove the whole array if the elements are contained in an array instead
          *    of looping through the array OR
-         *   <li> call `board.suspendUpdate()`
+         * - call `board.suspendUpdate()`
          * before looping through the elements to be removed and call
          * `board.unsuspendUpdate()` after the loop. Further, it is advisable to loop
          * in reverse order, i.e. remove the object in reverse order of their creation time.
-         * </ul>
+         *
          * @param {JXG.GeometryElement|Array} object The object to remove or array of objects to be removed.
          * The element(s) is/are given by name, id or a reference.
          * @param {Boolean} saveMethod If true, the algorithm runs through all elements
@@ -6550,11 +6550,11 @@ JXG.extend(
         /**
          * Sets an arbitrary number of attributes. This method has one or more
          * parameters of the following types:
-         * <ul>
-         * <li> object: {key1:value1,key2:value2,...}
-         * <li> string: 'key:value'
-         * <li> array: ['key', value]
-         * </ul>
+         *
+         * - object: `{key1:value1,key2:value2,...}`
+         * - string: `'key:value'`
+         * - array: `['key', value]`
+         *
          * Some board attributes are immutable, like e.g. the renderer type.
          *
          * @param {Object} attributes An object with attributes
