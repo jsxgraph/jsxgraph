@@ -1860,13 +1860,13 @@ declare namespace JXG {
         ): this;
         /**
          * Sets the scale points of the group. Dragging at one of these points results into a scaling of the whole group.
-         * @param objects Array of JXG.Point or arbitrary number of JXG.Point elements.
+         * @param {...Object|Array} objects Array of {@link Point} elements or arbitrary number of {@link Point} elements.
          * @param direction Restricts the directions to be scaled. Possible values are 'x', 'y', 'xy'. Default value is 'xy'. By default, all points of the group are translation points.
          */
         setScalePoints(objects: Point | Point[], direction?: "x" | "y" | "xy"): this;
         /**
          * Sets the translation points of the group. Dragging at one of these points results into a translation of the whole group.
-         * @param objects Array of JXG.Point or arbitrary number of JXG.Point elements. By default, all points of the group are translation points.
+         * @param {...Object|Array} objects Array of {@link Point} elements or arbitrary number of {@link Point} elements. By default, all points of the group are translation points.
          */
         setTranslationPoints(objects: Point | Point[]): this;
         /**

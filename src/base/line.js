@@ -2961,8 +2961,8 @@ JXG.createNormal = function (board, parents, attributes) {
  */
 /**
  * @jsxgraphsignature RadicalAxis
- * @param {JXG.Circle} circle one of the two respective circles.
- * @param {JXG.Circle} circle the other of the two respective circles.
+ * @param {Circle} circle one of the two respective circles.
+ * @param {Circle} circle the other of the two respective circles.
  *
  * @example
  * // Create the radical axis line with respect to two circles

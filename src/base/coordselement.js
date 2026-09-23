@@ -2500,7 +2500,7 @@ JXG.extend(
  * Generic method to create point, text or image.
  * Determines the type of the construction, i.e. free, or constrained by function,
  * transformation or of glider type.
- * @param {Object} Callback Object type, e.g. JXG.Point, JXG.Text or JXG.Image
+ * @param {Object} Callback Object type, e.g. {@link Point}, {@link Text} or {@link Image}
  * @param {Object} board Link to the board object
  * @param {Array} coords Array with coordinates. This may be: array of numbers, function
  * returning an array of numbers, array of functions returning a number, object and transformation.

@@ -941,10 +941,10 @@ JXG.extend(
         /* ********* Circle related stuff *********** */
 
         /**
-         * Draws a {@link JXG.Circle}
-         * @param {JXG.Circle} el Reference to a {@link JXG.Circle} object that has to be drawn.
+         * Draws a {@link Circle}
+         * @param {Circle} el Reference to a {@link Circle} object that has to be drawn.
          * @see Circle
-         * @see JXG.Circle
+         * @see Circle
          * @see JXG.AbstractRenderer#updateEllipse
          */
         drawEllipse: function (el) {
@@ -957,8 +957,8 @@ JXG.extend(
         },
 
         /**
-         * Updates visual appearance of a given {@link JXG.Circle} on the {@link JXG.Board}.
-         * @param {JXG.Circle} el Reference to a {@link JXG.Circle} object, that has to be updated.
+         * Updates visual appearance of a given {@link Circle} on the {@link JXG.Board}.
+         * @param {Circle} el Reference to a {@link Circle} object, that has to be updated.
          * @see Circle
          * @see JXG.Circle
          * @see JXG.AbstractRenderer#drawEllipse
