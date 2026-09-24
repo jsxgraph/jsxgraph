@@ -355,7 +355,7 @@ pre {
     max-width: var(--jxg-content-max);
     margin-left: 17.5rem;
     margin-left: var(--jxg-nav-width);
-    padding: 2.5rem 2.5rem 4rem;
+    padding: 0 2.5rem 4rem;
     padding: 0 var(--jxg-gutter) 4rem;
     min-width: 0;
 }
@@ -980,8 +980,7 @@ summary.signature::before {
     color: var(--jxg-text-muted);
     font-family: 'Fira Sans', 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
     font-family: var(--jxg-font-sans);
-    font-size: 0.8rem;
-    font-size: var(--jxg-fs-tiny);
+    font-size: 1rem;
     font-size: var(--jxg-fs-base);
     font-weight: 600;
     line-height: 1.6;
@@ -1547,7 +1546,7 @@ th {
     padding-bottom: .4rem;
 }
 
-thead tr, thead tr {
+thead th {
     background-color: #f3f6f8;
     background-color: var(--jxg-bg-subtle);
     color: #5d6b7a;
@@ -1586,10 +1585,12 @@ thead tr, thead tr {
 }
 
 .params td.description > p:last-child,
-.params td.description,
 .props td.description > p:last-child {
     margin-bottom: 0;
     padding-bottom: 0;
+}
+
+.params td.description {
     font-family: 'Fira Sans', 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
     font-family: var(--jxg-font-sans);
 }
@@ -1761,7 +1762,7 @@ span.param-type, .params td .param-type, .param-type dd {
     background: rgba(10, 44, 84, .45);
     -webkit-backdrop-filter: blur(2px);
     backdrop-filter: blur(2px);
-    z-index: 3;
+    z-index: 5;
 }
 
 /* search mode of the navigation */
@@ -1983,6 +1984,7 @@ summary:hover::before {
     nav {
         background: #f3f6f8;
         background: var(--jxg-bg-subtle);
+        width: 20rem;
         width: min(20rem, 85vw);
         height: 100%;
         position: fixed;
@@ -1990,7 +1992,7 @@ summary:hover::before {
         right: auto;
         bottom: 0;
         left: -100%;
-        z-index: 5;
+        z-index: 6;
         padding: 1rem;
         transition: left .25s ease;
     }
@@ -2000,7 +2002,7 @@ summary:hover::before {
         position: fixed;
         top: 1rem;
         right: 1rem;
-        z-index: 6;
+        z-index: 7;
     }
 
     #main {
@@ -2149,7 +2151,7 @@ summary:hover::before {
    white background, because the library draws axes and labels in dark
    colours.
    -------------------------------------------------------------------------- */
-@media (prefers-color-scheme: dark) {
+@media screen and (prefers-color-scheme: dark) {
     :root {
         --jxg-primary:        #8fbdea;
         --jxg-primary-dark:   #bcd9f4;
