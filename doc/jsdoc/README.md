@@ -1,8 +1,8 @@
 # JSXGraph API Documentation
 
-*JSXGraph API version 1.xx.x – yyy (xxxx-xx-xx)*
+*JSXGraph version 1.13.3, API generated 2026-09-24*
 
-JSXGraph is a cross-platform library for interactive geometry, function
+[JSXGraph](https://jsxgraph.org) is a cross-platform library for interactive geometry, function
 plotting and data visualisation in the web browser. It turns abstract concepts
 into graphics that can be dragged, animated and explored — for teaching,
 learning, assessment and research alike.
@@ -675,22 +675,22 @@ function highlightElement(el, id, cl) {
 
 ##### Who this documentation is for
 
-* *Building constructions* — which parameters exist, which attributes change
+- *Building constructions* — which parameters exist, which attributes change
   the behaviour → *Elements*
-* *Extending JSXGraph* — internal interfaces, private members included
+- *Extending JSXGraph* — internal interfaces, private members included
   → *Classes*, *Namespaces*
-* *Getting started* — tutorials, first steps → *Tutorials*
+<!-- - *Getting started* — tutorials, first steps → *Tutorials*-->
 
 ---
 
 ##### What this documentation contains
 
-* *Usage signatures* — every parameter combination `board.create()` accepts
-* *Attributes* — name, type, default value, own and inherited
-* *Members, methods, events* — the interface of each element
-* *Live examples* — runnable constructions next to their code
-* *Classes and namespaces* — the objects behind the elements
-* *Source links* — every entry points at the line it came from
+- *Usage signatures* — every parameter combination `board.create()` accepts
+- *Attributes* — name, type, default value, own and inherited
+- *Members, methods, events* — the interface of each element
+- *Live examples* — runnable constructions next to their code
+- *Classes and namespaces* — the objects behind the elements
+- *Source links* — every entry points at the line it came from
 
 ---
 
@@ -769,27 +769,27 @@ var euler = board.create('line', [i1, i2], {
 
 ##### How to navigate this documentation
 
-* *Search* — filters all entries as you type
-* *Elements* — grouped by topic: 3D, Circle, Control, Curve, Line, Point,
+- *Search* — filters all entries as you type
+- *Elements* — grouped by topic: 3D, Circle, Control, Curve, Line, Point,
   Polygon, Text, Transformation …
-* *Classes* — `JXG.Board`, `JXG.GeometryElement`, `JXG.Point` …
-* *Namespaces* — `JXG`, `JXG.Math`, `JXG.Options` …
-* *Modules* — the source files
-* *Tutorials* — how to read this documentation, first steps
+- *Classes* — `JXG.Board`, `JXG.GeometryElement`, `JXG.Point` …
+- *Namespaces* — `JXG`, `JXG.Math`, `JXG.Options` …
+- *Modules* — the source files
+<!-- - *Tutorials* — how to read this documentation, first steps -->
 
 ---
 
 ##### Beyond this documentation
 
-* <a href="https://github.com/jsxgraph/jsxgraph" target="_blank" rel="noopener">GitHub</a> — source code, releases and
+- <a href="https://github.com/jsxgraph/jsxgraph" target="_blank" rel="noopener">GitHub</a> — source code, releases and
   issue tracker
-* <a href="https://www.npmjs.com/package/jsxgraph" target="_blank" rel="noopener">npm</a> — install with
+- <a href="https://www.npmjs.com/package/jsxgraph" target="_blank" rel="noopener">npm</a> — install with
   `npm install jsxgraph` for use with Node.js or a bundler
-* <a href="https://jsxgraph.org/share" target="_blank" rel="noopener">Examples database</a> — several hundred ready
+- <a href="https://jsxgraph.org/share" target="_blank" rel="noopener">Examples database</a> — several hundred ready
   made constructions, each with its source
-* <a href="https://jsfiddle.net/my0fkdb6/1/" target="_blank" rel="noopener">jsFiddle</a> — a prepared sandbox for
+- <a href="https://jsfiddle.net/my0fkdb6/1/" target="_blank" rel="noopener">jsFiddle</a> — a prepared sandbox for
   trying things out without a local setup
-* <a href="https://forum.jsxgraph.org/" target="_blank" rel="noopener">Forum</a> — questions, answers and
+- <a href="https://forum.jsxgraph.org/" target="_blank" rel="noopener">Forum</a> — questions, answers and
   announcements
 
 
@@ -863,8 +863,8 @@ var dFx = () => Fdx(A.X(), A.Y()),
 
 ---
 
-Developed at the Center for Mobile Learning with Digital Technology,
-University of Bayreuth. Dual licensed under the
+Developed at the [Center for Mobile Learning with Digital Technology](https://mobile-learning.uni-bayreuth.de/),
+[University of Bayreuth](https://www.uni-bayreuth.de/en). Dual licensed under the
 <a href="http://www.gnu.org/licenses/licenses.html#LGPL" target="_blank" rel="noopener">LGPL</a> and the
 <a href="https://github.com/jsxgraph/jsxgraph/blob/master/LICENSE.MIT" target="_blank" rel="noopener">MIT licence</a> —
 free to use, modify and distribute, commercial use included.
