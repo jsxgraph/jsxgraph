@@ -15,7 +15,7 @@
   ],
   "opts": {
     "template": "./doc/jsdoc/templates/docdash-jsxgraph",
-    "destination": "./output_docs",
+    "destination": "./tmp/docs",
     // "recurse": true,
     "verbose": true,
     // "tutorials": "src/tutorials/",
