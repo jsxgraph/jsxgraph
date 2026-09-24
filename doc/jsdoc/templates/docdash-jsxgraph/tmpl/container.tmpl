@@ -319,14 +319,14 @@
 
         <?js= self.partial('augments.tmpl', doc) ?>
     <?js } ?>
-
+<!--
     <?js if (doc.see && doc.see.length) {?>
         <h3 class="subsection-title">See</h3>
         <ul><?js doc.see.forEach(function(s) { ?>
             <li><?js= self.linkto(s) ?></li>
         <?js }); ?></ul>
     <?js } ?>
-
+-->
 
     <?js if (doc.requires && doc.requires.length) { ?>
         <h3 class="subsection-title">Requires</h3>
