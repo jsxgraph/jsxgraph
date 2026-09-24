@@ -6,7 +6,6 @@
   - `@augments ...`
   - `@type ...`
   - `@throws`
-- jsdoc: Often, @see doubles @extends 
 - check domains (i.e. params a, b) of curves
 - arcs, sectors: check signatures having lines
 - check what base/composition.js does
@@ -32,6 +31,7 @@
 - ~~Turtle: params and examples~~
 - ~~Smartlabel: CSS of font color~~ (in main branch)
 - ~~IntersectionLine3D not dynamic, see example~~ (in main branch)
+- jsdoc: Often, @see doubles @extends: Much improved
 
 __AI issues__
 
@@ -86,6 +86,17 @@ __Example__
  *
  */
 ```
+- See {@link JXG.Board} for the list of attributes.
+  - Another link: {@link JXG.Board#animationDelay}
+- Create a line like in {@link Line}
+  - just a test: {@link JXG.Line#getSlope}
+- MathJax
+  1. Test: $\int_{-1}^1$
+  1. Test: $$\int_{-1}^1$$
+  1. Test: \\(\\int_{-1}^1\\)
+  1. Test: \\(\int_{-1}^1\\)
+  1. Test: \\[\int_{-1}^1\\]
+
 
 Old:
 

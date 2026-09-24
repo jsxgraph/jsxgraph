@@ -502,15 +502,15 @@ JXG.extend(
          *
          * @param {JXG.Board} board Board object
          * @param {Array} parents Array containing parent elements for a new object. This array may contain
-         *    <ul>
-         *      <li> {@link JXG.Point} objects
-         *      <li> {@link JXG.GeometryElement#name} of {@link JXG.Point} objects
-         *      <li> {@link JXG.GeometryElement#id} of {@link JXG.Point} objects
-         *      <li> Coordinates of points given as array of numbers of length two or three, e.g. [2, 3].
-         *      <li> Coordinates of points given as array of functions of length two or three. Each function returns one coordinate, e.g.
+         *
+         * - {@link JXG.Point} objects
+         * - {@link JXG.GeometryElement#name} of {@link JXG.Point} objects
+         * - {@link JXG.GeometryElement#id} of {@link JXG.Point} objects
+         * - Coordinates of points given as array of numbers of length two or three, e.g. [2, 3].
+         * - Coordinates of points given as array of functions of length two or three. Each function returns one coordinate, e.g.
          *           [function(){ return 2; }, function(){ return 3; }]
-         *      <li> Function returning coordinates, e.g. function() { return [2, 3]; }
-         *    </ul>
+         * - Function returning coordinates, e.g. function() { return [2, 3]; }
+         *
          *  In the last three cases a new point will be created.
          * @param {String} attrClass Main attribute class of newly created points, see {@link JXG#copyAttributes}
          * @param {Array} attrArray List of subtype attributes for the newly created points. The list of subtypes is mapped to the list of new points.
@@ -574,15 +574,15 @@ JXG.extend(
          *
          * @param {JXG.View3D} view View3D object
          * @param {Array} parents Array containing parent elements for a new object. This array may contain
-         *    <ul>
-         *      <li> {@link JXG.Point3D} objects
-         *      <li> {@link JXG.GeometryElement#name} of {@link JXG.Point3D} objects
-         *      <li> {@link JXG.GeometryElement#id} of {@link JXG.Point3D} objects
-         *      <li> Coordinates of 3D points given as array of numbers of length three, e.g. [2, 3, 1].
-         *      <li> Coordinates of 3D points given as array of functions of length three. Each function returns one coordinate, e.g.
+         *
+         * - {@link JXG.Point3D} objects
+         * - {@link JXG.GeometryElement#name} of {@link JXG.Point3D} objects
+         * - {@link JXG.GeometryElement#id} of {@link JXG.Point3D} objects
+         * - Coordinates of 3D points given as array of numbers of length three, e.g. [2, 3, 1].
+         * - Coordinates of 3D points given as array of functions of length three. Each function returns one coordinate, e.g.
          *           [function(){ return 2; }, function(){ return 3; }, function(){ return 1; }]
-         *      <li> Function returning coordinates, e.g. function() { return [2, 3, 1]; }
-         *    </ul>
+         * - Function returning coordinates, e.g. function() { return [2, 3, 1]; }
+         *
          *  In the last three cases a new 3D point will be created.
          * @param {String} attrClass Main attribute class of newly created 3D points, see {@link JXG#copyAttributes}
          * @param {Array} attrArray List of subtype attributes for the newly created 3D points. The list of subtypes is mapped to the list of new 3D points.
@@ -1057,12 +1057,12 @@ JXG.extend(
 
         /**
          * Convert value v. If v has the form
-         * <ul>
-         * <li> 'x%': return floating point number x * percentOfWhat * 0.01
-         * <li> 'xfr': return floating point number x * percentOfWhat
-         * <li> 'xpx': return x * convertPx or convertPx(x) or x
-         * <li> x or 'x': return floating point number x
-         * </ul>
+         *
+         * - 'x%': return floating point number x * percentOfWhat * 0.01
+         * - 'xfr': return floating point number x * percentOfWhat
+         * - 'xpx': return x * convertPx or convertPx(x) or x
+         * - x or 'x': return floating point number x
+         *
          * @param {String|Number} v
          * @param {Number} percentOfWhat
          * @param {Function|Number|*} convertPx

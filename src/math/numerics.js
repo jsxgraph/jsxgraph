@@ -1573,33 +1573,33 @@ Mat.Numerics = {
      * Compute an intersection of the curves c1 and c2
      * with a generalized Newton method (Newton-Raphson).
      * We want to find values t1, t2 such that
-     * c1(t1) = c2(t2), i.e.
-     * <br>
-     * (c1_x(t1) - c2_x(t2), c1_y(t1) - c2_y(t2)) = (0, 0).
+     * `c1(t1) = c2(t2)`, i.e.
+     *
+     * `(c1_x(t1) - c2_x(t2), c1_y(t1) - c2_y(t2)) = (0, 0).`
      *
      * We set
-     * (e, f) := (c1_x(t1) - c2_x(t2), c1_y(t1) - c2_y(t2))
+     * `(e, f) := (c1_x(t1) - c2_x(t2), c1_y(t1) - c2_y(t2))`
      *
      * The Jacobian J is defined by
-     * <pre>
+     * ```
      * J = (a, b)
      *     (c, d)
-     * </pre>
+     * ```
      * where
-     * <ul>
-     * <li> a = c1_x'(t1)
-     * <li> b = -c2_x'(t2)
-     * <li> c = c1_y'(t1)
-     * <li> d = -c2_y'(t2)
-     * </ul>
+     *
+     * - a = c1_x'(t1)
+     * - b = -c2_x'(t2)
+     * - c = c1_y'(t1)
+     * - d = -c2_y'(t2)
+     *
      * The inverse J^(-1) of J is equal to
-     * <pre>
+     *
+     * ```
      *  (d, -b) / (ad - bc)
      *  (-c, a) / (ad - bc)
-     * </pre>
+     * ```
      *
-     * Then, (t1new, t2new) := (t1,t2) - J^(-1)*(e,f).
-     *
+     * Then, `(t1new, t2new) := (t1,t2) - J^(-1)*(e,f)`.
      *
      * @param {Curve|Line|Circle} c1 Curve, Line or Circle
      * @param {Curve|Line|Circle} c2 Curve, Line or Circle
@@ -4059,8 +4059,8 @@ Mat.Numerics = {
      * and is the adaption of the algorithm GLOMIN by Richard Brent.
      *
      * Here is the original documentation:
-     * <pre>
      *
+     * ```
      * Discussion:
      *
      * This function assumes that F(X) is twice continuously differentiable over [A,B]
@@ -4105,23 +4105,23 @@ Mat.Numerics = {
      *
      *   Input, double T, a positive error tolerance.
      *
-     *    Input, double F (double x ), a user-supplied
+     *   Input, double F (double x ), a user-supplied
      *  function whose global minimum is being sought.
      *
      *   Output, double *X, the estimated value of the abscissa
      *  for which F attains its global minimum value in [A,B].
      *
      *   Output, double GLOMIN, the value F(X).
-     * </pre>
+     * ```
      *
      * In JSXGraph, some parameters of the original algorithm are set to fixed values:
-     * <ul>
-     *  <li> M = 10000000.0
-     *  <li> C = A or B, depending if f(A) <= f(B)
-     *  <li> T = JXG.Math.eps
-     *  <li> E = JXG.Math.eps * JXG.Math.eps
-     *  <li> MACHEP = JXG.Math.eps * JXG.Math.eps * JXG.Math.eps
-     * </ul>
+     *
+     * - M = 10000000.0
+     * - C = A or B, depending if f(A) <= f(B)
+     * - T = JXG.Math.eps
+     * - E = JXG.Math.eps * JXG.Math.eps
+     * - MACHEP = JXG.Math.eps * JXG.Math.eps * JXG.Math.eps
+     *
      * @param {function} f Function, whose global minimum is to be found
      * @param {Array} x0 Array of length 2 determining the interval [A, B] for which the global minimum is to be found
      * @returns {Array} [x, y] x is the position of the global minimum and y = f(x).

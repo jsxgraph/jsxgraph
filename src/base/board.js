@@ -359,11 +359,11 @@ JXG.Board = function (container, renderer, id,
 
     /**
      * The board mode the board is currently in. Possible values are
-     * <ul>
-     * <li>JXG.Board.BOARD_MODE_NONE</li>
-     * <li>JXG.Board.BOARD_MODE_DRAG</li>
-     * <li>JXG.Board.BOARD_MODE_MOVE_ORIGIN</li>
-     * </ul>
+     *
+     * - `JXG.Board.BOARD_MODE_NONE`
+     * - `JXG.Board.BOARD_MODE_DRAG`
+     * - `JXG.Board.BOARD_MODE_MOVE_ORIGIN`
+     *
      * @type Number
      */
     this.mode = this.BOARD_MODE_NONE;
@@ -373,10 +373,10 @@ JXG.Board = function (container, renderer, id,
      * If {@link JXG.Board#mode} equals {@link JXG.Board#BOARD_MODE_DRAG} this is set to
      * {@link JXG.Board#BOARD_QUALITY_LOW} to speed up the update process by e.g. reducing the number of
      * evaluation points when plotting functions. Possible values are
-     * <ul>
-     * <li>BOARD_QUALITY_LOW</li>
-     * <li>BOARD_QUALITY_HIGH</li>
-     * </ul>
+     *
+     * - `BOARD_QUALITY_LOW`
+     * - `BOARD_QUALITY_HIGH`
+     *
      * @type Number
      * @see JXG.Board#mode
      */

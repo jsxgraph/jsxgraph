@@ -46,15 +46,15 @@ import Numerics from "../math/numerics.js";
 // import $__canvas from 'canvas.js'
 
 /**
- * Uses HTML Canvas to implement the rendering methods defined in {@link JXG.AbstractRenderer}.
+ * @class Uses HTML Canvas to implement the rendering methods defined in {@link JXG.AbstractRenderer}.
  *
- * @class JXG.CanvasRenderer
  * @augments JXG.AbstractRenderer
  * @param {Node} container Reference to a DOM node containing the board.
  * @param {Object} dim The dimensions of the board
  * @param {Number} dim.width
  * @param {Number} dim.height
- * @see JXG.AbstractRenderer
+ * @see JXG.NoRenderer
+ * @see JXG.SVGRenderer
  */
 JXG.CanvasRenderer = function (container, dim) {
     this.type = 'canvas';

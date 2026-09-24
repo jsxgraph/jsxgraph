@@ -45,12 +45,12 @@ import JXG from "../jxg.js";
 import AbstractRenderer from "./abstract.js";
 
 /**
- * This renderer draws nothing. It is intended to be used in environments where none of our rendering engines
+ * @class This renderer draws nothing. It is intended to be used in environments where none of our rendering engines
  * are available, e.g. WebWorkers. All methods are empty.
  *
- * @class JXG.NoRenderer
  * @augments JXG.AbstractRenderer
- * @see JXG.AbstractRenderer
+ * @see JXG.CanvasRenderer
+ * @see JXG.SVGRenderer
  */
 JXG.NoRenderer = function () {
     /**

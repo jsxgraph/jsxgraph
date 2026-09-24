@@ -48,8 +48,7 @@ import Type from "../utils/type.js";
 import Expect from "../utils/expect.js";
 
 /**
- * Math.Geometry namespace definition. This namespace holds geometrical algorithms,
- * especially intersection algorithms.
+ * JXG.Math.Geometry namespace. This namespace holds geometrical algorithms, in particular intersection algorithms.
  * @name JXG.Math.Geometry
  * @exports Mat.Geometry as JXG.Math.Geometry
  * @namespace
@@ -612,11 +611,10 @@ JXG.extend(
         /**
          * Signed triangle area of the three points given. It can also be used
          * to test the orientation of the triangle.
-         * <ul>
-         * <li> If the return value is < 0, then the point p2 is left of the line [p1, p3] (i.e p3 is right from [p1, p2]).
-         * <li> If the return value is > 0, then the point p2 is right of the line [p1, p3] (i.e p3 is left from [p1, p2]).
-         * <li> If the return value is = 0, then the points p1, p2, p3 are collinear.
-         * </ul>
+         *
+         * - If the return value is \\(< 0\\), then the point p2 is left of the line [p1, p3] (i.e p3 is right from [p1, p2]).
+         * - If the return value is \\(> 0\\), then the point p2 is right of the line [p1, p3] (i.e p3 is left from [p1, p2]).
+         * - If the return value is \\(= 0\\), then the points p1, p2, p3 are collinear.
          *
          * @param {Point|JXG.Coords|Array} p1
          * @param {Point|JXG.Coords|Array} p2
@@ -1028,15 +1026,15 @@ JXG.extend(
 
         // /**
         //  * Determine if a polygon or a path element is convex, non-convex or complex which are defined like this:
-        //  * <ul>
-        //  * <li> A polygon is convex if for every pair of points, the line segment connecting them does not intersect
+        //  *
+        //  * - A polygon is convex if for every pair of points, the line segment connecting them does not intersect
         //  * an edge of the polygon in one point.
         //  * A single line segment or a a single point is considered as convex. A necessary condition for a polygon
         //  * to be convex that the angle sum of its interior angles equals &plusmn; 2 &pi;.
-        //  * <li> A polygon is non-convex, if it does not self-intersect, but is not convex.
-        //  * <li> A polygon is complex if its the angle sum is not equal to &plusmn; 2 &pi;.
+        //  * - A polygon is non-convex, if it does not self-intersect, but is not convex.
+        //  * - A polygon is complex if its the angle sum is not equal to &plusmn; 2 &pi;.
         //  * That is, there must be self-intersection (contiguous coincident points in the path are not treated as self-intersection).
-        //  * </ul>
+        //  *
         //  * A path  element might be specified as an array of coordinate arrays or {@link JXG.Coords}.
         //  *
         //  * @param {Array|Polygon|PolygonalChain} points Polygon or list of coordinates
@@ -2568,13 +2566,13 @@ JXG.extend(
         /**
          * Compute an intersection of the curves c1 and c2.
          * We want to find values t1, t2 such that
-         * c1(t1) = c2(t2), i.e. (c1_x(t1) - c2_x(t2), c1_y(t1) - c2_y(t2)) = (0, 0).
+         * \\(c_1(t_1) = c_2(t_2)\\), i.e.
+         * \\[(c_{1,x}(t_1) - c_{2,x}(t_2), c_{1,y}(t_1) - c_{2,y}(t_2)) = (0, 0).\\]
          *
          * Available methods:
-         * <ul>
-         *  <li> discrete, segment-wise intersections
-         *  <li> generalized damped Newton-Raphson
-         * </ul>
+         *
+         * - discrete, segment-wise intersections
+         * - generalized damped Newton-Raphson
          *
          * Segment-wise intersection is more stable, but has problems with tangent points.
          * Damped Newton-Raphson converges very rapidly but sometimes behaves chaotic.
@@ -4149,12 +4147,11 @@ JXG.extend(
 
         /**
          * Generate the function which computes the data of the intersection between
-         * <ul>
-         * <li> plane3d, plane3d,
-         * <li> plane3d, sphere3d,
-         * <li> sphere3d, plane3d,
-         * <li> sphere3d, sphere3d
-         * </ul>
+         *
+         * - plane3d, plane3d,
+         * - plane3d, sphere3d,
+         * - sphere3d, plane3d,
+         * - sphere3d, sphere3d
          *
          * @param {JXG.GeometryElement3D} el1 Plane or sphere element
          * @param {JXG.GeometryElement3D} el2 Plane or sphere element

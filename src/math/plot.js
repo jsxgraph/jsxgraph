@@ -42,7 +42,7 @@ import IntervalArithmetic from "./ia.js";
 import Type from "../utils/type.js";
 
 /**
- * Functions for plotting of curves.
+ * The JXG.Math.Plot namespace holds various functions for plotting of curves.
  * @name JXG.Math.Plot
  * @exports Mat.Plot as JXG.Math.Plot
  * @namespace

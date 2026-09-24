@@ -39,8 +39,8 @@ import Color from "./utils/color.js";
 import Type from "./utils/type.js";
 
 /**
- * Options Namespace
- * @description This namespace contains all default options of the board and all geometry elements.
+ * JXG.Options namespace.
+ * This namespace contains all default options of the board and all geometry elements.
  * @namespace
  * @private
  * @name JXG.Options

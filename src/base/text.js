@@ -1253,13 +1253,12 @@ JXG.extend(
         },
         /**
          * Calculates the score of a label position with a given radius and angle. The score is calculated by the following rules:
-         * <ul>
-         * <li> the maximum score is 0
-         * <li> if the label is outside of the bounding box, the score is reduced by 1
-         * <li> for each conflict, the score is reduced by 1
-         * <li> the score is reduced by the displacement (angle difference between old and new position) of the label
-         * <li> the score is reduced by the angle between the original label position and the new label position
-         * </ul>
+         *
+         * - the maximum score is 0
+         * - if the label is outside of the bounding box, the score is reduced by 1
+         * - for each conflict, the score is reduced by 1
+         * - the score is reduced by the displacement (angle difference between old and new position) of the label
+         * - the score is reduced by the angle between the original label position and the new label position
          *
          * @param {number} radius radius in pixels
          * @param {number} angle angle in radians
@@ -1723,7 +1722,6 @@ JXG.registerElement("text", JXG.createText);
  *
  * However, the element label has some specific attributes which can be set by the user.
  *
- * @description
  * Labels for points are positioned with the attributes {@link Text#anchorX}, {@link Text#anchorX} and {@link Label#offset}.
  *
  * Labels for lines, segments, curves and circles can be controlled additionally by the attributes {@link Label#position} and

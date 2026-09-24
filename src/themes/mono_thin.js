@@ -31,6 +31,62 @@ import JXG from "../jxg.js";
 let size = 0.75,
     color = '#000';
 
+/**
+ * @class `mono_thin` theme for printing.
+ * No support of 3D, yet.
+ *
+ * @pseudo
+ * @name JXG.themes.mono_thin
+ * @elementclass themes
+ * @type Object
+ *
+ * @example
+ * JXG.Options.text.fontSize = 12;
+ * const board = JXG.board('jxgbox', {
+ *     boundingbox: [-5, 5, 5, -5], axis: true,
+ *     theme: 'mono_thin'
+ * });
+ *
+ * var a = board.create('slider', [[1, 4], [3, 4], [-10, 1, 10]]);
+ * var p1 = board.create('point', [1, 2]);
+ * var ci1 = board.create('circle', [p1, 0.7]);
+ * var cu = board.create('functiongraph', ['x^2']);
+ *
+ * var l1 = board.create('line', [2, 3, -1]);
+ * var l2 = board.create('line', [-5, -3, -1], { dash: 2 });
+ * var i1 = board.create('intersection', [l1, l2]);
+ *
+ * var pol = board.create('polygon', [[1, 0], [4, 0], [3.5, 1]]);
+ * var an = board.create('angle', [pol.vertices[1], pol.vertices[0], pol.vertices[2]]);
+ * var se = board.create('sector', [pol.vertices[1], pol.vertices[2], pol.vertices[0]]);
+ * var ci1 = board.create('circle', [[-3, -3], 0.7], { center: { visible: true } });
+ *
+ * </pre><div id="JXG00a28950-b2cc-4e89-a19c-acdf7759e27b" class="jxgbox" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *     (function() {
+ *         JXG.Options.text.fontSize = 12;
+ *         var board = JXG.board('JXG00a28950-b2cc-4e89-a19c-acdf7759e27b',
+ *             { boundingbox: [-5, 5, 5, -5], axis: true,
+ *               theme: 'mono_thin',
+ *               showcopyright: false, shownavigation: false
+ *             });
+ *
+ *         var a = board.create('slider', [[1, 4], [3, 4], [-10, 1, 10]]);
+ *         var p1 = board.create('point', [1, 2]);
+ *         var ci1 = board.create('circle', [p1, 0.7]);
+ *         var cu = board.create('functiongraph', ['x^2']);
+ *         var l1 = board.create('line', [2, 3, -1]);
+ *         var l2 = board.create('line', [-5, -3, -1], { dash: 2 });
+ *         var i1 = board.create('intersection', [l1, l2]);
+ *         var pol = board.create('polygon', [[1, 0], [4, 0], [3.5, 1]]);
+ *         var an = board.create('angle', [pol.vertices[1], pol.vertices[0], pol.vertices[2]]);
+ *         var se = board.create('sector', [pol.vertices[1], pol.vertices[2], pol.vertices[0]]);
+ *         var ci1 = board.create('circle', [[-3, -3], 0.7], { center: { visible: true } });
+ *
+ *     })();
+ *
+ * </script><pre>
+ * */
 JXG.themes['mono_thin'] = {
 
         board: {

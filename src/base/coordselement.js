@@ -863,11 +863,11 @@ JXG.extend(
         /**
          * Getter method for coordinates x, y and (optional) z.
          * @param {Number|String} [digits='auto'] Truncating rule for the digits in the infobox.
-         * <ul>
-         * <li>'auto': done automatically by JXG.autoDigits()
-         * <li>'none': no truncation
-         * <li>number: truncate after "number digits" with JXG.toFixed()
-         * </ul>
+         *
+         * - 'auto': done automatically by `JXG.autoDigits()`
+         * - 'none': no truncation
+         * - number: truncate after "number digits" with `JXG.toFixed()`
+         *
          * @param {Boolean} [withZ=false] If set to true the return value will be `(x | y | z)` instead of `(x, y)`.
          * @returns {String} User coordinates of point.
          */
@@ -1473,14 +1473,15 @@ JXG.extend(
          * Convert the point to CAS point and call update().
          * @param {Array} terms [[zterm], xterm, yterm] defining terms for the z, x and y coordinate.
          * The z-coordinate is optional and it is used for homogeneous coordinates.
-         * The coordinates may be either <ul>
-         *   <li>a JavaScript function,</li>
-         *   <li>a string containing GEONExT syntax. This string will be converted into a JavaScript
-         *     function here,</li>
-         *   <li>a Number</li>
-         *   <li>a pointer to a slider object. This will be converted into a call of the Value()-method
-         *     of this slider.</li>
-         *   </ul>
+         * The coordinates may be either
+         *
+         * - a JavaScript function,
+         * - a string containing GEONExT syntax. This string will be converted into a JavaScript
+         *     function here,
+         * - a Number
+         * - a pointer to a slider object. This will be converted into a call of the Value()-method
+         *     of this slider.
+         *
          * @see JXG.GeonextParser#geonext2JS
          */
         addConstraint: function (terms) {

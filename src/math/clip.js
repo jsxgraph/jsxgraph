@@ -46,7 +46,7 @@ import Geometry from "./geometry.js";
 import Type from "../utils/type.js";
 
 /**
- * Math.Clip namespace definition. This namespace contains algorithms for Boolean operations on paths, i.e.
+ * JXG.Math.Clip namespace. This namespace contains algorithms for Boolean operations on paths, i.e.
  * intersection, union and difference of paths. Base is the Greiner-Hormann algorithm.
  * @name JXG.Math.Clip
  * @exports Mat.Clip as JXG.Math.Clip
@@ -1689,10 +1689,10 @@ Mat.Clip = {
      *
      *
      * Problematic are:
-     * <ul>
-     *   <li>degenerate cases where one path additionally has self-intersections
-     *   <li>differences with one path having self-intersections.
-     * </ul>
+     *
+     * - degenerate cases where one path additionally has self-intersections
+     * - differences with one path having self-intersections.
+     *
      *
      * @param  {Circle|Curve|Polygon} subject   First closed path, usually called 'subject'.
      * Maybe curve, arc, sector, circle, polygon, array of points, array of JXG.Coords,

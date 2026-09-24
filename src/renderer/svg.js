@@ -43,14 +43,15 @@ import Base64 from "../utils/base64.js";
 import Numerics from "../math/numerics.js";
 
 /**
- * Uses SVG to implement the rendering methods defined in {@link JXG.AbstractRenderer}.
- * @class JXG.SVGRenderer
+ * @class Uses SVG to implement the rendering methods defined in {@link JXG.AbstractRenderer}.
+ *
  * @augments JXG.AbstractRenderer
  * @param {Node} container Reference to a DOM node containing the board.
  * @param {Object} dim The dimensions of the board
  * @param {Number} dim.width
  * @param {Number} dim.height
- * @see JXG.AbstractRenderer
+ * @see JXG.CanvasRenderer
+ * @see JXG.NoRenderer
  */
 JXG.SVGRenderer = function (container, dim) {
     var i;
@@ -2371,17 +2372,15 @@ JXG.extend(
         },
 
         /**
-         * Display SVG image in html img-tag which enables
-         * easy download for the user.
+         * Display SVG image in html img-tag which enables easy download for the user.
          *
          * Support:
-         * <ul>
-         * <li> IE: No
-         * <li> Edge: full
-         * <li> Firefox: full
-         * <li> Chrome: full
-         * <li> Safari: full (No text support in versions prior to 12).
-         * </ul>
+         *
+         * - IE: No
+         * - Edge: full
+         * - Firefox: full
+         * - Chrome: full
+         * - Safari: full (No text support in versions prior to 12).
          *
          * @param {JXG.Board} board Link to the board.
          * @param {String} imgId Optional id of an img object. If given and different from the empty string,

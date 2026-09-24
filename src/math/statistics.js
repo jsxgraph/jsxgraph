@@ -37,7 +37,7 @@ import Mat from "./math.js";
 import Type from "../utils/type.js";
 
 /**
- * Functions for mathematical statistics. Most functions are like in the statistics package R.
+ * JXG.Math.Statistics namespace with functions for mathematical statistics. Most functions are like in the statistics package R.
  * @name JXG.Math.Statistics
  * @exports Mat.Statistics as JXG.Math.Statistics
  * @namespace

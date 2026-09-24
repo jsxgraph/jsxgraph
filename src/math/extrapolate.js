@@ -33,6 +33,7 @@
 import Mat from "./math.js";
 
 /**
+ * JXG.Math.Extrapolate namespace.
  * Functions for extrapolation of sequences. Used for finding limits of sequences which is used for curve plotting.
  * @name JXG.Math.Extrapolate
  * @exports Mat.Extrapolate as JXG.Math.Extrapolate

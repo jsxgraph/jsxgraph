@@ -829,7 +829,8 @@ JXG.extend(
          * even more later.
          * @param {Object} hash Object containing attributes with target values for the animation.
          * @param {number} time Number of milliseconds to complete the animation.
-         * @param {Object} [options] Optional settings for the animation:<ul><li>callback: A function that is called as soon as the animation is finished.</li></ul>
+         * @param {Object} [options] Optional settings for the animation:
+         * - callback: A function that is called as soon as the animation is finished
          * @returns {JXG.GeometryElement} A reference to the object
          */
         animate: function (hash, time, options) {
@@ -1257,11 +1258,11 @@ JXG.extend(
         /**
          * Sets an arbitrary number of attributes. This method has one or more
          * parameters of the following types:
-         * <ul>
-         * <li> object: {key1:value1,key2:value2,...}
-         * <li> string: 'key:value'
-         * <li> array: ['key', value]
-         * </ul>
+         *
+         * - object: `{key1:value1,key2:value2,...}`
+         * - string: `'key:value'`
+         * - array: `['key', value]`
+         *
          * @param {Object} attributes An object with attributes.
          * @returns {JXG.GeometryElement} A reference to the element.
          *
