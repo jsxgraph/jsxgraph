@@ -1101,6 +1101,16 @@ summary.signature::before {
     background-color: transparent;
 }
 
+div#index-container .container-article-other {
+    max-width: 100%;
+    overflow: hidden;
+    column-width: 13rem;
+    column-gap: 2rem;
+    column-rule: 1px solid #d7e0e8;
+    column-rule: 1px solid var(--jxg-border);
+    margin-bottom: 1.75rem;
+}
+
 /* The type line of an exception needs less room above it than a free-standing
    type annotation, but it still has to keep its distance to whatever section
    follows - "Extends" and "See" come right after it on many pages. Where it
