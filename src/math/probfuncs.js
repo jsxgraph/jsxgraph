@@ -93,7 +93,7 @@ Mat.ProbFuncs = {
 
     /**
      *
-     *	Exponential of squared argument
+     * Exponential of squared argument
      *
      * SYNOPSIS:
      *
@@ -243,8 +243,9 @@ Mat.ProbFuncs = {
 
     /**
      *
-     *	Normal distribution function
+     * Normal distribution function
      *
+     * ```
      * SYNOPSIS:
      *
      * y = ndtr( x );
@@ -280,8 +281,10 @@ Mat.ProbFuncs = {
      *
      *   message         condition         value returned
      * erfc underflow    x > 37.519379347       0.0
+     * ```
      *
      * @param  {Number} a
+     * @memberof JXG.Math.ProbFuncs
      * @returns {Number}
      */
     ndtr: function (a) {
@@ -319,8 +322,9 @@ Mat.ProbFuncs = {
 
     /**
      *
-     *	Complementary error function
+     * Complementary error function
      *
+     * ```
      * SYNOPSIS:
      *
      * double x, y, erfc();
@@ -361,6 +365,7 @@ Mat.ProbFuncs = {
      *
      *   message         condition              value returned
      * erfc underflow    x > 9.231948545 (DEC)       0.0
+     * ```
      *
      * @param  {Number} a
      * @returns {Number}
@@ -407,9 +412,12 @@ Mat.ProbFuncs = {
 
     /**
      * Exponentially scaled erfc function
+     *
+     * ```
      *   exp(x^2) erfc(x)
      *   valid for x > 1.
      *   Use with ndtr and expx2.
+     * ```
      *
      * @private
      * @param {Number} x
@@ -429,8 +437,9 @@ Mat.ProbFuncs = {
     },
 
     /**
-     *	Error function
+     * Error function
      *
+     * ```
      * SYNOPSIS:
      *
      * double x, y, erf();
@@ -461,6 +470,7 @@ Mat.ProbFuncs = {
      * arithmetic   domain     # trials      peak         rms
      *    DEC       0,1         14000       4.7e-17     1.5e-17
      *    IEEE      0,1         30000       3.7e-16     1.0e-16
+     * ```
      *
      * @param  {Number} x
      * @returns {Number}
@@ -520,8 +530,9 @@ Mat.ProbFuncs = {
 
     /**
      *
-     *	Inverse of Normal distribution function
+     * Inverse of Normal distribution function
      *
+     * ```
      * SYNOPSIS:
      *
      * double x, y, ndtri();
@@ -558,6 +569,7 @@ Mat.ProbFuncs = {
      *   message         condition    value returned
      * ndtri domain       x <= 0        -MAXNUM
      * ndtri domain       x >= 1         MAXNUM
+     * ```
      *
      * @param  {Number} y0
      * @returns {Number}

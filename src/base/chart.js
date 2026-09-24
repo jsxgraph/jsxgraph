@@ -1439,7 +1439,6 @@ JXG.Legend.prototype.drawVerticalLegend = function (board, attributes) {
  * @pseudo
  * @name Legend
  * @elementclass text
- * @augments JXG.Legend
  * @constructor
  * @type JXG.Legend
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.

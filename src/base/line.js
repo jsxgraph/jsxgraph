@@ -56,12 +56,11 @@ import GeometryElement from "./element.js";
 import Type from "../utils/type.js";
 
 /**
+ * @class Creates a new basic line object. Do not use this constructor to create a line.
  * The Line class is a basic class for all kind of line objects, e.g. line, arrow, and axis. It is usually defined by two points and can
  * be intersected with some other geometry elements.
- * @class Creates a new basic line object. Do not use this constructor to create a line.
  * Use {@link JXG.Board#create} with
  * type {@link Line}, {@link Arrow}, or {@link Axis} instead.
- * @constructor
  * @augments JXG.GeometryElement
  * @param {String|JXG.Board} board The board the new line is drawn on.
  * @param {Point} p1 Startpoint of the line.
@@ -1179,7 +1178,6 @@ JXG.extend(
  * @name Line
  * @elementclass line
  * @augments JXG.Line
- * @constructor
  * @type JXG.Line
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
  *
@@ -1554,9 +1552,8 @@ JXG.registerElement("line", JXG.createLine);
  * @pseudo
  * @name Segment
  * @elementclass line
- * @augments JXG.Line
  * @type JXG.Line
- * @constructor
+ * @augments JXG.Line
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
  * @see Line
  *
@@ -1688,9 +1685,8 @@ JXG.registerElement("segment", JXG.createSegment);
  * @pseudo
  * @name Arrow
  * @elementclass line
- * @augments JXG.Line
  * @type JXG.Line
- * @constructor
+ * @augments JXG.Line
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
  * @see Line
  */
@@ -1760,9 +1756,8 @@ JXG.registerElement("arrow", JXG.createArrow);
  * @pseudo
  * @name Axis
  * @elementclass line
- * @augments JXG.Line
  * @type JXG.Line
- * @constructor
+ * @augments JXG.Line
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
  *
  */
@@ -2148,9 +2143,8 @@ JXG.registerElement("axis", JXG.createAxis);
  * @pseudo
  * @name Tangent
  * @elementclass line
- * @augments JXG.Line
  * @type JXG.Line
- * @constructor
+ * @augments JXG.Line
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
  *
  */
@@ -2502,11 +2496,10 @@ JXG.createTangent = function (board, parents, attributes) {
  * A normal is a line through a given point on an element of type line, circle, curve, or turtle and orthogonal to that object.
  *
  * @pseudo
- * @constructor
  * @name Normal
  * @elementclass line
- * @augments JXG.Line
  * @type JXG.Line
+ * @augments JXG.Line
  *
  * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
  *
@@ -2953,10 +2946,9 @@ JXG.createNormal = function (board, parents, attributes) {
  * When a circle about the midpoint of circle centers, passing through the circle centers, intersects the circles, the polar lines pass through those intersection points.
  * @pseudo
  * @name RadicalAxis
- * @constructor
  * @elementclass line
- * @augments JXG.Line
  * @type JXG.Line
+ * @augments JXG.Line
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
  *
  */
@@ -3047,7 +3039,6 @@ JXG.createRadicalAxis = function (board, parents, attributes) {
  * @pseudo
  * @name PolarLine
  * @elementclass line
- * @constructor
  * @augments JXG.Line
  * @type JXG.Line
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
@@ -3169,7 +3160,6 @@ JXG.createPolarLine = function (board, parents, attributes) {
  * @pseudo
  * @name TangentTo
  * @elementclass line
- * @constructor
  * @augments JXG.Line
  * @type JXG.Line
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.

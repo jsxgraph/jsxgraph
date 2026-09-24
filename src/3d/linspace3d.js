@@ -908,7 +908,7 @@ JXG.Plane3D = function (view, point, dir1, range_u, dir2, range_v, attributes) {
      * @type Array
      * @private
      *
-     * @see Plane3D.updateNormal
+     * @see Plane3D#updateNormal
      *
      */
     this.normal = [0, 0, 0, 0];
@@ -919,7 +919,7 @@ JXG.Plane3D = function (view, point, dir1, range_u, dir2, range_v, attributes) {
      * @type Array
      * @private
      *
-     * @see Plane3D.updateNormal
+     * @see Plane3D#updateNormal
      *
      */
     this.d = 0;

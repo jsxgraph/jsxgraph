@@ -69,7 +69,7 @@ JXG.Circle3D = function (view, center, normal, radius, attributes) {
      * @type Array
      * @private
      *
-     * @see updateNormal
+     * @see JXG.Circle3D#updateNormal
      */
     this.normal = [0, 0, 0, 0];
 
@@ -84,7 +84,7 @@ JXG.Circle3D = function (view, center, normal, radius, attributes) {
      * @type Array
      * @private
      *
-     * @see updateFrame
+     * @see JXG.Circle3D#updateFrame
      */
     this.frame1;
 
@@ -94,7 +94,7 @@ JXG.Circle3D = function (view, center, normal, radius, attributes) {
      * @type Array
      * @private
      *
-     * @see updateFrame
+     * @see JXG.Circle3D#updateFrame
      */
     this.frame2;
 
@@ -218,6 +218,11 @@ JXG.extend(
             return this;
         },
 
+        /**
+         * Update data for normal.
+         *
+         * @returns {JXG.Circle3D} Reference to this sphere
+         */
         updateNormal: function () {
             // evaluate normal direction
             var i, len,
@@ -236,6 +241,11 @@ JXG.extend(
             return this;
         },
 
+        /**
+         * Update frame.
+         *
+         * @returns {JXG.Circle3D} Reference to this sphere
+         */
         updateFrame: function () {
             this.frame1 = Mat.crossProduct(this.frame2.slice(1), this.normal.slice(1));
             this.frame1.unshift(0);

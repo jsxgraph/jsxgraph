@@ -1620,7 +1620,6 @@ JXG.extend(
  * @name Text
  * @elementclass text
  * @augments JXG.Text
- * @constructor
  * @type JXG.Text
  * @see JXG.Text
  *
@@ -1738,7 +1737,6 @@ JXG.registerElement("text", JXG.createText);
  * @name Label
  * @elementclass text
  * @augments JXG.Text
- * @constructor
  * @type JXG.Text
  */
 //  See element.js#createLabel

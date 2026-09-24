@@ -168,9 +168,9 @@ jxg.extend = function (object, extension, onlyOwn, toLower) {
  */
 
 /**
- * A dummy line type. Just for experimenting
+ * A line or an array of size 3 with homogenous coordinates defining the line.
  *
- * @typedef {(Line|number[]|JXG.Line)} LineType
+ * @typedef {(Line|number[])} LineType
  * @memberof Line
  */
 

@@ -57,7 +57,6 @@ JXG.GeometryElement3D = function (view, elType) {
      * in a view. In case, there are several 2D elements, it is an array.
      *
      * @type Array
-     * @description JXG.GeometryElement,Array
      * @private
      *
      * @example

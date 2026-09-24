@@ -62,7 +62,6 @@ import Type from "../utils/type.js";
  * @name Smartlabel
  * @elementclass text
  * @augments JXG.Text
- * @constructor
  * @type JXG.Text
  * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
  */

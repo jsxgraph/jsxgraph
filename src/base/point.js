@@ -449,7 +449,6 @@ JXG.extend(
  * @name Point
  * @elementclass point
  * @augments JXG.Point
- * @constructor
  * @type JXG.Point
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
  */
@@ -541,7 +540,6 @@ JXG.createPoint = function (board, parents, attributes) {
  * @name Glider
  * @elementclass point
  * @augments JXG.Point
- * @constructor
  * @type JXG.Point
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
  */
@@ -635,7 +633,6 @@ JXG.createGlider = function (board, parents, attributes) {
  * @name Intersection
  * @elementclass point
  * @augments JXG.Point
- * @constructor
  * @type JXG.Point
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
  */
@@ -749,7 +746,6 @@ JXG.createIntersectionPoint = function (board, parents, attributes) {
  * @name OtherIntersection
  * @elementclass point
  * @augments JXG.Point
- * @constructor
  * @type JXG.Point
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
  */
@@ -935,7 +931,6 @@ JXG.createOtherIntersectionPoint = function (board, parents, attributes) {
  * @name PolePoint
  * @elementclass point
  * @augments JXG.Point
- * @constructor
  * @type JXG.Point
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
  */

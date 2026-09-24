@@ -143,12 +143,14 @@ JXG.EventEmitter = {
     },
 
     /**
-     * @description Implements the functionality from this interface in the given object.
+     * Implements the functionality from this interface in the given object.
+     *
      * All objects getting their event handling
      * capabilities from this method should document it by adding
      * the `on, off, triggerEventHandlers` via the
      * borrows tag as methods to their documentation:
-     * <pre>@borrows JXG.EventEmitter#on as this.on</pre>
+     *
+     * @borrows JXG.EventEmitter#on as this.on
      * @param {Object} o
      */
     eventify: function (o) {

@@ -37,9 +37,8 @@ import Symbolic from "../math/symbolic.js";
 import Type from "../utils/type.js";
 
 /**
- * @class This element is used to visualize the locus of a given dependent point.
+ * @class The locus element is used to visualize the curve a given constraint point describes.
  * @pseudo
- * @description The locus element is used to visualize the curve a given point describes.
  * @constructor
  * @name Locus
  * @type JXG.Curve

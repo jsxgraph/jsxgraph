@@ -55,8 +55,7 @@ import Type from "../utils/type.js";
  * @param {Line} line Reference to the axis the ticks are drawn on.
  * @param {Number|Array} ticks Number defining the distance between two major ticks or an array defining static ticks.
  * @param {Object} attributes Attributes
- * @see JXG.Line#addTicks
- * @constructor
+ * @see JXG.GeometryElement#addTicks
  * @augments JXG.GeometryElement
  */
 JXG.Ticks = function (line, ticks, attributes) {
@@ -1669,7 +1668,6 @@ JXG.extend(
  * @name Ticks
  * @elementclass various
  * @augments JXG.Ticks
- * @constructor
  * @type JXG.Ticks
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
  */
@@ -1780,7 +1778,6 @@ JXG.createTicks = function (board, parents, attributes) {
  * @name Hatch
  * @elementclass various
  * @augments JXG.Ticks
- * @constructor
  * @type JXG.Ticks
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
  */

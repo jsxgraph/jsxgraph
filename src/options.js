@@ -390,12 +390,11 @@ JXG.Options = {
         },
 
         /**
-         * Supply the document object. Defaults to window.document
+         * Supply the document object (DOM object). Defaults to window.document
          *
          * @name JXG.Board#document
          * @attribute
          * @type Object
-         * @description DOM object
          * @default false (meaning window.document)
          */
         document: false,
@@ -946,7 +945,6 @@ JXG.Options = {
          * @name JXG.Board#moveTarget
          * @attribute
          * @type Object
-         * @description HTML node or document
          * @default null
          *
          * @example
@@ -1051,8 +1049,6 @@ JXG.Options = {
          * @name JXG.Board.registerEvents
          * @attribute
          * @see JXG.Board#keyboard
-         * @see JXG.Board.registerResizeEvent
-         * @see JXG.Board.registerFullscreenEvent
          * @type Boolean
          * @default true
          */
@@ -1663,7 +1659,7 @@ JXG.Options = {
          * @type Boolean
          * @default true
          *
-         * @see JXG#appBox
+         * @see JXG.appBox
          */
         clip: true,
 
@@ -2392,7 +2388,7 @@ JXG.Options = {
          * @default true
          * @name JXG.GeometryElement#scalable
          * @attribute
-         * @see JXG.Ticks#fixed
+         * @see JXG.GeometryElement#fixed
          * @see JXG.GeometryElement#rotatable
          */
         scalable: true,
@@ -3513,7 +3509,7 @@ JXG.Options = {
          * @type String
          * @name Ticks#face
          * @attribute
-         * @see hatch
+         * @see Hatch
          * @default '|'
          * @example
          *   var p1 = board.create('point', [0, 3]);
@@ -5273,12 +5269,13 @@ JXG.Options = {
         /**
          * Configure arrow head at the start position for curve.
          * Recommended arrow head type is 7.
+         * For available values see {@link Line#firstArrow}.
          *
          * @name Curve#firstArrow
          * @attribute
          * @type Boolean | Object
          * @default false
-         * @see Line#firstArrow for options
+         * @see Line#firstArrow
          */
         firstArrow: false,
 
@@ -5305,10 +5302,11 @@ JXG.Options = {
         /**
          * Configure arrow head at the end position for curve.
          * Recommended arrow head type is 7.
+         * For available values see {@link Line#lastArrow}.
          *
          * @name Curve#lastArrow
          * @attribute
-         * @see Line#lastArrow for options
+         * @see Line#lastArrow
          * @type Boolean | Object
          * @default false
          */
@@ -6098,7 +6096,6 @@ JXG.Options = {
          * @name Image#cssClass
          * @attribute
          *
-         * @see Image#highlightCssClass
          * @type String
          * @default 'JXGimage'
          * @see Image#highlightCssClass
@@ -6120,7 +6117,7 @@ JXG.Options = {
          * @type String
          * @default 'JXGimageHighlight'
          * @see Image#cssClass
-         * @see Image#highlightCssClass
+         * @see Text#highlightCssClass
          * @see JXG.GeometryElement#highlightCssClass
          */
         highlightCssClass: 'JXGimageHighlight',
@@ -6923,7 +6920,7 @@ JXG.Options = {
          * @attribute
          * @see Label#offset
          * @type Boolean
-         * @see GeometryElement#ignoreForLabelAutoposition
+         * @see JXG.GeometryElement#ignoreForLabelAutoposition
          * @see Label#autoPositionMinDistance
          * @see Label#autoPositionMaxDistance
          * @see Label#autoPositionWhitelist
@@ -8124,11 +8121,12 @@ JXG.Options = {
          * If the value is 'inherit', the value of
          * {@link JXG.Board#showInfobox} is taken.
          *
+         * Values: `true | false | 'inherit'`
+         *
          * @name Point#showInfobox
          * @attribute
          * @see JXG.Board#showInfobox
          * @type Boolean|String
-         * @description true | false | 'inherit'
          * @default true
          */
         showInfobox: 'inherit',
@@ -8145,8 +8143,8 @@ JXG.Options = {
          *
          * @type String| Number
          * @default 'auto'
-         * @see JXG#autoDigits
-         * @see JXG#toFixed
+         * @see JXG.autoDigits
+         * @see JXG.toFixed
          */
         infoboxDigits: 'auto',
 
@@ -9046,8 +9044,8 @@ JXG.Options = {
          * @attribute
          * @memberOf Slider.prototype
          * @default null
-         * @see JXG.Slider#unitLabel
-         * @see JXG.Slider#postLabel
+         * @see Slider#unitLabel
+         * @see Slider#postLabel
          */
         suffixLabel: null,
 
@@ -9059,8 +9057,8 @@ JXG.Options = {
          * @attribute
          * @memberOf Slider.prototype
          * @default null
-         * @see JXG.Slider#suffixLabel
-         * @see JXG.Slider#postLabel
+         * @see Slider#suffixLabel
+         * @see Slider#postLabel
          */
         unitLabel: null,
 
@@ -9072,8 +9070,8 @@ JXG.Options = {
          * @attribute
          * @memberOf Slider.prototype
          * @default null
-         * @see JXG.Slider#suffixLabel
-         * @see JXG.Slider#unitLabel
+         * @see Slider#suffixLabel
+         * @see Slider#unitLabel
          */
         postLabel: null,
 

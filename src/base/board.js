@@ -506,10 +506,9 @@ JXG.Board = function (container, renderer, id,
     /**
      * If GEONExT constructions are displayed, then this property should be set to true.
      * At the moment there should be no difference. But this may change.
-     * This is set in {@link JXG.GeonextReader.readGeonext}.
+     *
      * @type Boolean
      * @default false
-     * @see JXG.GeonextReader.readGeonext
      */
     this.geonextCompatibilityMode = false;
 
@@ -7597,90 +7596,90 @@ JXG.extend(
         //region Event handler documentation
 
         /**
+         * Whenever {@link JXG.Board#setAttribute} is called.
          * @event
-         * @description Whenever the {@link JXG.Board#setAttribute} is called.
          * @name JXG.Board#attribute
          * @param {Event} e The browser's event object.
          */
         __evt__attribute: function (e) { },
 
         /**
+         * Whenever the user starts to touch or click the board.
          * @event
-         * @description Whenever the user starts to touch or click the board.
          * @name JXG.Board#down
          * @param {Event} e The browser's event object.
          */
         __evt__down: function (e) { },
 
         /**
+         * Whenever the user starts to click on the board.
          * @event
-         * @description Whenever the user starts to click on the board.
          * @name JXG.Board#mousedown
          * @param {Event} e The browser's event object.
          */
         __evt__mousedown: function (e) { },
 
         /**
+         * Whenever the user taps the pen on the board.
          * @event
-         * @description Whenever the user taps the pen on the board.
          * @name JXG.Board#pendown
          * @param {Event} e The browser's event object.
          */
         __evt__pendown: function (e) { },
 
         /**
-         * @event
-         * @description Whenever the user starts to click on the board with a
+         * Whenever the user starts to click on the board with a
          * device sending pointer events.
+         * @event
          * @name JXG.Board#pointerdown
          * @param {Event} e The browser's event object.
          */
         __evt__pointerdown: function (e) { },
 
         /**
+         * Whenever the user starts to touch the board.
          * @event
-         * @description Whenever the user starts to touch the board.
          * @name JXG.Board#touchstart
          * @param {Event} e The browser's event object.
          */
         __evt__touchstart: function (e) { },
 
         /**
+         * Whenever the user stops to touch or click the board.
          * @event
-         * @description Whenever the user stops to touch or click the board.
          * @name JXG.Board#up
          * @param {Event} e The browser's event object.
          */
         __evt__up: function (e) { },
 
         /**
+         * Whenever the user releases the mousebutton over the board.
          * @event
-         * @description Whenever the user releases the mousebutton over the board.
          * @name JXG.Board#mouseup
          * @param {Event} e The browser's event object.
          */
         __evt__mouseup: function (e) { },
 
         /**
-         * @event
-         * @description Whenever the user releases the mousebutton over the board with a
+         * Whenever the user releases the mousebutton over the board with a
          * device sending pointer events.
+         * @event
          * @name JXG.Board#pointerup
          * @param {Event} e The browser's event object.
          */
         __evt__pointerup: function (e) { },
 
         /**
+         * Whenever the user stops touching the board.
          * @event
-         * @description Whenever the user stops touching the board.
          * @name JXG.Board#touchend
          * @param {Event} e The browser's event object.
          */
         __evt__touchend: function (e) { },
 
         /**
+         * Whenever the user clicks on the board.
          * @event
-         * @description Whenever the user clicks on the board.
          * @name JXG.Board#click
          * @see JXG.Board#clickDelay
          * @param {Event} e The browser's event object.
@@ -7688,10 +7687,10 @@ JXG.extend(
         __evt__click: function (e) { },
 
         /**
-         * @event
-         * @description Whenever the user double clicks on the board.
+         * Whenever the user double clicks on the board.
          * This event works on desktop browser, but is undefined
          * on mobile browsers.
+         * @event
          * @name JXG.Board#dblclick
          * @see JXG.Board#clickDelay
          * @see JXG.Board#dblClickSuppressClick
@@ -7700,16 +7699,16 @@ JXG.extend(
         __evt__dblclick: function (e) { },
 
         /**
+         * Whenever the user clicks on the board with a mouse device.
          * @event
-         * @description Whenever the user clicks on the board with a mouse device.
          * @name JXG.Board#mouseclick
          * @param {Event} e The browser's event object.
          */
         __evt__mouseclick: function (e) { },
 
         /**
+         * Whenever the user double clicks on the board with a mouse device.
          * @event
-         * @description Whenever the user double clicks on the board with a mouse device.
          * @name JXG.Board#mousedblclick
          * @see JXG.Board#clickDelay
          * @param {Event} e The browser's event object.
@@ -7717,18 +7716,18 @@ JXG.extend(
         __evt__mousedblclick: function (e) { },
 
         /**
+         * Whenever the user clicks on the board with a pointer device.
          * @event
-         * @description Whenever the user clicks on the board with a pointer device.
          * @name JXG.Board#pointerclick
          * @param {Event} e The browser's event object.
          */
         __evt__pointerclick: function (e) { },
 
         /**
-         * @event
-         * @description Whenever the user double clicks on the board with a pointer device.
+         * Whenever the user double clicks on the board with a pointer device.
          * This event works on desktop browser, but is undefined
          * on mobile browsers.
+         * @event
          * @name JXG.Board#pointerdblclick
          * @see JXG.Board#clickDelay
          * @param {Event} e The browser's event object.
@@ -7736,8 +7735,8 @@ JXG.extend(
         __evt__pointerdblclick: function (e) { },
 
         /**
+         * This event is fired whenever the user is moving the finger or mouse pointer over the board.
          * @event
-         * @description This event is fired whenever the user is moving the finger or mouse pointer over the board.
          * @name JXG.Board#move
          * @param {Event} e The browser's event object.
          * @param {Number} mode The mode the board currently is in
@@ -7746,8 +7745,8 @@ JXG.extend(
         __evt__move: function (e, mode) { },
 
         /**
+         * This event is fired whenever the user is moving the mouse over the board.
          * @event
-         * @description This event is fired whenever the user is moving the mouse over the board.
          * @name JXG.Board#mousemove
          * @param {Event} e The browser's event object.
          * @param {Number} mode The mode the board currently is in
@@ -7756,8 +7755,8 @@ JXG.extend(
         __evt__mousemove: function (e, mode) { },
 
         /**
+         * This event is fired whenever the user is moving the pen over the board.
          * @event
-         * @description This event is fired whenever the user is moving the pen over the board.
          * @name JXG.Board#penmove
          * @param {Event} e The browser's event object.
          * @param {Number} mode The mode the board currently is in
@@ -7766,9 +7765,9 @@ JXG.extend(
         __evt__penmove: function (e, mode) { },
 
         /**
-         * @event
-         * @description This event is fired whenever the user is moving the mouse over the board with a
+         * This event is fired whenever the user is moving the mouse over the board with a
          * device sending pointer events.
+         * @event
          * @name JXG.Board#pointermove
          * @param {Event} e The browser's event object.
          * @param {Number} mode The mode the board currently is in
@@ -7777,8 +7776,8 @@ JXG.extend(
         __evt__pointermove: function (e, mode) { },
 
         /**
+         * This event is fired whenever the user is moving the finger over the board.
          * @event
-         * @description This event is fired whenever the user is moving the finger over the board.
          * @name JXG.Board#touchmove
          * @param {Event} e The browser's event object.
          * @param {Number} mode The mode the board currently is in
@@ -7787,9 +7786,9 @@ JXG.extend(
         __evt__touchmove: function (e, mode) { },
 
         /**
-         * @event
-         * @description This event is fired whenever the user is moving an element over the board by
+         * This event is fired whenever the user is moving an element over the board by
          * pressing arrow keys on a keyboard.
+         * @event
          * @name JXG.Board#keymove
          * @param {Event} e The browser's event object.
          * @param {Number} mode The mode the board currently is in
@@ -7798,8 +7797,8 @@ JXG.extend(
         __evt__keymove: function (e, mode) { },
 
         /**
+         * Whenever an element is highlighted this event is fired.
          * @event
-         * @description Whenever an element is highlighted this event is fired.
          * @name JXG.Board#hit
          * @param {Event} e The browser's event object.
          * @param {JXG.GeometryElement} el The hit element.
@@ -7828,8 +7827,8 @@ JXG.extend(
         __evt__hit: function (e, el, target) { },
 
         /**
+         * Whenever an element is highlighted this event is fired.
          * @event
-         * @description Whenever an element is highlighted this event is fired.
          * @name JXG.Board#mousehit
          * @see JXG.Board#hit
          * @param {Event} e The browser's event object.
@@ -7839,112 +7838,112 @@ JXG.extend(
         __evt__mousehit: function (e, el, target) { },
 
         /**
+         * This board is updated.
          * @event
-         * @description This board is updated.
          * @name JXG.Board#update
          */
         __evt__update: function () { },
 
         /**
+         * The bounding box of the board has changed.
          * @event
-         * @description The bounding box of the board has changed.
          * @name JXG.Board#boundingbox
          */
         __evt__boundingbox: function () { },
 
         /**
-         * @event
-         * @description Select a region is started during a down event or by calling
+         * Select a region is started during a down event or by calling
          * {@link JXG.Board.startSelectionMode}
+         * @event
          * @name JXG.Board#startselecting
          */
         __evt__startselecting: function () { },
 
         /**
-         * @event
-         * @description Select a region is started during a down event
+         * Select a region is started during a down event
          * from a device sending mouse events or by calling
          * {@link JXG.Board.startSelectionMode}.
+         * @event
          * @name JXG.Board#mousestartselecting
          */
         __evt__mousestartselecting: function () { },
 
         /**
-         * @event
-         * @description Select a region is started during a down event
+         * Select a region is started during a down event
          * from a device sending pointer events or by calling
          * {@link JXG.Board.startSelectionMode}.
+         * @event
          * @name JXG.Board#pointerstartselecting
          */
         __evt__pointerstartselecting: function () { },
 
         /**
-         * @event
-         * @description Select a region is started during a down event
+         * Select a region is started during a down event
          * from a device sending touch events or by calling
          * {@link JXG.Board.startSelectionMode}.
+         * @event
          * @name JXG.Board#touchstartselecting
          */
         __evt__touchstartselecting: function () { },
 
         /**
+         * Selection of a region is stopped during an up event.
          * @event
-         * @description Selection of a region is stopped during an up event.
          * @name JXG.Board#stopselecting
          */
         __evt__stopselecting: function () { },
 
         /**
-         * @event
-         * @description Selection of a region is stopped during an up event
+         * Selection of a region is stopped during an up event
          * from a device sending mouse events.
+         * @event
          * @name JXG.Board#mousestopselecting
          */
         __evt__mousestopselecting: function () { },
 
         /**
-         * @event
-         * @description Selection of a region is stopped during an up event
+         * Selection of a region is stopped during an up event
          * from a device sending pointer events.
+         * @event
          * @name JXG.Board#pointerstopselecting
          */
         __evt__pointerstopselecting: function () { },
 
         /**
-         * @event
-         * @description Selection of a region is stopped during an up event
+         * Selection of a region is stopped during an up event
          * from a device sending touch events.
+         * @event
          * @name JXG.Board#touchstopselecting
          */
         __evt__touchstopselecting: function () { },
 
         /**
+         * A move event while selecting of a region is active.
          * @event
-         * @description A move event while selecting of a region is active.
          * @name JXG.Board#moveselecting
          */
         __evt__moveselecting: function () { },
 
         /**
-         * @event
-         * @description A move event while selecting of a region is active
+         * A move event while selecting of a region is active
          * from a device sending mouse events.
+         * @event
          * @name JXG.Board#mousemoveselecting
          */
         __evt__mousemoveselecting: function () { },
 
         /**
-         * @event
-         * @description Select a region is started during a down event
+         * Select a region is started during a down event
          * from a device sending mouse events.
+         * @event
          * @name JXG.Board#pointermoveselecting
          */
         __evt__pointermoveselecting: function () { },
 
         /**
-         * @event
-         * @description Select a region is started during a down event
+         * Select a region is started during a down event
          * from a device sending touch events.
+         * @event
          * @name JXG.Board#touchmoveselecting
          */
         __evt__touchmoveselecting: function () { },

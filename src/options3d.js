@@ -1399,7 +1399,6 @@ JXG.extend(Options, {
          * @name ParametricSurface3D#polyhedron
          * @attribute
          * @default { strokewidth: 0, fillColorArray: ['white', 'black'] }
-         * @see ParametricSurface3D#style
          *
          * @example
          * var F = (x, y) => Math.cos(x * y / 4);

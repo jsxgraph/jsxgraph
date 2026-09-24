@@ -2645,139 +2645,139 @@ JXG.extend(
 
         //region Event handler documentation
         /**
+         * This event is fired whenever the user is hovering over an element.
          * @event
-         * @description This event is fired whenever the user is hovering over an element.
          * @name JXG.GeometryElement#over
          * @param {Event} e The browser's event object.
          */
         __evt__over: function (e) { },
 
         /**
+         * This event is fired whenever the user puts the mouse over an element.
          * @event
-         * @description This event is fired whenever the user puts the mouse over an element.
          * @name JXG.GeometryElement#mouseover
          * @param {Event} e The browser's event object.
          */
         __evt__mouseover: function (e) { },
 
         /**
+         * This event is fired whenever the user is leaving an element.
          * @event
-         * @description This event is fired whenever the user is leaving an element.
          * @name JXG.GeometryElement#out
          * @param {Event} e The browser's event object.
          */
         __evt__out: function (e) { },
 
         /**
+         * This event is fired whenever the user puts the mouse away from an element.
          * @event
-         * @description This event is fired whenever the user puts the mouse away from an element.
          * @name JXG.GeometryElement#mouseout
          * @param {Event} e The browser's event object.
          */
         __evt__mouseout: function (e) { },
 
         /**
+         * This event is fired whenever the user is moving over an element.
          * @event
-         * @description This event is fired whenever the user is moving over an element.
          * @name JXG.GeometryElement#move
          * @param {Event} e The browser's event object.
          */
         __evt__move: function (e) { },
 
         /**
+         * This event is fired whenever the user is moving the mouse over an element.
          * @event
-         * @description This event is fired whenever the user is moving the mouse over an element.
          * @name JXG.GeometryElement#mousemove
          * @param {Event} e The browser's event object.
          */
         __evt__mousemove: function (e) { },
 
         /**
+         * This event is fired whenever the user drags an element.
          * @event
-         * @description This event is fired whenever the user drags an element.
          * @name JXG.GeometryElement#drag
          * @param {Event} e The browser's event object.
          */
         __evt__drag: function (e) { },
 
         /**
+         * This event is fired whenever the user drags the element with a mouse.
          * @event
-         * @description This event is fired whenever the user drags the element with a mouse.
          * @name JXG.GeometryElement#mousedrag
          * @param {Event} e The browser's event object.
          */
         __evt__mousedrag: function (e) { },
 
         /**
+         * This event is fired whenever the user drags the element with a pen.
          * @event
-         * @description This event is fired whenever the user drags the element with a pen.
          * @name JXG.GeometryElement#pendrag
          * @param {Event} e The browser's event object.
          */
         __evt__pendrag: function (e) { },
 
         /**
+         * This event is fired whenever the user drags the element on a touch device.
          * @event
-         * @description This event is fired whenever the user drags the element on a touch device.
          * @name JXG.GeometryElement#touchdrag
          * @param {Event} e The browser's event object.
          */
         __evt__touchdrag: function (e) { },
 
         /**
-         * @event
-         * @description This event is fired whenever the user drags the element by pressing arrow keys
+         * This event is fired whenever the user drags the element by pressing arrow keys
          * on the keyboard.
+         * @event
          * @name JXG.GeometryElement#keydrag
          * @param {Event} e The browser's event object.
          */
         __evt__keydrag: function (e) { },
 
         /**
+         * Whenever the user starts to touch or click an element.
          * @event
-         * @description Whenever the user starts to touch or click an element.
          * @name JXG.GeometryElement#down
          * @param {Event} e The browser's event object.
          */
         __evt__down: function (e) { },
 
         /**
+         * Whenever the user starts to click an element.
          * @event
-         * @description Whenever the user starts to click an element.
          * @name JXG.GeometryElement#mousedown
          * @param {Event} e The browser's event object.
          */
         __evt__mousedown: function (e) { },
 
         /**
+         * Whenever the user taps an element with the pen.
          * @event
-         * @description Whenever the user taps an element with the pen.
          * @name JXG.GeometryElement#pendown
          * @param {Event} e The browser's event object.
          */
         __evt__pendown: function (e) { },
 
         /**
+         * Whenever the user starts to touch an element.
          * @event
-         * @description Whenever the user starts to touch an element.
          * @name JXG.GeometryElement#touchdown
          * @param {Event} e The browser's event object.
          */
         __evt__touchdown: function (e) { },
 
         /**
+         * Whenever the user clicks on an element.
          * @event
-         * @description Whenever the user clicks on an element.
          * @name JXG.Board#click
          * @param {Event} e The browser's event object.
          */
         __evt__click: function (e) { },
 
         /**
-         * @event
-         * @description Whenever the user double clicks on an element.
+         * Whenever the user double clicks on an element.
          * This event works on desktop browser, but is undefined
          * on mobile browsers.
+         * @event
          * @name JXG.Board#dblclick
          * @param {Event} e The browser's event object.
          * @see JXG.Board#clickDelay
@@ -2786,74 +2786,74 @@ JXG.extend(
         __evt__dblclick: function (e) { },
 
         /**
+         * Whenever the user clicks on an element with a mouse device.
          * @event
-         * @description Whenever the user clicks on an element with a mouse device.
          * @name JXG.Board#mouseclick
          * @param {Event} e The browser's event object.
          */
         __evt__mouseclick: function (e) { },
 
         /**
+         * Whenever the user double clicks on an element with a mouse device.
          * @event
-         * @description Whenever the user double clicks on an element with a mouse device.
          * @name JXG.Board#mousedblclick
          * @param {Event} e The browser's event object.
          */
         __evt__mousedblclick: function (e) { },
 
         /**
+         * Whenever the user clicks on an element with a pointer device.
          * @event
-         * @description Whenever the user clicks on an element with a pointer device.
          * @name JXG.Board#pointerclick
          * @param {Event} e The browser's event object.
          */
         __evt__pointerclick: function (e) { },
 
         /**
-         * @event
-         * @description Whenever the user double clicks on an element with a pointer device.
+         * Whenever the user double clicks on an element with a pointer device.
          * This event works on desktop browser, but is undefined
          * on mobile browsers.
+         * @event
          * @name JXG.Board#pointerdblclick
          * @param {Event} e The browser's event object.
          */
         __evt__pointerdblclick: function (e) { },
 
         /**
+         * Whenever the user stops to touch or click an element.
          * @event
-         * @description Whenever the user stops to touch or click an element.
          * @name JXG.GeometryElement#up
          * @param {Event} e The browser's event object.
          */
         __evt__up: function (e) { },
 
         /**
+         * Whenever the user releases the mousebutton over an element.
          * @event
-         * @description Whenever the user releases the mousebutton over an element.
          * @name JXG.GeometryElement#mouseup
          * @param {Event} e The browser's event object.
          */
         __evt__mouseup: function (e) { },
 
         /**
+         * Whenever the user lifts the pen over an element.
          * @event
-         * @description Whenever the user lifts the pen over an element.
          * @name JXG.GeometryElement#penup
          * @param {Event} e The browser's event object.
          */
         __evt__penup: function (e) { },
 
         /**
+         * Whenever the user stops touching an element.
          * @event
-         * @description Whenever the user stops touching an element.
          * @name JXG.GeometryElement#touchup
          * @param {Event} e The browser's event object.
          */
         __evt__touchup: function (e) { },
 
         /**
+         * Notify every time an attribute is changed.
          * @event
-         * @description Notify every time an attribute is changed.
          * @name JXG.GeometryElement#attribute
          * @param {Object} o A list of changed attributes and their new value.
          * @param {Object} el Reference to the element
@@ -2861,10 +2861,10 @@ JXG.extend(
         __evt__attribute: function (o, el) { },
 
         /**
-         * @event
-         * @description This is a generic event handler. It exists for every possible attribute that can be set for
+         * This is a generic event handler. It exists for every possible attribute that can be set for
          * any element, e.g. if you want to be notified everytime an element's strokecolor is changed, is
          * the event `attribute:strokecolor`.
+         * @event
          * @name JXG.GeometryElement#attribute:key
          * @param val The old value.
          * @param nval The new value

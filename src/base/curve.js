@@ -60,7 +60,6 @@ import Type from "../utils/type.js";
  * @param {Array} parents defining terms An array with the function terms or the data points of the curve.
  * @param {Object} attributes Defines the visual appearance of the curve.
  * @see JXG.Board#generateName
- * @see JXG.Board#addCurve
  */
 JXG.Curve = function (board, parents, attributes) {
     this.constructor(board, attributes, Const.OBJECT_TYPE_CURVE, Const.OBJECT_CLASS_CURVE);
@@ -3085,7 +3084,7 @@ JXG.registerElement("curveunion", JXG.createCurveUnion);
  * @augments JXG.Curve
  * @constructor
  * @type JXG.Curve
- * @see JXG.Math.Statistics#boxplot
+ * @see JXG.Math.Statistics.boxplot
  */
 /**
  * @jsxgraphsignature Boxplot
