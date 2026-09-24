@@ -52,8 +52,8 @@ import QDT from "../math/qdt.js";
 import Type from "../utils/type.js";
 
 /**
- * Curves are the common object for function graphs, parametric curves, polar curves, and data plots.
- * @class Creates a new curve object. Do not use this constructor to create a curve. Use {@link JXG.Board#create} with
+ * @class Curves are the common object for function graphs, parametric curves, polar curves, and data plots.
+ * Creates a new curve object. Do not use this constructor to create a curve. Use {@link JXG.Board#create} with
  * type {@link Curve}, or {@link Functiongraph} instead.
  * @augments JXG.GeometryElement
  * @param {String|JXG.Board} board The board the new curve is drawn on.
