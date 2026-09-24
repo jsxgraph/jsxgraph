@@ -355,7 +355,7 @@ pre {
     max-width: var(--jxg-content-max);
     margin-left: 17.5rem;
     margin-left: var(--jxg-nav-width);
-    padding: 0 2.5rem 4rem;
+    padding: 2.5rem 2.5rem 4rem;
     padding: 0 var(--jxg-gutter) 4rem;
     min-width: 0;
 }
@@ -443,13 +443,12 @@ nav {
     border-right: 1px solid var(--jxg-border);
     overflow-y: auto;
     overscroll-behavior: contain;
-    padding: .6rem .1rem 3rem 1rem;
-    /* Reserve the scrollbar track, so the entries sit in exactly the same
-       place whether the sidebar currently scrolls or not - with all groups
-       collapsed the bar disappears and the content would otherwise shift
-       sideways. Only on the right: both-edges would add a second, empty
-       track to the left padding. */
-    scrollbar-gutter: stable;
+    padding: .6rem .6rem 3rem;
+    /* Reserve the scrollbar track on both sides, so the entries sit in exactly
+       the same place whether the sidebar currently scrolls or not - with all
+       groups collapsed the bar disappears and the content would otherwise
+       shift sideways. */
+    scrollbar-gutter: stable both-edges;
     scrollbar-width: thin;
     scrollbar-color: #b6c6d4 transparent;
     scrollbar-color: var(--jxg-border-strong) transparent;
@@ -468,11 +467,19 @@ nav::before {
     position: sticky;
     top: 0;
     z-index: 3;
-    /* Height and the gap below always add up to 3.6rem, which keeps the top
-       edge of the search field at 4.6rem and the rule below the page title on
-       the same line. */
-    height: 3.2rem;
-    margin: 0 0 .8rem;
+    /* Height and the gap below always add up to 4rem. Together with the 0.6rem
+       padding of the nav that puts the top edge of the search field at 4.6rem,
+       which is where the rule below the page title sits. Change the height and
+       the gap has to compensate - and the sticky top of the search field below
+       follows the height alone. */
+    height: 2.6rem;
+    /* Pulled up against the .6rem padding of the nav so the wordmark lines up
+       with the page title on the right. The image file carries some empty space
+       of its own at the top, which is why the value is negative rather than the
+       difference to the title padding. The bottom value compensates, so padding
+       + margins + height still add up to the 4.6rem where the search field
+       starts. */
+    margin: .3rem 0 1.1rem;
     background-color: #f3f6f8;
     background-color: var(--jxg-bg-subtle);
     box-shadow: 0 -1rem 0 #f3f6f8;
@@ -485,16 +492,19 @@ nav::before {
             url('../images/jsxgraph-api-logo_blue-text-solid-250.png') 1x,
             url('../images/jsxgraph-api-logo_blue-text-solid-500.png') 2x);
     background-repeat: no-repeat;
-    background-position: left center;
-    /* The box keeps its 3.2rem, only the image shrinks. Centred in the box it
-       lands at 2.2rem from the top - the same line as the centre of the page
-       title text (1.35rem padding + half of its 1.7rem line). */
-    background-size: auto 2.4rem;
+    /* Anchored at the top, not centred: contain scales the image by its width,
+       so it is usually shorter than the box. Centring would split the leftover
+       space above and below, and the visible gap at the top would change with
+       every adjustment to the height or the padding. Anchored at the top it is
+       always exactly the padding of the nav; the leftover falls below, where
+       the margin sits anyway. */
+    background-position: left top;
+    background-size: contain;
 }
 
 nav #nav-search {
     position: sticky;
-    top: 3.8rem;
+    top: 3.5rem;
     z-index: 2;
     width: 100%;
     height: auto;
@@ -984,8 +994,8 @@ summary.signature::before {
     color: var(--jxg-text-muted);
     font-family: 'Fira Sans', 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
     font-family: var(--jxg-font-sans);
-    font-size: 1rem;
-    font-size: var(--jxg-fs-base);
+    font-size: 0.8rem;
+    font-size: var(--jxg-fs-tiny);
     font-weight: 600;
     line-height: 1.6;
     letter-spacing: .02em;
@@ -1105,16 +1115,6 @@ summary.signature::before {
     background-color: transparent;
 }
 
-div#index-container .container-article-other {
-    max-width: 100%;
-    overflow: hidden;
-    column-width: 13rem;
-    column-gap: 2rem;
-    column-rule: 1px solid #d7e0e8;
-    column-rule: 1px solid var(--jxg-border);
-    margin-bottom: 1.75rem;
-}
-
 /* The type line of an exception needs less room above it than a free-standing
    type annotation, but it still has to keep its distance to whatever section
    follows - "Extends" and "See" come right after it on many pages. Where it
@@ -1131,6 +1131,62 @@ div#index-container .container-article-other {
     border-radius: var(--jxg-radius);
     box-shadow: 0 1px 2px rgba(16, 66, 124, 0.08);
     box-shadow: var(--jxg-shadow-sm);
+}
+
+/* --------------------------------------------------------------------------
+   9d. Home page (readme)
+
+   The start page has no h1.page-title - its content comes straight from the
+   markdown file. These rules give its headings the same look as on every
+   other page: the h1 behaves like the page title, the h2 like a section
+   header.
+   -------------------------------------------------------------------------- */
+
+/* docdash emits an empty package section above the readme; its heading would
+   push the sticky title out of place */
+section.package {
+    display: none;
+}
+
+.readme h1 {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+    z-index: 4;
+    font-size: 1.55rem;
+    font-weight: 400;
+    margin: 0 0 .8rem;
+    padding: 1.35rem 0 1.15rem 0;
+    line-height: 1.1;
+    background-color: #ffffff;
+    background-color: var(--jxg-bg);
+    border-bottom: 1px solid #d7e0e8;
+    border-bottom: 1px solid var(--jxg-border);
+}
+
+.readme h2 {
+    font-family: 'Fira Sans', 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-family: var(--jxg-font-head);
+    font-size: 1.05rem;
+    font-weight: 600;
+    line-height: 1.4;
+    margin: 1.5rem 0 .75rem;
+    padding: .45rem .85rem;
+    border: 1px solid #d7e0e8;
+    border: 1px solid var(--jxg-border);
+    border-radius: 0.6rem;
+    border-radius: var(--jxg-radius);
+    background-color: #f3f6f8;
+    background-color: var(--jxg-bg-subtle);
+}
+
+/* the section bars already separate the parts */
+.readme hr {
+    display: none;
+}
+
+.readme article > :last-child {
+    margin-bottom: 0;
 }
 
 /* --------------------------------------------------------------------------
@@ -1550,7 +1606,7 @@ th {
     padding-bottom: .4rem;
 }
 
-thead th {
+thead tr, thead tr {
     background-color: #f3f6f8;
     background-color: var(--jxg-bg-subtle);
     color: #5d6b7a;
@@ -1592,9 +1648,6 @@ thead th {
 .props td.description > p:last-child {
     margin-bottom: 0;
     padding-bottom: 0;
-}
-
-.params td.description {
     font-family: 'Fira Sans', 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
     font-family: var(--jxg-font-sans);
 }
@@ -1766,7 +1819,7 @@ span.param-type, .params td .param-type, .param-type dd {
     background: rgba(10, 44, 84, .45);
     -webkit-backdrop-filter: blur(2px);
     backdrop-filter: blur(2px);
-    z-index: 5;
+    z-index: 3;
 }
 
 /* search mode of the navigation */
@@ -1988,7 +2041,6 @@ summary:hover::before {
     nav {
         background: #f3f6f8;
         background: var(--jxg-bg-subtle);
-        width: 20rem;
         width: min(20rem, 85vw);
         height: 100%;
         position: fixed;
@@ -1996,7 +2048,7 @@ summary:hover::before {
         right: auto;
         bottom: 0;
         left: -100%;
-        z-index: 6;
+        z-index: 5;
         padding: 1rem;
         transition: left .25s ease;
     }
@@ -2006,7 +2058,7 @@ summary:hover::before {
         position: fixed;
         top: 1rem;
         right: 1rem;
-        z-index: 7;
+        z-index: 6;
     }
 
     #main {
@@ -2155,7 +2207,7 @@ summary:hover::before {
    white background, because the library draws axes and labels in dark
    colours.
    -------------------------------------------------------------------------- */
-@media screen and (prefers-color-scheme: dark) {
+@media (prefers-color-scheme: dark) {
     :root {
         --jxg-primary:        #8fbdea;
         --jxg-primary-dark:   #bcd9f4;
