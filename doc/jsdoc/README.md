@@ -673,13 +673,13 @@ function highlightElement(el, id, cl) {
 
 ---
 
-##### Who it is for
+##### Who this documentation is for
 
 * *Building constructions* — which parameters exist, which attributes change
   the behaviour → *Elements*
 * *Extending JSXGraph* — internal interfaces, private members included
   → *Classes*, *Namespaces*
-* *Getting started* — tutorials, first steps → *Tutorials* (more information <a href="https://jsxgraph.org/home/start/gettingstarted/" target="_blank" rel="noopener">jsxgraph.org</a>)
+* *Getting started* — tutorials, first steps → *Tutorials*
 
 ---
 
@@ -767,7 +767,19 @@ var euler = board.create('line', [i1, i2], {
 
 ---
 
-##### Where to go next
+##### How to navigate this documentation
+
+* *Search* — filters all entries as you type
+* *Elements* — grouped by topic: 3D, Circle, Control, Curve, Line, Point,
+  Polygon, Text, Transformation …
+* *Classes* — `JXG.Board`, `JXG.GeometryElement`, `JXG.Point` …
+* *Namespaces* — `JXG`, `JXG.Math`, `JXG.Options` …
+* *Modules* — the source files
+* *Tutorials* — how to read this documentation, first steps
+
+---
+
+##### Beyond this documentation
 
 * <a href="https://github.com/jsxgraph/jsxgraph" target="_blank" rel="noopener">GitHub</a> — source code, releases and
   issue tracker
@@ -780,18 +792,7 @@ var euler = board.create('line', [i1, i2], {
 * <a href="https://forum.jsxgraph.org/" target="_blank" rel="noopener">Forum</a> — questions, answers and
   announcements
 
----
 
-
-##### The sidebar
-
-* *Search* — filters all entries as you type
-* *Elements* — grouped by topic: 3D, Circle, Control, Curve, Line, Point,
-  Polygon, Text, Transformation …
-* *Classes* — `JXG.Board`, `JXG.GeometryElement`, `JXG.Point` …
-* *Namespaces* — `JXG`, `JXG.Math`, `JXG.Options` …
-* *Modules* — the source files
-* *Tutorials* — how to read this documentation, first steps
 
 <div id="home-surface" class="jxgbox" style="width: 300px; height: 300px;"></div>
 
