@@ -95,14 +95,13 @@ Mat.ProbFuncs = {
      *
      * Exponential of squared argument
      *
+     * ```
      * SYNOPSIS:
      *
      * double x, y, expx2();
      * int sign;
      *
      * y = expx2( x, sign );
-     *
-     *
      *
      * DESCRIPTION:
      *
@@ -118,11 +117,13 @@ Mat.ProbFuncs = {
      *                      Relative error:
      * arithmetic    domain     # trials      peak         rms
      *   IEEE      -26.6, 26.6    10^7       3.9e-16     8.9e-17
+     * ```
      *
      * @private
      * @param  {Number} x
      * @param  {Number} sign (int)
      * @returns {Number}
+     * @memberof JXG.Math.ProbFuncs
      */
     expx2: function (x, sign) {
         // double x;
@@ -160,8 +161,9 @@ Mat.ProbFuncs = {
 
     /**
      *
-     *	Evaluate polynomial
+     * Evaluate polynomial
      *
+     * ```
      * SYNOPSIS:
      *
      * int N;
@@ -194,12 +196,14 @@ Mat.ProbFuncs = {
      * the functions in the library.  Depending on available
      * equipment features, the user may wish to rewrite the
      * program in microcode or assembly language.
+     * ```
      *
      * @private
      * @param  {Number} x
      * @param  {Number} coef
      * @param  {Number} N
      * @returns {Number}
+     * @memberof JXG.Math.ProbFuncs
      */
     polevl: function (x, coef, N) {
         var ans, i;
@@ -225,6 +229,7 @@ Mat.ProbFuncs = {
      * @param  {Number} coef
      * @param  {Number} N
      * @returns {Number}
+     * @memberof JXG.Math.ProbFuncs
      */
     p1evl: function (x, coef, N) {
         var ans, i;
@@ -310,6 +315,7 @@ Mat.ProbFuncs = {
 
     /**
      * @private
+     * @memberof JXG.Math.ProbFuncs
      * @param  {Number} a
      * @returns {Number}
      */
@@ -367,6 +373,7 @@ Mat.ProbFuncs = {
      * erfc underflow    x > 9.231948545 (DEC)       0.0
      * ```
      *
+     * @memberof JXG.Math.ProbFuncs
      * @param  {Number} a
      * @returns {Number}
      */
@@ -422,6 +429,7 @@ Mat.ProbFuncs = {
      * @private
      * @param {Number} x
      * @returns {Number}
+     * @memberof JXG.Math.ProbFuncs
      */
     erfce: function (x) {
         var p, q;
@@ -474,6 +482,7 @@ Mat.ProbFuncs = {
      *
      * @param  {Number} x
      * @returns {Number}
+     * @memberof JXG.Math.ProbFuncs
      */
     erf: function (x) {
         var y, z;
@@ -573,6 +582,7 @@ Mat.ProbFuncs = {
      *
      * @param  {Number} y0
      * @returns {Number}
+     * @memberof JXG.Math.ProbFuncs
      */
     ndtri: function (y0) {
         var x, y, z, y2, x0, x1, code;
@@ -624,6 +634,7 @@ Mat.ProbFuncs = {
      *
      * @param  {Number} x
      * @returns {Number}
+     * @memberof JXG.Math.ProbFuncs
      */
     erfi: function (x) {
         return this.ndtri((x + 1) * 0.5) * this.SQRTH;
