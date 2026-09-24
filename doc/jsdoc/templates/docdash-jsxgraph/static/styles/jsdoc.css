@@ -2209,28 +2209,28 @@ summary:hover::before {
    -------------------------------------------------------------------------- */
 @media (prefers-color-scheme: dark) {
     :root {
-        --jxg-primary:        #8fbdea;
-        --jxg-primary-dark:   #bcd9f4;
-        --jxg-primary-light:  #aed0f2;
+        --jxg-primary:        #79b8ff;
+        --jxg-primary-dark:   #b8d8ff;
+        --jxg-primary-light:  #9ccbff;
         --jxg-secondary:      #6ec3e2;
-        --jxg-accent:         #2f5f85;
-        --jxg-accent-soft:    #17334c;
+        --jxg-accent:         #3d7099;
+        --jxg-accent-soft:    #1b3b55;
 
         --jxg-bg:             #0f1720;
-        --jxg-bg-subtle:      #17212c;
-        --jxg-bg-inline-code: #1c2734;
-        --jxg-code-bg:        #141d27;
+        --jxg-bg-subtle:      #1a2531;
+        --jxg-bg-inline-code: #1f2c3a;
+        --jxg-code-bg:        #151f2a;
         --jxg-code-fg:        #d4dee8;
-        --jxg-code-gutter:    #273746;
+        --jxg-code-gutter:    #2e4053;
 
         --jxg-text:           #dce5ef;
-        --jxg-text-muted:     #94a4b5;
+        --jxg-text-muted:     #9aabbd;
         --jxg-text-invert:    #0f1720;
         --jxg-param:          #e3a874;
         --jxg-element:        #86d2a8;
 
-        --jxg-border:         #2b3a48;
-        --jxg-border-strong:  #3d4f60;
+        --jxg-border:         #3a4b5d;
+        --jxg-border-strong:  #586b80;
         --jxg-danger:         #ef9189;
 
         --jxg-shadow-sm:      0 1px 2px rgba(0, 0, 0, .40);
