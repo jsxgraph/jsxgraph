@@ -74,7 +74,7 @@ JXG.View3D = function (board, parents, attributes) {
 
     /**
      * An array containing all the elements in the view that are sorted due to their depth order.
-     * @Type Object
+     * @type Object
      * @private
      */
     this.depthOrdered = {};

@@ -50,7 +50,7 @@ import Type from "../utils/type.js";
  * @pseudo
  * @name Ellipse
  * @elementclass curve
- * @augments JXG.Conic
+ * @augments JXG.Curve
  * @constructor
  * @type JXG.Curve
  * @see Conic
@@ -353,7 +353,7 @@ JXG.createEllipse = function (board, parents, attributes) {
  * @pseudo
  * @name Hyperbola
  * @elementclass curve
- * @augments JXG.Conic
+ * @augments JXG.Curve
  * @constructor
  * @type JXG.Curve
  * @see Conic
@@ -596,7 +596,7 @@ JXG.createHyperbola = function (board, parents, attributes) {
  * @pseudo
  * @name Parabola
  * @elementclass curve
- * @augments JXG.Conic
+ * @augments JXG.Curve
  * @constructor
  * @type JXG.Curve
  * @see Conic
@@ -836,7 +836,7 @@ JXG.createParabola = function (board, parents, attributes) {
  * @elementclass curve
  * @augments JXG.Curve
  * @constructor
- * @type JXG.Conic
+ * @type JXG.Curve
  * @see Ellipse
  * @see Hyperbola
  * @see Parabola

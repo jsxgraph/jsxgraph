@@ -1318,7 +1318,6 @@ JXG.extend(
          * This function calculates where the origin is located (@link Board#getPointLoc).
          * Optional a `margin` to the inner of the board is respected.<br>
          *
-         * @name Board#getLocationOrigin
          * @param {Array|Number} [margin] Optional margin for the inner of the board: `[top, right, bottom, left]`. A single number `m` is interpreted as `[m, m, m, m]`.
          * @returns {Array} [u,v] which shows where the origin is located (@link Board#getPointLoc).
          */
@@ -4653,9 +4652,9 @@ JXG.extend(
             attr.id = this.id + '_infobox';
 
             /**
-             * Infobox close to points in which the points' coordinates are displayed.
-             * This is simply a JXG.Text element. Access through board.infobox.
-             * Uses CSS class .JXGinfobox.
+             * @class Infobox close to points in which the points' coordinates are displayed.
+             * This is simply a JXG.Text element. Access through `board.infobox`.
+             * Uses CSS class `.JXGinfobox` from `jsxgraph.css`.
              *
              * @name JXG.Board.infobox
              * @type JXG.Text
