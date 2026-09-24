@@ -184,7 +184,7 @@ JXG.extend(
         /**
          * Sets ids of elements to the array this.parents. This is a copy
          * of {@link Element.setParents}
-         * First, this.parents is cleared. See {@link Group#addParents}.
+         * First, this.parents is cleared. See {@link JXG.Group#addParents}.
          * @param {Array} parents Array of elements or ids of elements.
          * Alternatively, one can give a list of objects as parameters.
          * @returns {JXG.Object} reference to the object itself.
@@ -584,7 +584,7 @@ JXG.extend(
 
         /**
          * Sets the rotation points of the group. Dragging at one of these points results into a rotation of the whole group around
-         * the rotation center of the group {@see Group#setRotationCenter}.
+         * the rotation center of the group {@link Group#setRotationCenter}.
          * @param {Array|Point} objects Array of {@link Point} or arbitrary number of {@link Point} elements.
          * @returns {Group} returns this group
          */
@@ -594,7 +594,7 @@ JXG.extend(
 
         /**
          * Adds a point to the set of rotation points of the group. Dragging at one of these points results into a rotation of the whole group around
-         * the rotation center of the group {@see Group#setRotationCenter}.
+         * the rotation center of the group {@link Group#setRotationCenter}.
          * @param {Point} point {@link Point} element.
          * @returns {Group} returns this group
          */
@@ -700,7 +700,7 @@ JXG.extend(
         },
 
         /**
-         * Generic method for {@link Group#setTranslationPoints} and {@link Group#setRotationPoints}
+         * Generic method for {@link JXG.Group#setTranslationPoints} and {@link JXG.Group#setRotationPoints}
          * @private
          */
         _setActionPoints: function (action, objects) {
@@ -721,7 +721,7 @@ JXG.extend(
         },
 
         /**
-         * Generic method for {@link Group#addTranslationPoint} and {@link Group#addRotationPoint}
+         * Generic method for {@link JXG.Group#addTranslationPoint} and {@link JXG.Group#addRotationPoint}
          * @private
          */
         _addActionPoint: function (action, point) {
@@ -731,7 +731,7 @@ JXG.extend(
         },
 
         /**
-         * Generic method for {@link Group#removeTranslationPoint} and {@link Group#removeRotationPoint}
+         * Generic method for {@link JXG.Group#removeTranslationPoint} and {@link JXG.Group#removeRotationPoint}
          * @private
          */
         _removeActionPoint: function (action, point) {

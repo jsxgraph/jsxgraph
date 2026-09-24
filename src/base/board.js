@@ -427,7 +427,6 @@ JXG.Board = function (container, renderer, id,
 
     /**
      * A string containing the XML text of the construction.
-     * This is set in {@link JXG.FileReader.parseString}.
      * Only useful if a construction is read from a GEONExT-, Intergeo-, Geogebra-, or Cinderella-File.
      * @type String
      */

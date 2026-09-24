@@ -92,7 +92,7 @@ JXG.Curve = function (board, parents, attributes) {
 
     /**
      * Array of ticks storing all the ticks on this curve. Do not set this field directly and use
-     * {@link JXG.Curve#addTicks} and {@link JXG.Curve#removeTicks} to add and remove ticks to and
+     * {@link JXG.GeometryElement#addTicks} and {@link JXG.GeometryElement#removeTicks} to add and remove ticks to and
      * from the curve.
      * @type Array
      * @see JXG.Ticks

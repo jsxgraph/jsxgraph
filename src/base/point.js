@@ -138,7 +138,7 @@ JXG.extend(
         },
 
         /**
-         * Applies the transformations of the element to {@link JXG.Point#baseElement}.
+         * Applies the transformations of the element to {@link JXG.GeometryElement#baseElement}.
          * Point transformations are relative to a base element.
          * @param {Boolean} fromParent True if the drag comes from a child element. This is the case if a line
          *    through two points is dragged. Otherwise, the element is the drag element and we apply the

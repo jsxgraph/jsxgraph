@@ -406,7 +406,7 @@ JXG.extend(
         },
 
         /**
-         * Updates this circle's {@link JXG.Circle#quadraticform}.
+         * Updates this circle's {@link JXG.GeometryElement#quadraticform}.
          * @private
          */
         updateQuadraticform: function () {

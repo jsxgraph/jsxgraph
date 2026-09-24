@@ -85,7 +85,7 @@ JXG.Line = function (board, p1, p2, attributes) {
 
     /**
      * Array of ticks storing all the ticks on this line. Do not set this field directly and use
-     * {@link JXG.Line#addTicks} and {@link JXG.Line#removeTicks} to add and remove ticks to and from the line.
+     * {@link JXG.GeometryElement#addTicks} and {@link JXG.GeometryElement#removeTicks} to add and remove ticks to and from the line.
      * @type Array
      * @see JXG.Ticks
      */

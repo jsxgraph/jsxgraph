@@ -114,7 +114,7 @@ JXG.CoordsElement = function (coordinates, isLabel) {
     /**
      * When used as a glider this member stores the object, where to glide on.
      * To set the object to glide on use the method
-     * {@link JXG.Point#makeGlider} and DO NOT set this property directly
+     * {@link JXG.CoordsElement#makeGlider} and DO NOT set this property directly
      * as it will break the dependency tree.
      * @type JXG.GeometryElement
      */
@@ -123,7 +123,7 @@ JXG.CoordsElement = function (coordinates, isLabel) {
     /**
      * List of elements the element is bound to, i.e. the element glides on.
      * Only the last entry is active.
-     * Use {@link JXG.Point#popSlideObject} to remove the currently active slideObject.
+     * Use {@link JXG.CoordsElement#popSlideObject} to remove the currently active slideObject.
      */
     this.slideObjects = [];
 
@@ -1281,7 +1281,7 @@ JXG.extend(
 
         /**
          * Sets the position of a glider relative to the defining elements
-         * of the {@link JXG.Point#slideObject}.
+         * of the {@link JXG.CoordsElement#slideObject}.
          * @param {Number} x
          * @returns {JXG.Point} Reference to the point element.
          */
