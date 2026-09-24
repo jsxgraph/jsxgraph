@@ -441,8 +441,8 @@ JXG.extend(
 
 /**
  * @class A 3D parametric surface visualizes a map (u, v) &rarr; [X(u, v), Y(u, v), Z(u, v)].
- * @description A 3D parametric surface is defined by a function
- * \\[F: {\mathbb R}^2 \to {\mathbb R}^3<.\\]
+ * It is defined by a function
+ * \\[F: {\mathbb R}^2 \to {\mathbb R}^3.\\]
  *
  * @pseudo
  * @name ParametricSurface3D

@@ -45,7 +45,9 @@
  */
 
 /**
- * JXG is the top object of JSXGraph and defines the namespace
+ * JXG is the top object of JSXGraph and defines the namespace of all classes.
+ *
+ * See {@link JXG.board} and {@see JXG.appBox}.
  *
  * @name JXG
  * @exports jxg as JXG

@@ -1280,9 +1280,9 @@ JXG.createPolygon = function (board, parents, attributes) {
 /**
  * @class A regular polygon is a polygon that is
  * direct equiangular (all angles are equal in measure) and equilateral (all sides have the same length).
- * It needs two points which define the base line and the number of vertices.
+ * It needs two points which define the base line and the number of vertices, or a set of points.
+ *
  * @pseudo
- * @description Constructs a regular polygon. It needs two points which define the base line and the number of vertices, or a set of points.
  * @constructor
  * @name RegularPolygon
  * @elementclass polygon

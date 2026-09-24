@@ -535,9 +535,9 @@ JXG.createPoint = function (board, parents, attributes) {
 };
 
 /**
- * @class A glider is a point bound to a line, circle or curve or even another point.
+ * @class A glider is a point bound to a line, circle, curve, turtle, or even another point.
+ *
  * @pseudo
- * @description A glider is a point which lives on another geometric element like a line, circle, curve, turtle.
  * @name Glider
  * @elementclass point
  * @augments JXG.Point
@@ -740,12 +740,12 @@ JXG.createIntersectionPoint = function (board, parents, attributes) {
 
 /**
  * @class Given a set of intersection points, this is another ('other') intersection point,
- * @pseudo
- * @description If two elements of type curve, circle or line intersect in more than one point, with this element it is possible
- * to construct the "other" intersection. This is a an intersection which is different from a supplied point or different from any
+ * If two elements of type curve, circle or line intersect in more than one point, with this element it is possible
+ * to construct one of the "other" intersections. This is a an intersection which is different from a supplied point or different from any
  * point in an array of supplied points. This might be helpful in situtations where one intersection point is already part of the construction
  * or in situtation where the order of the intersection points changes while interacting with the construction.
  *
+ * @pseudo
  * @name OtherIntersection
  * @elementclass point
  * @augments JXG.Point
@@ -926,11 +926,12 @@ JXG.createOtherIntersectionPoint = function (board, parents, attributes) {
 
 /**
  * @class This element is used to provide a constructor for the pole point of a line with respect to a conic or a circle.
- * @pseudo
- * @description The pole point is the unique reciprocal relationship of a line with respect to a conic.
+ * The pole point is the unique reciprocal relationship of a line with respect to a conic.
  * The lines tangent to the intersections of a conic and a line intersect at the pole point of that line with respect to that conic.
  * A line tangent to a conic has the pole point of that line with respect to that conic as the tangent point.
  * See {@link https://en.wikipedia.org/wiki/Pole_and_polar} for more information on pole and polar.
+ *
+ * @pseudo
  * @name PolePoint
  * @elementclass point
  * @augments JXG.Point

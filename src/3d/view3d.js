@@ -51,9 +51,9 @@ import GeometryElement from "../base/element.js";
 import Composition from "../base/composition.js";
 
 /**
- * 3D view inside a JXGraph board.
+ * @class 3D view inside a JXGraph board.
  *
- * @class Creates a new 3D view. Do not use this constructor to create a 3D view. Use {@link JXG.Board#create} with
+ * Creates a new 3D view. Do not use this constructor to create a 3D view. Use {@link JXG.Board#create} with
  * type {@link View3D} instead.
  *
  * @augments JXG.GeometryElement
@@ -2311,8 +2311,7 @@ JXG.extend(
 
 /**
  * @class A View3D element provides the container and the methods to create and display 3D elements.
- * @description  A View3D element provides the container and the methods to create and display 3D elements.
- * It is contained in a JSXGraph board.
+ *It is contained in a JSXGraph board.
  *
  * It is advisable to disable panning of the board by setting the board attribute "pan":
  * ```

@@ -1722,7 +1722,6 @@ JXG.registerElement("text", JXG.createText);
  *
  * However, the element label has some specific attributes which can be set by the user.
  *
- * @description
  * Labels for points are positioned with the attributes {@link Text#anchorX}, {@link Text#anchorX} and {@link Label#offset}.
  *
  * Labels for lines, segments, curves and circles can be controlled additionally by the attributes {@link Label#position} and

@@ -1513,7 +1513,8 @@ JXG.extend(
 
 /**
  * @class  Curves can be defined by mappings or by discrete data sets.
- * In general, a curve is a mapping from R to R^2, where t maps to (x(t),y(t)). The graph is drawn for t in the interval [a,b].
+ * In general, a curve is a mapping from \\( {\mathbb R} \to {\mathbb R}^2, \; t \mapsto (x(t), y(t))\\).
+ * The graph is drawn for `t` in the interval `[a,b]`.
  *
  * The following types of curves can be plotted:
  *
@@ -1526,8 +1527,7 @@ JXG.extend(
  * @elementclass curve
  * @augments JXG.Curve
  * @constructor
- * @type Object
- * @description JXG.Curve
+ * @type JXG.Curve
  * @see JXG.Curve
  */
 /**
@@ -2702,8 +2702,7 @@ JXG.registerElement("tracecurve", JXG.createTracecurve);
  * @elementclass curve
  * @augments JXG.Curve
  * @constructor
- * @type Curve
- * @description JXG.Curve
+ * @type JXG.Curve
  */
 /**
  * @jsxgraphsignature Stepfunction

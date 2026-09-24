@@ -2499,8 +2499,9 @@ JXG.createTangent = function (board, parents, attributes) {
 
 /**
  * @class A normal is the line perpendicular to a line or to a tangent of a circle or curve.
+ * A normal is a line through a given point on an element of type line, circle, curve, or turtle and orthogonal to that object.
+ *
  * @pseudo
- * @description A normal is a line through a given point on an element of type line, circle, curve, or turtle and orthogonal to that object.
  * @constructor
  * @name Normal
  * @elementclass line
@@ -3037,13 +3038,13 @@ JXG.createRadicalAxis = function (board, parents, attributes) {
 
 /**
  * @class The polar line of a point with respect to a conic or a circle.
- * @pseudo
- * @description The polar line is the unique reciprocal relationship of a point with respect to a conic.
+ * The polar line is the unique reciprocal relationship of a point with respect to a conic.
  * The lines through the intersections of a conic and the polar line of a point
  * with respect to that conic and through that point are tangent to the conic.
  * A point on a conic has the polar line of that point with respect to that
  * conic as the tangent line to that conic at that point.
  * See {@link https://en.wikipedia.org/wiki/Pole_and_polar} for more information on pole and polar.
+ * @pseudo
  * @name PolarLine
  * @elementclass line
  * @constructor
@@ -3158,14 +3159,14 @@ JXG.createPolarLine = function (board, parents, attributes) {
 /**
  *
  * @class One of the two tangent lines to a conic or a circle through an external point.
- * @pseudo
- * @description Construct the tangent line through a point to a conic or a circle. There will be either two, one or no
+ * Construct the tangent line through a point to a conic or a circle. There will be either two, one or no
  * such tangent, depending if the point is outside of the conic, on the conic, or inside of the conic.
  * Similar to the intersection of a line with a circle, the specific tangent can be chosen with a third (optional) parameter
  * `number`.
  *
  * Attention: from a technical point of view, the point from which the tangent to the conic/circle is constructed is not an element of
  * the tangent line.
+ * @pseudo
  * @name TangentTo
  * @elementclass line
  * @constructor
