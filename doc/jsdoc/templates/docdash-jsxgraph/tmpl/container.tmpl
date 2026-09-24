@@ -103,8 +103,6 @@
                 <?js } ?>
             </div>
 
-            <!--<h4 class="subsection-title">Attributes details</h4>-->
-
             <?js attributesOwn.forEach(function(p) { ?>
                 <?js= self.partial('members.tmpl', p) ?>
             <?js }); ?>
@@ -153,8 +151,6 @@
         <?js } ?>
         </div>
 
-        <!--<h4 class="subsection-title">Details:</h4>-->
-
         <?js membersOwn.forEach(function(p) { ?>
             <?js= self.partial('members.tmpl', p) ?>
         <?js }); ?>
@@ -194,8 +190,6 @@
         <?js } ?>
         </div>
 
-        <!--<h4 class="subsection-title">Details:</h4>-->
-
         <?js methodsOwn.forEach(function(m) { ?>
             <?js= self.partial('method.tmpl', m) ?>
         <?js }); ?>
@@ -234,8 +228,6 @@
             <p class="columntext no-items">none</p>
         <?js } ?>
         </div>
-
-        <!--<h4 class="subsection-title">Details:</h4>-->
 
         <?js eventsOwn.forEach(function(e) { ?>
             <?js= self.partial('method.tmpl', e) ?>
@@ -319,14 +311,6 @@
 
         <?js= self.partial('augments.tmpl', doc) ?>
     <?js } ?>
-<!--
-    <?js if (doc.see && doc.see.length) {?>
-        <h3 class="subsection-title">See</h3>
-        <ul><?js doc.see.forEach(function(s) { ?>
-            <li><?js= self.linkto(s) ?></li>
-        <?js }); ?></ul>
-    <?js } ?>
--->
 
     <?js if (doc.requires && doc.requires.length) { ?>
         <h3 class="subsection-title">Requires</h3>
