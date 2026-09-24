@@ -1,6 +1,3 @@
 - Create a board with 
   - `JXG.board(BOARDID, attributes)`, see {@link JXG.board} 
   - `JXG.appBox(BOARDID, attributes)`, see {@link JXG.appBox}
-
-  
-  

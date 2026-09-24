@@ -18,7 +18,7 @@ var self = this;
           })
           .map(function (p) {
             var attribs = [],
-                out = self.htmlsafe(p.name);
+                out = p.name;  //self.htmlsafe(p.name);
 
             if (p.variable) { out = '...' + out; }
             if (p.optional) { attribs.push('opt'); }
