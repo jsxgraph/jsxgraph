@@ -444,11 +444,12 @@ nav {
     overflow-y: auto;
     overscroll-behavior: contain;
     padding: .6rem .1rem 3rem 1rem;
-    /* Reserve the scrollbar track on both sides, so the entries sit in exactly
-       the same place whether the sidebar currently scrolls or not - with all
-       groups collapsed the bar disappears and the content would otherwise
-       shift sideways. */
-    scrollbar-gutter: stable both-edges;
+    /* Reserve the scrollbar track, so the entries sit in exactly the same
+       place whether the sidebar currently scrolls or not - with all groups
+       collapsed the bar disappears and the content would otherwise shift
+       sideways. Only on the right: both-edges would add a second, empty
+       track to the left padding. */
+    scrollbar-gutter: stable;
     scrollbar-width: thin;
     scrollbar-color: #b6c6d4 transparent;
     scrollbar-color: var(--jxg-border-strong) transparent;
@@ -485,7 +486,10 @@ nav::before {
             url('../images/jsxgraph-api-logo_blue-text-solid-500.png') 2x);
     background-repeat: no-repeat;
     background-position: left center;
-    background-size: contain;
+    /* The box keeps its 3.2rem, only the image shrinks. Centred in the box it
+       lands at 2.2rem from the top - the same line as the centre of the page
+       title text (1.35rem padding + half of its 1.7rem line). */
+    background-size: auto 2.4rem;
 }
 
 nav #nav-search {
