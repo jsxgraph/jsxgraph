@@ -20,7 +20,7 @@ var self = this;
       }
     ?><?js= (data.signature || '') ?></h4>
 
-    <?js if (data.summary) { ?>
+    <?js if (false && data.summary) { ?>
         <p class="summary usertext"><?js= summary
             .trim()
             .replace(/^<p>/, "")
@@ -29,7 +29,7 @@ var self = this;
 
 <?js } ?>
 
-<?js= this.partial('details.tmpl', data) ?>
+<?js= this.partial('details_wo_desc.tmpl', data) ?>
 
 <?js if (data.augments && data.alias && data.alias.indexOf('module:') === 0) { ?>
     <h5 class="h5-extends">Extends:</h5>

@@ -23,7 +23,7 @@
 <header class='container-section-header'>
     <?js if (!doc.longname || doc.kind !== 'module') { ?>
         <h2><?js if (doc.kind === 'namespace') {
-            /* print(doc.name); */ ?>
+            ?>
             <span class='container-main-type'>Namespace</span>
         <?js } else { ?>
             <?js if (doc.isPseudo) { print("<span class='container-main-type'>Element</span> "); }  else  { print("<span class='container-main-type'>Class</span> "); }?>
