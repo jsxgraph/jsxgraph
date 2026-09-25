@@ -120,6 +120,7 @@ beta: docs
 
 docs: core docs4only
 
+# jsdoc 2 documentation
 docsonly:
 	# Set up tmp dir
 	$(MKDIR) $(MKDIRFLAGS) $(TMP)
@@ -151,6 +152,7 @@ docsonly:
 	# Test
 	$(CD) $(OUTPUT) && $(UNZIP) -o docs.zip
 
+# jsdoc 4 documentation
 docs4only:
 	# Set up tmp dir
 	$(MKDIR) $(MKDIRFLAGS) $(TMP)
@@ -160,6 +162,8 @@ docs4only:
 	$(CP) $(OUTPUT)/jsxgraph.css      $(JSDOCTPLSTAT)/styles/jsxgraph.css
 
 	# Run node-jsdoc4
+	sed -i '3 s/JSXGraph version .*/JSXGraph version $(VERSION), API documentation generated '`date +"%Y-%m-%d"`'*/' ./doc/jsdoc/README.md
+	# sed -i '3 s/JSXGraph version .*$/'"$(date)"'/g' ./doc/jsdoc/README.md
 	node_modules/.bin/jsdoc -a all --verbose --pedantic --readme ./doc/jsdoc/README.md -c ./doc/jsdoc/jsdoc.json $(FILELIST)
 
 	# Compress the result: zip -r tmp/docs.zip docs/
@@ -168,12 +172,11 @@ docs4only:
 	$(RM) $(RMFLAGS) tmp
 
 	# Test
+	$(RM) $(RMFLAGS) $(OUTPUT)/docs
 	$(CD) $(OUTPUT) && $(UNZIP) -o docs.zip
 
-t:
-	node_modules/.bin/jsdoc -a all --pedantic -c ./doc/jsdoc/jsdoc.json ./doc/jsdoc/tests/pseudo.js ./doc/jsdoc/tests/test.js
-
 d:
+	sed -i '3 s/JSXGraph version .*/JSXGraph version $(VERSION), API documentation generated '`date +"%Y-%m-%d"`'*/' ./doc/jsdoc/README.md
 	node_modules/.bin/jsdoc -a all --verbose --pedantic --readme ./doc/jsdoc/README.md -c ./doc/jsdoc/jsdoc.json $(FILELIST)
 
 # prettier:
