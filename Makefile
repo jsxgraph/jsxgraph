@@ -162,7 +162,7 @@ docs4only:
 	$(CP) $(OUTPUT)/jsxgraph.css      $(JSDOCTPLSTAT)/styles/jsxgraph.css
 
 	# Run node-jsdoc4
-	sed -i '3 s/JSXGraph version .*/JSXGraph version $(VERSION), API documentation generated '`date +"%Y-%m-%d"`'*/' ./doc/jsdoc/README.md
+	sed -i '3 s/JSXGraph version .*/JSXGraph version $(VERSION), API reference generated '`date +"%Y-%m-%d"`'*/' ./doc/jsdoc/README.md
 	# sed -i '3 s/JSXGraph version .*$/'"$(date)"'/g' ./doc/jsdoc/README.md
 	node_modules/.bin/jsdoc -a all --verbose --pedantic --readme ./doc/jsdoc/README.md -c ./doc/jsdoc/jsdoc.json $(FILELIST)
 
@@ -176,7 +176,7 @@ docs4only:
 	$(CD) $(OUTPUT) && $(UNZIP) -o docs.zip
 
 d:
-	sed -i '3 s/JSXGraph version .*/JSXGraph version $(VERSION), API documentation generated '`date +"%Y-%m-%d"`'*/' ./doc/jsdoc/README.md
+	sed -i '3 s/JSXGraph version .*/JSXGraph version $(VERSION), API reference generated '`date +"%Y-%m-%d"`'*/' ./doc/jsdoc/README.md
 	node_modules/.bin/jsdoc -a all --verbose --pedantic --readme ./doc/jsdoc/README.md -c ./doc/jsdoc/jsdoc.json $(FILELIST)
 
 # prettier:
