@@ -293,6 +293,7 @@ h5,
 .h3-examples,
 .h3-throws,
 .h3-types,
+.h3-details,
 h3.subsection-title,
 h4.subsection-title,
 .container-overview .subsection-title {
@@ -1195,7 +1196,7 @@ section.package {
 .details {
     display: grid;
     grid-template-columns: max-content minmax(0, 1fr);
-    margin: .75rem 0 1.5rem;
+    margin: .75rem 0 1.5rem !important;
     padding: 0;
     border: 1px solid #d7e0e8;
     border: 1px solid var(--jxg-border);

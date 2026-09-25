@@ -63,7 +63,6 @@ if (
   <?js= this.partial('params.tmpl', params) ?>
 <?js } ?>
 
-
 <?js if (data.kind !== 'module' && data.requires && data.requires.length) { ?>
 <h3 class="h3-requires">Requires</h3>
 <ul><?js data.requires.forEach(function(r) { ?>
@@ -140,6 +139,7 @@ if (
     <?js });
 } } ?>
 
+<h3 class="h3-details">Details</h3>
 <?js= this.partial('details_wo_desc.tmpl', data) ?>
 
 </div>
