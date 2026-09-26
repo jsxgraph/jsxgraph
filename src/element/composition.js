@@ -1141,18 +1141,16 @@ JXG.createBisector = function (board, parents, attributes) {
     var p, l, i, attr;
 
     parents = Type.providePoints(board, parents, attributes, 'point');
+
     if (Type.isPoint(parents[0]) && Type.isPoint(parents[1]) && Type.isPoint(parents[2])) {
         // hidden and fixed helper
         attr = Type.copyAttributes(attributes, board.options, "bisector", 'point');
         attr.snapToGrid = false;
 
-        p = board.create(
-            "point",
-            [
-                function () {
+        p = board.create("point",
+            [function () {
                     return Geometry.angleBisector(parents[0], parents[1], parents[2], board);
-                }
-            ],
+            }],
             attr
         );
         p.dump = false;
