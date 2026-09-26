@@ -501,10 +501,13 @@ JXG.registerElement("arc", JXG.createArc);
  * </script><pre>
  */
 JXG.createSemicircle = function (board, parents, attributes) {
-    var el, mp, attr, points;
+    var el, mp, attr, attr_c,
+        points = [];
+
+    attr = Type.copyAttributes(attributes, board.options, 'semicircle');
 
     // we need 2 points
-    points = Type.providePoints(board, parents, attributes, 'point');
+    points = Type.providePoints(board, parents, attr, 'point', ['radiusPoint', 'anglePoint']);
     if (points === false || points.length !== 2) {
         throw new Error(
             "JSXGraph: Can't create Semicircle with parent types '" +
@@ -516,11 +519,10 @@ JXG.createSemicircle = function (board, parents, attributes) {
         );
     }
 
-    attr = Type.copyAttributes(attributes, board.options, "semicircle", 'center');
-    mp = board.create("midpoint", points, attr);
+    attr_c = Type.copyAttributes(attributes, board.options, "semicircle", 'center');
+    mp = board.create("midpoint", points, attr_c);
     mp.dump = false;
 
-    attr = Type.copyAttributes(attributes, board.options, 'semicircle');
     el = board.create("arc", [mp, points[1], points[0]], attr);
     el.elType = 'semicircle';
     el.setParents([points[0].id, points[1].id]);

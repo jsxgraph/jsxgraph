@@ -8503,6 +8503,14 @@ JXG.Options = {
             highlightFillColor: '#eeeeee',
             highlightStrokeColor: Color.palette.red,
             name: ''
+        },
+
+        anglePoint: {
+            name: ''
+        },
+
+        radiusPoint: {
+            name: ''
         }
 
         /**#@-*/
