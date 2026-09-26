@@ -4796,9 +4796,10 @@ Mat.Numerics = {
     },
 
     /**
-     * Polyline simplifcation withthe Ramer-Douglas-Peucker algorithm.
+     * Polyline simplification with the Ramer-Douglas-Peucker algorithm.
      * It discards points which are not necessary from the polygonal line defined by the point array
-     * pts. The computation is done in screen coordinates.
+     * `pts`. The computation is done in screen coordinates.
+     *
      * Average runtime is O(nlog(n)), worst case runtime is O(n^2), where n is the number of points.
      * @param {Array} pts Array of {@link JXG.Coords}
      * @param {Number} eps If the absolute value of a given number `x` is smaller than `eps` it is considered to be equal `0`.
