@@ -781,6 +781,8 @@ var euler = board.create('line', [i1, i2], {
 
 ##### Beyond this documentation
 
+- <a href="https://forum.jsxgraph.org/" target="_blank" rel="noopener">Forum</a> — questions, answers and
+  announcements
 - <a href="https://github.com/jsxgraph/jsxgraph" target="_blank" rel="noopener">GitHub</a> — source code, releases and
   issue tracker
 - <a href="https://www.npmjs.com/package/jsxgraph" target="_blank" rel="noopener">npm</a> — install with
@@ -789,8 +791,6 @@ var euler = board.create('line', [i1, i2], {
   made constructions, each with its source
 - <a href="https://jsfiddle.net/my0fkdb6/1/" target="_blank" rel="noopener">jsFiddle</a> — a prepared sandbox for
   trying things out without a local setup
-- <a href="https://forum.jsxgraph.org/" target="_blank" rel="noopener">Forum</a> — questions, answers and
-  announcements
 
 
 
