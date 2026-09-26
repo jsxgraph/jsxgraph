@@ -589,9 +589,11 @@ JXG.extend(
         /**
          * Returns the direction vector of the line. This is an array of length two
          * containing the direction vector as [x, y]. It is defined as
-         *  <li> the difference of the x- and y-coordinate of the second and first point, in case both points are finite or both points are infinite.
-         *  <li> [x, y] coordinates of point2, in case only point2 is infinite.
-         *  <li> [-x, -y] coordinates of point1, in case only point1 is infinite.
+         *
+         * - the difference of the x- and y-coordinate of the second and first point, in case both points are finite or both points are infinite.
+         * - `[x, y]` coordinates of point2, in case only point2 is infinite.
+         * - `[-x, -y]` coordinates of point1, in case only point1 is infinite.
+         *
          * @function
          * @returns {Array} of length 2.
          */
