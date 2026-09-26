@@ -89,7 +89,7 @@ var bitReverse = [
 JXG.Util = JXG.Util || {};
 
 /**
- * @class Unzip class
+ * Unzip class.
  * Class for gunzipping, unzipping and base64 decoding of files.
  * It is used for reading GEONExT, Geogebra and Intergeo files.
  *
@@ -97,6 +97,7 @@ JXG.Util = JXG.Util || {};
  * The code is based on the source code for gunzip.c by Pasi Ojala
  * @see http://www.cs.tut.fi/~albert/Dev/gunzip/gunzip.c
  * @see http://www.cs.tut.fi/~albert
+ * @memberof JXG.Util
  */
 JXG.Util.Unzip = function (barray) {
     var gpflags,
@@ -563,9 +564,8 @@ JXG.Util.Unzip = function (barray) {
     }
 
     /**
-     * nextFile:
      * Extract the next file from the compressed archive.
-     * Calls skipdir() to proceed recursively.
+     * Calls `skipdir()` to proceed recursively.
      *
      * @return {Boolean}  false if the end of files' data section has baseElement
      * reached. Then, then all recursive functions are stopped immediately.
@@ -829,6 +829,11 @@ JXG.Util.Unzip = function (barray) {
 
     }
 
+    /**
+     *
+     * @param {String} name
+     * @returns String
+     */
     JXG.Util.Unzip.prototype.unzipFile = function (name) {
         var i;
 
@@ -843,6 +848,10 @@ JXG.Util.Unzip = function (barray) {
         return "";
     };
 
+    /**
+     *
+     * @returns {Array}
+     */
     JXG.Util.Unzip.prototype.unzip = function () {
         nextFile();
         return unzipped;

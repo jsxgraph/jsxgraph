@@ -35,7 +35,7 @@
  * on polygons and curves
  *
  * // TODO:
- * * Check if input polygons are closed. If not, handle this case.
+ * Check if input polygons are closed. If not, handle this case.
  */
 
 // import JXG from "../jxg.js";
@@ -63,6 +63,7 @@ Mat.Clip = {
      * @private
      * @param  {Array} S Array
      * @return {Array} return containing the starter indices of each component.
+     * @memberof JXG.Math.Clip
      */
     makeDoublyLinkedList: function (S) {
         var i,
@@ -122,6 +123,7 @@ Mat.Clip = {
      *      of the i-th segment.
      * @param  {Array} path      Pointer to the path containing the intersection point
      * @param  {String} pathname Name of the path: 'S' or 'C'.
+     * @memberof JXG.Math.Clip
      */
     Vertex: function (coords, i, alpha, path, pathname, type) {
         this.pos = i;
@@ -170,6 +172,7 @@ Mat.Clip = {
      * @param  {Array} P_crossings Array of arrays. Each array contains the intersections of the path
      *      with one segment of the other path.
      * @return {Array}  Array of intersection points ordered by first occurrence in the path.
+     * @memberof JXG.Math.Clip
      */
     sortIntersections: function (P_crossings) {
         var i,
@@ -348,6 +351,7 @@ Mat.Clip = {
      * @return {Array}  Array containing two arrays. The first array contains the intersection vertices
      * of the subject path and the second array contains the intersection vertices of the clip path.
      * @see JXG.Math.Clip.Vertex
+     * @memberof JXG.Math.Clip
      */
     findIntersections: function (S, C, board) {
         var res = [], eps = Mat.eps * 100,
@@ -572,6 +576,7 @@ Mat.Clip = {
      * @param {Array} p3 User coords array
      * @returns string 'left' or 'right'
      * @private
+     * @memberof JXG.Math.Clip
      */
     _getPosition: function (q, p1, p2, p3) {
         var s1 = Geometry.det3p(q, p1, p2),
@@ -603,6 +608,7 @@ Mat.Clip = {
      * @private
      * @see JXG.Math.Clip.markEntryExit
      * @see JXG.Math.Clip._handleIntersectionChains
+     * @memberof JXG.Math.Clip
      */
     _classifyDegenerateIntersections: function (P) {
         var Pp, Pm, Qp, Qm,  Q,
@@ -802,6 +808,7 @@ Mat.Clip = {
      * @see JXG.Math.Clip.markEntryExit
      * @see JXG.Math.Clip._classifyDegenerateIntersections
      * @private
+     * @memberof JXG.Math.Clip
      */
     _handleIntersectionChains: function (P) {
         var cnt = 0,
@@ -911,6 +918,7 @@ Mat.Clip = {
      * @param {Array} C Clip path
      * @param {JXG.board} board JSXGraph board object. It is needed to convert between
      * user coordinates and screen coordinates.
+     * @memberof JXG.Math.Clip
      */
     _handleFullyDegenerateCase: function (S, C, board) {
         var P, Q, l, M, crds,
@@ -1025,6 +1033,7 @@ Mat.Clip = {
      * @private
      * @param  {Array} path1 First path
      * @param  {Array} path2 Second path
+     * @memberof JXG.Math.Clip
      */
     markEntryExit: function (path1, path2, starters) {
         var status, P, cnt, res,
@@ -1161,6 +1170,7 @@ Mat.Clip = {
      * @param {Array} P
      * @param {Boolean} isBackward
      * @returns {Boolean} True, if the node is an intersection and is of type 'X'
+     * @memberof JXG.Math.Clip
      */
     _stayOnPath: function (P, status) {
         var stay = true;
@@ -1181,6 +1191,7 @@ Mat.Clip = {
      * @param {Boolean} DEBUG if true, write debug output to console.log
      * @returns {Boolean} true: point has been visited before, false otherwise
      * @private
+     * @memberof JXG.Math.Clip
      */
     _addVertex: function (path, vertex, DEBUG) {
         if (!isNaN(vertex.coords.usrCoords[1]) && !isNaN(vertex.coords.usrCoords[2])) {
@@ -1229,6 +1240,7 @@ Mat.Clip = {
      * @param  {String} clip_type  contains the Boolean operation: 'intersection', 'union', or 'difference'
      * @return {Array}             Array consisting of two arrays containing the x-coordinates and the y-coordintaes of
      *      the resulting path.
+     * @memberof JXG.Math.Clip
      */
     tracing: function (S, S_intersect, clip_type) {
         var P, status, current, start,
@@ -1396,6 +1408,7 @@ Mat.Clip = {
      * @param  {Array} C        Second path, array of JXG.Coords
      * @param  {String} clip_type Type of Boolean operation: 'intersection', 'union', 'differrence'.
      * @return {Boolean}        true, if one of the input paths is empty, false otherwise.
+     * @memberof JXG.Math.Clip
      */
     isEmptyCase: function (S, C, clip_type) {
         if (clip_type === "intersection" && (S.length === 0 || C.length === 0)) {
@@ -1448,6 +1461,7 @@ Mat.Clip = {
      * @param  {String} clip_type Type of Boolean operation: 'intersection', 'union', 'differrence'.
      * @return {Array}          Array consisting of two arrays containing the x-coordinates and the y-coordinates of
      *      the resulting path.
+     * @memberof JXG.Math.Clip
      */
     handleEmptyIntersection: function (S, C, clip_type) {
         var P,
@@ -1559,6 +1573,7 @@ Mat.Clip = {
      * @param {JXG.Mat.Clip.Vertex} intersections
      * @returns Number
      * @private
+     * @memberof JXG.Math.Clip
      */
     _countCrossingIntersections: function (intersections) {
         var i,
@@ -1584,6 +1599,7 @@ Mat.Clip = {
      * user coordinates and screen coordinates.
      * @returns {Array} Array of JXG.Coords elements containing a path.
      * @see JXG.Math.Clip.greinerHormann
+     * @memberof JXG.Math.Clip
      */
     _getPath: function (obj, board) {
         var i, len, r,
@@ -1706,6 +1722,7 @@ Mat.Clip = {
      * user coordinates and screen coordinates.
      * @return {Array}          Array consisting of two arrays containing the x-coordinates and the y-coordinates of
      *      the resulting path.
+     * @memberof JXG.Math.Clip
      *
      * @see JXG.Math.Clip.intersection
      * @see JXG.Math.Clip.union
@@ -2002,6 +2019,7 @@ Mat.Clip = {
      * @see JXG.Math.Clip.greinerHormann
      * @see JXG.Math.Clip.intersection
      * @see JXG.Math.Clip.difference
+     * @memberof JXG.Math.Clip
      *
      * @example
      *     var curve1 = board.create('curve', [
@@ -2069,6 +2087,7 @@ Mat.Clip = {
      * @see JXG.Math.Clip.greinerHormann
      * @see JXG.Math.Clip.union
      * @see JXG.Math.Clip.difference
+     * @memberof JXG.Math.Clip
      *
      * @example
      * var p = [];
@@ -2148,6 +2167,7 @@ Mat.Clip = {
      * @see JXG.Math.Clip.greinerHormann
      * @see JXG.Math.Clip.intersection
      * @see JXG.Math.Clip.union
+     * @memberof JXG.Math.Clip
      *
      * @example
      *     var curve1 = board.create('polygon', [[-4, 4], [4, 4], [0, -1]],
