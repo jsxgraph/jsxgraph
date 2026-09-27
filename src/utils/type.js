@@ -496,8 +496,12 @@ JXG.extend(
         },
 
         /**
-         *  Test if array `paranets` contains existing points. If instead `parents` contains coordinate arrays or
-         *  function returning coordinate arrays free points with these coordinates are created.
+         * Test if array `parents` contains existing points. If instead `parents` contains coordinate arrays or
+         * function returning coordinate arrays free points with these coordinates are created.
+         * For points that are created, attributes from param `attributes` are merged with
+         * `board.options.attrClass.attrArray[j]` with priority for values in `attributes`.
+         * Here, `j` is the corresponding position in array `attrArray` of the coordinate array in `parents` (or
+         * the last one).
          *
          * @param {JXG.Board} board Board object
          * @param {Array} parents Array containing parent elements for a new object. This array may contain
@@ -515,6 +519,12 @@ JXG.extend(
          * @param {String} attrClass Main attribute class of newly created points, see {@link JXG#copyAttributes}
          * @param {Array} attrArray List of subtype attributes for the newly created points. The list of subtypes is mapped to the list of new points.
          * @returns {Array} List of newly created {@link JXG.Point} elements or false if not all returned elements are points.
+         *
+         * @example
+         * parents = Type.providePoints(board, parents, attributes, 'point');
+         *
+         * @example
+         * points = Type.providePoints(board, parents, attributes, "polygon", ["vertices"]);
          */
         providePoints: function (board, parents, attributes, attrClass, attrArray) {
             var i, j, len,
@@ -536,6 +546,8 @@ JXG.extend(
 
             for (i = 0; i < len; ++i) {
                 if (lenAttr > 0) {
+                    // Merge attributes from `attributes` and `board.options.attrClass.attrArray[j]`
+                    // with priority for values in `attributes`
                     j = Math.min(i, lenAttr - 1);
                     attr = this.copyAttributes(
                         attributes,
@@ -544,6 +556,7 @@ JXG.extend(
                         attrArray[j].toLowerCase()
                     );
                 }
+                // Take points or create points
                 if (this.isArray(parents[i]) && parents[i].length > 1) {
                     points.push(board.create("point", parents[i], attr));
                     points[points.length - 1]._is_new = true;
@@ -1469,7 +1482,7 @@ JXG.extend(
          * Generates an attributes object that is filled with default values from the Options object
          * and overwritten by the user specified attributes.
          * @param {Object} attributes user specified attributes
-         * @param {Object} options defaults options
+         * @param {Object} options default options
          * @param {String} s variable number of strings, e.g. 'slider', subtype 'point1'. Must be provided in lower case!
          * @returns {Object} The resulting attributes object
          */
