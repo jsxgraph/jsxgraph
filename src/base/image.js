@@ -45,14 +45,16 @@ import Type from "../utils/type.js";
 import CoordsElement from "./coordselement.js";
 
 /**
- * Construct and handle images
- *
- * The image can be supplied as an URL or an base64 encoded inline image
- * like "data:image/png;base64, /9j/4AAQSkZJRgA..." or a function returning
- * an URL: function(){ return 'xxx.png; }.
- *
- * @class Creates a new image object. Do not use this constructor to create a image. Use {@link JXG.Board#create} with
+ * @class Construct and handle images.
+ * Creates a new image object. Do not use this constructor to create a image. Use {@link JXG.Board#create} with
  * type {@link Image} instead.
+ *
+ * The image can be supplied as
+ *
+ * - URL or
+ * - base64 encoded inline image like `"data:image/png;base64, /9j/4AAQSkZJRgA..."` or
+ * - a function returning an URL: `function(){ return 'xxx.png; }`.
+ *
  * @augments JXG.GeometryElement
  * @augments JXG.CoordsElement
  * @param {string|JXG.Board} board The board the new image is drawn on.

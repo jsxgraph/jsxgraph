@@ -496,9 +496,8 @@ JXG.extend(
         },
 
         /**
-         *  Test if the parents array contains existing points. If instead parents contains coordinate arrays or
-         *  function returning coordinate arrays
-         *  free points with these coordinates are created.
+         *  Test if array `paranets` contains existing points. If instead `parents` contains coordinate arrays or
+         *  function returning coordinate arrays free points with these coordinates are created.
          *
          * @param {JXG.Board} board Board object
          * @param {Array} parents Array containing parent elements for a new object. This array may contain
@@ -506,20 +505,19 @@ JXG.extend(
          * - {@link JXG.Point} objects
          * - {@link JXG.GeometryElement#name} of {@link JXG.Point} objects
          * - {@link JXG.GeometryElement#id} of {@link JXG.Point} objects
-         * - Coordinates of points given as array of numbers of length two or three, e.g. [2, 3].
+         * - Coordinates of points given as array of numbers of length two or three, e.g. `[2, 3]`.
          * - Coordinates of points given as array of functions of length two or three. Each function returns one coordinate, e.g.
-         *           [function(){ return 2; }, function(){ return 3; }]
-         * - Function returning coordinates, e.g. function() { return [2, 3]; }
+         *           `[function(){ return 2; }, () => 3]`
+         * - Function returning coordinates, e.g. `() => [2, 3]`
          *
          *  In the last three cases a new point will be created.
+         * @param {Object} attributes Object containing attributes for newly created points.
          * @param {String} attrClass Main attribute class of newly created points, see {@link JXG#copyAttributes}
          * @param {Array} attrArray List of subtype attributes for the newly created points. The list of subtypes is mapped to the list of new points.
          * @returns {Array} List of newly created {@link JXG.Point} elements or false if not all returned elements are points.
          */
         providePoints: function (board, parents, attributes, attrClass, attrArray) {
-            var i,
-                j,
-                len,
+            var i, j, len,
                 lenAttr = 0,
                 points = [],
                 attr,

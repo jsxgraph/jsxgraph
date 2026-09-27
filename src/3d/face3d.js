@@ -34,8 +34,7 @@ import Type from "../utils/type.js";
 import Mat from "../math/math.js";
 
 /**
- * 3D faces
- * @class Creates a new 3D face object. Do not use this constructor to create a 3D curve. Use {@link JXG.View3D#create} with type {@link Face3D} instead.
+ * @class Creates a new 3D face object. 3D faces are part of a {@link JXG.Polyhedron3D}. Do not use this constructor to create a 3D face.
  *
  * @augments JXG.GeometryElement3D
  * @augments JXG.GeometryElement
