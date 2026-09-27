@@ -2567,12 +2567,12 @@ JXG.createNormal = function (board, parents, attributes) {
     for (i = 0; i < parents.length; ++i) {
         parents[i] = board.select(parents[i]);
     }
-    // One arguments: glider on line, circle or curve
     if (parents.length === 1) {
+        // One arguments: glider on line, circle or curve
         p = parents[0];
         c = p.slideObject;
-        // Two arguments: (point,line), (point,circle), (line,point) or (circle,point)
     } else if (parents.length === 2) {
+        // Two arguments: (point,line), (point,circle), (line,point) or (circle,point)
         if (Type.isPointType(board, parents[0])) {
             p = Type.providePoints(board, [parents[0]], attributes, 'point')[0];
             c = parents[1];
@@ -2604,9 +2604,7 @@ JXG.createNormal = function (board, parents, attributes) {
     if (c.elementClass === Const.OBJECT_CLASS_LINE) {
         // Private point
         attrp = Type.copyAttributes(attributes, board.options, "normal", 'point');
-        pp = board.create(
-            "point",
-            [
+        pp = board.create("point", [
                 function () {
                     var p = Mat.crossProduct([1, 0, 0], c.stdform);
                     return [p[0], -p[2], p[1]];

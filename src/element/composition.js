@@ -1074,9 +1074,7 @@ JXG.createParallel = function (board, parents, attributes) {
     if (ty === 1) {
         // Line is given by line element. The parallel line is
         // constructed as line through an ideal point.
-        pp = board.create(
-            "point",
-            [
+        pp = board.create("point", [
                 function () {
                     return Mat.crossProduct([1, 0, 0], li());
                 }
