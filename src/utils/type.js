@@ -576,10 +576,10 @@ JXG.extend(
          * - {@link JXG.Point3D} objects
          * - {@link JXG.GeometryElement#name} of {@link JXG.Point3D} objects
          * - {@link JXG.GeometryElement#id} of {@link JXG.Point3D} objects
-         * - Coordinates of 3D points given as array of numbers of length three, e.g. [2, 3, 1].
+         * - Coordinates of 3D points given as array of numbers of length three, e.g. `[2, 3, 1]`.
          * - Coordinates of 3D points given as array of functions of length three. Each function returns one coordinate, e.g.
-         *           [function(){ return 2; }, function(){ return 3; }, function(){ return 1; }]
-         * - Function returning coordinates, e.g. function() { return [2, 3, 1]; }
+         *           `[() => 2, () => 3, () => 1]`
+         * - Function returning coordinates, e.g. `() => [2, 3, 1]`
          *
          *  In the last three cases a new 3D point will be created.
          * @param {String} attrClass Main attribute class of newly created 3D points, see {@link JXG#copyAttributes}
