@@ -37,7 +37,7 @@ import JXG from "../jxg.js";
 // import Type from "../utils/type.js";
 
 /**
- * Namespace Parse3D. Contains parsers for 3D models like STL.
+ * Namespace JXG.Parse3D. Contains parsers for 3D models like STL.
  * @namespace
  */
 JXG.Parse3D = {

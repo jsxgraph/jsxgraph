@@ -1,0 +1,16 @@
+{
+    "first_steps": {
+        "title": "First Steps",
+        "children": {
+            "implementation": {
+                "title": "How to Use JSXGraph"
+            },
+            "animations": {
+                "title": "Animations with JSXGraph"
+            }
+        }
+    },
+    "api": {
+        "title": "API documentation HOWTO"
+    }
+}

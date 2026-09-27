@@ -37,7 +37,7 @@ import Mat from "./math.js";
 import Type from "../utils/type.js";
 
 /**
- * Functions for mathematical statistics. Most functions are like in the statistics package R.
+ * JXG.Math.Statistics namespace with functions for mathematical statistics. Most functions are like in the statistics package R.
  * @name JXG.Math.Statistics
  * @exports Mat.Statistics as JXG.Math.Statistics
  * @namespace
@@ -143,16 +143,17 @@ Mat.Statistics = {
     },
 
     /**
-     * The P-th percentile ( <i>0 < P ≤ 100</i> ) of a list of <i>N</i> ordered values (sorted from least to greatest)
-     * is the smallest value in the list such that no more than <i>P</i> percent of the data is strictly less
-     * than the value and at least <i>P</i> percent of the data is less than or equal to that value.
+     * The P-th percentile ( \\(0 < P \leq 100\\) ) of a list of \\(N\\) ordered values (sorted from least to greatest)
+     * is the smallest value in the list such that no more than \\(P\\) percent of the data is strictly less
+     * than the value and at least \\(P\\) percent of the data is less than or equal to that value.
      * See <a href="https://en.wikipedia.org/wiki/Percentile">https://en.wikipedia.org/wiki/Percentile</a>.
      *
-     * Here, the <i>linear interpolation between closest ranks</i> method is used.
+     * Here, the *linear interpolation between closest ranks* method is used.
      * @param {Array} arr The set of values, need not be ordered.
      * @param {Number|Array} percentile One or several percentiles
      * @returns {Number|Array} Depending if a number or an array is the input for percentile, a number or an array containing the percentiles
      * is returned.
+     * @memberof JXG.Math.Statistics
      */
     percentile: function (arr, percentile) {
         var tmp, p,
@@ -199,6 +200,7 @@ Mat.Statistics = {
      * @param {Array} arr
      * @param {Number} [coef=1.5] factor for the interquartile range. If 0: no outliers
      * @returns {Array} quartile data: [min, 25%, 50%, 75%, max, [outliers]]
+     * @memberof JXG.Math.Statistics
      *
      * @see Boxplot
      */
@@ -327,8 +329,8 @@ Mat.Statistics = {
     /**
      * Extracts the maximum value from the array.
      * @param {Array} arr
-     * @returns {Number} The highest number from the array. It returns <tt>NaN</tt> if not every element could be
-     * interpreted as a number and <tt>-Infinity</tt> if an empty array is given or no element could be interpreted
+     * @returns {Number} The highest number from the array. It returns `NaN` if not every element could be
+     * interpreted as a number and `-Infinity` if an empty array is given or no element could be interpreted
      * as a number.
      * @memberof JXG.Math.Statistics
      */
@@ -339,8 +341,8 @@ Mat.Statistics = {
     /**
      * Extracts the minimum value from the array.
      * @param {Array} arr
-     * @returns {Number} The lowest number from the array. It returns <tt>NaN</tt> if not every element could be
-     * interpreted as a number and <tt>Infinity</tt> if an empty array is given or no element could be interpreted
+     * @returns {Number} The lowest number from the array. It returns `NaN` if not every element could be
+     * interpreted as a number and `Infinity` if an empty array is given or no element could be interpreted
      * as a number.
      * @memberof JXG.Math.Statistics
      */
@@ -484,7 +486,7 @@ Mat.Statistics = {
      * match the shortest length is taken.
      * @param {Array|Number} arr1 Dividend
      * @param {Array|Number} arr2 Divisor
-     * @param {Boolean} [math=false] Mathematical mod or symmetric mod? Default is symmetric, the JavaScript <tt>%</tt> operator.
+     * @param {Boolean} [math=false] Mathematical mod or symmetric mod? Default is symmetric, the JavaScript `%` operator.
      * @returns {Array|Number}
      * @memberof JXG.Math.Statistics
      */
@@ -748,11 +750,11 @@ Mat.Statistics = {
      *
      * </pre><div id="JXGda56df4d-a5a5-4c87-9ffc-9bbc1b512302-4" class="jxgbox" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
-     * {
+     * (function() {
      *  let board = JXG.JSXGraph.initBoard('JXGda56df4d-a5a5-4c87-9ffc-9bbc1b512302-4',
      *       { boundingbox: [-5, 1.5, 5, -.03], axis: true});
      *
-     *   let runs = [
+     *  let runs = [
      *       [0, 0.2, 'blue'],
      *       [0, 1.0, 'red'],
      *       [0, 5.0, 'orange'],
@@ -767,8 +769,8 @@ Mat.Statistics = {
      *       let x = Array(50000).fill(0).map(() => JXG.Math.Statistics.randomNormal(run[0],Math.sqrt(run[1])))  // sqrt so Std Dev, not Variance
      *       let res = JXG.Math.Statistics.histogram(x, { bins: 40, density: true, cumulative: false, range: false });
      *       board.create('curve', [res[1], res[0]], { strokeColor: run[2], strokeWidth:2});
-     *   })
-     * }
+     *   });
+     * })();
      * </script><pre>
 
      */
@@ -789,11 +791,11 @@ Mat.Statistics = {
 
     /**
      * Generate value of a random variable with exponential distribution, i.e.
-     * <i>f(x; lambda) = lambda * e^(-lambda x)</i> if <i>x >= 0</i> and <i>f(x; lambda) = 0</i> if <i>x < 0</i>.
+     * \\(f(x; \lambda) = \lambda * e^(-\lambda x)\\) if \\(x \geq 0\\) and \\(f(x; \lambda) = 0\\) if \\(x < 0\\).
      * See <a href="https://en.wikipedia.org/wiki/Exponential_distribution">https://en.wikipedia.org/wiki/Exponential_distribution</a>.
      * Algorithm: D.E. Knuth, TAOCP 2, p. 128.
      *
-     * @param {Number} lambda <i>&gt; 0</i>
+     * @param {Number} lambda \\(> 0\\)
      * @returns Number
      * @memberof JXG.Math.Statistics
      * @example
@@ -818,7 +820,7 @@ Mat.Statistics = {
      *
      * </pre><div id="JXGda56df4d-a5a5-4c87-9ffc-9bbc1b512302-5" class="jxgbox" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
-     * {
+     * (function() {
      *  let board = JXG.JSXGraph.initBoard('JXGda56df4d-a5a5-4c87-9ffc-9bbc1b512302-5',
      *       { boundingbox: [-.5, 1.5, 5, -.1], axis: true});
      *
@@ -836,11 +838,10 @@ Mat.Statistics = {
      *       let x = Array(50000).fill(0).map(() => JXG.Math.Statistics.randomExponential(run[0]))
      *       let res = JXG.Math.Statistics.histogram(x, { bins: 40, density: true, cumulative: false, range: false });
      *       board.create('curve', [res[1], res[0]], { strokeColor: run[1], strokeWidth:2});
-     *   })
-     * }
+     *   });
+     * })();
      * </script><pre>
-
-    */
+     */
     randomExponential: function (lbda) {
         var u;
 
@@ -862,8 +863,8 @@ Mat.Statistics = {
      * See <a href="https://en.wikipedia.org/wiki/Gamma_distribution">https://en.wikipedia.org/wiki/Gamma_distribution</a>.
      * Algorithm: D.E. Knuth, TAOCP 2, p. 129.
 
-     * @param {Number} a shape, <i> &gt; 0</i>
-     * @param {Number} [b=1] scale, <i> &gt; 0</i>
+     * @param {Number} a shape, \\( > 0\\)
+     * @param {Number} [b=1] scale, \\( > 0\\)
      * @param {Number} [t=0] threshold
      * @returns Number
      * @memberof JXG.Math.Statistics
@@ -891,13 +892,10 @@ Mat.Statistics = {
      *       let res = JXG.Math.Statistics.histogram(x, { bins: 50, density: true, cumulative: false, range: [0, 20] });
      *       board.create('curve', [res[1], res[0]], { strokeColor: run[2]});
      *
-     *   })
-     *
-     *
-     * </pre>
-     * <div id="JXGda56df4d-a5a5-4c87-9ffc-9bbc1b512302-6" class="jxgbox" style="width: 300px; height: 300px;"></div>
+     *   });
+     * </pre><div id="JXGda56df4d-a5a5-4c87-9ffc-9bbc1b512302-6" class="jxgbox" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
-     * {
+     * (function() {
      *  let board = JXG.JSXGraph.initBoard('JXGda56df4d-a5a5-4c87-9ffc-9bbc1b512302-6',
      *       { boundingbox: [-1.7, .5, 20, -.03], axis: true});
      *
@@ -920,7 +918,7 @@ Mat.Statistics = {
      *       let res = JXG.Math.Statistics.histogram(x, { bins: 50, density: true, cumulative: false, range: [0, 20] });
      *       board.create('curve', [res[1], res[0]], { strokeColor: run[2]});
      *   })
-     * }
+     * })();
      * </script><pre>
      *
      */
@@ -980,8 +978,8 @@ Mat.Statistics = {
      * Generate value of a random variable with beta distribution with shape parameters alpha and beta.
      * See <a href="https://en.wikipedia.org/wiki/Beta_distribution">https://en.wikipedia.org/wiki/Beta_distribution</a>.
      *
-     * @param {Number} alpha <i>&gt; 0</i>
-     * @param {Number} beta <i>&gt; 0</i>
+     * @param {Number} alpha \\(< 0\\)
+     * @param {Number} beta \\(< 0\\)
      * @returns Number
      * @memberof JXG.Math.Statistics
      */
@@ -1003,7 +1001,7 @@ Mat.Statistics = {
      * Generate value of a random variable with chi-square distribution with k degrees of freedom.
      * See <a href="https://en.wikipedia.org/wiki/Chi-squared_distribution">https://en.wikipedia.org/wiki/Chi-squared_distribution</a>.
      *
-     * @param {Number} k <i>&gt; 0</i>
+     * @param {Number} k \\(>0\\)
      * @returns Number
      * @memberof JXG.Math.Statistics
      */
@@ -1020,8 +1018,8 @@ Mat.Statistics = {
     /**
      * Generate value of a random variable with F-distribution with d<sub>1</sub> and d<sub>2</sub> degrees of freedom.
      * See <a href="https://en.wikipedia.org/wiki/F-distribution">https://en.wikipedia.org/wiki/F-distribution</a>.
-     * @param {Number} d1 <i>&gt; 0</i>
-     * @param {Number} d2 <i>&gt; 0</i>
+     * @param {Number} d1 \\(>0\\)
+     * @param {Number} d2 \\(>0\\)
      * @returns Number
      * @memberof JXG.Math.Statistics
      */
@@ -1042,7 +1040,7 @@ Mat.Statistics = {
     /**
      * Generate value of a random variable with Students-t-distribution with &nu; degrees of freedom.
      * See <a href="https://en.wikipedia.org/wiki/Student%27s_t-distribution">https://en.wikipedia.org/wiki/Student%27s_t-distribution</a>.
-     * @param {Number} nu <i>&gt; 0</i>
+     * @param {Number} nu \\(>0\\)
      * @returns Number
      * @memberof JXG.Math.Statistics
      */
@@ -1061,7 +1059,7 @@ Mat.Statistics = {
     },
 
     /**
-     * Generate values for a random variable in binomial distribution with parameters <i>n</i> and <i>p</i>.
+     * Generate values for a random variable in binomial distribution with parameters \\(n\\) and \\(p\\).
      * See <a href="https://en.wikipedia.org/wiki/Binomial_distribution">https://en.wikipedia.org/wiki/Binomial_distribution</a>.
      * It uses algorithm BG from <a href="https://dl.acm.org/doi/pdf/10.1145/42372.42381">https://dl.acm.org/doi/pdf/10.1145/42372.42381</a>.
      *
@@ -1094,11 +1092,9 @@ Mat.Statistics = {
      *     });
      *     board.create('curve', [res[1], res[0]], { strokeColor: run[2] });
      * });
-     *
-     *
      * </pre><div id="JXGda56df4d-a5a5-4c87-9ffc-9bbc1b512302-3" class="jxgbox" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
-     * {
+     * (function() {
      *  let board = JXG.JSXGraph.initBoard('JXGda56df4d-a5a5-4c87-9ffc-9bbc1b512302-3',
      *       { boundingbox: [-1.7, .5, 30, -.03], axis: true});
      *
@@ -1117,7 +1113,7 @@ Mat.Statistics = {
      *       let res = JXG.Math.Statistics.histogram(x, { bins: 40, density: true, cumulative: false, range: [0, 40] });
      *       board.create('curve', [res[1], res[0]], { strokeColor: run[2]});
      *   })
-     * }
+     * })();
      * </script><pre>
      *
      */
@@ -1188,7 +1184,7 @@ Mat.Statistics = {
     },
 
     /**
-     * Generate values for a random variable in geometric distribution with probability <i>p</i>.
+     * Generate values for a random variable in geometric distribution with probability \\(p\\).
      * See <a href="https://en.wikipedia.org/wiki/Geometric_distribution">https://en.wikipedia.org/wiki/Geometric_distribution</a>.
      *
      * @param {Number} p (0 <= p <= 1)
@@ -1208,8 +1204,8 @@ Mat.Statistics = {
     },
 
     /**
-     * Generate values for a random variable in Poisson distribution with mean <i>mu</i>.
-     * See <a href="https://en.wikipedia.org/wiki/Poisson_distribution">https://en.wikipedia.org/wiki/Poisson_distribution</a>.
+     * Generate values for a random variable in Poisson distribution with mean \\(\mu\\).
+     * See {@link https://en.wikipedia.org/wiki/Poisson_distribution}.
      *
      * @param {Number} mu (0 < mu)
      * @returns Number
@@ -1248,8 +1244,8 @@ Mat.Statistics = {
 
     /**
      * Generate values for a random variable in Pareto distribution with
-     * shape <i>gamma</i> and scale <i>k</i>.
-     * See <a href="https://en.wikipedia.org/wiki/Pareto_distribution">https://en.wikipedia.org/wiki/Pareto_distribution</a>.
+     * shape \\(\gamma\\) and scale \\(k\\).
+     * See {@link https://en.wikipedia.org/wiki/Pareto_distribution}.
      * Method: use inverse transformation sampling.
      *
      * @param {Number} gamma shape (0 < gamma)
@@ -1268,15 +1264,16 @@ Mat.Statistics = {
 
     /**
      * Generate values for a random variable in hypergeometric distribution.
-     * Samples are drawn from a hypergeometric distribution with specified parameters, <i>good</i> (ways to make a good selection),
-     * <i>bad</i> (ways to make a bad selection), and <i>samples</i> (number of items sampled, which is less than or equal to <i>good + bad</i>).
-     * <p>
-     * Naive implementation with runtime <i>O(samples)</i>.
+     * Samples are drawn from a hypergeometric distribution with specified parameters, `good` (ways to make a good selection),
+     * `bad` (ways to make a bad selection), and `samples` (number of items sampled, which is less than or equal to
+     * `good + bad`).
+     *
+     * Naive implementation with runtime O(samples).
      *
      * @param {Number} good ways to make a good selection
      * @param {Number} bad ways to make a bad selection
      * @param {Number} samples number of items sampled
-     * @returns
+     * @returns Number
      * @memberof JXG.Math.Statistics
      */
     randomHypergeometric: function (good, bad, k) {
@@ -1330,7 +1327,7 @@ Mat.Statistics = {
      * Compute the histogram of a dataset.
      * Optional parameters can be supplied through a JavaScript object
      * with the following default values:
-     * <pre>
+     * ```
      * {
      *   bins: 10,          // Number of bins
      *   range: false,      // false or array. The lower and upper range of the bins.
@@ -1339,10 +1336,10 @@ Mat.Statistics = {
      *   density: false,    // If true, normalize the counts by dividing by sum(counts)
      *   cumulative: false
      * }
-     * </pre>
+     * ```
      * The function returns an array containing two arrays. The first array is of length bins+1
      * containing the start values of the bins. The last entry contains the end values of the last bin.
-     * <p>
+     *
      * The second array contains the counts of each bin.
      * @param {Array} x
      * @param {Object} opt Optional parameters
@@ -1381,14 +1378,12 @@ Mat.Statistics = {
      *       res[0].unshift(0)  // add zero to front so cumulative starts at zero
      *       res[1].unshift(0)
      *       board2.create('curve', [res[1], res[0]], { strokeColor: run[2], strokeWidth:2 });
-     *   })
-     *
+     *   });
      *
      * </pre><div id="JXGda56df4d-a5a5-4c87-9ffc-9bbc1b512302" class="jxgbox" style="width: 300px; height: 300px; float:left;"></div>
-     * <div style='float:left;'>&nbsp;&nbsp;</div>
      * <div id="JXGda56df4d-a5a5-4c87-9ffc-9bbc1b512302-2" class="jxgbox" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
-     * {
+     * (function() {
      *  let board = JXG.JSXGraph.initBoard('JXGda56df4d-a5a5-4c87-9ffc-9bbc1b512302',
      *       { boundingbox: [-1.7, .5, 20, -.03], axis: true});
      *  let board2 = JXG.JSXGraph.initBoard('JXGda56df4d-a5a5-4c87-9ffc-9bbc1b512302-2',
@@ -1418,8 +1413,8 @@ Mat.Statistics = {
      *       res[0].unshift(0)  // add zero to front so cumulative starts at zero
      *       res[1].unshift(0)
      *       board2.create('curve', [res[1], res[0]], { strokeColor: run[2], strokeWidth:2 });
-     *   })
-     * }
+     *   });
+     * })();
      * </script><pre>
      *
      */

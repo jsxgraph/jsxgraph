@@ -71,7 +71,7 @@ var undef,
     };
 
 /**
- * Math namespace. Contains mathematics related methods which are
+ * Namespace JXG.Math. Contains mathematics-related methods which are
  * specific to JSXGraph or which extend the JavaScript Math class.
  * @namespace
  */
@@ -103,15 +103,15 @@ JXG.Math = {
      * mod and "%" are both identical if a >= 0 and m >= 0 but the results differ if a or m < 0.
      * @param {Number} a
      * @param {Number} m
-     * @returns {Number} Mathematical modulo <tt>a mod m</tt>
+     * @returns {Number} Mathematical modulo \\(a \bmod m\\)
      */
     mod: function (a, m) {
         return a - Math.floor(a / m) * m;
     },
 
     /**
-     * Translate <code>x</code> into the interval <code>[a, b)</code> by adding
-     * a multiple of <code>b - a</code>.
+     * Translate `x` into the interval `[a, b)` by adding
+     * a multiple of `b - a`.
      * @param {Number} x
      * @param {Number} a
      * @param {Number} b
@@ -121,20 +121,20 @@ JXG.Math = {
     },
 
     /**
-     * Clamp <code>x</code> within the interval <code>[a, b]</code>. If
-     * <code>x</code> is below <code>a</code>, increase it to <code>a</code>. If
-     * it's above <code>b</code>, decrease it to <code>b</code>.
+     * Clamp `x` within the interval `[a, b]`. If
+     * `x` is below `a`, increase it to `a`. If
+     * it's above `b`, decrease it to `b`.
      */
     clamp: function (x, a, b) {
         return Math.min(Math.max(x, a), b);
     },
 
     /**
-     * A way of clamping a periodic variable. If <code>x</code> is congruent mod
-     * <code>period</code> to a point in <code>[a, b]</code>, return that point.
-     * Otherwise, wrap it into <code>[mid - period/2, mid + period/2]</code>,
-     * where <code>mid</code> is the mean of <code>a</code> and <code>b</code>,
-     * and then clamp it to <code>[a, b]</code> from there.
+     * A way of clamping a periodic variable. If `x` is congruent mod
+     * `period` to a point in `[a, b]`, return that point.
+     * Otherwise, wrap it into `[mid - period/2, mid + period/2]`,
+     * where `mid` is the mean of `a` and `b`,
+     * and then clamp it to `[a, b]` from there.
      */
     wrapAndClamp: function (x, a, b, period) {
         var mid = 0.5 * (a + b),
@@ -152,10 +152,10 @@ JXG.Math = {
     },
 
     /**
-     * Initializes a vector of size <tt>n</tt> wih coefficients set to the init value (default 0)
+     * Initializes a vector of size `n` wih coefficients set to the init value (default 0)
      * @param {Number} n Length of the vector
      * @param {Number} [init=0] Initial value for each coefficient
-     * @returns {Array} An array of length <tt>n</tt>
+     * @returns {Array} An array of length `n`
      */
     vector: function (n, init) {
         var r, i;
@@ -175,7 +175,7 @@ JXG.Math = {
      * @param {Number} n Number of rows
      * @param {Number} [m=n] Number of columns
      * @param {Number} [init=0] Initial value for each coefficient
-     * @returns {Array} A <tt>n</tt> times <tt>m</tt>-matrix represented by a
+     * @returns {Array} A `n` times `m`-matrix represented by a
      * two-dimensional array. The inner arrays hold the columns, the outer array holds the rows.
      */
     matrix: function (n, m, init) {
@@ -201,8 +201,8 @@ JXG.Math = {
      * if n and m are both numbers, an nxm matrix is generated.
      * @param {Number} n Number of rows
      * @param {Number} [m=n] Number of columns
-     * @returns {Array} A square matrix of length <tt>n</tt> with all coefficients equal to 0 except a_(i,i), i out of (1, ..., n), if <tt>m</tt> is undefined or not a number
-     * or a <tt>n</tt> times <tt>m</tt>-matrix with a_(i,j) = 0 and a_(i,i) = 1 if m is a number.
+     * @returns {Array} A square matrix of length `n` with all coefficients equal to 0 except a_(i,i), i out of (1, ..., n), if `m` is undefined or not a number
+     * or a `n` times `m`-matrix with a_(i,j) = 0 and a_(i,i) = 1 if m is a number.
      */
     identity: function (n, m) {
         var r, i;
@@ -440,7 +440,7 @@ JXG.Math = {
     },
 
     /**
-     * Compute the inverse of an <i>(n x n)</i>-matrix by Gauss elimination.
+     * Compute the inverse of an \\((n \times n)\\)-matrix by Gauss elimination.
      *
      * @param {Array} A matrix
      * @returns {Array} Inverse matrix of A or empty array (i.e. []) in case A is singular.
@@ -573,10 +573,10 @@ JXG.Math = {
     /**
      * Calculates the cross product of two vectors both of length three.
      * In case of homogeneous coordinates this is either
-     * <ul>
-     * <li>the intersection of two lines</li>
-     * <li>the line through two points</li>
-     * </ul>
+     *
+     * - the intersection of two lines
+     * - the line through two points
+     *
      * @param {Array} c1 Homogeneous coordinates of line or point 1
      * @param {Array} c2 Homogeneous coordinates of line or point 2
      * @returns {Array} vector of length 3: homogeneous coordinates of the resulting point / line.
@@ -1295,7 +1295,7 @@ JXG.Math = {
      *
      * Convert a floating point number to sign + integer + fraction.
      * fraction is given as nominator and denominator.
-     * <p>
+     *
      * Algorithm: approximate the floating point number
      * by a continued fraction and simultaneously keep track
      * of its convergents.
@@ -1434,7 +1434,7 @@ JXG.Math = {
      * Theorem of Vieta: Given a set of simple zeroes x_0, ..., x_n
      * of a polynomial f, compute the coefficients s_k, (k=0,...,n-1)
      * of the polynomial of the form. See {@link https://de.wikipedia.org/wiki/Elementarsymmetrisches_Polynom}.
-     * <p>
+     *
      *  f(x) = (x-x_0)*...*(x-x_n) =
      *  x^n + sum_{k=1}^{n} (-1)^(k) s_{k-1} x^(n-k)
      * </p>

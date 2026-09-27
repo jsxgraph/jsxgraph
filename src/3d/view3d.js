@@ -51,15 +51,15 @@ import GeometryElement from "../base/element.js";
 import Composition from "../base/composition.js";
 
 /**
- * 3D view inside a JXGraph board.
+ * @class 3D view inside a JXGraph board.
  *
- * @class Creates a new 3D view. Do not use this constructor to create a 3D view. Use {@link JXG.Board#create} with
+ * Creates a new 3D view. Do not use this constructor to create a 3D view. Use {@link JXG.Board#create} with
  * type {@link View3D} instead.
  *
  * @augments JXG.GeometryElement
- * @param {Array} parents Array consisting of lower left corner [x, y] of the view inside the board, [width, height] of the view
- * and box size [[x1, x2], [y1,y2], [z1,z2]]. If the view's azimuth=0 and elevation=0, the 3D view will cover a rectangle with lower left corner
- * [x,y] and side lengths [w, h] of the board.
+ * @param {Array} parents Array consisting of lower left corner `[x, y]` of the view inside the board, `[width, height]` of the view
+ * and box size `[[x1, x2], [y1,y2], [z1,z2]]`. If the view's `azimuth=0` and `elevation=0`, the 3D view will cover a rectangle with lower left corner
+ * `[x,y]` and side lengths `[w, h]` of the board.
  */
 JXG.View3D = function (board, parents, attributes) {
     this.constructor(board, attributes, Const.OBJECT_TYPE_VIEW3D, Const.OBJECT_CLASS_3D);
@@ -74,7 +74,7 @@ JXG.View3D = function (board, parents, attributes) {
 
     /**
      * An array containing all the elements in the view that are sorted due to their depth order.
-     * @Type Object
+     * @type Object
      * @private
      */
     this.depthOrdered = {};
@@ -112,8 +112,8 @@ JXG.View3D = function (board, parents, attributes) {
     };
 
     /**
-     * @type {Array}
      * The view box orientation matrix
+     * @type {Array}
      */
     this.matrix3DRot = [
         [1, 0, 0, 0],
@@ -144,20 +144,20 @@ JXG.View3D = function (board, parents, attributes) {
     /**
      * The 4×4 matrix that maps box coordinates to camera coordinates. These
      * coordinate systems fit into the View3D coordinate atlas as follows.
-     * <ul>
-     * <li><b>World coordinates.</b> The coordinates used to specify object
-     * positions in a JSXGraph scene.</li>
-     * <li><b>Box coordinates.</b> The world coordinates translated to put the
+     *
+     * - __World coordinates.__ The coordinates used to specify object
+     * positions in a JSXGraph scene.
+     * - __Box coordinates.__ The world coordinates translated to put the
      * center of the view box at the origin.
-     * <li><b>Camera coordinates.</b> The coordinate system where the
-     * <code>x</code>, <code>y</code> plane is the screen, the origin is the
-     * center of the screen, and the <code>z</code> axis points out of the
+     * - __Camera coordinates.__ The coordinate system where the
+     * `x`, `y` plane is the screen, the origin is the
+     * center of the screen, and the `z` axis points out of the
      * screen, toward the viewer.
-     * <li><b>Focal coordinates.</b> The camera coordinates translated to put
+     * - __Focal coordinates.__ The camera coordinates translated to put
      * the origin at the focal point, which is set back from the screen by the
-     * focal distance.</li>
-     * </ul>
-     * The <code>boxToCam</code> transformation is exposed to help 3D elements
+     * focal distance.
+     *
+     * The `boxToCam` transformation is exposed to help 3D elements
      * manage their 2D representations in central projection mode. To map world
      * coordinates to focal coordinates, use the
      * {@link JXG.View3D#worldToFocal} method.
@@ -272,6 +272,7 @@ JXG.extend(
      * @param {Boolean} onlyByIdOrName If true (default:false) elements are only filtered by their id, name or groupId.
      * The advanced filters consisting of objects or functions are ignored.
      * @returns {JXG.GeometryElement3D|JXG.Composition}
+     *
      * @example
      * // select the element with name A
      * view.select('A');
@@ -1200,7 +1201,7 @@ JXG.extend(
      * Project a 2D coordinate to the plane defined by point "foot"
      * and the normal vector `normal`.
      *
-     * @param  {JXG.Point} point2d
+     * @param  {Point} point2d
      * @param  {Array} normal Normal of plane
      * @param  {Array} foot Foot point of plane
      * @returns {Array} of length 4 containing the projected
@@ -1270,7 +1271,7 @@ JXG.extend(
      * Project a point on the screen to the nearest point, in screen
      * distance, on a line segment in 3d space. The inputs and outputs
      * are in homogeneous coordinates.
-     * <p>
+     *
      * Used in View3d.project2DTo3DVertical() and
      * Line3d.projectScreenCoords().
      *
@@ -1345,7 +1346,7 @@ JXG.extend(
      * the 3D x, y coordinates and changing only the z coordinate.
      * All horizontal moves of the 2D point are ignored.
      *
-     * @param {JXG.Point} point2d
+     * @param {Point} point2d
      * @param {Array} base_c3d
      * @returns {Array} of length 4 containing the projected
      * point in homogeneous coordinates.
@@ -1449,8 +1450,8 @@ JXG.extend(
 
     /**
      *
-     * @param {JXG.Plane3D} plane1
-     * @param {JXG.Plane3D} plane2
+     * @param {Plane3D} plane1
+     * @param {Plane3D} plane2
      * @param {Number} d Right hand side of Hesse normal for plane2 (it can be adjusted)
      * @returns {Array} of length 2 containing the coordinates of the defining points of
      * of the intersection segment, or false if there is no intersection
@@ -2310,47 +2311,51 @@ JXG.extend(
 
 /**
  * @class A View3D element provides the container and the methods to create and display 3D elements.
- * @pseudo
- * @description  A View3D element provides the container and the methods to create and display 3D elements.
- * It is contained in a JSXGraph board.
- * <p>
+ *It is contained in a JSXGraph board.
+ *
  * It is advisable to disable panning of the board by setting the board attribute "pan":
- * <pre>
+ * ```
  *   pan: {enabled: false}
- * </pre>
+ * ```
  * Otherwise users will not be able to rotate the scene with their fingers on a touch device.
- * <p>
+ *
  * The start position of the camera can be adjusted by the attributes {@link View3D#az}, {@link View3D#el}, and {@link View3D#bank}.
  *
+ * @pseudo
  * @name View3D
+ * @elementclass 3D
  * @augments JXG.View3D
  * @constructor
  * @type Object
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {Array_Array_Array} lower,dim,cube  Here, lower is an array of the form [x, y] and
- * dim is an array of the form [w, h].
- * The arrays [x, y] and [w, h] define the 2D frame into which the 3D cube is
- * (roughly) projected. If the view's azimuth=0 and elevation=0, the 3D view will cover a rectangle with lower left corner
- * [x,y] and side lengths [w, h] of the board.
- * The array 'cube' is of the form [[x1, x2], [y1, y2], [z1, z2]]
+ */
+/**
+ * @jsxgraphsignature View3D
+ * The arrays `[x, y]` and `[w, h]` define the 2D frame into which the 3D cube is
+ * (roughly) projected. If the view's `azimuth=0` and `elevation=0`, the 3D view will cover a rectangle with lower left corner
+ * `[x,y]` and side lengths `[w, h]` of the board.
+ * The array `cube` is of the form `[[x1, x2], [y1, y2], [z1, z2]]`
  * which determines the coordinate ranges of the 3D cube.
+ * @param {Array} lower Array of the form `[x, y]`, position of the lower ledt corner of view3D in the board.
+ * @param {Array} dim Array of the form `[w, h]`. Size of view3D.
+ * @param {Array} cube  3D-size of view3D.
  *
  * @example
- *     var bound = [-4, 6];
- *     var view = board.create('view3d',
- *         [[-4, -3], [8, 8],
- *         [bound, bound, bound]],
- *         {
- *             projection: 'parallel',
- *             trackball: {enabled:true},
- *         });
+ * var bound = [-4, 6];
+ * var view = board.create('view3d',
+ *     [[-4, -3], [8, 8],
+ *     [bound, bound, bound]],
+ *     {
+ *         projection: 'parallel',
+ *         trackball: {enabled:true},
+ *     });
  *
- *     var curve = view.create('curve3d', [
- *         (t) => (2 + Math.cos(3 * t)) * Math.cos(2 * t),
- *         (t) => (2 + Math.cos(3 * t)) * Math.sin(2 * t),
- *         (t) => Math.sin(3 * t),
- *         [-Math.PI, Math.PI]
- *     ], { strokeWidth: 4 });
+ * var curve = view.create('curve3d', [
+ *     (t) => (2 + Math.cos(3 * t)) * Math.cos(2 * t),
+ *     (t) => (2 + Math.cos(3 * t)) * Math.sin(2 * t),
+ *     (t) => Math.sin(3 * t),
+ *     [-Math.PI, Math.PI]
+ * ], { strokeWidth: 4 });
  *
  * </pre><div id="JXG9b327a6c-1bd6-4e40-a502-59d024dbfd1b" class="jxgbox" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
@@ -2378,25 +2383,23 @@ JXG.extend(
  * </script><pre>
  *
  * @example
- *     var bound = [-4, 6];
- *     var view = board.create('view3d',
- *         [[-4, -3], [8, 8],
- *         [bound, bound, bound]],
- *         {
- *             projection: 'central',
- *             trackball: {enabled:true},
+ * var bound = [-4, 6];
+ * var view = board.create('view3d',
+ *     [[-4, -3], [8, 8],
+ *     [bound, bound, bound]],
+ *     {
+ *         projection: 'central',
+ *         trackball: {enabled:true},
+ *         xPlaneRear: { visible: false },
+ *         yPlaneRear: { visible: false }
+ *     });
  *
- *             xPlaneRear: { visible: false },
- *             yPlaneRear: { visible: false }
- *
- *         });
- *
- *     var curve = view.create('curve3d', [
- *         (t) => (2 + Math.cos(3 * t)) * Math.cos(2 * t),
- *         (t) => (2 + Math.cos(3 * t)) * Math.sin(2 * t),
- *         (t) => Math.sin(3 * t),
- *         [-Math.PI, Math.PI]
- *     ], { strokeWidth: 4 });
+ * var curve = view.create('curve3d', [
+ *     (t) => (2 + Math.cos(3 * t)) * Math.cos(2 * t),
+ *     (t) => (2 + Math.cos(3 * t)) * Math.sin(2 * t),
+ *     (t) => Math.sin(3 * t),
+ *     [-Math.PI, Math.PI]
+ * ], { strokeWidth: 4 });
  *
  * </pre><div id="JXG0dc2493d-fb2f-40d5-bdb8-762ba0ad2007" class="jxgbox" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
@@ -2427,38 +2430,38 @@ JXG.extend(
  *
  * </script><pre>
  *
-* @example
- *     var bound = [-4, 6];
- *     var view = board.create('view3d',
- *         [[-4, -3], [8, 8],
- *         [bound, bound, bound]],
- *         {
- *             projection: 'central',
- *             trackball: {enabled:true},
+ * @example
+ * var bound = [-4, 6];
+ * var view = board.create('view3d',
+ *     [[-4, -3], [8, 8],
+ *     [bound, bound, bound]],
+ *     {
+ *         projection: 'central',
+ *         trackball: {enabled:true},
  *
- *             // Main axes
- *             axesPosition: 'border',
+ *         // Main axes
+ *         axesPosition: 'border',
  *
- *             // Axes at the border
- *             xAxisBorder: { ticks3d: { ticksDistance: 2} },
- *             yAxisBorder: { ticks3d: { ticksDistance: 2} },
- *             zAxisBorder: { ticks3d: { ticksDistance: 2} },
+ *         // Axes at the border
+ *         xAxisBorder: { ticks3d: { ticksDistance: 2} },
+ *         yAxisBorder: { ticks3d: { ticksDistance: 2} },
+ *         zAxisBorder: { ticks3d: { ticksDistance: 2} },
  *
- *             // No axes on planes
- *             xPlaneRearYAxis: {visible: false},
- *             xPlaneRearZAxis: {visible: false},
- *             yPlaneRearXAxis: {visible: false},
- *             yPlaneRearZAxis: {visible: false},
- *             zPlaneRearXAxis: {visible: false},
- *             zPlaneRearYAxis: {visible: false}
- *         });
+ *         // No axes on planes
+ *         xPlaneRearYAxis: {visible: false},
+ *         xPlaneRearZAxis: {visible: false},
+ *         yPlaneRearXAxis: {visible: false},
+ *         yPlaneRearZAxis: {visible: false},
+ *         zPlaneRearXAxis: {visible: false},
+ *         zPlaneRearYAxis: {visible: false}
+ *     });
  *
- *     var curve = view.create('curve3d', [
- *         (t) => (2 + Math.cos(3 * t)) * Math.cos(2 * t),
- *         (t) => (2 + Math.cos(3 * t)) * Math.sin(2 * t),
- *         (t) => Math.sin(3 * t),
- *         [-Math.PI, Math.PI]
- *     ], { strokeWidth: 4 });
+ * var curve = view.create('curve3d', [
+ *     (t) => (2 + Math.cos(3 * t)) * Math.cos(2 * t),
+ *     (t) => (2 + Math.cos(3 * t)) * Math.sin(2 * t),
+ *     (t) => Math.sin(3 * t),
+ *     [-Math.PI, Math.PI]
+ * ], { strokeWidth: 4 });
  *
  * </pre><div id="JXG586f3551-335c-47e9-8d72-835409f6a103" class="jxgbox" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
@@ -2502,23 +2505,22 @@ JXG.extend(
  * </script><pre>
  *
  * @example
- *     var bound = [-4, 6];
- *     var view = board.create('view3d',
- *         [[-4, -3], [8, 8],
- *         [bound, bound, bound]],
- *         {
- *             projection: 'central',
- *             trackball: {enabled:true},
+ * var bound = [-4, 6];
+ * var view = board.create('view3d',
+ *     [[-4, -3], [8, 8],
+ *     [bound, bound, bound]],
+ *     {
+ *         projection: 'central',
+ *         trackball: {enabled:true},
+ *         axesPosition: 'none'
+ *     });
  *
- *             axesPosition: 'none'
- *         });
- *
- *     var curve = view.create('curve3d', [
- *         (t) => (2 + Math.cos(3 * t)) * Math.cos(2 * t),
- *         (t) => (2 + Math.cos(3 * t)) * Math.sin(2 * t),
- *         (t) => Math.sin(3 * t),
- *         [-Math.PI, Math.PI]
- *     ], { strokeWidth: 4 });
+ * var curve = view.create('curve3d', [
+ *     (t) => (2 + Math.cos(3 * t)) * Math.cos(2 * t),
+ *     (t) => (2 + Math.cos(3 * t)) * Math.sin(2 * t),
+ *     (t) => Math.sin(3 * t),
+ *     [-Math.PI, Math.PI]
+ * ], { strokeWidth: 4 });
  *
  * </pre><div id="JXG9a9467e1-f189-4c8c-adb2-d4f49bc7fa26" class="jxgbox" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
@@ -2548,72 +2550,71 @@ JXG.extend(
  * </script><pre>
  *
  * @example
- *     var bound = [-4, 6];
- *     var view = board.create('view3d',
- *         [[-4, -3], [8, 8],
- *         [bound, bound, bound]],
- *         {
- *             projection: 'central',
- *             trackball: {enabled:true},
+ * var bound = [-4, 6];
+ * var view = board.create('view3d',
+ *     [[-4, -3], [8, 8],
+ *     [bound, bound, bound]],
+ *     {
+ *         projection: 'central',
+ *         trackball: {enabled:true},
  *
- *             // Main axes
- *             axesPosition: 'border',
+ *         // Main axes
+ *         axesPosition: 'border',
  *
- *             // Axes at the border
- *             xAxisBorder: { ticks3d: { ticksDistance: 2} },
- *             yAxisBorder: { ticks3d: { ticksDistance: 2} },
- *             zAxisBorder: { ticks3d: { ticksDistance: 2} },
+ *         // Axes at the border
+ *         xAxisBorder: { ticks3d: { ticksDistance: 2} },
+ *         yAxisBorder: { ticks3d: { ticksDistance: 2} },
+ *         zAxisBorder: { ticks3d: { ticksDistance: 2} },
  *
- *             xPlaneRear: {
- *                 fillColor: '#fff',
- *                 mesh3d: {visible: false}
- *             },
- *             yPlaneRear: {
- *                 fillColor: '#fff',
- *                 mesh3d: {visible: false}
- *             },
- *             zPlaneRear: {
- *                 fillColor: '#fff',
- *                 mesh3d: {visible: false}
- *             },
- *             xPlaneFront: {
- *                 visible: true,
- *                 fillColor: '#fff',
- *                 mesh3d: {visible: false}
- *             },
- *             yPlaneFront: {
- *                 visible: true,
- *                 fillColor: '#fff',
- *                 mesh3d: {visible: false}
- *             },
- *             zPlaneFront: {
- *                 visible: true,
- *                 fillColor: '#fff',
- *                 mesh3d: {visible: false}
- *             },
+ *         xPlaneRear: {
+ *             fillColor: '#fff',
+ *             mesh3d: {visible: false}
+ *         },
+ *         yPlaneRear: {
+ *             fillColor: '#fff',
+ *             mesh3d: {visible: false}
+ *         },
+ *         zPlaneRear: {
+ *             fillColor: '#fff',
+ *             mesh3d: {visible: false}
+ *         },
+ *         xPlaneFront: {
+ *             visible: true,
+ *             fillColor: '#fff',
+ *             mesh3d: {visible: false}
+ *         },
+ *         yPlaneFront: {
+ *             visible: true,
+ *             fillColor: '#fff',
+ *             mesh3d: {visible: false}
+ *         },
+ *         zPlaneFront: {
+ *             visible: true,
+ *             fillColor: '#fff',
+ *             mesh3d: {visible: false}
+ *         },
  *
- *             // No axes on planes
- *             xPlaneRearYAxis: {visible: false},
- *             xPlaneRearZAxis: {visible: false},
- *             yPlaneRearXAxis: {visible: false},
- *             yPlaneRearZAxis: {visible: false},
- *             zPlaneRearXAxis: {visible: false},
- *             zPlaneRearYAxis: {visible: false},
- *             xPlaneFrontYAxis: {visible: false},
- *             xPlaneFrontZAxis: {visible: false},
- *             yPlaneFrontXAxis: {visible: false},
- *             yPlaneFrontZAxis: {visible: false},
- *             zPlaneFrontXAxis: {visible: false},
- *             zPlaneFrontYAxis: {visible: false}
+ *         // No axes on planes
+ *         xPlaneRearYAxis: {visible: false},
+ *         xPlaneRearZAxis: {visible: false},
+ *         yPlaneRearXAxis: {visible: false},
+ *         yPlaneRearZAxis: {visible: false},
+ *         zPlaneRearXAxis: {visible: false},
+ *         zPlaneRearYAxis: {visible: false},
+ *         xPlaneFrontYAxis: {visible: false},
+ *         xPlaneFrontZAxis: {visible: false},
+ *         yPlaneFrontXAxis: {visible: false},
+ *         yPlaneFrontZAxis: {visible: false},
+ *         zPlaneFrontXAxis: {visible: false},
+ *         zPlaneFrontYAxis: {visible: false}
+ *     });
  *
- *         });
- *
- *     var curve = view.create('curve3d', [
- *         (t) => (2 + Math.cos(3 * t)) * Math.cos(2 * t),
- *         (t) => (2 + Math.cos(3 * t)) * Math.sin(2 * t),
- *         (t) => Math.sin(3 * t),
- *         [-Math.PI, Math.PI]
- *     ], { strokeWidth: 4 });
+ * var curve = view.create('curve3d', [
+ *     (t) => (2 + Math.cos(3 * t)) * Math.cos(2 * t),
+ *     (t) => (2 + Math.cos(3 * t)) * Math.sin(2 * t),
+ *     (t) => Math.sin(3 * t),
+ *     [-Math.PI, Math.PI]
+ * ], { strokeWidth: 4 });
  *
  * </pre><div id="JXGbd41a4e3-1bf7-4764-b675-98b01667103b" class="jxgbox" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
@@ -2691,30 +2692,30 @@ JXG.extend(
  * </script><pre>
  *
  * @example
- *  var bound = [-5, 5];
- *  var view = board.create('view3d',
- *      [[-6, -3],
- *       [8, 8],
- *       [bound, bound, bound]],
- *      {
- *          // Main axes
- *          axesPosition: 'center',
- *          xAxis: { strokeColor: 'blue', strokeWidth: 3},
+ * var bound = [-5, 5];
+ * var view = board.create('view3d',
+ *     [[-6, -3],
+ *      [8, 8],
+ *      [bound, bound, bound]],
+ *     {
+ *         // Main axes
+ *         axesPosition: 'center',
+ *         xAxis: { strokeColor: 'blue', strokeWidth: 3},
  *
- *          // Planes
- *          xPlaneRear: { fillColor: 'yellow',  mesh3d: {visible: false}},
- *          yPlaneFront: { visible: true, fillColor: 'blue'},
+ *         // Planes
+ *         xPlaneRear: { fillColor: 'yellow',  mesh3d: {visible: false}},
+ *         yPlaneFront: { visible: true, fillColor: 'blue'},
  *
- *          // Axes on planes
- *          xPlaneRearYAxis: {strokeColor: 'red'},
- *          xPlaneRearZAxis: {strokeColor: 'red'},
+ *         // Axes on planes
+ *         xPlaneRearYAxis: {strokeColor: 'red'},
+ *         xPlaneRearZAxis: {strokeColor: 'red'},
  *
- *          yPlaneFrontXAxis: {strokeColor: 'blue'},
- *          yPlaneFrontZAxis: {strokeColor: 'blue'},
+ *         yPlaneFrontXAxis: {strokeColor: 'blue'},
+ *         yPlaneFrontZAxis: {strokeColor: 'blue'},
  *
- *          zPlaneFrontXAxis: {visible: false},
- *          zPlaneFrontYAxis: {visible: false}
- *      });
+ *         zPlaneFrontXAxis: {visible: false},
+ *         zPlaneFrontYAxis: {visible: false}
+ *     });
  *
  * </pre><div id="JXGdd06d90e-be5d-4531-8f0b-65fc30b1a7c7" class="jxgbox" style="width: 500px; height: 500px;"></div>
  * <script type="text/javascript">
@@ -2743,6 +2744,7 @@ JXG.extend(
  *     })();
  *
  * </script><pre>
+ *
  * @example
  * var bound = [-5, 5];
  * var view = board.create('view3d',

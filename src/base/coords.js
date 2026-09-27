@@ -48,7 +48,7 @@ import Mat from "../math/math.js";
  * @class This is the Coordinates class.
  * All members a coordinate has to provide
  * are defined here.
- * @param {Number} method The type of coordinates given by the user. Accepted values are <b>COORDS_BY_SCREEN</b> and <b>COORDS_BY_USER</b>.
+ * @param {Number} method The type of coordinates given by the user. Accepted values are `COORDS_BY_SCREEN` and `COORDS_BY_USER`.
  * @param {Array} coordinates An array of affine coordinates.
  * @param {JXG.Board} board A reference to a board.
  * @param {Boolean} [emitter=true]
@@ -141,7 +141,7 @@ JXG.extend(
 
         /**
          * Calculate distance of one point to another.
-         * @param {Number} coord_type The type of coordinates used here. Possible values are <b>JXG.COORDS_BY_USER</b> and <b>JXG.COORDS_BY_SCREEN</b>.
+         * @param {Number} coord_type The type of coordinates used here. Possible values are `JXG.COORDS_BY_USER` and `JXG.COORDS_BY_SCREEN`.
          * @param {JXG.Coords} coordinates The Coords object to which the distance is calculated.
          * @returns {Number} The distance
          */
@@ -169,7 +169,7 @@ JXG.extend(
 
         /**
          * Set coordinates by either user coordinates or screen coordinates and recalculate the other one.
-         * @param {Number} coord_type The type of coordinates used here. Possible values are <b>COORDS_BY_USER</b> and <b>COORDS_BY_SCREEN</b>.
+         * @param {Number} coord_type The type of coordinates used here. Possible values are `COORDS_BY_USER` and `COORDS_BY_SCREEN`.
          * @param {Array} coordinates An array of affine coordinates the Coords object is set to.
          * @param {Boolean} [doRound=true] flag If true or null round the coordinates in usr2screen. This is used in smooth curve plotting.
          * The IE needs rounded coordinates. Id doRound==false we have to round in updatePathString.

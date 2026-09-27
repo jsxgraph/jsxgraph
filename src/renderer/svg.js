@@ -43,14 +43,15 @@ import Base64 from "../utils/base64.js";
 import Numerics from "../math/numerics.js";
 
 /**
- * Uses SVG to implement the rendering methods defined in {@link JXG.AbstractRenderer}.
- * @class JXG.SVGRenderer
+ * @class Uses SVG to implement the rendering methods defined in {@link JXG.AbstractRenderer}.
+ *
  * @augments JXG.AbstractRenderer
  * @param {Node} container Reference to a DOM node containing the board.
  * @param {Object} dim The dimensions of the board
  * @param {Number} dim.width
  * @param {Number} dim.height
- * @see JXG.AbstractRenderer
+ * @see JXG.CanvasRenderer
+ * @see JXG.NoRenderer
  */
 JXG.SVGRenderer = function (container, dim) {
     var i;
@@ -107,7 +108,7 @@ JXG.SVGRenderer = function (container, dim) {
     this.container.appendChild(this.svgRoot);
 
     /**
-     * The <tt>defs</tt> element is a container element to reference reusable SVG elements.
+     * The `defs` element is a container element to reference reusable SVG elements.
      * @type Node
      * @see https://www.w3.org/TR/SVG2/struct.html#DefsElement
      */
@@ -194,7 +195,7 @@ JXG.SVGRenderer = function (container, dim) {
      *
      * If the id is used in an "url()" call it must be eascaped.
      *
-     * @params {String} one or strings which will be concatenated.
+     * @param {String} one or strings which will be concatenated.
      * @return {String}
      * @private
      */
@@ -207,7 +208,7 @@ JXG.SVGRenderer = function (container, dim) {
      * Combine arguments to a string, joined by empty string.
      * The container id needs to be escaped, as it may contain URI-unsafe characters
      *
-     * @params {String} str variable number of strings
+     * @param {String} str variable number of strings
      * @returns String
      * @see JXG.SVGRenderer#toURL
      * @private
@@ -230,7 +231,7 @@ JXG.SVGRenderer = function (container, dim) {
      * Combine arguments to an URL string of the form url(#...)
      * Masks the container id. Calls {@link JXG.SVGRenderer#toStr}.
      *
-     * @params {String} str variable number of strings
+     * @param {String} str variable number of strings
      * @returns URL string
      * @see JXG.SVGRenderer#toStr
      * @private
@@ -556,7 +557,7 @@ JXG.extend(
         /**
          * Updates color of an arrow DOM node.
          * @param {Node} node The arrow node.
-         * @param {String} color Color value in a HTML compatible format, e.g. <tt>#00ff00</tt> or <tt>green</tt> for green.
+         * @param {String} color Color value in a HTML compatible format, e.g. `#00ff00` or `green` for green.
          * @param {Number} opacity
          * @param {JXG.GeometryElement} el The element the arrows are to be attached to
          */
@@ -2280,10 +2281,10 @@ JXG.extend(
         /**
          * Convert the SVG construction into an HTML canvas image.
          * This works for all SVG supporting browsers. Implemented as Promise.
-         * <p>
+         *
          * Might fail if any text element or foreign object element contains SVG. This
          * is the case e.g. for the default fullscreen symbol.
-         * <p>
+         *
          * For IE, it is realized as function.
          * It works from version 9, with the exception that HTML texts
          * are ignored on IE. The drawing is done with a delay of
@@ -2333,7 +2334,6 @@ JXG.extend(
             /**
              * @type {Image}
              * @ignore
-             * {ignore}
              */
             tmpImg = new Image();
             svg = this.dumpToDataURI(ignoreTexts);
@@ -2372,17 +2372,15 @@ JXG.extend(
         },
 
         /**
-         * Display SVG image in html img-tag which enables
-         * easy download for the user.
+         * Display SVG image in html img-tag which enables easy download for the user.
          *
          * Support:
-         * <ul>
-         * <li> IE: No
-         * <li> Edge: full
-         * <li> Firefox: full
-         * <li> Chrome: full
-         * <li> Safari: full (No text support in versions prior to 12).
-         * </ul>
+         *
+         * - IE: No
+         * - Edge: full
+         * - Firefox: full
+         * - Chrome: full
+         * - Safari: full (No text support in versions prior to 12).
          *
          * @param {JXG.Board} board Link to the board.
          * @param {String} imgId Optional id of an img object. If given and different from the empty string,

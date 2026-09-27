@@ -44,7 +44,7 @@ import Type from "../utils/type.js";
 
 /**
  * A JessieCode object provides an interface to the parser and stores all variables and objects used within a JessieCode script.
- * The optional argument <tt>code</tt> is interpreted after initializing. To evaluate more code after initializing a JessieCode instance
+ * The optional argument `code` is interpreted after initializing. To evaluate more code after initializing a JessieCode instance
  * please use {@link JXG.JessieCode#parse}. For code snippets like single expressions use {@link JXG.JessieCode#snippet}.
  * @constructor
  * @param {String} [code] Code to parse.

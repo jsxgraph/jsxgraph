@@ -118,22 +118,26 @@ JXG.extend(
 /**
  * @class A polygon is a sequence of points connected by lines, with the last point
  * connecting back to the first one. The points are given by:
- * <ul>
- *    <li> a list of Point3D objects,
- *    <li> a list of coordinate arrays, or
- *    <li> a function returning a list of coordinate arrays.
- * </ul>
+ *
+ * - a list of {@link Point3D} objects,
+ * - a list of coordinate arrays, or
+ * - a function returning a list of coordinate arrays.
+ *
  * Each two consecutive points of the list define a line.
- * <p>
- * JSXGraph does not require and does not check planarity of the polygon.
+ *
+ * JSXGraph does __not__ require and does not check planarity of the polygon.
  *
  * @pseudo
  * @constructor
  * @name Polygon3D
+ * @elementclass 3D
  * @type JXG.Polygon3D
  * @augments JXG.Polygon3D
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {Array} vertices The polygon's vertices.
+ */
+/**
+ * @jsxgraphsignature Polygon3D
+ * @param {...Point3DLike} vertices The polygon's vertices.
  */
 JXG.createPolygon3D = function (board, parents, attributes) {
     var view = parents[0],

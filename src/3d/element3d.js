@@ -57,7 +57,6 @@ JXG.GeometryElement3D = function (view, elType) {
      * in a view. In case, there are several 2D elements, it is an array.
      *
      * @type Array
-     * @description JXG.GeometryElement,Array
      * @private
      *
      * @example
@@ -193,7 +192,7 @@ JXG.extend(JXG.GeometryElement3D.prototype, {
     // /**
     //  * Add transformations to this element.
     //  * @param {JXG.GeometryElement} el
-    //  * @param {JXG.Transformation|Array} transform Either one {@link JXG.Transformation}
+    //  * @param {Transformation|Array} transform Either one {@link Transformation}
     //  * or an array of {@link JXG.Transformation}s.
     //  * @returns {JXG.CoordsElement} Reference to itself.
     //  */
@@ -240,7 +239,8 @@ JXG.extend(JXG.GeometryElement3D.prototype, {
     /**
      * Set position of the 2D element. This is a
      * callback function, executed in {@link JXG.GeometryElement#setPosition}.
-     * @param {JXG.Transform} t transformation
+     * @param {Transformation} t transformation
+     * @memberof JXG.GeometryElement3D
      * @private
      * @see JXG.GeometryElement#setPosition
      */
@@ -250,22 +250,25 @@ JXG.extend(JXG.GeometryElement3D.prototype, {
 
     /**
      * Project a 3D point to this element and update point.position. This function computes the
-     * preimage (u,v) of a 3D position (1, X, Y, Z)
+     * preimage (u,v) of a 3D position \\((1, X, Y, Z)\\)
      * @param {Array} p 3D position of the point (array of length 4, homogeneous coordinates)
      * @param {Array} params Changed in place to the new parameters of the point in terms of the elements functions X, Y, Z.
      * For example for a surface, params will contain values (u,v) such that the new 3D position is
-     * p = [X(u, v), Z(u, v), Z(u, v)].
+     * `p = [X(u, v), Z(u, v), Z(u, v)]`.
      * @returns {Array} 3D coordinates of the projected point with homogeneous coordinates of the form [1, x, y, z].
+     * @memberof JXG.GeometryElement3D
+     * @private
      */
     projectCoords: function(p, params) {
         /* stub */
     },
 
     /**
-     *
-     * @param {*} pScr
-     * @param {*} params
-     * @returns
+     * Computes the screen coordinates (e.g. of of the mouse pointer) to a position on a 3D object.
+     * @param {Array} pScr 2D screen coordinates (in pixel)
+     * @param {Array} params See {@link JXG.Math.Geometry.projectScreenCoordsToParametric}
+     * @returns Array of length 4 containing the coordinates of the nearest point on the curve or surface.
+     * @memberof JXG.GeometryElement3D
      */
     // TODO check if Geometry.projectScreenCoordsToParametric has range or (range_u and range_v) - depending on the dimension given in params
     projectScreenCoords: function (pScr, params, cyclic) {

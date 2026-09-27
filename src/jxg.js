@@ -45,7 +45,9 @@
  */
 
 /**
- * JXG is the top object of JSXGraph and defines the namespace
+ * JXG is the top object of JSXGraph and defines the namespace of all classes.
+ *
+ * See {@link JXG.board} and {@link JXG.appBox}.
  *
  * @name JXG
  * @exports jxg as JXG
@@ -67,11 +69,11 @@ try {
 // We need the following two methods "extend" and "shortcut" to create the JXG object via JXG.extend.
 
 /**
- * Copy all properties of the <tt>extension</tt> object to <tt>object</tt>.
+ * Copy all properties of the `extension` object to `object`.
  * @param {Object} object
  * @param {Object} extension
  * @param {Boolean} [onlyOwn=false] Only consider properties that belong to extension itself, not any inherited properties.
- * @param {Boolean} [toLower=false] If true the keys are convert to lower case. This is needed for visProp, see JXG#copyAttributes
+ * @param {Boolean} [toLower=false] If true the keys are convert to lower case. This is needed for visProp, see  {@link JXG#copyAttributes}
  */
 jxg.extend = function (object, extension, onlyOwn, toLower) {
     var e, e2;
@@ -94,8 +96,88 @@ jxg.extend = function (object, extension, onlyOwn, toLower) {
     }
 };
 
+// ----------------------------------------------------------------------
+//
+// typedef declarations for jsdoc
+//
+
 /**
- * Set a constant <tt>name</tt> in <tt>object</tt> to <tt>value</tt>. The value can't be changed after declaration.
+ * Function returning a point like object.
+ *
+ * This could be
+ * - a {@link Point}
+ * - coordinate array `[x, y]`
+ * - coordinate array `[z, x, y]` with homogeneous coordinates.
+ * In this case, `z` is 0 for infinite points, non-zero otherwise.
+ *
+ * @callback PointFunction
+ * @returns PointLike
+ */
+
+/**
+ * An array of length 2 or 3.
+ *
+ * - coordinate array `[x, y]`: *affine coordinates*
+ * - coordinate array `[z, x, y]`: *homogeneous coordinates*.
+ *
+ * In most cases, both types (affine or homogeneous) coordinates can be used.
+ *
+ * @typedef {array} Coordinates2D
+ */
+
+/**
+ * A point, coordinates array, or a function returning point or coordinates.
+ *
+ * @typedef {(Point | Coordinates2D | PointFunction)} PointLike
+ */
+
+/**
+ * A number or a function returning a number.
+ *
+ * @typedef {Number | Function} NumberLike
+ */
+
+/**
+ * An array of length 3 or 4.
+ *
+ * - coordinate array `[x, y, z]`: *affine coordinates*
+ * - coordinate array `[w, x, y, z]`: *homogeneous coordinates*.
+ *
+ * In most cases, both types (affine or homogeneous) coordinates can be used.
+ *
+ * @typedef {array} Coordinates3D
+ */
+
+/**
+ * A point, coordinates, or a function returning point or coordinates.
+ *
+ * @typedef {(Point3D | Coordinates3D | Point3DFunction)} Point3DLike
+ */
+
+/**
+ * Function returning a 3D point like object.
+ *
+ * This could be
+ * - a {@link Point3D}
+ * - coordinate array `[x, y, z]`
+ * - coordinate array `[w, x, y, z]` with homogeneous coordinates.
+ * In this case, `w` is 0 for infinite points, non-zero otherwise.
+ *
+ * @callback Point3DFunction
+ * @returns Point3DLike
+ */
+
+/**
+ * A line or an array of size 3 with homogenous coordinates defining the line.
+ *
+ * @typedef {(Line|number[])} LineType
+ * @memberof Line
+ */
+
+// ----------------------------------------------------------------------
+
+/**
+ * Set a constant `name` in `object` to `value`. The value can't be changed after declaration.
  * @param {Object} object
  * @param {String} name
  * @param {Number|String|Boolean} value
@@ -117,7 +199,7 @@ jxg.defineConstant = function (object, name, value, ignoreRedefine) {
 };
 
 /**
- * Copy all properties of the <tt>constants</tt> object in <tt>object</tt> as a constant.
+ * Copy all properties of the `constants` object in `object` as a constant.
  * @param {Object} object
  * @param {Object} constants
  * @param {Boolean} [onlyOwn=false] Only consider properties that belong to extension itself, not any inherited properties.
@@ -173,7 +255,7 @@ jxg.extend(
          * will be overwritten.
          * @param {Function} creator A reference to a function taking three parameters: First the board, the element is
          * to be created on, a parent element array, and an attributes object. See {@link JXG.createPoint} or any other
-         * <tt>JXG.create...</tt> function for an example.
+         * `JXG.create...` function for an example.
          */
         registerElement: function (element, creator) {
             element = element.toLowerCase();
@@ -182,8 +264,8 @@ jxg.extend(
 
         /**
          * Register a file reader.
-         * @param {function} reader A file reader. This object has to provide two methods: <tt>prepareString()</tt>
-         * and <tt>read()</tt>.
+         * @param {function} reader A file reader. This object has to provide two methods: `prepareString()`
+         * and `read()`.
          * @param {Array} ext
          */
         registerReader: function (reader, ext) {
@@ -348,10 +430,17 @@ jxg.extend(
         },
 
         /**
+         * @class
+         *
+         * @pseudo
+         * @name JXG.board
+         * @elementclass board
+         */
+        /**
          * Initialize a new board.
          * Alias of {@link JXG.JSXGraph.initBoard}.
          * @param {String|Object} box id of or reference to the HTML element in which the board is painted.
-         * @param {Object} attributes An object that sets some of the board properties.
+         * @param {Object} attributes An object that sets some of the board attributes.
          * See {@link JXG.Board} for a list of available attributes of the board.
          * Most of these attributes can also be set globally via {@link JXG.Options}.
          *
@@ -377,7 +466,6 @@ jxg.extend(
          *     })();
          *
          * </script><pre>
-         *
          *
          * @example
          * const board = JXG.board('jxgbox', {
@@ -458,6 +546,7 @@ jxg.extend(
          *     })();
          *
          * </script><pre>
+         *
          * @example
          * const board = JXG.board('jxgbox', {
          *     boundingbox: [-5, 5, 5, -5],
@@ -548,28 +637,37 @@ jxg.extend(
         },
 
         /**
+         * @class
+         *
+         * @pseudo
+         * @name JXG.appBox
+         * @elementclass board
+         */
+        /**
          * Create a JSXGraph div element containing a JSXGraph board inside of a user supplied div.
-         * <p>
+         *
          * The styling of the supplied div is up to the user, see the style-tag in the example below for
          * one possibility. The CSS for the inner div, hosting the JSXGraph board, is supplied by the attributes
-         *  <pre>
+         *
+         * ```
          *   jxgbox: {
          *       cssStyle: 'width:640px;  aspect-ratio:2/1; background-color: white',
          *       cssClass: '',
          *       id: 'jxgbox'
          *   }
-         * </pre>
+         * ```
+         *
          * i.e. the div's style-attribute and a list of classes (separated by blanks) can be given.
-         * <p>
+         *
          * By setting the attribute "clip" to false for selected
          * elements (like sliders and texts), these elements can be positioned outside of the JSXGraph board. For those elements,
          * the setting of the attributes "frozen:true, fixed:true" is recommended to make their position independent from zooming
          * or panning the board coordinates.
-         * <p>
+         *
          * However, not all elements will look good if displayed outside of the JSXGraph board - be careful.
          *
          * @param {String|Object} box id of or reference to the HTML element in which the board is painted into a sub-element of type div.
-         * @param {Object} attributes An object that sets some of the board properties and properties of the sub-element containing the board.
+         * @param {Object} attributes An object that sets some of the board attributes and attributes of the sub-element containing the board.
          * See {@link JXG.Board} for a list of available attributes of the board.
          * Most of these attributes can also be set globally via {@link JXG.Options}.
          *
@@ -620,7 +718,7 @@ jxg.extend(
          *        var graph = board.create("functiongraph", ['s.Value() * x^3'], { clip: true });
          *
          * &lt;/script&gt;
-         * </pre>
+         * </pre><div id="JXGd1c7bf6a-a571-4392-a289-e4ef44d57c88" class="container"></div>
          * <style>
          * .container {
          *   display: flex;
@@ -634,7 +732,7 @@ jxg.extend(
          *   background-color: #eee;
          * }
          * </style>
-         * <div id="JXGd1c7bf6a-a571-4392-a289-e4ef44d57c88" class="container"></div>
+         *
          * <script type="text/javascript">
          *     (function() {
          *        const board = JXG.appBox('JXGd1c7bf6a-a571-4392-a289-e4ef44d57c88', {
@@ -729,6 +827,14 @@ jxg.extend(
             return board;
         },
 
+        /**
+         * @class Collection of themes
+         *
+         * @name JXG.themes
+         * @elementclass themes
+         * @type Object
+         *
+         */
         themes: {}
     }
 );

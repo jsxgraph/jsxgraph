@@ -83,7 +83,7 @@ import Mat from "./math.js";
 // import Type from "../utils/type.js";
 
 /**
- * The JXG.Math.Nlp namespace holds numerical algorithms for non-linear optimization.
+ * The JXG.Math.Nlp namespace holds numerical algorithms for non-linear optimization, mainly the port of COBYLA.
  * @name JXG.Math.Nlp
  * @namespace
  *

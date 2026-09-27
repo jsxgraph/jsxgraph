@@ -22,6 +22,7 @@ JXG.extend(Options, {
          *
          * @type String
          * @name View3D#axesPosition
+         * @attribute
          * @default 'center'
          */
         axesPosition: "center", // Possible values: 'center', 'border', 'none'
@@ -33,6 +34,7 @@ JXG.extend(Options, {
          *
          * @type Line3D
          * @name View3D#xAxis
+         * @attribute
          * @see View3D#axesPosition
          */
         xAxis: {
@@ -50,6 +52,7 @@ JXG.extend(Options, {
          *
          * @type Line3D
          * @name View3D#yAxis
+         * @attribute
          * @see View3D#axesPosition
          */
         yAxis: {
@@ -67,6 +70,7 @@ JXG.extend(Options, {
          *
          * @type Line3D
          * @name View3D#zAxis
+         * @attribute
          * @see View3D#axesPosition
          */
         zAxis: {
@@ -83,8 +87,9 @@ JXG.extend(Options, {
          *
          * @type Line3D
          * @name View3D#xAxisBorder
+         * @attribute
          * @see View3D#axesPosition
-         * @default <pre>{
+         * @default {
          *   name: 'x',
          *   withLabel: false,
          *   label: {
@@ -100,8 +105,7 @@ JXG.extend(Options, {
          *           anchorY: 'middle'
          *       }
          *   }
-         *}
-         *</pre>
+         * }
          */
         xAxisBorder: {
             name: 'x',
@@ -129,8 +133,9 @@ JXG.extend(Options, {
          *
          * @type Line3D
          * @name View3D#yAxisBorder
+         * @attribute
          * @see View3D#axesPosition
-         * @default <pre>{
+         * @default {
          *   name: 'x',
          *   withLabel: false,
          *   label: {
@@ -145,8 +150,7 @@ JXG.extend(Options, {
          *           anchorX: 'middle',
          *       }
          *   }
-         *}
-         *</pre>
+         * }
          */
         yAxisBorder: {
             name: 'y',
@@ -172,8 +176,9 @@ JXG.extend(Options, {
          *
          * @type Line3D
          * @name View3D#zAxisBorder
+         * @attribute
          * @see View3D#axesPosition
-         * @default <pre>{
+         * @default {
          *   name: 'z',
          *   withLabel: false,
          *   label: {
@@ -189,8 +194,8 @@ JXG.extend(Options, {
          *           anchorY: 'middle'
          *       }
          *   }
-         *}
-         *</pre>
+         * }
+         *
          */
         zAxisBorder: {
             name: 'z',
@@ -217,6 +222,7 @@ JXG.extend(Options, {
          * Attributes of the 3D plane orthogonal to the x-axis at the "rear" of the cube.
          * @type Plane3D
          * @name View3D#xPlaneRear
+         * @attribute
          */
         xPlaneRear: {
             visible: true,
@@ -252,6 +258,7 @@ JXG.extend(Options, {
          * Attributes of the 3D plane orthogonal to the y-axis at the "rear" of the cube.
          * @type Plane3D
          * @name View3D#yPlaneRear
+         * @attribute
          */
         yPlaneRear: {
             visible: true,
@@ -287,6 +294,7 @@ JXG.extend(Options, {
          * Attributes of the 3D plane orthogonal to the z-axis at the "rear" of the cube.
          * @type Plane3D
          * @name View3D#zPlaneRear
+         * @attribute
          */
         zPlaneRear: {
             visible: true,
@@ -322,6 +330,7 @@ JXG.extend(Options, {
          * Attributes of the 3D plane orthogonal to the x-axis at the "front" of the cube.
          * @type Plane3D
          * @name View3D#xPlaneFront
+         * @attribute
          */
         xPlaneFront: {
             visible: false,
@@ -360,6 +369,7 @@ JXG.extend(Options, {
          * Attributes of the 3D plane orthogonal to the y-axis at the "front" of the cube.
          * @type Plane3D
          * @name View3D#yPlaneFront
+         * @attribute
          */
         yPlaneFront: {
             visible: false,
@@ -398,6 +408,7 @@ JXG.extend(Options, {
          * Attributes of the 3D plane orthogonal to the z-axis at the "front" of the cube.
          * @type Plane3D
          * @name View3D#zPlaneFront
+         * @attribute
          */
         zPlaneFront: {
             visible: false,
@@ -438,6 +449,7 @@ JXG.extend(Options, {
          * Attributes of the 3D y-axis on the 3D plane orthogonal to the x-axis at the "rear" of the cube.
          * @type Plane3D
          * @name View3D#xPlaneRearYAxis
+         * @attribute
          */
         xPlaneRearYAxis: {
             visible: 'inherit',
@@ -449,6 +461,7 @@ JXG.extend(Options, {
          * Attributes of the 3D z-axis on the 3D plane orthogonal to the x-axis at the "rear" of the cube.
          * @type Plane3D
          * @name View3D#xPlaneRearZAxis
+         * @attribute
          */
         xPlaneRearZAxis: {
             visible: 'inherit',
@@ -460,6 +473,7 @@ JXG.extend(Options, {
          * Attributes of the 3D y-axis on the 3D plane orthogonal to the x-axis at the "front" of the cube.
          * @type Plane3D
          * @name View3D#xPlaneFrontYAxis
+         * @attribute
          */
         xPlaneFrontYAxis: {
             visible: false,
@@ -471,6 +485,7 @@ JXG.extend(Options, {
          * Attributes of the 3D z-axis on the 3D plane orthogonal to the x-axis at the "front" of the cube.
          * @type Plane3D
          * @name View3D#xPlaneFrontZAxis
+         * @attribute
          */
         xPlaneFrontZAxis: {
             visible: false,
@@ -482,6 +497,7 @@ JXG.extend(Options, {
          * Attributes of the 3D x-axis on the 3D plane orthogonal to the y-axis at the "rear" of the cube.
          * @type Plane3D
          * @name View3D#yPlaneRearXAxis
+         * @attribute
          */
         yPlaneRearXAxis: {
             visible: 'inherit',
@@ -493,6 +509,7 @@ JXG.extend(Options, {
          * Attributes of the 3D z-axis on the 3D plane orthogonal to the y-axis at the "rear" of the cube.
          * @type Plane3D
          * @name View3D#yPlaneRearZAxis
+         * @attribute
          */
         yPlaneRearZAxis: {
             visible: 'inherit',
@@ -504,6 +521,7 @@ JXG.extend(Options, {
          * Attributes of the 3D x-axis on the 3D plane orthogonal to the y-axis at the "front" of the cube.
          * @type Plane3D
          * @name View3D#yPlaneFrontXAxis
+         * @attribute
          */
         yPlaneFrontXAxis: {
             visible: false,
@@ -515,6 +533,7 @@ JXG.extend(Options, {
          * Attributes of the 3D z-axis on the 3D plane orthogonal to the y-axis at the "front" of the cube.
          * @type Plane3D
          * @name View3D#yPlaneFrontZAxis
+         * @attribute
          */
         yPlaneFrontZAxis: {
             visible: false,
@@ -527,6 +546,7 @@ JXG.extend(Options, {
          * Attributes of the 3D x-axis on the 3D plane orthogonal to the z-axis at the "rear" of the cube.
          * @type Plane3D
          * @name View3D#zPlaneRearXAxis
+         * @attribute
          */
         zPlaneRearXAxis: {
             visible: 'inherit',
@@ -538,6 +558,7 @@ JXG.extend(Options, {
          * Attributes of the 3D y-axis on the 3D plane orthogonal to the z-axis at the "rear" of the cube.
          * @type Plane3D
          * @name View3D#zPlaneRearYAxis
+         * @attribute
          */
         zPlaneRearYAxis: {
             visible: 'inherit',
@@ -549,6 +570,7 @@ JXG.extend(Options, {
          * Attributes of the 3D x-axis on the 3D plane orthogonal to the z-axis at the "front" of the cube.
          * @type Plane3D
          * @name View3D#zPlaneFrontXAxis
+         * @attribute
          */
         zPlaneFrontXAxis: {
             visible: false,
@@ -560,6 +582,7 @@ JXG.extend(Options, {
          * Attributes of the 3D y-axis on the 3D plane orthogonal to the z-axis at the "front" of the cube.
          * @type Plane3D
          * @name View3D#zPlaneFrontYAxis
+         * @attribute
          */
         zPlaneFrontYAxis: {
             visible: false,
@@ -631,15 +654,16 @@ JXG.extend(Options, {
          * By default (i.e. type:'angle'), the angle between the camera axis and the normal of the
          * face determines the lightness value of the HSL color. Otherwise, the
          * zIndex of the face determines the lightness value of the HSL color.
-         * <p>
+         *
          * Note that shading needs a lot of computing resources, in particular for
          * SVG rendering. Setting `renderer:'canvas'` will allow to rotate the viewport
          * much faster.
          *
          * @type Object
          * @name Face3D#shader
+         * @attribute
          * @see View3D#depthOrder
-         * @default <pre>shader: {
+         * @default shader: {
          *   enabled: false,
          *   fixed: true,    // If false, update shading during rotation of viewport
          *   type: 'angle',  // 'angle', otherwise zIndex
@@ -657,67 +681,67 @@ JXG.extend(Options, {
          *       bank: 0, // TODO use radians, ignored for type==1, type==3
          *       dir: -1  // -1 (reverse), 0 (use abs), 1. Default: -1
          *   }
-         * }</pre>
+         * }
          *
          * @example
-         *         var view = board.create(
-         *             'view3d',
-         *             [[-5, -3], [8, 8],
-         *             [[-3, 3], [-3, 3], [-3, 3]]],
-         *             {
-         *                 projection: 'central',
-         *                 trackball: { enabled: true },
-         *                 depthOrder: {
-         *                     enabled: true
-         *                 },
-         *                 xPlaneRear: { visible: false },
-         *                 yPlaneRear: { visible: false },
-         *                 zPlaneRear: { fillOpacity: 0.2, visible: true }
-         *             }
-         *         );
+         *   var view = board.create(
+         *       'view3d',
+         *       [[-5, -3], [8, 8],
+         *       [[-3, 3], [-3, 3], [-3, 3]]],
+         *       {
+         *           projection: 'central',
+         *           trackball: { enabled: true },
+         *           depthOrder: {
+         *               enabled: true
+         *           },
+         *           xPlaneRear: { visible: false },
+         *           yPlaneRear: { visible: false },
+         *           zPlaneRear: { fillOpacity: 0.2, visible: true }
+         *       }
+         *   );
          *
-         *         let rho = 1.6180339887;
-         *         let vertexList = [
-         *             [0, -1, -rho], [0, +1, -rho], [0, -1, rho], [0, +1, rho],
-         *             [1, rho, 0], [-1, rho, 0], [1, -rho, 0], [-1, -rho, 0],
-         *             [-rho, 0, 1], [-rho, 0, -1], [rho, 0, 1], [rho, 0, -1]
-         *         ];
-         *         let faceArray = [
-         *             [4, 1, 11],
-         *             [11, 1, 0],
-         *             [6, 11, 0],
-         *             [0, 1, 9],
-         *             [11, 10, 4],
-         *             [9, 1, 5],
-         *             [8, 9, 5],
-         *             [5, 3, 8],
-         *             [6, 10, 11],
-         *             [2, 3, 10],
-         *             [2, 10, 6],
-         *             [8, 3, 2],
-         *             [3, 4, 10],
-         *             [7, 8, 2],
-         *             [9, 8, 7],
-         *             [0, 9, 7],
-         *             [4, 3, 5],
-         *             [5, 1, 4],
-         *             [0, 7, 6],
-         *             [7, 2, 6]
-         *         ];
-         *         var ico = view.create('polyhedron3d', [vertexList, faceArray], {
-         *             fillColorArray: [],
-         *             fillOpacity: 1,
-         *             strokeWidth: 0.1,
-         *             layer: 12,
-         *             shader: {
-         *                 enabled: true,
-         *                 type: 'angle',
-         *                 hue: 0,
-         *                 saturation: 90,
-         *                 minlightness: 60,
-         *                 maxLightness: 80
-         *             }
-         *         });
+         *   let rho = 1.6180339887;
+         *   let vertexList = [
+         *       [0, -1, -rho], [0, +1, -rho], [0, -1, rho], [0, +1, rho],
+         *       [1, rho, 0], [-1, rho, 0], [1, -rho, 0], [-1, -rho, 0],
+         *       [-rho, 0, 1], [-rho, 0, -1], [rho, 0, 1], [rho, 0, -1]
+         *   ];
+         *   let faceArray = [
+         *       [4, 1, 11],
+         *       [11, 1, 0],
+         *       [6, 11, 0],
+         *       [0, 1, 9],
+         *       [11, 10, 4],
+         *       [9, 1, 5],
+         *       [8, 9, 5],
+         *       [5, 3, 8],
+         *       [6, 10, 11],
+         *       [2, 3, 10],
+         *       [2, 10, 6],
+         *       [8, 3, 2],
+         *       [3, 4, 10],
+         *       [7, 8, 2],
+         *       [9, 8, 7],
+         *       [0, 9, 7],
+         *       [4, 3, 5],
+         *       [5, 1, 4],
+         *       [0, 7, 6],
+         *       [7, 2, 6]
+         *   ];
+         *   var ico = view.create('polyhedron3d', [vertexList, faceArray], {
+         *       fillColorArray: [],
+         *       fillOpacity: 1,
+         *       strokeWidth: 0.1,
+         *       layer: 12,
+         *       shader: {
+         *           enabled: true,
+         *           type: 'angle',
+         *           hue: 0,
+         *           saturation: 90,
+         *           minlightness: 60,
+         *           maxLightness: 80
+         *       }
+         *   });
          *
          * </pre><div id="JXGbf32b040-affb-4e03-a05b-abfe953f614d" class="jxgbox" style="width: 300px; height: 300px;"></div>
          * <script type="text/javascript">
@@ -835,7 +859,8 @@ JXG.extend(Options, {
          * Attributes of the defining point in case the line is defined by [point, vector, [range]]
          * @type Point3D
          * @name Line3D#point
-         * @default <pre>visible: false, name: ""</pre>
+         * @attribute
+         * @default { visible: false, name: ""}
          */
         point: { visible: false, name: "" }, // Used in cases of point/direction/range
 
@@ -843,7 +868,8 @@ JXG.extend(Options, {
          * Attributes of the first point in case the line is defined by [point, point].
          * @type Point3D
          * @name Line3D#point1
-         * @default <pre>visible: false, name: ""</pre>
+         * @attribute
+         * @default {visible: false, name: ""}
          */
         point1: { visible: false, name: "" }, // Used in point/point
 
@@ -851,7 +877,8 @@ JXG.extend(Options, {
          * Attributes of the second point in case the line is defined by [point, point].
          * @type Point3D
          * @name Line3D#point2
-         * @default <pre>visible: false, name: ""</pre>
+         * @attribute
+         * @default {visible: false, name: ""}
          */
         point2: { visible: false, name: "" },
 
@@ -861,6 +888,7 @@ JXG.extend(Options, {
          * Otherwise it ends at point1.
          *
          * @name Line3D#straightFirst
+         * @attribute
          * @see Line3D#straightLast
          * @type Boolean
          * @default false
@@ -874,6 +902,7 @@ JXG.extend(Options, {
          * Otherwise it ends at point2.
          *
          * @name Line3D#straightLast
+         * @attribute
          * @see Line3D#straightFirst
          * @type Boolean
          * @default false
@@ -900,6 +929,7 @@ JXG.extend(Options, {
          * Step width of the mesh in the direction of the first spanning vector.
          * @type {Number}
          * @name Mesh3D#stepWidthU
+         * @attribute
          * @default 1
          *
          */
@@ -910,6 +940,7 @@ JXG.extend(Options, {
          *
          * @type {Number}
          * @name Mesh3D#stepWidthV
+         * @attribute
          * @default 1
          *
          */
@@ -947,6 +978,7 @@ JXG.extend(Options, {
          *
          * @type Mesh3D
          * @name Plane3D#mesh3d
+         * @attribute
          * @default see {@link Mesh3D}
          */
         mesh3d: {
@@ -990,6 +1022,7 @@ JXG.extend(Options, {
          * the plane is defined by three points.
          *
          * @name Plane3D#threePoints
+         * @attribute
          * @type Boolean
          * @default false
          */
@@ -999,7 +1032,8 @@ JXG.extend(Options, {
          * Attributes of the defining point in case the plane is defined by [point, direction1, direction2, [range1, [range2]]].
          * @type Point3D
          * @name Plane3D#point
-         * @default <pre>visible: false, name: "", fixed: true</pre>
+         * @attribute
+         * @default {visible: false, name: "", fixed: true}
          */
         point: { visible: false, name: "", fixed: true },
 
@@ -1007,7 +1041,8 @@ JXG.extend(Options, {
          * Attributes of the first point in case the plane is defined by [point, point, point].
          * @type Point3D
          * @name Plane3D#point1
-         * @default <pre>visible: false, name: ""</pre>
+         * @attribute
+         * @default {visible: false, name: ""}
          */
         point1: { visible: false, name: "" }, // Used in point/point/point
 
@@ -1015,7 +1050,8 @@ JXG.extend(Options, {
          * Attributes of the second point in case the plane is defined by [point, point, point].
          * @type Point3D
          * @name Plane3D#point2
-         * @default <pre>visible: false, name: ""</pre>
+         * @attribute
+         * @default {visible: false, name: ""}
          */
         point2: { visible: false, name: "" }, // Used in point/point/point
 
@@ -1023,7 +1059,8 @@ JXG.extend(Options, {
          * Attributes of the third point in case the plane is defined by [point, point, point].
          * @type Point3D
          * @name Plane3D#point3
-         * @default <pre>visible: false, name: ""</pre>
+         * @attribute
+         * @default {visible: false, name: ""}
          */
         point3: { visible: false, name: "" } // Used in point/point/point
 
@@ -1049,6 +1086,7 @@ JXG.extend(Options, {
          * For this, set cyclic to true.
          * @type Boolean
          * @name Point3D#cyclic
+         * @attribute
          * @default false
          */
         cyclic: false
@@ -1081,6 +1119,7 @@ JXG.extend(Options, {
          *
          * @type Array
          * @name Polyhedron3D#fillColorArray
+         * @attribute
          * @default ['white', 'black']
          */
         fillColorArray: ['white', 'black'],
@@ -1126,17 +1165,18 @@ JXG.extend(Options, {
          * In case of `tiling:'wireframe'`, a rectangular mesh is displayed, the number of steps is determined by
          * the attributes `stepsU` and `stepsV`. Further, the attributes `strokeWidth` and `strokeColor`, ...
          * determine the style of the mesh.
-         * <p>
+         *
          * In case of `tiling:'triangle'` or `tiling:'rectangle'` a polyhedron3d element is displayed, using the
          * attributes `stepsU` and `stepsV`. In case of `triangle`, equilateral triangles are created if stepsV==0.
-         * <p>
+         *
          * All other attributes of the polyhedron3d have to be set inside of `polyhedron`, including `strokeWidth`
          * and `strokeColor`. The wireframe settings for these attributes are ignored.
-         * <p>
+         *
          * At the time being (v1.13+), this attribute is immutable.
          *
          * @type String
          * @name ParametricSurface3D#tiling
+         * @attribute
          * @default 'wireframe'
          * @see ParametricSurface3D#polyhedron
          *
@@ -1333,12 +1373,13 @@ JXG.extend(Options, {
          *
          * @type {object}
          * @name ParametricSurface3D#colormap
-         * @default <pre>{
+         * @attribute
+         * @default {
          *   min: [-5, 190],
          *   max: [5, 0],
          *   s: 0.9,
          *   v: 0.9
-         * }</pre>
+         * }
          */
         colormap: {
             min: [-5, 190],
@@ -1350,14 +1391,14 @@ JXG.extend(Options, {
         /**
          * Attributes for the polyhedron3d in case `style='triangle'` or `style='rectangle'`.
          * Specifications are e.g.
-         * <ul>
-         *  <li>strokewidth: 0
-         *  <li>fillColorArray: ['white', JXG.palette.blue]
-         * </ul>
+         *
+         * - strokewidth: 0
+         * - fillColorArray: ['white', JXG.palette.blue]
+         *
          * @type {object}
          * @name ParametricSurface3D#polyhedron
-         * @default <pre>{strokewidth: 0, fillColorArray: ['white', 'black'] }</pre>
-         * @see ParametricSurface3D#style
+         * @attribute
+         * @default { strokewidth: 0, fillColorArray: ['white', 'black'] }
          *
          * @example
          * var F = (x, y) => Math.cos(x * y / 4);
@@ -1504,6 +1545,7 @@ JXG.extend(Options, {
          * If stepsU = 0 and type is 'wireframe' a 3D wireframe plot in one direction is created.
          * @type Number
          * @name ParametricSurface3D#stepsU
+         * @attribute
          */
         stepsU: 30,
 
@@ -1512,6 +1554,7 @@ JXG.extend(Options, {
          * If stepsV = 0 and type is 'wireframe' a 3D wireframe plot in one direction is created.
          * @type Number
          * @name ParametricSurface3D#stepsV
+         * @attribute
          */
         stepsV: 30,
 
@@ -1561,9 +1604,10 @@ JXG.extend(Options, {
         /**
          * Scaling factor of the vectors. This in contrast to slope fields, where this attribute sets the vector to the given length.
          * @name scale
+         * @attribute
          * @memberOf Vectorfield3D.prototype
          * @type {Number|Function}
-         * @see Slopefield.scale
+         * @see Slopefield#scale
          * @default 1
          */
         scale: 1,
@@ -1571,15 +1615,16 @@ JXG.extend(Options, {
         /**
          * Customize arrow heads of vectors. Be careful! If enabled this will slow down the performance.
          * Fields are:
-         * <ul>
-         *  <li> enabled: Boolean
-         *  <li> size: length of the arrow head legs (in pixel)
-         *  <li> angle: angle of the arrow head legs In radians.
-         * </ul>
+         *
+         * - enabled: Boolean
+         * - size: length of the arrow head legs (in pixel)
+         * - angle: angle of the arrow head legs In radians.
+         *
          * @name arrowhead
+         * @attribute
          * @memberOf Vectorfield3D.prototype
          * @type {Object}
-         * @default <tt>{enabled: true, size: 5, angle: Math.PI * 0.125}</tt>
+         * @default {enabled: true, size: 5, angle: Math.PI * 0.125}
          */
         arrowhead: {
             enabled: true,
@@ -1602,21 +1647,21 @@ JXG.extend(Options, {
          * When this attribute is enabled, elements closer to the screen are drawn
          * over elements further from the screen within the 3D layer. This affects
          * all elements which are in one of the layer specified in the sub-attribute 'layers'.
-         * <p>
+         *
          * For each layer this depth ordering is done independently.
          * Sub-attributes:
-         *      <ul>
-         *          <li><tt>enabled</tt>: false/true
-         *          <li><tt>layers</tt>: [12, 13]
-         *      </ul>
+         *
+         *  - `enabled`: false/true
+         *  - `layers`: [12, 13]
+         *
          *
          * @name View3D#depthOrder
+         * @attribute
          * @type Object
-         * @default <pre>{
+         * @default {
          *   enabled: false,
          *   layers: [12, 13]
          * }
-         * </pre>
          */
         depthOrder: {
             enabled: true,
@@ -1625,23 +1670,22 @@ JXG.extend(Options, {
 
         /**
          * Choose the projection type to be used: `parallel` or `central`.
-         * <ul>
-         * <li> `parallel` is parallel projection, also called orthographic projection
-         * <li> `central` is central projection, also called perspective projection
-         * </ul>
          *
+         * - `parallel` is parallel projection, also called orthographic projection
+         * - `central` is central projection, also called perspective projection
          *
          * @name View3D#projection
+         * @attribute
          * @type String
          * @default 'parallel'
          * @example
-         *         var bound = [-5, 5];
-         *         var view = board.create('view3d',
-         *             [[-6, -3], [8, 8],
-         *             [bound, bound, bound]],
-         *             {
-         *                 projection: 'parallel'
-         *             });
+         *  var bound = [-5, 5];
+         *  var view = board.create('view3d',
+         *      [[-6, -3], [8, 8],
+         *      [bound, bound, bound]],
+         *      {
+         *          projection: 'parallel'
+         *      });
          *
          * </pre><div id="JXG80d81b13-c604-4841-bdf6-62996440088a" class="jxgbox" style="width: 300px; height: 300px;"></div>
          * <script type="text/javascript">
@@ -1661,13 +1705,13 @@ JXG.extend(Options, {
          * </script><pre>
          *
          * @example
-         *         var bound = [-5, 5];
-         *         var view = board.create('view3d',
-         *             [[-6, -3], [8, 8],
-         *             [bound, bound, bound]],
-         *             {
-         *                 projection: 'central'
-         *             });
+         *  var bound = [-5, 5];
+         *  var view = board.create('view3d',
+         *      [[-6, -3], [8, 8],
+         *      [bound, bound, bound]],
+         *      {
+         *          projection: 'central'
+         *      });
          *
          * </pre><div id="JXGdb7b7c99-631c-41d0-99bf-c0a8d0138218" class="jxgbox" style="width: 300px; height: 300px;"></div>
          * <script type="text/javascript">
@@ -1691,16 +1735,16 @@ JXG.extend(Options, {
         /**
          * Allow vertical dragging of objects, i.e. in direction of the z-axis.
          * Subobjects are
-         * <ul>
-         *  <li>enabled: true
-         *  <li>key: 'shift'
-         * </ul>
-         * <p>
-         * Possible values for attribute <i>key</i>: 'shift' or 'ctrl'.
+         *
+         * - enabled: true
+         * - key: 'shift'
+         *
+         * Possible values for attribute `key`: 'shift' or 'ctrl'.
          *
          * @name View3D#verticalDrag
+         * @attribute
          * @type Object
-         * @default <tt>{enabled: true, key: 'shift'}</tt>
+         * @default {enabled: true, key: 'shift'}
          */
         verticalDrag: {
             enabled: true,
@@ -1709,36 +1753,31 @@ JXG.extend(Options, {
 
         /**
          * Specify the user handling of the azimuth.
-         * <ul>
-         *  <li><tt>pointer</tt> sub-attributes:
-         *      <ul>
-         *          <li><tt>enabled</tt>: Boolean that specifies whether pointer navigation is allowed by azimuth.
-         *          <li><tt>speed</tt>: Number indicating how many passes the range of the az_slider makes when the cursor crosses the entire board once in the horizontal direction.
-         *          <li><tt>outside</tt>: Boolean that specifies whether the pointer navigation is continued when the cursor leaves the board.
-         *          <li><tt>button</tt>: Which button of the pointer should be used? (<tt>'-1'</tt> (=no button), <tt>'0'</tt> or <tt>'2'</tt>)
-         *          <li><tt>key</tt>: Should an additional key be pressed? (<tt>'none'</tt>, <tt>'shift'</tt> or <tt>'ctrl'</tt>)
-         *      </ul>
-         *  <li><tt>keyboard</tt> sub-attributes:
-         *      <ul>
-         *          <li><tt>enabled</tt>: Boolean that specifies whether the keyboard (left/right arrow keys) can be used to navigate the board.
-         *          <li><tt>step</tt>: Size of the step per keystroke.
-         *          <li><tt>key</tt>: Should an additional key be pressed? (<tt>'none'</tt>, <tt>'shift'</tt> or <tt>'ctrl'</tt>)
-         *      </ul>
-         *  <li><tt>continuous</tt>: Boolean that specifies whether the az_slider starts again from the beginning when its end is reached.
-         *  <li><tt>slider</tt> attributes of the az_slider ({@link Slider}) with additional
-         *      <ul>
-         *          <li><tt>min</tt>: Minimum value.
-         *          <li><tt>max</tt>: Maximum value.
-         *          <li><tt>start</tt>: Start value.
-         *      </ul>
+         *
+         * - `pointer` sub-attributes:
+         *   - `enabled`: Boolean that specifies whether pointer navigation is allowed by azimuth.
+         *   - `speed`: Number indicating how many passes the range of the az_slider makes when the cursor crosses the entire board once in the horizontal direction.
+         *   - `outside`: Boolean that specifies whether the pointer navigation is continued when the cursor leaves the board.
+         *   - `button`: Which button of the pointer should be used? (`'-1'` (=no button), `'0'` or `'2'`)
+         *   - `key`: Should an additional key be pressed? (`'none'`, `'shift'` or `'ctrl'`)
+         * - `keyboard` sub-attributes:
+         *   - `enabled`: Boolean that specifies whether the keyboard (left/right arrow keys) can be used to navigate the board.
+         *   - `step`: Size of the step per keystroke.
+         *   - `key`: Should an additional key be pressed? (`'none'`, `'shift'` or `'ctrl'`)
+         * - `continuous`: Boolean that specifies whether the az_slider starts again from the beginning when its end is reached.
+         * - `slider` attributes of the az_slider ({@link Slider}) with additional
+         *   - `min`: Minimum value.
+         *   - `max`: Maximum value.
+         *   - `start`: Start value.
          *      'min' and 'max' are used only if trackball is not enabled.
          *     Additionally, the attributes 'slider.point1.pos' and 'slider.point2.pos' control the position of the slider. Possible
          *     values are 'auto' or an array [x, y] of length 2 for the position in user coordinates (or a function returning such an array).
-         * </ul>
+         *
          *
          * @name View3D#az
+         * @attribute
          * @type Object
-         * @default <pre>{
+         * @default {
          *      pointer: {enabled: true, speed: 1, outside: true, button: -1, key: 'none'},
          *      keyboard: {enabled: true, step: 10, key: 'ctrl'},
          *      continuous: true,
@@ -1757,19 +1796,19 @@ JXG.extend(Options, {
          *          max: 2 * Math.PI,
          *          start: 1.0
          *      },
-         * }</pre>
+         * }
          *
          * @example
-         *     var bound = [-4, 6];
-         *     var view = board.create('view3d',
-         *         [[-4, -3], [8, 8],
-         *         [bound, bound, bound]],
-         *         {
-         *             projection: 'parallel',
-         *             az: {
-         *                 slider: {visible: true, start: 0.75 * Math.PI}
-         *             }
-         *         });
+         *  var bound = [-4, 6];
+         *  var view = board.create('view3d',
+         *      [[-4, -3], [8, 8],
+         *      [bound, bound, bound]],
+         *      {
+         *          projection: 'parallel',
+         *          az: {
+         *              slider: {visible: true, start: 0.75 * Math.PI}
+         *          }
+         *      });
          *
          * </pre><div id="JXG4c381f21-f043-4419-941d-75f384c026d0" class="jxgbox" style="width: 300px; height: 300px;"></div>
          * <script type="text/javascript">
@@ -1825,36 +1864,32 @@ JXG.extend(Options, {
 
         /**
          * Specify the user handling of the elevation.
-         * <ul>
-         *  <li><tt>pointer</tt> sub-attributes:
-         *      <ul>
-         *          <li><tt>enabled</tt>: Boolean that specifies whether pointer navigation is allowed by elevation.
-         *          <li><tt>speed</tt>: Number indicating how many passes the range of the el_slider makes when the cursor crosses the entire board once in the horizontal direction.
-         *          <li><tt>outside</tt>: Boolean that specifies whether the pointer navigation is continued when the cursor leaves the board.
-         *          <li><tt>button</tt>: Which button of the pointer should be used? (<tt>'-1'</tt> (=no button), <tt>'0'</tt> or <tt>'2'</tt>)
-         *          <li><tt>key</tt>: Should an additional key be pressed? (<tt>'none'</tt>, <tt>'shift'</tt> or <tt>'ctrl'</tt>)
-         *      </ul>
-         *  <li><tt>keyboard</tt> sub-attributes:
-         *      <ul>
-         *          <li><tt>enabled</tt>: Boolean that specifies whether the keyboard (up/down arrow keys) can be used to navigate the board.
-         *          <li><tt>step</tt>: Size of the step per keystroke.
-         *          <li><tt>key</tt>: Should an additional key be pressed? (<tt>'none'</tt>, <tt>'shift'</tt> or <tt>'ctrl'</tt>)
-         *      </ul>
-         *  <li><tt>continuous</tt>: Boolean that specifies whether the el_slider starts again from the beginning when its end is reached.
-         *  <li><tt>slider</tt> attributes of the el_slider ({@link Slider}) with additional
-         *      <ul>
-         *          <li><tt>min</tt>: Minimum value.
-         *          <li><tt>max</tt>: Maximum value.
-         *          <li><tt>start</tt>: Start value.
-         *      </ul>
+         *
+         *  - `pointer` sub-attributes:
+         *    - `enabled`: Boolean that specifies whether pointer navigation is allowed by elevation.
+         *    - `speed`: Number indicating how many passes the range of the el_slider makes when the cursor crosses the entire board once in the horizontal direction.
+         *    - `outside`: Boolean that specifies whether the pointer navigation is continued when the cursor leaves the board.
+         *    - `button`: Which button of the pointer should be used? (`'-1'` (=no button), `'0'` or `'2'`)
+         *    - `key`: Should an additional key be pressed? (`'none'`, `'shift'` or `'ctrl'`)
+         *
+         *  - `keyboard` sub-attributes:
+         *    - `enabled`: Boolean that specifies whether the keyboard (up/down arrow keys) can be used to navigate the board.
+         *    - `step`: Size of the step per keystroke.
+         *    - `key`: Should an additional key be pressed? (`'none'`, `'shift'` or `'ctrl'`)
+         *  - `continuous`: Boolean that specifies whether the el_slider starts again from the beginning when its end is reached.
+         *  - `slider` attributes of the el_slider ({@link Slider}) with additional
+         *    - `min`: Minimum value.
+         *    - `max`: Maximum value.
+         *    - `start`: Start value.
          *     'min' and 'max' are used only if trackball is not enabled.
          *     Additionally, the attributes 'slider.point1.pos' and 'slider.point2.pos' control the position of the slider. Possible
-         *     values are 'auto' or an array [x, y] of length 2 for the position in user coordinates (or a function returning such an array).
-         * </ul>
+         *     values are 'auto' or an array `[x, y]` of length 2 for the position in user coordinates (or a function returning such an array).
+         *
          *
          * @name View3D#el
+         * @attribute
          * @type Object
-         * @default <pre>{
+         * @default {
          *      pointer: {enabled: true, speed: 1, outside: true, button: -1, key: 'none'},
          *      keyboard: {enabled: true, step: 10, key: 'ctrl'},
          *      continuous: true,
@@ -1873,18 +1908,19 @@ JXG.extend(Options, {
          *          max: 2 * Math.PI,
          *          start: 0.3
          *      },
-         * }<pre>
+         * }
+         *
          * @example
-         *     var bound = [-4, 6];
-         *     var view = board.create('view3d',
-         *         [[-4, -3], [8, 8],
-         *         [bound, bound, bound]],
-         *         {
-         *             projection: 'parallel',
-         *             el: {
-         *                 slider: {visible: true}
-         *             }
-         *         });
+         *  var bound = [-4, 6];
+         *  var view = board.create('view3d',
+         *      [[-4, -3], [8, 8],
+         *      [bound, bound, bound]],
+         *      {
+         *          projection: 'parallel',
+         *          el: {
+         *              slider: {visible: true}
+         *          }
+         *      });
          *
          * </pre><div id="JXG8926f733-c42e-466b-853c-74feb795e879" class="jxgbox" style="width: 300px; height: 300px;"></div>
          * <script type="text/javascript">
@@ -1940,36 +1976,30 @@ JXG.extend(Options, {
 
         /**
          * Specify the user handling of the bank angle.
-         * <ul>
-         *  <li><tt>pointer</tt> sub-attributes:
-         *      <ul>
-         *          <li><tt>enabled</tt>: Boolean that specifies whether pointer navigation is allowed by elevation.
-         *          <li><tt>speed</tt>: Number indicating how many passes the range of the el_slider makes when the cursor crosses the entire board once in the horizontal direction.
-         *          <li><tt>outside</tt>: Boolean that specifies whether the pointer navigation is continued when the cursor leaves the board.
-         *          <li><tt>button</tt>: Which button of the pointer should be used? (<tt>'-1'</tt> (=no button), <tt>'0'</tt> or <tt>'2'</tt>)
-         *          <li><tt>key</tt>: Should an additional key be pressed? (<tt>'none'</tt>, <tt>'shift'</tt> or <tt>'ctrl'</tt>)
-         *      </ul>
-         *  <li><tt>keyboard</tt> sub-attributes:
-         *      <ul>
-         *          <li><tt>enabled</tt>: Boolean that specifies whether the keyboard ('<', '>' keys) can be used to navigate the board.
-         *          <li><tt>step</tt>: Size of the step per keystroke.
-         *          <li><tt>key</tt>: Should an additional key be pressed? (<tt>'none'</tt>, <tt>'shift'</tt> or <tt>'ctrl'</tt>)
-         *      </ul>
-         *  <li><tt>continuous</tt>: Boolean that specifies whether the el_slider starts again from the beginning when its end is reached.
-         *  <li><tt>slider</tt> attributes of the el_slider ({@link Slider}) with additional
-         *      <ul>
-         *          <li><tt>min</tt>: Minimum value.
-         *          <li><tt>max</tt>: Maximum value.
-         *          <li><tt>start</tt>: Start value.
-         *      </ul>
+         *
+         *  - `pointer` sub-attributes:
+         *    - `enabled`: Boolean that specifies whether pointer navigation is allowed by elevation.
+         *    - `speed`: Number indicating how many passes the range of the el_slider makes when the cursor crosses the entire board once in the horizontal direction.
+         *    - `outside`: Boolean that specifies whether the pointer navigation is continued when the cursor leaves the board.
+         *    - `button`: Which button of the pointer should be used? (`'-1'` (=no button), `'0'` or `'2'`)
+         *    - `key`: Should an additional key be pressed? (`'none'`, `'shift'` or `'ctrl'`)
+         *  - `keyboard` sub-attributes:
+         *    - `enabled`: Boolean that specifies whether the keyboard ('<', '>' keys) can be used to navigate the board.
+         *    - `step`: Size of the step per keystroke.
+         *    - `key`: Should an additional key be pressed? (`'none'`, `'shift'` or `'ctrl'`)
+         *  - `continuous`: Boolean that specifies whether the el_slider starts again from the beginning when its end is reached.
+         *  - `slider` attributes of the el_slider ({@link Slider}) with additional
+         *    - `min`: Minimum value.
+         *    - `max`: Maximum value.
+         *    - `start`: Start value.
          *      'min' and 'max' are used only if trackball is not enabled.
          *     Additionally, the attributes 'slider.point1.pos' and 'slider.point2.pos' control the position of the slider. Possible
          *     values are 'auto' or an array [x, y] of length 2 for the position in user coordinates (or a function returning such an array).
-         * </ul>
          *
          * @name View3D#bank
+         * @attribute
          * @type Object
-         * @default <pre>{
+         * @default {
          *      pointer: {enabled: true, speed: 1, outside: true, button: -1, key: 'none'},
          *      keyboard: {enabled: true, step: 10, key: 'ctrl'},
          *      continuous: true,
@@ -1988,18 +2018,19 @@ JXG.extend(Options, {
          *          max: 2 * Math.PI,
          *          start: 0.3
          *      },
-         * }<pre>
+         * }
+         *
          * @example
-         *     var bound = [-4, 6];
-         *     var view = board.create('view3d',
-         *         [[-4, -3], [8, 8],
-         *         [bound, bound, bound]],
-         *         {
-         *             projection: 'parallel',
-         *             bank: {
-         *                 slider: {visible: true}
-         *             }
-         *         });
+         *  var bound = [-4, 6];
+         *  var view = board.create('view3d',
+         *      [[-4, -3], [8, 8],
+         *      [bound, bound, bound]],
+         *      {
+         *          projection: 'parallel',
+         *          bank: {
+         *              slider: {visible: true}
+         *          }
+         *      });
          *
          * </pre><div id="JXGb67811ea-c1e3-4d1e-b13c-3537b3436f6c" class="jxgbox" style="width: 300px; height: 300px;"></div>
          * <script type="text/javascript">
@@ -2055,12 +2086,12 @@ JXG.extend(Options, {
 
         /**
          * Distance of the camera to the center of the view. Expects values
-         * larger than zero. If set to 'auto', r will be set to 1.01.
-         * <p>
-         * After a call of view.setView(az, el, r), view.nextView(),
-         * view.previousView(), or view.setCurrentView()
-         * with an optional r,
-         * the camera distance is set to this value of r until a call of view.freeR().
+         * larger than zero. If set to 'auto', `r` will be set to 1.01.
+         *
+         * After a call of `view.setView(az, el, r)`, `view.nextView()`,
+         * `view.previousView()`, or `view.setCurrentView()`
+         * with an optional `r`,
+         * the camera distance is set to this value of `r` until a call of `view.freeR()`.
          *
          * @type {Number|String}
          * @default 'auto'
@@ -2076,24 +2107,24 @@ JXG.extend(Options, {
          * Enable user handling by a virtual trackball that allows to move the 3D scene
          * with 3 degrees of freedom. If not enabled, direct user dragging (i.e. in the JSXGraph board, not manipulating the sliders) will only have
          * two degrees of freedom. This means, the z-axis will always be projected to a vertical 2D line.
-         * <p>
+         *
          * Sub-attributes:
-         *      <ul>
-         *          <li><tt>enabled</tt>: Boolean that specifies whether pointer navigation is allowed by elevation.
-         *          <li><tt>outside</tt>: Boolean that specifies whether the pointer navigation is continued when the cursor leaves the board.
-         *          <li><tt>button</tt>: Which button of the pointer should be used? (<tt>'-1'</tt> (=no button), <tt>'0'</tt> or <tt>'2'</tt>)
-         *          <li><tt>key</tt>: Should an additional key be pressed? (<tt>'none'</tt>, <tt>'shift'</tt> or <tt>'ctrl'</tt>)
-         *      </ul>
+         *
+         * - `enabled`: Boolean that specifies whether pointer navigation is allowed by elevation.
+         * - `outside`: Boolean that specifies whether the pointer navigation is continued when the cursor leaves the board.
+         * - `button`: Which button of the pointer should be used? (`'-1'` (=no button), `'0'` or `'2'`)
+         * - `key`: Should an additional key be pressed? (`'none'`, `'shift'` or `'ctrl'`)
          *
          * @name View3D#trackball
+         * @attribute
          * @type Object
-         * @default <pre>{
+         * @default {
          *   enabled: false,
          *   outside: true,
          *   button: -1,
          *   key: 'none'
          * }
-         * </pre>
+         *
          */
         trackball: {
             enabled: false,
@@ -2103,7 +2134,8 @@ JXG.extend(Options, {
         },
 
         /**
-         * Field of View defines the angle of view (in radians) of the camera, determining how much of the scene is captured within the frame.
+         * Field of View defines the angle of view (in radians) of the camera,
+         * determining how much of the scene is captured within the frame.
          *
          * @type Number
          * @default 2/5*Math.PI
@@ -2112,11 +2144,12 @@ JXG.extend(Options, {
 
         /**
          * Fixed values for the view, which can be changed using keyboard keys `picture-up` and `picture-down`.
-         * Array of the form: [[el0, az0, r0], [el1, az1, r1, ...[eln, azn, rn]]
+         * Array of the form: `[[el0, az0, r0], [el1, az1, r1, ...[eln, azn, rn]]`
          *
          * @name View3D#values
+         * @attribute
          * @type Array
-         * @default <tt>{[[0, 1.57], [0.78, 0.62], [0, 0], [5.49, 0.62], [4.71, 0], [3.93, 0.62], [3.14, 0], [2.36, 0.62], [1.57, 1.57]]}<tt>
+         * @default [[0, 1.57], [0.78, 0.62], [0, 0], [5.49, 0.62], [4.71, 0], [3.93, 0.62], [3.14, 0], [2.36, 0.62], [1.57, 1.57]]
          */
         values: [
             [0, 1.57],

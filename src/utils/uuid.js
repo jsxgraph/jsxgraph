@@ -20,11 +20,17 @@ var uuidCharsStr = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwx
     uuidChars = uuidCharsStr.split("");
 
 /**
- * General utility routines
+ * JXG.Util namespace providing general utility routines.
  * @namespace
  */
 JXG.Util = JXG.Util || {};
 
+/**
+ * Generate uuid string with optional prefix string.
+ *
+ * @param {String} [prefix='']
+ * @returns {String}
+ */
 JXG.Util.genUUID = function (prefix) {
     var r,
         i,

@@ -36,7 +36,7 @@ import JXG from "../jxg.js";
 import Type from "./type.js";
 
 /**
- * Holds browser independent xml parsing routines. Won't work in environments other than browsers.
+ * JXG.XML namespace holds browser independent xml parsing routines. Won't work in environments other than browsers.
  * @namespace
  */
 JXG.XML = {

@@ -48,8 +48,8 @@ import Type from "../utils/type.js";
  * @constructor
  * @param {JXG.Board} board Reference to the board the element is constructed on.
  * @param {Object} attributes Hash of attributes and their values.
- * @param {Number} type Element type (a <tt>JXG.OBJECT_TYPE_</tt> value).
- * @param {Number} oclass The element's class (a <tt>JXG.OBJECT_CLASS_</tt> value).
+ * @param {Number} type Element type (a `JXG.OBJECT_TYPE_...` value).
+ * @param {Number} oclass The element's class (a `JXG.OBJECT_CLASS_` value).
  * @borrows JXG.EventEmitter#on as this.on
  * @borrows JXG.EventEmitter#off as this.off
  * @borrows JXG.EventEmitter#triggerEventHandlers as this.triggerEventHandlers
@@ -166,13 +166,12 @@ JXG.GeometryElement = function (board, attributes, type, oclass) {
      * access to SVG nodes. The properties of such an SVG node can then be changed
      * by calling setAttribute(). Note that there are a few elements which consist
      * of more than one SVG nodes:
-     * <ul>
-     * <li> Elements with arrow tail or head: rendNodeTriangleStart, rendNodeTriangleEnd
-     * <li> SVG (or VML) texts: rendNodeText
-     * <li> Button: rendNodeForm, rendNodeButton, rendNodeTag
-     * <li> Checkbox: rendNodeForm, rendNodeCheckbox, rendNodeLabel, rendNodeTag
-     * <li> Input: rendNodeForm, rendNodeInput, rendNodeLabel, rendNodeTag
-     * </ul>
+     *
+     * - Elements with arrow tail or head: rendNodeTriangleStart, rendNodeTriangleEnd
+     * - SVG (or VML) texts: rendNodeText
+     * - Button: rendNodeForm, rendNodeButton, rendNodeTag
+     * - Checkbox: rendNodeForm, rendNodeCheckbox, rendNodeLabel, rendNodeTag
+     * - Input: rendNodeForm, rendNodeInput, rendNodeLabel, rendNodeTag
      *
      * Here is are two examples: The first example shows how to access the SVG node,
      * the second example demonstrates how to change SVG attributes.
@@ -200,7 +199,7 @@ JXG.GeometryElement = function (board, attributes, type, oclass) {
     this.elType = "";
 
     /**
-     * The element is saved with an explicit entry in the file (<tt>true</tt>) or implicitly
+     * The element is saved with an explicit entry in the file (`true`) or implicitly
      * via a composition.
      * @type Boolean
      * @default true
@@ -266,14 +265,14 @@ JXG.GeometryElement = function (board, attributes, type, oclass) {
     ];
 
     /**
-     * An associative array containing all visual properties.
+     * An associative array containing all attributes.
      * @type Object
      * @default empty object
      */
     this.visProp = {};
 
     /**
-     * An associative array containing visual properties which are calculated from
+     * An associative array containing attributes which are calculated from
      * the attribute values (i.e. visProp) and from other constraints.
      * An example: if an intersection point does not have real coordinates,
      * visPropCalc.visible is set to false.
@@ -623,7 +622,7 @@ JXG.extend(
 
         /**
          * Add transformations to this element.
-         * @param {JXG.Transformation|Array} transform Either one {@link JXG.Transformation}
+         * @param {Transformation|Array} transform Either one {@link Transformation}
          * or an array of {@link JXG.Transformation}s.
          * @returns {JXG.GeometryElement} Reference to the element.
          */
@@ -633,7 +632,7 @@ JXG.extend(
 
         /**
          * Remove transformations of this element.
-         * @param {JXG.Transformation|Array} transform Either one {@link JXG.Transformation}
+         * @param {Transformation|Array} transform Either one {@link Transformation}
          * or an array of {@link JXG.Transformation}s.
          * @returns {JXG.GeometryElement} Reference to the element.
          */
@@ -666,7 +665,7 @@ JXG.extend(
         },
 
         /**
-         * Translates the object by <tt>(x, y)</tt>. In case the element is defined by points, the defining points are
+         * Translates the object by `(x, y)`. In case the element is defined by points, the defining points are
          * translated, e.g. a circle constructed by a center point and a point on the circle line.
          * @param {Number} method The type of coordinates used here.
          * Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
@@ -826,11 +825,12 @@ JXG.extend(
         },
 
         /**
-         * Animates properties for that object like stroke or fill color, opacity and maybe
+         * Animates attributes for that object like stroke or fill color, opacity and maybe
          * even more later.
-         * @param {Object} hash Object containing properties with target values for the animation.
+         * @param {Object} hash Object containing attributes with target values for the animation.
          * @param {number} time Number of milliseconds to complete the animation.
-         * @param {Object} [options] Optional settings for the animation:<ul><li>callback: A function that is called as soon as the animation is finished.</li></ul>
+         * @param {Object} [options] Optional settings for the animation:
+         * - callback: A function that is called as soon as the animation is finished
          * @returns {JXG.GeometryElement} A reference to the object
          */
         animate: function (hash, time, options) {
@@ -948,7 +948,7 @@ JXG.extend(
         /**
          * Show the element or hide it. If hidden, it will still exist but not be
          * visible on the board.
-         * <p>
+         *
          * Sets also the display of the inherits elements. These can be
          * JSXGraph elements or arrays of JSXGraph elements.
          * However, deeper nesting than this is not supported.
@@ -1050,21 +1050,19 @@ JXG.extend(
         /**
          * Set the visibility of an element. The visibility is influenced by
          * (listed in ascending priority):
-         * <ol>
-         * <li> The value of the element's attribute 'visible'
-         * <li> The visibility of a parent element. (Example: label)
+         *
+         * 1) The value of the element's attribute 'visible'
+         * 2) The visibility of a parent element. (Example: label)
          * This overrules the value of the element's attribute value only if
          * this attribute value of the element is 'inherit'.
-         * <li> being inside of the canvas
-         * </ol>
-         * <p>
+         * 3) being inside of the canvas
+         *
          * This method is called three times for most elements:
-         * <ol>
-         * <li> between {@link JXG.GeometryElement#update}
+         *
+         * 1) between {@link JXG.GeometryElement#update}
          * and {@link JXG.GeometryElement#updateRenderer}. In case the value is 'inherit', nothing is done.
-         * <li> Recursively, called by itself for child elements. Here, 'inherit' is overruled by the parent's value.
-         * <li> In {@link JXG.GeometryElement#updateRenderer}, if the element is outside of the canvas.
-         * </ol>
+         * 2) Recursively, called by itself for child elements. Here, 'inherit' is overruled by the parent's value.
+         * 3) In {@link JXG.GeometryElement#updateRenderer}, if the element is outside of the canvas.
          *
          * @param  {Boolean} parent_val Visibility of the parent element.
          * @return {JXG.GeometryElement} Reference to the element.
@@ -1134,7 +1132,7 @@ JXG.extend(
         },
 
         /**
-         * Sets the value of attribute <tt>key</tt> to <tt>value</tt>.
+         * Sets the value of attribute `key` to `value`.
          * Here, mainly hex strings for rga(a) colors are parsed and values of type object get a special treatment.
          * Other values are just set to the key.
          *
@@ -1182,8 +1180,8 @@ JXG.extend(
         },
 
         /**
-         * Resolves attribute shortcuts like <tt>color</tt> and expands them, e.g. <tt>strokeColor</tt> and <tt>fillColor</tt>.
-         * Writes the expanded attributes back to the given <tt>attributes</tt>.
+         * Resolves attribute shortcuts like `color` and expands them, e.g. `strokeColor` and `fillColor`.
+         * Writes the expanded attributes back to the given `attributes`.
          * @param {Object} attributes object
          * @returns {Object} The given attributes object with shortcuts expanded.
          * @private
@@ -1260,11 +1258,11 @@ JXG.extend(
         /**
          * Sets an arbitrary number of attributes. This method has one or more
          * parameters of the following types:
-         * <ul>
-         * <li> object: {key1:value1,key2:value2,...}
-         * <li> string: 'key:value'
-         * <li> array: ['key', value]
-         * </ul>
+         *
+         * - object: `{key1:value1,key2:value2,...}`
+         * - string: `'key:value'`
+         * - array: `['key', value]`
+         *
          * @param {Object} attributes An object with attributes.
          * @returns {JXG.GeometryElement} A reference to the element.
          *
@@ -1588,7 +1586,7 @@ JXG.extend(
         },
 
         /**
-         * Get the value of the property <tt>key</tt>.
+         * Get the value of the property `key`.
          * @param {String} key The name of the property you are looking for
          * @returns The value of the property
          */
@@ -1907,7 +1905,7 @@ JXG.extend(
         },
 
         /**
-         * Uses the "normal" properties of the element.
+         * Uses the "normal" attributes of the element.
          * @returns {JXG.Board}
          */
         noHighlight: function () {
@@ -2227,11 +2225,11 @@ JXG.extend(
         },
 
         /**
-         * @ignore
          * Snaps the element to the grid. Only works for points, lines and circles. Points will snap to the grid
-         * as defined in their properties {@link JXG.Point#snapSizeX} and {@link JXG.Point#snapSizeY}. Lines and circles
-         * will snap their parent points to the grid, if they have {@link JXG.Point#snapToGrid} set to true.
+         * as defined in their attributes {@link Point#snapSizeX} and {@link Point#snapSizeY}. Lines and circles
+         * will snap their parent points to the grid, if they have {@link Point#snapToGrid} set to true.
          * @private
+         * @ignore
          * @returns {JXG.GeometryElement} Reference to the element.
          */
         snapToGrid: function () {
@@ -2240,7 +2238,7 @@ JXG.extend(
 
         /**
          * Snaps the element to points. Only works for points. Points will snap to the next point
-         * as defined in their properties {@link JXG.Point#attractorDistance} and {@link JXG.Point#attractorUnit}.
+         * as defined in their attributes {@link Point#attractorDistance} and {@link Point#attractorUnit}.
          * Lines and circles
          * will snap their parent points to points.
          * @private
@@ -2647,139 +2645,139 @@ JXG.extend(
 
         //region Event handler documentation
         /**
+         * This event is fired whenever the user is hovering over an element.
          * @event
-         * @description This event is fired whenever the user is hovering over an element.
          * @name JXG.GeometryElement#over
          * @param {Event} e The browser's event object.
          */
         __evt__over: function (e) { },
 
         /**
+         * This event is fired whenever the user puts the mouse over an element.
          * @event
-         * @description This event is fired whenever the user puts the mouse over an element.
          * @name JXG.GeometryElement#mouseover
          * @param {Event} e The browser's event object.
          */
         __evt__mouseover: function (e) { },
 
         /**
+         * This event is fired whenever the user is leaving an element.
          * @event
-         * @description This event is fired whenever the user is leaving an element.
          * @name JXG.GeometryElement#out
          * @param {Event} e The browser's event object.
          */
         __evt__out: function (e) { },
 
         /**
+         * This event is fired whenever the user puts the mouse away from an element.
          * @event
-         * @description This event is fired whenever the user puts the mouse away from an element.
          * @name JXG.GeometryElement#mouseout
          * @param {Event} e The browser's event object.
          */
         __evt__mouseout: function (e) { },
 
         /**
+         * This event is fired whenever the user is moving over an element.
          * @event
-         * @description This event is fired whenever the user is moving over an element.
          * @name JXG.GeometryElement#move
          * @param {Event} e The browser's event object.
          */
         __evt__move: function (e) { },
 
         /**
+         * This event is fired whenever the user is moving the mouse over an element.
          * @event
-         * @description This event is fired whenever the user is moving the mouse over an element.
          * @name JXG.GeometryElement#mousemove
          * @param {Event} e The browser's event object.
          */
         __evt__mousemove: function (e) { },
 
         /**
+         * This event is fired whenever the user drags an element.
          * @event
-         * @description This event is fired whenever the user drags an element.
          * @name JXG.GeometryElement#drag
          * @param {Event} e The browser's event object.
          */
         __evt__drag: function (e) { },
 
         /**
+         * This event is fired whenever the user drags the element with a mouse.
          * @event
-         * @description This event is fired whenever the user drags the element with a mouse.
          * @name JXG.GeometryElement#mousedrag
          * @param {Event} e The browser's event object.
          */
         __evt__mousedrag: function (e) { },
 
         /**
+         * This event is fired whenever the user drags the element with a pen.
          * @event
-         * @description This event is fired whenever the user drags the element with a pen.
          * @name JXG.GeometryElement#pendrag
          * @param {Event} e The browser's event object.
          */
         __evt__pendrag: function (e) { },
 
         /**
+         * This event is fired whenever the user drags the element on a touch device.
          * @event
-         * @description This event is fired whenever the user drags the element on a touch device.
          * @name JXG.GeometryElement#touchdrag
          * @param {Event} e The browser's event object.
          */
         __evt__touchdrag: function (e) { },
 
         /**
-         * @event
-         * @description This event is fired whenever the user drags the element by pressing arrow keys
+         * This event is fired whenever the user drags the element by pressing arrow keys
          * on the keyboard.
+         * @event
          * @name JXG.GeometryElement#keydrag
          * @param {Event} e The browser's event object.
          */
         __evt__keydrag: function (e) { },
 
         /**
+         * Whenever the user starts to touch or click an element.
          * @event
-         * @description Whenever the user starts to touch or click an element.
          * @name JXG.GeometryElement#down
          * @param {Event} e The browser's event object.
          */
         __evt__down: function (e) { },
 
         /**
+         * Whenever the user starts to click an element.
          * @event
-         * @description Whenever the user starts to click an element.
          * @name JXG.GeometryElement#mousedown
          * @param {Event} e The browser's event object.
          */
         __evt__mousedown: function (e) { },
 
         /**
+         * Whenever the user taps an element with the pen.
          * @event
-         * @description Whenever the user taps an element with the pen.
          * @name JXG.GeometryElement#pendown
          * @param {Event} e The browser's event object.
          */
         __evt__pendown: function (e) { },
 
         /**
+         * Whenever the user starts to touch an element.
          * @event
-         * @description Whenever the user starts to touch an element.
          * @name JXG.GeometryElement#touchdown
          * @param {Event} e The browser's event object.
          */
         __evt__touchdown: function (e) { },
 
         /**
+         * Whenever the user clicks on an element.
          * @event
-         * @description Whenever the user clicks on an element.
          * @name JXG.Board#click
          * @param {Event} e The browser's event object.
          */
         __evt__click: function (e) { },
 
         /**
-         * @event
-         * @description Whenever the user double clicks on an element.
+         * Whenever the user double clicks on an element.
          * This event works on desktop browser, but is undefined
          * on mobile browsers.
+         * @event
          * @name JXG.Board#dblclick
          * @param {Event} e The browser's event object.
          * @see JXG.Board#clickDelay
@@ -2788,74 +2786,74 @@ JXG.extend(
         __evt__dblclick: function (e) { },
 
         /**
+         * Whenever the user clicks on an element with a mouse device.
          * @event
-         * @description Whenever the user clicks on an element with a mouse device.
          * @name JXG.Board#mouseclick
          * @param {Event} e The browser's event object.
          */
         __evt__mouseclick: function (e) { },
 
         /**
+         * Whenever the user double clicks on an element with a mouse device.
          * @event
-         * @description Whenever the user double clicks on an element with a mouse device.
          * @name JXG.Board#mousedblclick
          * @param {Event} e The browser's event object.
          */
         __evt__mousedblclick: function (e) { },
 
         /**
+         * Whenever the user clicks on an element with a pointer device.
          * @event
-         * @description Whenever the user clicks on an element with a pointer device.
          * @name JXG.Board#pointerclick
          * @param {Event} e The browser's event object.
          */
         __evt__pointerclick: function (e) { },
 
         /**
-         * @event
-         * @description Whenever the user double clicks on an element with a pointer device.
+         * Whenever the user double clicks on an element with a pointer device.
          * This event works on desktop browser, but is undefined
          * on mobile browsers.
+         * @event
          * @name JXG.Board#pointerdblclick
          * @param {Event} e The browser's event object.
          */
         __evt__pointerdblclick: function (e) { },
 
         /**
+         * Whenever the user stops to touch or click an element.
          * @event
-         * @description Whenever the user stops to touch or click an element.
          * @name JXG.GeometryElement#up
          * @param {Event} e The browser's event object.
          */
         __evt__up: function (e) { },
 
         /**
+         * Whenever the user releases the mousebutton over an element.
          * @event
-         * @description Whenever the user releases the mousebutton over an element.
          * @name JXG.GeometryElement#mouseup
          * @param {Event} e The browser's event object.
          */
         __evt__mouseup: function (e) { },
 
         /**
+         * Whenever the user lifts the pen over an element.
          * @event
-         * @description Whenever the user lifts the pen over an element.
          * @name JXG.GeometryElement#penup
          * @param {Event} e The browser's event object.
          */
         __evt__penup: function (e) { },
 
         /**
+         * Whenever the user stops touching an element.
          * @event
-         * @description Whenever the user stops touching an element.
          * @name JXG.GeometryElement#touchup
          * @param {Event} e The browser's event object.
          */
         __evt__touchup: function (e) { },
 
         /**
+         * Notify every time an attribute is changed.
          * @event
-         * @description Notify every time an attribute is changed.
          * @name JXG.GeometryElement#attribute
          * @param {Object} o A list of changed attributes and their new value.
          * @param {Object} el Reference to the element
@@ -2863,10 +2861,10 @@ JXG.extend(
         __evt__attribute: function (o, el) { },
 
         /**
+         * This is a generic event handler. It exists for every possible attribute that can be set for
+         * any element, e.g. if you want to be notified everytime an element's strokecolor is changed, is
+         * the event `attribute:strokecolor`.
          * @event
-         * @description This is a generic event handler. It exists for every possible attribute that can be set for
-         * any element, e.g. if you want to be notified everytime an element's strokecolor is changed, is the event
-         * <tt>attribute:strokecolor</tt>.
          * @name JXG.GeometryElement#attribute:key
          * @param val The old value.
          * @param nval The new value

@@ -71,7 +71,7 @@ JXG.extend(
 );
 
 /**
- * Define a monomial over the polynomial ring <tt>ring</tt>.
+ * Define a monomial over the polynomial ring `ring`.
  * @class
  * @name JXG.Math.Poly.Monomial
  * @param {JXG.Math.Poly.Ring} ring
@@ -210,7 +210,7 @@ JXG.extend(
          * Adds a monomial to the polynomial. Checks the existing monomials for the added
          * monomial's signature and just adds the coefficient if one is found.
          * @param {JXG.Math.Poly.Monomial} m
-         * @param {Number} factor Either <tt>1</tt> or <tt>-1</tt>.
+         * @param {Number} factor Either `1` or `-1`.
          * @memberof JXG.Math.Poly.Polynomial
          */
         addSubMonomial: function (m, factor) {

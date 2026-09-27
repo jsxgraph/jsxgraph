@@ -46,13 +46,14 @@ import Geometry from "../math/geometry.js";
  * @augments JXG.GeometryElement
  * @param {JXG.View3D} view The 3D view the sphere is drawn on.
  * @param {String} method Can be:
- * <ul><li> <b><code>'twoPoints'</code></b> &ndash; The sphere is defined by its center and a point on the sphere.</li>
- * <li><b><code>'pointRadius'</code></b> &ndash; The sphere is defined by its center and its radius in user units.</li></ul>
- * The parameters <code>p1</code>, <code>p2</code> and <code>radius</code> must be set according to this method parameter.
- * @param {JXG.Point3D} par1 The center of the sphere.
- * @param {JXG.Point3D} par2 Can be:
- * <ul><li>A point on the sphere (if the construction method is <code>'twoPoints'</code>)</li>
- * <ul><li>A number or function (if the construction method is <code>'pointRadius'</code>)</li>
+ * - `'twoPoints'` The sphere is defined by its center and a point on the sphere.
+ * - `'pointRadius'` The sphere is defined by its center and its radius in user units.
+ *
+ * The parameters `p1`, `p2` and `radius` must be set according to this method parameter.
+ * @param {Point3D} par1 The center of the sphere.
+ * @param {Point3D} par2 Can be:
+ * - A point on the sphere (if the construction method is `'twoPoints'`)
+ * - A number or function (if the construction method is `'pointRadius'`)
  * @param {Object} attributes An object containing visual properties like in {@link JXG.Options#point3d} and
  * {@link JXG.Options#elements}, and optional a name and an id.
  * @see JXG.Board#generateName
@@ -66,8 +67,10 @@ JXG.Sphere3D = function (view, method, par1, par2, attributes) {
     /**
      * The construction method.
      * Can be:
-     * <ul><li><b><code>'twoPoints'</code></b> &ndash; The sphere is defined by its center and a point on the sphere.</li>
-     * <li><b><code>'pointRadius'</code></b> &ndash; The sphere is defined by its center and its radius in user units.</li></ul>
+     *
+     * - `'twoPoints'` - The sphere is defined by its center and a point on the sphere.
+     * - `'pointRadius'` - The sphere is defined by its center and its radius in user units.
+     *
      * @type String
      * @see JXG.Sphere3D#center
      * @see JXG.Sphere3D#point2
@@ -103,7 +106,7 @@ JXG.Sphere3D = function (view, method, par1, par2, attributes) {
     this.aux2D = [];
 
     /**
-     * The type of projection (<code>'parallel'</code> or <code>'central'</code>) that the sphere is currently drawn in.
+     * The type of projection (`'parallel'` or `'central'`) that the sphere is currently drawn in.
      * @type String
      */
     this.projectionType = view.projectionType;
@@ -410,14 +413,22 @@ JXG.extend(
  *
  * @pseudo
  * @name Sphere3D
+ * @elementclass 3D
  * @augments JXG.Sphere3D
  * @constructor
  * @type JXG.Sphere3D
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {JXG.Point3D_number,JXG.Point3D} center,radius The center must be given as a {@link JXG.Point3D} (see {@link JXG.providePoints3D}),
- * but the radius can be given as a number (which will create a sphere with a fixed radius) or another {@link JXG.Point3D}.
- * <p>
- * If the radius is supplied as number or the output of a function, its absolute value is taken.
+ */
+/**
+ * @jsxgraphsignature Sphere3D
+ * @param {Point3DLike} center
+ * @param {NumberLike} radius If the radius is supplied as number or the output of a function, its absolute value is taken.
+ *
+ */
+/**
+ * @jsxgraphsignature Sphere3D
+ * @param {Point3DLike} center
+ * @param {NumberLike} point Point on sphere defining the radius.
  *
  * @example
  * var view = board.create(
@@ -501,33 +512,32 @@ JXG.extend(
  *
  * </script><pre>
  *
- * @example
- *     // Glider on sphere
- *     var view = board.create(
- *         'view3d',
- *         [[-6, -3], [8, 8],
- *         [[-3, 3], [-3, 3], [-3, 3]]],
- *         {
- *             depthOrder: {
- *                 enabled: true
- *             },
- *             projection: 'central',
- *             xPlaneRear: {fillOpacity: 0.2, gradient: null},
- *             yPlaneRear: {fillOpacity: 0.2, gradient: null},
- *             zPlaneRear: {fillOpacity: 0.2, gradient: null}
- *         }
- *     );
+ * @example <caption>Glider on sphere</caption>
+ *  var view = board.create(
+ *      'view3d',
+ *      [[-6, -3], [8, 8],
+ *      [[-3, 3], [-3, 3], [-3, 3]]],
+ *      {
+ *          depthOrder: {
+ *              enabled: true
+ *          },
+ *          projection: 'central',
+ *          xPlaneRear: {fillOpacity: 0.2, gradient: null},
+ *          yPlaneRear: {fillOpacity: 0.2, gradient: null},
+ *          zPlaneRear: {fillOpacity: 0.2, gradient: null}
+ *      }
+ *  );
  *
- *     // Two points
- *     var center = view.create('point3d', [0, 0, 0], {withLabel: false, size: 2});
- *     var point = view.create('point3d', [2, 0, 0], {withLabel: false, size: 2});
+ *  // Two points
+ *  var center = view.create('point3d', [0, 0, 0], {withLabel: false, size: 2});
+ *  var point = view.create('point3d', [2, 0, 0], {withLabel: false, size: 2});
  *
- *     // Sphere
- *     var sphere = view.create('sphere3d', [center, point], {fillOpacity: 0.8});
+ *  // Sphere
+ *  var sphere = view.create('sphere3d', [center, point], {fillOpacity: 0.8});
  *
- *     // Glider on sphere
- *     var glide = view.create('point3d', [2, 2, 0, sphere], {withLabel: false, color: 'red', size: 4});
- *     var l1 = view.create('line3d', [glide, center], { strokeWidth: 2, dash: 2 });
+ *  // Glider on sphere
+ *  var glide = view.create('point3d', [2, 2, 0, sphere], {withLabel: false, color: 'red', size: 4});
+ *  var l1 = view.create('line3d', [glide, center], { strokeWidth: 2, dash: 2 });
  *
  * </pre><div id="JXG672fe3c7-e6fd-48e0-9a24-22f51f2dfa71" class="jxgbox" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">

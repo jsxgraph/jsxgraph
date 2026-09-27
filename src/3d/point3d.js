@@ -459,7 +459,7 @@ JXG.extend(
 
         /**
          * Calculate the distance from one point to another. If one of the points is on the plane at infinity, return positive infinity.
-         * @param {JXG.Point3D} pt The point to which the distance is calculated.
+         * @param {Point3D} pt The point to which the distance is calculated.
          * @returns {Number} The distance
          */
         distance: function (pt) {
@@ -481,8 +481,8 @@ JXG.extend(
 
 
         /**
-        * Starts an animated point movement towards the given coordinates <tt>where</tt>.
-        * The animation is done after <tt>time</tt> milliseconds.
+        * Starts an animated point movement towards the given coordinates `where`.
+        * The animation is done after `time` milliseconds.
         * If the second parameter is not given or is equal to 0, coordinates are changed without animation.
         * @param {Array} where Array containing the target coordinate in cartesian or homogenous form.
         * @param {Number} [time] Number of milliseconds the animation should last.
@@ -493,8 +493,8 @@ JXG.extend(
         * the whole animation.
         * @see JXG.Point3D#moveAlong
         * @see JXG.Point#moveTo
-        * @example
-        * // visit a coordinate, then use callback to visit a second coordinate.
+        *
+        * @example <caption>Visit a coordinate, then use callback to visit a second coordinate</caption>
         * const board = JXG.JSXGraph.initBoard('jxgbox')
         * var view = board.create(
         *     'view3d',
@@ -631,17 +631,17 @@ JXG.extend(
          * @param {number} [time] Number of milliseconds the animation should last.
          * @param {Object} [options] 'callback' and 'interpolate'.  see {@link JXG.CoordsElement#moveAlong},
          * @example
-         *const board = JXG.JSXGraph.initBoard('jxgbox')
-         *var view = board.create(
-         *    'view3d',
-         *    [[-6, -3], [8, 8],
-         *    [[-3, 3], [-3, 3], [-3, 3]]]);
+         *  const board = JXG.JSXGraph.initBoard('jxgbox')
+         *  var view = board.create(
+         *      'view3d',
+         *      [[-6, -3], [8, 8],
+         *      [[-3, 3], [-3, 3], [-3, 3]]]);
          *
-         * board.create('button', [-4, 4.5, 'start', () => {
-         *      let A = view.create('point3d', [0, 0, 0]);
-         *      A.moveAlong([[3, 3, 3], [-2, -1, -2], [-1, -1, -1], [-1, -2, 1]], 3000,
-         *         { callback: () => board.create('text', [-4, 4, 'done!']) })
-         *}])
+         *   board.create('button', [-4, 4.5, 'start', () => {
+         *        let A = view.create('point3d', [0, 0, 0]);
+         *        A.moveAlong([[3, 3, 3], [-2, -1, -2], [-1, -1, -1], [-1, -2, 1]], 3000,
+         *           { callback: () => board.create('text', [-4, 4, 'done!']) })
+         *  }])
          *
          * </pre><div id="JXGa45032e5-a517-4f1d-868a-abc698d344cf" class="jxgbox" style="width: 300px; height: 300px;"></div>
          * <script type="text/javascript">
@@ -715,18 +715,21 @@ JXG.extend(
  *
  * @pseudo
  * @name Point3D
+ * @elementclass 3D
  * @augments JXG.Point3D
  * @constructor
  * @throws {Exception} If the element cannot be constructed with the given parent
  * objects an exception is thrown.
- * @param {number,function_number,function_number,function_JXG.GeometryElement3D} x,y,z,[slide=undefined] The coordinates are given as x, y, z consisting of numbers or functions.
- * If an optional 3D element "slide" is supplied, the point is a glider on that element. At the time of version v1.11, only elements of type line3d are supperted as glider hosts.
- * @param {array,function_JXG.GeometryElement3D} F,[slide=null] Alternatively, the coordinates can be supplied as
- *  <ul>
- *   <li>function returning an array [x,y,z] of length 3 of numbers or
- *   <li>array arr=[x,y,z] of length 3 consisting of numbers
- * </ul>
- * If an optional 3D element "slide" is supplied, the point is a glider on that element.
+ */
+/**
+ * @jsxgraphsignature Point3D
+ * The coordinates are given as `x`, `y`, `z` consisting of numbers or functions.
+ * If an optional 3D element `slide` is supplied, the point is a 3D glider on that element.
+ *
+ * @param {NumberLike} x
+ * @param {NumberLike} y
+ * @param {NumberLike} z
+ * @param {JXG.GeometryElement3D} [slide=undefined]
  *
  * @example
  *    var bound = [-5, 5];
@@ -754,34 +757,32 @@ JXG.extend(
  *     })();
  *
  * </script><pre>
+ * @example <caption>Glider on sphere</caption>
+ *  var view = board.create(
+ *      'view3d',
+ *      [[-6, -3], [8, 8],
+ *      [[-3, 3], [-3, 3], [-3, 3]]],
+ *      {
+ *          depthOrder: {
+ *              enabled: true
+ *          },
+ *          projection: 'central',
+ *          xPlaneRear: {fillOpacity: 0.2, gradient: null},
+ *          yPlaneRear: {fillOpacity: 0.2, gradient: null},
+ *          zPlaneRear: {fillOpacity: 0.2, gradient: null}
+ *      }
+ *  );
  *
- * @example
- *     // Glider on sphere
- *     var view = board.create(
- *         'view3d',
- *         [[-6, -3], [8, 8],
- *         [[-3, 3], [-3, 3], [-3, 3]]],
- *         {
- *             depthOrder: {
- *                 enabled: true
- *             },
- *             projection: 'central',
- *             xPlaneRear: {fillOpacity: 0.2, gradient: null},
- *             yPlaneRear: {fillOpacity: 0.2, gradient: null},
- *             zPlaneRear: {fillOpacity: 0.2, gradient: null}
- *         }
- *     );
+ *  // Two points
+ *  var center = view.create('point3d', [0, 0, 0], {withLabel: false, size: 2});
+ *  var point = view.create('point3d', [2, 0, 0], {withLabel: false, size: 2});
  *
- *     // Two points
- *     var center = view.create('point3d', [0, 0, 0], {withLabel: false, size: 2});
- *     var point = view.create('point3d', [2, 0, 0], {withLabel: false, size: 2});
+ *  // Sphere
+ *  var sphere = view.create('sphere3d', [center, point], {fillOpacity: 0.8});
  *
- *     // Sphere
- *     var sphere = view.create('sphere3d', [center, point], {fillOpacity: 0.8});
- *
- *     // Glider on sphere
- *     var glide = view.create('point3d', [2, 2, 0, sphere], {withLabel: false, color: 'red', size: 4});
- *     var l1 = view.create('line3d', [glide, center], { strokeWidth: 2, dash: 2 });
+ *  // Glider on sphere
+ *  var glide = view.create('point3d', [2, 2, 0, sphere], {withLabel: false, color: 'red', size: 4});
+ *  var l1 = view.create('line3d', [glide, center], { strokeWidth: 2, dash: 2 });
  *
  * </pre><div id="JXG672fe3c7-e6fd-48e0-9a24-22f51f2dfa71" class="jxgbox" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
@@ -817,6 +818,18 @@ JXG.extend(
  *     })();
  *
  * </script><pre>
+ */
+/**
+ * @jsxgraphsignature Point3D
+ * Alternatively, the coordinates can be supplied as
+ *
+ * - function `() => [x,y,z]` returning an array of length 3 of numbers or
+ * - array `arr=[x,y,z]` of length 3 consisting of numbers
+ *
+ * If an optional 3D element `slide` is supplied, the point is a glider on that element.
+ * @param {Array|Function} F
+ * @param {JXG.GeometryElement3D} [slide=null]
+ *
  *
  */
 JXG.createPoint3D = function (board, parents, attributes) {

@@ -101,7 +101,7 @@ JXG.Dump = {
     },
 
     /**
-     * Stringifies a string, i.e. puts some quotation marks around <tt>s</tt> if it is of type string.
+     * Stringifies a string, i.e. puts some quotation marks around `s` if it is of type string.
      * @param {*} s
      * @returns {String} " + s + "
      */
@@ -118,7 +118,8 @@ JXG.Dump = {
      * @param {Object} instance Attribute object of the element. Usually a copy is supplied
      * @param {Object} def Default attributes, the instance is compared to
      * @param {String} pre Helper string for debug output
-     * @returns
+     * @returns Boolean true if all elements can be deleted
+     * @private
      */
     _minimizeSubObject: function(instance, def, pre) {
         var p, pl, del,
@@ -181,7 +182,7 @@ JXG.Dump = {
     /**
      * Eliminate default values given by {@link JXG.Options} from the attributes object.
      * @param {Object} instance Attribute object of the element
-     * @param {Object} s Arbitrary number of objects <tt>instance</tt> will be compared to. Usually these are
+     * @param {Object} s Arbitrary number of objects `instance` will be compared to. Usually these are
      * sub-objects of the {@link JXG.Board#options} structure.
      * @returns {Object} Minimal attributes object
      */
@@ -365,7 +366,7 @@ JXG.Dump = {
     /**
      * Converts an array of different values into a parameter string that can be used by the code generators.
      * @param {Array} a
-     * @param {function} converter A function that is used to transform the elements of <tt>a</tt>. Usually
+     * @param {function} converter A function that is used to transform the elements of `a`. Usually
      * {@link JXG.toJSON} or {@link JXG.Dump.toJCAN} are used.
      * @returns {String}
      */
@@ -421,7 +422,7 @@ JXG.Dump = {
     },
 
     /**
-     * Exports the construction in <tt>board</tt> to JessieCode.
+     * Exports the construction in `board` to JessieCode.
      * @param {JXG.Board} board
      * @param {Boolean} [noAttributes=false] If true, output contains no attributes beside 'id' and 'name'
      * @returns {String} The construction as JessieCode code
@@ -549,7 +550,7 @@ JXG.Dump = {
     },
 
     /**
-     * Exports the construction in <tt>board</tt> to JavaScript.
+     * Exports the construction in `board` to JavaScript.
      * @param {JXG.Board} board
      * @returns {String} The construction as JavaScript code
      * @see JXG.Dump#dump

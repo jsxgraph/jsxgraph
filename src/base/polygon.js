@@ -49,7 +49,7 @@ import GeometryElement from "./element.js";
  * @param {JXG.Board} board Reference to the board the polygon is to be drawn on.
  * @param {Array} vertices Unique identifiers for the points defining the polygon.
  * Last point must be first point. Otherwise, the first point will be added at the list.
- * @param {Object} attributes An object which contains properties as given in {@link JXG.Options.elements}
+ * @param {Object} attributes An object which contains attributes as given in {@link JXG.Options.elements}
  * and {@link JXG.Options.polygon}.
  */
 JXG.Polygon = function (board, vertices, attributes) {
@@ -525,7 +525,7 @@ JXG.extend(
 
         /**
          * Finds the index to a given point reference.
-         * @param {JXG.Point} p Reference to an element of type {@link JXG.Point}
+         * @param Point} p Reference to an element of type {@link Point}
          * @returns {Number} Index of the point or -1.
          */
         findPoint: function (p) {
@@ -551,8 +551,8 @@ JXG.extend(
          * If new vertices are supplied by coordinates, the default attributes of polygon
          * vertices are taken as their attributes. Therefore, the visual attributes of
          * new vertices and borders may have to be adapted afterwards.
-         * @param {JXG.Point} p Arbitrary number of points or coordinate arrays
-         * @returns {JXG.Polygon} Reference to the polygon
+         * @param {Point} p Arbitrary number of points or coordinate arrays
+         * @returns {Polygon} Reference to the polygon
          * @example
          * var pg = board.create('polygon', [[1,2], [3,4], [-3,1]], {hasInnerPoints: true});
          * var newPoint = board.create('point', [-1, -1]);
@@ -587,7 +587,7 @@ JXG.extend(
         },
 
         /**
-         * Insert points to the vertex list of the polygon after index <tt>idx</tt>.
+         * Insert points to the vertex list of the polygon after index `idx`.
          * The attributes of new border segments are set to the same values
          * as those used when the polygon was created.
          * If new vertices are supplied by coordinates, the default attributes of polygon
@@ -596,8 +596,8 @@ JXG.extend(
          *
          * @param {Number} idx The position after which the new vertices are inserted.
          * Setting idx to -1 inserts the new points at the front, i.e. at position 0.
-         * @param {JXG.Point} p Arbitrary number of points or coordinate arrays to insert.
-         * @returns {JXG.Polygon} Reference to the polygon object
+         * @param {Point} p Arbitrary number of points or coordinate arrays to insert.
+         * @returns {Polygon} Reference to the polygon object
          *
          * @example
          * var pg = board.create('polygon', [[1,2], [3,4], [-3,1]], {hasInnerPoints: true});
@@ -694,8 +694,8 @@ JXG.extend(
 
         /**
          * Removes given set of vertices from the polygon
-         * @param {JXG.Point} p Arbitrary number of vertices as {@link JXG.Point} elements or index numbers
-         * @returns {JXG.Polygon} Reference to the polygon
+         * @param {Point} p Arbitrary number of vertices as {@link Point} elements or index numbers
+         * @returns {Polygon} Reference to the polygon
          */
         removePoints: function (p) {
             var i, j, idx,
@@ -930,7 +930,7 @@ JXG.extend(
          *
          * @private
          *
-         * @param {JXG.Polygon} polygon Polygon which will be clipped.
+         * @param {Polygon} polygon Polygon which will be clipped.
          *
          * @returns {Array} of (normalized homogeneous user) coordinates (i.e. [z, x, y], where z==1 in most cases,
          *   representing the vertices of the intersection polygon.
@@ -1010,11 +1010,11 @@ JXG.extend(
          * The parent object is the clipping polygon, it expects as parameter a polygon to be clipped.
          * Both polygons have to be convex.
          * Calls the algorithm by Sutherland, Hodgman, {@link JXG.Polygon#sutherlandHodgman}.
-         * <p>
+         *
          * An alternative is to use the methods from {@link JXG.Math.Clip}, where the algorithm by Greiner and Hormann
          * is used.
          *
-         * @param {JXG.Polygon} polygon Polygon which will be clipped.
+         * @param {Polygon} polygon Polygon which will be clipped.
          *
          * @returns {Array} of (normalized homogeneous user) coordinates (i.e. [z, x, y], where z==1 in most cases,
          *   representing the vertices of the intersection polygon.
@@ -1119,23 +1119,24 @@ JXG.extend(
  * @class A polygon is a plane figure made up of line segments (the borders) connected
  * to form a closed polygonal chain.
  * It is determined by
- * <ul>
- *    <li> a list of points or
- *    <li> a list of coordinate arrays or
- *    <li> a function returning a list of coordinate arrays.
- * </ul>
+ *
+ * - a list of points or
+ * - a list of coordinate arrays or
+ * - a function returning a list of coordinate arrays.
+ *
  * Each two consecutive points of the list define a line.
  * @pseudo
  * @constructor
  * @name Polygon
+ * @elementclass polygon
  * @type JXG.Polygon
  * @augments JXG.Polygon
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
+ */
+/**
+ * @jsxgraphsignature Polygon
  * @param {Array} vertices The polygon's vertices. If the first and the last vertex don't match the first one will be
- * added to the array by the creator. Here, two points match if they have the same 'id' attribute.
- *
- * Additionally, a polygon can be created by providing a polygon and a transformation (or an array of transformations).
- * The result is a polygon which is the transformation of the supplied polygon.
+ * added to the array by the creator. Here, two points match if they have the same `id` attribute.
  *
  * @example
  * var p1 = board.create('point', [0.0, 2.0]);
@@ -1170,10 +1171,10 @@ JXG.extend(
  * </script><pre>
  *
  * @example
- *   var f1 = function() { return [0.0, 2.0]; },
- *       f2 = function() { return [2.0, 1.0]; },
- *       f3 = function() { return [4.0, 6.0]; },
- *       f4 = function() { return [1.0, 4.0]; },
+ *   var f1 = () => [0.0, 2.0],
+ *       f2 = () => [2.0, 1.0],
+ *       f3 = () => [4.0, 6.0],
+ *       f4 = () => [1.0, 4.0],
  *       cc1 = board.create('polygon', [f1, f2, f3, f4]);
  *       board.update();
  *
@@ -1181,14 +1182,22 @@ JXG.extend(
  * <script type="text/javascript">
  *  (function () {
  *   var board = JXG.JSXGraph.initBoard('JXGceb09915-b783-44db-adff-7877ae3534c8', {boundingbox: [-1, 9, 9, -1], axis: false, showcopyright: false, shownavigation: false}),
- *       f1 = function() { return [0.0, 2.0]; },
- *       f2 = function() { return [2.0, 1.0]; },
- *       f3 = function() { return [4.0, 6.0]; },
- *       f4 = function() { return [1.0, 4.0]; },
+ *       f1 = () => [0.0, 2.0],
+ *       f2 = () => [2.0, 1.0],
+ *       f3 = () => [4.0, 6.0],
+ *       f4 = () => [1.0, 4.0],
  *       cc1 = board.create('polygon', [f1, f2, f3, f4]);
  *       board.update();
  *  })();
  * </script><pre>
+ */
+/**
+ * @jsxgraphsignature Polygon
+ * Additionally, a polygon can be created by providing a polygon and a transformation (or an array of transformations).
+ * The result is a polygon which is the transformation of the supplied polygon.
+ * @param {Polygon} pol
+ * @param {Transformation} t
+ *
  *
  * @example
  * var t = board.create('transform', [2, 1.5], {type: 'scale'});
@@ -1271,15 +1280,22 @@ JXG.createPolygon = function (board, parents, attributes) {
 /**
  * @class A regular polygon is a polygon that is
  * direct equiangular (all angles are equal in measure) and equilateral (all sides have the same length).
- * It needs two points which define the base line and the number of vertices.
+ * It needs two points which define the base line and the number of vertices, or a set of points.
+ *
  * @pseudo
- * @description Constructs a regular polygon. It needs two points which define the base line and the number of vertices, or a set of points.
  * @constructor
  * @name RegularPolygon
+ * @elementclass polygon
  * @type Polygon
  * @augments Polygon
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {JXG.Point_JXG.Point_Number} p1,p2,n The constructed regular polygon has n vertices and the base line defined by p1 and p2.
+ */
+/**
+ * @jsxgraphsignature RegularPolygon
+ * The constructed regular polygon has n vertices and the base line defined by p1 and p2.
+ * @param {PointLike} p1
+ * @param {PointLike} p2
+ * @param {NumberLike} n
  * @example
  * var p1 = board.create('point', [0.0, 2.0]);
  * var p2 = board.create('point', [2.0, 1.0]);
@@ -1400,11 +1416,11 @@ JXG.createRegularPolygon = function (board, parents, attributes) {
 /**
  * @class  A polygonal chain is a connected series of line segments (borders).
  * It is determined by
- * <ul>
- *    <li> a list of points or
- *    <li> a list of coordinate arrays or
- *    <li> a function returning a list of coordinate arrays.
- * </ul>
+ *
+ * - a list of points or
+ * - a list of coordinate arrays or
+ * - a function returning a list of coordinate arrays.
+ *
  * Each two consecutive points of the list define a line.
  * In JSXGraph, a polygonal chain is simply realized as polygon without the last - closing - point.
  * This may lead to unexpected results. Polygonal chains can be distinguished from polygons by the attribute 'elType' which
@@ -1412,13 +1428,14 @@ JXG.createRegularPolygon = function (board, parents, attributes) {
  * @pseudo
  * @constructor
  * @name PolygonalChain
+ * @elementclass polygon
  * @type Polygon
  * @augments JXG.Polygon
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
+ */
+/**
+ * @jsxgraphsignature PolygonalChain
  * @param {Array} vertices The polygon's vertices.
- *
- * Additionally, a polygonal chain can be created by providing a polygonal chain and a transformation (or an array of transformations).
- * The result is a polygonal chain which is the transformation of the supplied polygonal chain.
  *
  * @example
  *     var attr = {
@@ -1457,6 +1474,14 @@ JXG.createRegularPolygon = function (board, parents, attributes) {
  * </script><pre>
  *
  */
+/**
+ * @jsxgraphsignature PolygonalChain
+ * Additionally, a polygonal chain can be created by providing a polygonal chain and a transformation (or an array of transformations).
+ * The result is a polygonal chain which is the transformation of the supplied polygonal chain.
+ * @param {PolygonalChain} pol
+ * @param {Transformation} t
+ *
+ */
 JXG.createPolygonalChain = function (board, parents, attributes) {
     var attr, el;
 
@@ -1474,15 +1499,23 @@ JXG.createPolygonalChain = function (board, parents, attributes) {
 
 /**
  * @class A quadrilateral polygon with parallel opposite sides.
+ * Constructs a parallelogram. As input, three points or coordinate arrays are expected.
  * @pseudo
- * @description Constructs a parallelogram. As input, three points or coordinate arrays are expected.
  * @constructor
  * @name Parallelogram
+ * @elementclass polygon
  * @type Polygon
- * @augments Polygon
+ * @augments JXG.Polygon
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {JXG.Point,Array_JXG.Point,Array_JXG.Point,Array} p1,p2,p3 The parallelogram is a polygon through
- * the points [p1, p2, pp, p3], where pp is a parallelpoint, available as sub-object parallelogram.parallelPoint.
+ */
+/**
+ * @jsxgraphsignature Parallelogram
+ * The parallelogram is a polygon through
+ * the points `[p1, p2, pp, p3]`, where pp is a parallelpoint, available as sub-object `parallelogram.parallelPoint`.
+ *
+ * @param {PointLike} p1
+ * @param {PointLike} p2
+ * @param {PointLike} p3
  *
  * @example
  * var p1 = board.create('point', [-3, -4]);

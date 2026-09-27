@@ -81,7 +81,7 @@ var priv = {
  * @augments JXG.CoordsElement
  * @param {string|JXG.Board} board The board the new text is drawn on.
  * @param {Array} coordinates An array with the user coordinates of the text.
- * @param {Object} attributes An object containing visual properties and optional a name and a id.
+ * @param {Object} attributes An object containing attributes and optional a name and a id.
  * @param {string|function} content A string or a function returning a string.
  *
  */
@@ -231,10 +231,10 @@ JXG.extend(
                 /**
                  * Dynamically created function to update the content
                  * of a text. Can not be overwritten.
-                 * <p>
+                 *
                  * &lt;value&gt; tags will not be evaluated if text is provided by a function
-                 * <p>
-                 * Sets the property <tt>plaintext</tt> of the text element.
+                 *
+                 * Sets the property `plaintext` of the text element.
                  *
                  * @private
                  */
@@ -705,7 +705,7 @@ JXG.extend(
          * (a+b)(3+1) instead of (a+b)*(3+1).
          *
          * @private
-         * @param{String} expr Math term
+         * @param {String} expr Math term
          * @returns {string} expanded String
          */
         expandShortMath: function (expr) {
@@ -721,11 +721,11 @@ JXG.extend(
          *
          * Obsolete, replaced by JXG.Text.valueTagToJessieCode
          *
-         * @param{String} contentStr String to be parsed
-         * @param{Boolean} [expand] Optional flag if shortened math syntax is allowed (e.g. 3x instead of 3*x).
-         * @param{Boolean} [avoidGeonext2JS] Optional flag if geonext2JS should be called. For backwards compatibility
+         * @param {String} contentStr String to be parsed
+         * @param {Boolean} [expand] Optional flag if shortened math syntax is allowed (e.g. 3x instead of 3*x).
+         * @param {Boolean} [avoidGeonext2JS] Optional flag if geonext2JS should be called. For backwards compatibility
          * this has to be set explicitly to true.
-         * @param{Boolean} [outputTeX] Optional flag which has to be true if the resulting term will be sent to MathJax or KaTeX.
+         * @param {Boolean} [outputTeX] Optional flag which has to be true if the resulting term will be sent to MathJax or KaTeX.
          * If true, "_" and "^" are NOT replaced by HTML tags sub and sup. Default: false, i.e. the replacement is done.
          * This flag allows the combination of &lt;value&gt; tag containing calculations with TeX output.
          *
@@ -1072,7 +1072,7 @@ JXG.extend(
          * The method assumes that the lower left corner is at position [el.X(), el.Y()]
          * of the text element el, i.e. the attributes anchorX, anchorY are ignored.
          *
-         * <p>
+         *
          * <strong>Attention:</strong> for labels, [0, 0, 0, 0] is returned.
          *
          * @returns Array
@@ -1154,10 +1154,9 @@ JXG.extend(
          * and center (x, y)
          *
          * An overlap occurs when either:
-         * <ol>
-         *   <li> For labels/points: Their bounding boxes intersect
-         *   <li> For other objects: The object contains the center point of the box
-         * </ol>
+         *
+         * 1) For labels/points: Their bounding boxes intersect
+         * 2) For other objects: The object contains the center point of the box
          *
          * @private
          * @param  {Number} x x-coordinate of the center (screen coordinates)
@@ -1254,13 +1253,12 @@ JXG.extend(
         },
         /**
          * Calculates the score of a label position with a given radius and angle. The score is calculated by the following rules:
-         * <ul>
-         * <li> the maximum score is 0
-         * <li> if the label is outside of the bounding box, the score is reduced by 1
-         * <li> for each conflict, the score is reduced by 1
-         * <li> the score is reduced by the displacement (angle difference between old and new position) of the label
-         * <li> the score is reduced by the angle between the original label position and the new label position
-         * </ul>
+         *
+         * - the maximum score is 0
+         * - if the label is outside of the bounding box, the score is reduced by 1
+         * - for each conflict, the score is reduced by 1
+         * - the score is reduced by the displacement (angle difference between old and new position) of the label
+         * - the score is reduced by the angle between the original label position and the new label position
          *
          * @param {number} radius radius in pixels
          * @param {number} angle angle in radians
@@ -1348,7 +1346,7 @@ JXG.extend(
         /**
          * Automatically positions the label by finding the optimal position.
          * Aims to minimize conflicts while maintaining readability.
-         * <p>
+         *
          * The method tests 60 different angles (0 to 2π) at 3 different distances (radii).
          * It evaluates each position using calculateScore(radius, angle) and chooses the position with the highest score.
          * Then the label's anchor points and offset are adjusted accordingly.
@@ -1603,48 +1601,57 @@ JXG.extend(
  *
  * The coordinates can either be absolute (i.e. respective to the coordinate system of the board) or be relative to the coordinates of an element
  * given in {@link Text#anchor}.
- * <p>
+ *
  * HTML, MathJaX, KaTeX, ASCIIMathML, and GEONExT syntax can be handled.
- * <p>
- * There are two ways to display texts:
- * <ul>
- * <li> using the text element of the renderer (canvas or svg). In most cases this is the suitable approach if speed matters.
+ *
+ * Internally, there are two ways to display texts:
+ * - using the text element of the renderer (canvas or svg). In most cases this is the suitable approach if speed matters.
  * However, advanced rendering like MathJax, KaTeX or HTML/CSS are not possible.
- * <li> using HTML &lt;div&gt;. This is the most flexible approach. The drawback is that HTML can only be display "above" the geometry elements.
- * If HTML should be displayed in an inbetween layer, conder to use an element of type {@link ForeignObject} (available in svg renderer, only).
- * </ul>
+ * - using HTML &lt;div&gt;. This is the most flexible approach. The drawback is that HTML can only be display "above" the geometry elements.
+ * If HTML should be displayed in an inbetween layer, consider to use an element of type {@link ForeignObject} (available in SVG renderer, only).
+ *
+ * This can be controlled with attribute {@link Text#display} that takes the values 'html' or 'internal'. In case of 'html' an HTML division tag is created to display
+ * the text. In this case it is also possible to use MathJax, KaTeX, or ASCIIMathML. If neither of these is used, basic Math rendering is
+ * applied.
+ *
+ * In case of 'internal', an SVG text element is used to display the text.
+ *
  * @pseudo
  * @name Text
+ * @elementclass text
  * @augments JXG.Text
- * @constructor
  * @type JXG.Text
+ * @see JXG.Text
  *
- * @param {number,function_number,function_number,function_String,function} z_,x,y,str Parent elements for text elements.
- *                     <p>
- *   Parent elements can be two or three elements of type number, a string containing a GEONE<sub>x</sub>T
+ */
+/**
+ * @jsxgraphsignature Text
+ *   Parent elements can be two or three elements of type number, a string containing a GEONExT
  *   constraint, or a function which takes no parameter and returns a number. Every parent element beside the last determines one coordinate.
  *   If a coordinate is
  *   given by a number, the number determines the initial position of a free text. If given by a string or a function that coordinate will be constrained
  *   that means the user won't be able to change the texts's position directly by mouse because it will be calculated automatically depending on the string
  *   or the function's return value. If two parent elements are given the coordinates will be interpreted as 2D affine Euclidean coordinates, if three such
  *   parent elements are given they will be interpreted as homogeneous coordinates.
- *                     <p>
- *                     The text to display may be given as string or as function returning a string.
  *
- * There is the attribute 'display' which takes the values 'html' or 'internal'. In case of 'html' an HTML division tag is created to display
- * the text. In this case it is also possible to use MathJax, KaTeX, or ASCIIMathML. If neither of these is used, basic Math rendering is
- * applied.
- * <p>
- * In case of 'internal', an SVG text element is used to display the text.
- * @see JXG.Text
+ * The text to display may be given as string or as function returning a string.
+ *
+ * @param {NumberLike} [z=1]
+ * @param {NumberLike} x
+ * @param {NumberLike} y
+ * @param {String|Function} str String to be displayed. Could be the return value of a function, to make the text dynamic.
+ *
  * @example
  * // Create a fixed text at position [0,1].
  *   var t1 = board.create('text',[0,1,"Hello World"]);
  * </pre><div class="jxgbox" id="JXG896013aa-f24e-4e83-ad50-7bc7df23f6b7" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
- *   var t1_board = JXG.JSXGraph.initBoard('JXG896013aa-f24e-4e83-ad50-7bc7df23f6b7', {boundingbox: [-3, 6, 5, -3], axis: true, showcopyright: false, shownavigation: false});
- *   var t1 = t1_board.create('text',[0,1,"Hello World"]);
+ * (function() {
+ *   var board = JXG.JSXGraph.initBoard('JXG896013aa-f24e-4e83-ad50-7bc7df23f6b7', {boundingbox: [-3, 6, 5, -3], axis: true, showcopyright: false, shownavigation: false});
+ *   var t1 = board.create('text',[0,1,"Hello World"]);
+ * })();
  * </script><pre>
+ *
  * @example
  * // Create a variable text at a variable position.
  *   var s = board.create('slider',[[0,4],[3,4],[-2,0,2]]);
@@ -1655,10 +1662,11 @@ JXG.extend(
  *                     );
  * </pre><div class="jxgbox" id="JXG5441da79-a48d-48e8-9e53-75594c384a1c" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
- *   var t2_board = JXG.JSXGraph.initBoard('JXG5441da79-a48d-48e8-9e53-75594c384a1c', {boundingbox: [-3, 6, 5, -3], axis: true, showcopyright: false, shownavigation: false});
- *   var s = t2_board.create('slider',[[0,4],[3,4],[-2,0,2]]);
- *   var t2 = t2_board.create('text',[function(x){ return s.Value();}, 1, function(){return "The value of s is "+JXG.toFixed(s.Value(), 2);}]);
+ *   var board = JXG.JSXGraph.initBoard('JXG5441da79-a48d-48e8-9e53-75594c384a1c', {boundingbox: [-3, 6, 5, -3], axis: true, showcopyright: false, shownavigation: false});
+ *   var s = board.create('slider',[[0,4],[3,4],[-2,0,2]]);
+ *   var t2 = board.create('text',[function(x){ return s.Value();}, 1, function(){return "The value of s is "+JXG.toFixed(s.Value(), 2);}]);
  * </script><pre>
+ *
  * @example
  * // Create a text bound to the point A
  * var p = board.create('point',[0, 1]),
@@ -1673,7 +1681,6 @@ JXG.extend(
  *         t = board.create('text',[0, -1,"Hello World"], {anchor: p});
  *
  *     })();
- *
  * </script><pre>
  *
  */
@@ -1710,30 +1717,31 @@ JXG.registerElement("text", JXG.createText);
 
 /**
  * @class Labels are text objects tied to other elements like points, lines and curves.
- * Labels are handled internally by JSXGraph, only. There is NO constructor "board.create('label', ...)".
+ * Labels are handled internally by JSXGraph, only. There is __no__ constructor `board.create('label', ...)`.
  *
- * @description
+ * However, the element label has some specific attributes which can be set by the user.
+ *
  * Labels for points are positioned with the attributes {@link Text#anchorX}, {@link Text#anchorX} and {@link Label#offset}.
- * <p>
+ *
  * Labels for lines, segments, curves and circles can be controlled additionally by the attributes {@link Label#position} and
  * {@link Label#distance}, i.e. for a segment [A, B] one could use the follwoing attributes:
- * <ul>
- * <li> "position": determines, where in the direction of the segment from A to B the label is placed
- * <li> "distance": determines the (orthogonal) distance of the label from the line segment. It is a factor which is multiplied by the font-size.
- * <li> "offset: [h, v]": a final correction in pixel (horizontally: h, vertically: v)
- * <li> "anchorX" ('left', 'middle', 'right') and "anchorY" ('bottom', 'middle', 'top'): determines which part of the
+ *
+ * - "position": determines, where in the direction of the segment from A to B the label is placed
+ * - "distance": determines the (orthogonal) distance of the label from the line segment. It is a factor which is multiplied by the font-size.
+ * - "offset: [h, v]": a final correction in pixel (horizontally: h, vertically: v)
+ * - "anchorX" ('left', 'middle', 'right') and "anchorY" ('bottom', 'middle', 'top'): determines which part of the
  * label string is the anchor position that is positioned to the coordinates determined by "position", "distance" and "offset".
- * </ul>
+ *
  *
  * @pseudo
  * @name Label
+ * @elementclass text
  * @augments JXG.Text
- * @constructor
  * @type JXG.Text
  */
 //  See element.js#createLabel
 
-/**
+/*
  * [[x,y], [w px, h px], [range]
  */
 JXG.createHTMLSlider = function (board, parents, attributes) {

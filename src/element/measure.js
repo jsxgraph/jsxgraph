@@ -45,18 +45,23 @@ import Prefix from "../parser/prefix.js";
 
 /**
  * @class A tape measure can be used to measure distances between points.
- * <p>
- * The two defining points of the tape measure (which is a segment) do not inherit by default the attribute "visible" from
+ *
+ * The two defining points of the tape measure (which is a segment) do not inherit by default the attribute `visible` from
  * the segment. Otherwise the tape meassure would be inaccessible if the two points coincide and the segment is hidden.
  *
  * @pseudo
  * @name Tapemeasure
- * @augments Segment
+ * @elementclass line
  * @constructor
  * @type JXG.Segment
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {Array_Array} start,end, The two arrays give the initial position where the tape measure
- * is drawn on the board.
+ */
+/**
+ * @jsxgraphsignature Tapemeasure
+ * The two arrays give the initial position where the tape measure is positioned.
+ * @param {Array} start `[x, y]`
+ * @param {Array} end `[x, y]`
+ *
  * @example
  * // Create a tape measure
  * var p1 = board.create('point', [0,0]);
@@ -197,18 +202,23 @@ JXG.registerElement("tapemeasure", JXG.createTapemeasure);
  * @class Display measurements of geometric elements and the arithmetic operations of measurements.
  * Under the hood this is a text element which has a method Value. The text to be displayed
  * is the result of the evaluation of a prefix expression, see {@link JXG.PrefixParser}.
- * <p>
+ *
  * The purpose of this element is to display values of measurements of geometric objects, like the radius of a circle,
  * as well as expressions consisting of measurements.
  *
  * @pseudo
  * @name Measurement
- * @augments Text
+ * @elementclass text
  * @constructor
  * @type JXG.Text
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {Point|Array_Point|Array_Array} x,y,expression
- * Here, expression is a prefix expression, see {@link JXG.PrefixParser}.
+ */
+/**
+ * @jsxgraphsignature Measurement
+ * Here, `expression` is a prefix expression, see {@link JXG.PrefixParser}.
+ * @param {PointLike} x
+ * @param {PointLike} y
+ * @param {Array} expression
  * @example
  * var p1 = board.create('point', [1, 1]);
  * var p2 = board.create('point', [1, 3]);

@@ -310,7 +310,7 @@ JXG.extend(
          * Handle default parameters.
          * @param v Given value
          * @param d Default value
-         * @returns <tt>d</tt>, if <tt>v</tt> is undefined or null.
+         * @returns `d`, if `v` is undefined or null.
          */
         def: function (v, d) {
             if (this.exists(v)) {
@@ -425,7 +425,7 @@ JXG.extend(
          * by a JessieCode string, thus it must be a valid reference only in case one of the param
          * values is of type string.
          * @param {Array} param An array containing strings, numbers, or functions.
-         * @param {Number} n Length of <tt>param</tt>.
+         * @param {Number} n Length of `param`.
          * @returns {Function} A function taking one parameter k which specifies the index of the param element
          * to evaluate.
          */
@@ -496,30 +496,28 @@ JXG.extend(
         },
 
         /**
-         *  Test if the parents array contains existing points. If instead parents contains coordinate arrays or
-         *  function returning coordinate arrays
-         *  free points with these coordinates are created.
+         *  Test if array `paranets` contains existing points. If instead `parents` contains coordinate arrays or
+         *  function returning coordinate arrays free points with these coordinates are created.
          *
          * @param {JXG.Board} board Board object
          * @param {Array} parents Array containing parent elements for a new object. This array may contain
-         *    <ul>
-         *      <li> {@link JXG.Point} objects
-         *      <li> {@link JXG.GeometryElement#name} of {@link JXG.Point} objects
-         *      <li> {@link JXG.GeometryElement#id} of {@link JXG.Point} objects
-         *      <li> Coordinates of points given as array of numbers of length two or three, e.g. [2, 3].
-         *      <li> Coordinates of points given as array of functions of length two or three. Each function returns one coordinate, e.g.
-         *           [function(){ return 2; }, function(){ return 3; }]
-         *      <li> Function returning coordinates, e.g. function() { return [2, 3]; }
-         *    </ul>
+         *
+         * - {@link JXG.Point} objects
+         * - {@link JXG.GeometryElement#name} of {@link JXG.Point} objects
+         * - {@link JXG.GeometryElement#id} of {@link JXG.Point} objects
+         * - Coordinates of points given as array of numbers of length two or three, e.g. `[2, 3]`.
+         * - Coordinates of points given as array of functions of length two or three. Each function returns one coordinate, e.g.
+         *           `[function(){ return 2; }, () => 3]`
+         * - Function returning coordinates, e.g. `() => [2, 3]`
+         *
          *  In the last three cases a new point will be created.
+         * @param {Object} attributes Object containing attributes for newly created points.
          * @param {String} attrClass Main attribute class of newly created points, see {@link JXG#copyAttributes}
          * @param {Array} attrArray List of subtype attributes for the newly created points. The list of subtypes is mapped to the list of new points.
          * @returns {Array} List of newly created {@link JXG.Point} elements or false if not all returned elements are points.
          */
         providePoints: function (board, parents, attributes, attrClass, attrArray) {
-            var i,
-                j,
-                len,
+            var i, j, len,
                 lenAttr = 0,
                 points = [],
                 attr,
@@ -574,15 +572,15 @@ JXG.extend(
          *
          * @param {JXG.View3D} view View3D object
          * @param {Array} parents Array containing parent elements for a new object. This array may contain
-         *    <ul>
-         *      <li> {@link JXG.Point3D} objects
-         *      <li> {@link JXG.GeometryElement#name} of {@link JXG.Point3D} objects
-         *      <li> {@link JXG.GeometryElement#id} of {@link JXG.Point3D} objects
-         *      <li> Coordinates of 3D points given as array of numbers of length three, e.g. [2, 3, 1].
-         *      <li> Coordinates of 3D points given as array of functions of length three. Each function returns one coordinate, e.g.
+         *
+         * - {@link JXG.Point3D} objects
+         * - {@link JXG.GeometryElement#name} of {@link JXG.Point3D} objects
+         * - {@link JXG.GeometryElement#id} of {@link JXG.Point3D} objects
+         * - Coordinates of 3D points given as array of numbers of length three, e.g. [2, 3, 1].
+         * - Coordinates of 3D points given as array of functions of length three. Each function returns one coordinate, e.g.
          *           [function(){ return 2; }, function(){ return 3; }, function(){ return 1; }]
-         *      <li> Function returning coordinates, e.g. function() { return [2, 3, 1]; }
-         *    </ul>
+         * - Function returning coordinates, e.g. function() { return [2, 3, 1]; }
+         *
          *  In the last three cases a new 3D point will be created.
          * @param {String} attrClass Main attribute class of newly created 3D points, see {@link JXG#copyAttributes}
          * @param {Array} attrArray List of subtype attributes for the newly created 3D points. The list of subtypes is mapped to the list of new 3D points.
@@ -663,11 +661,11 @@ JXG.extend(
         },
 
         /**
-         * If <tt>val</tt> is a function, it will be evaluated without giving any parameters, else the input value
+         * If `val` is a function, it will be evaluated without giving any parameters, else the input value
          * is just returned.
          * @param val Could be anything. Preferably a number or a function. If it is an array, evaluate() recurses
          * into the elements.
-         * @returns If <tt>val</tt> is a function, it is evaluated and the result is returned. Otherwise <tt>val</tt> is returned.
+         * @returns If `val` is a function, it is evaluated and the result is returned. Otherwise `val` is returned.
          */
         evaluate: function (val) {
             var i, le, arr;
@@ -693,7 +691,7 @@ JXG.extend(
          * @param value
          * @param {String} [sub] Use this property if the elements of the array are objects.
          * @returns {Number} The index of the first appearance of the given value, or
-         * <tt>-1</tt> if the value was not found.
+         * `-1` if the value was not found.
          */
         indexOf: function (array, value, sub) {
             var i,
@@ -845,7 +843,7 @@ JXG.extend(
         },
 
         /**
-         * Checks if an array contains an element equal to <tt>val</tt> but does not check the type!
+         * Checks if an array contains an element equal to `val` but does not check the type!
          * @param {Array} arr
          * @param val
          * @returns {Boolean}
@@ -885,7 +883,7 @@ JXG.extend(
          * Compare two arrays.
          * @param {Array} a1
          * @param {Array} a2
-         * @returns {Boolean} <tt>true</tt>, if the arrays coefficients are of same type and value.
+         * @returns {Boolean} `true`, if the arrays coefficients are of same type and value.
          */
         cmpArrays: function (a1, a2) {
             var i;
@@ -932,7 +930,7 @@ JXG.extend(
         },
 
         /**
-         * Truncate a number <tt>n</tt> after <tt>p</tt> decimals.
+         * Truncate a number `n` after `p` decimals.
          * @param {Number} n
          * @param {Number} p
          * @returns {Number}
@@ -1034,7 +1032,7 @@ JXG.extend(
         },
 
         /**
-         * Truncate a number <tt>val</tt> automatically.
+         * Truncate a number `val` automatically.
          * @memberOf JXG
          * @param val
          * @returns {Number}
@@ -1057,12 +1055,12 @@ JXG.extend(
 
         /**
          * Convert value v. If v has the form
-         * <ul>
-         * <li> 'x%': return floating point number x * percentOfWhat * 0.01
-         * <li> 'xfr': return floating point number x * percentOfWhat
-         * <li> 'xpx': return x * convertPx or convertPx(x) or x
-         * <li> x or 'x': return floating point number x
-         * </ul>
+         *
+         * - 'x%': return floating point number x * percentOfWhat * 0.01
+         * - 'xfr': return floating point number x * percentOfWhat
+         * - 'xpx': return x * convertPx or convertPx(x) or x
+         * - x or 'x': return floating point number x
+         *
          * @param {String|Number} v
          * @param {Number} percentOfWhat
          * @param {Function|Number|*} convertPx
@@ -1097,9 +1095,9 @@ JXG.extend(
         /**
          * Parse a string for label positioning of the form 'left pos' or 'pos right'
          * and return e.g.
-         * <tt>{ side: 'left', pos: 'pos' }</tt>.
+         * `{ side: 'left', pos: 'pos' }`.
          * @param {String} str
-         * @returns {Obj}  <tt>{ side, pos }</tt>
+         * @returns {Obj}  `{ side, pos }`
          */
         parsePosition: function(str) {
             var a, i,
@@ -1156,7 +1154,7 @@ JXG.extend(
          * you need a copy of an e.g. attributes object and want to overwrite some of the attributes
          * without changing the original object.
          * @param {Object} obj Object to be embedded.
-         * @returns {Object} An object with a base class reference to <tt>obj</tt>.
+         * @returns {Object} An object with a base class reference to `obj`.
          */
         clone: function (obj) {
             var cObj = {};
@@ -1198,7 +1196,7 @@ JXG.extend(
         /**
          * Recursively merges obj2 into obj1 in-place. Contrary to {@link JXG#deepCopy} this won't create a new object
          * but instead will overwrite obj1.
-         * <p>
+         *
          * In contrast to method JXG.mergeAttr, merge recurses into any kind of object, e.g. DOM object and JSXGraph objects.
          * So, please be careful.
          * @param {Object} obj1
@@ -1367,7 +1365,7 @@ JXG.extend(
 
         /**
          * In-place (deep) merging of attributes. Allows attributes like `{shadow: {enabled: true...}}`
-         * <p>
+         *
          * In contrast to method JXG.merge, mergeAttr does not recurse into DOM objects and JSXGraph objects. Instead
          * handles (pointers) to these objects are used.
          *
@@ -1996,7 +1994,7 @@ JXG.extend(
          * Uses push instead of JavaScript concat, which is much
          * faster.
          * The array dest is changed in place.
-         * <p><b>Attention:</b> if "dest" is an anonymous array, the correct result is returned from the function.
+         * <b>Attention:</b> if "dest" is an anonymous array, the correct result is returned from the function.
          *
          * @param {Array} dest
          * @param {Array} src
@@ -2038,7 +2036,7 @@ JXG.extend(
         },
 
         /**
-         * If <tt>s</tt> is a slider, it returns the sliders value, otherwise it just returns the given value.
+         * If `s` is a slider, it returns the sliders value, otherwise it just returns the given value.
          * @param {*} s
          * @returns {*} s.Value() if s is an element of type slider, s otherwise
          */
@@ -2053,7 +2051,7 @@ JXG.extend(
         /**
          * Convert a string containing a MAXIMA /STACK expression into a JSXGraph / JessieCode string
          * or an array of JSXGraph / JessieCode strings.
-         * <p>
+         *
          * This function is meanwhile superseded by stack_jxg.stack2jsxgraph.
          *
          * @deprecated

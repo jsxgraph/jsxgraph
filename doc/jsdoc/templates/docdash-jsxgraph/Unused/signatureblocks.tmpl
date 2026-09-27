@@ -1,0 +1,89 @@
+<?js
+// Docdash gives current Doclet as an "obj"
+var doclet = obj;
+var self = this;
+?>
+
+<?js
+// only render when Plugin generated signatureBlocks
+if (doclet.signatureBlocks && doclet.signatureBlocks.length) {
+?>
+  <details open>
+  <summary>Syntax (Signatures):</summary>
+    
+  <?js
+  // every signatureBlock corresponds an Overload (@signature)
+  doclet.signatureBlocks.forEach(function(b) {
+  ?>
+    <!--<div class="signature">-->
+    <details class="signature">
+
+      <!-- Anzeige der eigentlichen Signatur -->
+      <!--<pre class="prettyprint"><code><?js= b.signature ?></code></pre>-->
+      <!--<summary><pre class="prettyprint"><code><?js= b.signature ?></code></pre></summary>-->
+      <summary><code class="prettyprint"><?js= b.signature ?></code></summary>
+
+      <?js
+        // optional Discription of an Overloads
+        if (b.description) { ?>
+          <p class="summary usertext"><?js= b.description
+              .trim()
+              .replace(/^<p>/, "")
+              .replace(/<\/p>$/, "") ?></p>
+      <?js } ?>
+
+      <?js
+      // parameterlist for an Overload
+      if (b.params && b.params.length) {
+      ?>
+        <h6>Parameters</h6>
+        <ul>
+          <?js b.params.forEach(function(p) { ?>
+            <li>
+              <code><?js= p.name ?></code>
+              <span class="type">{<?js= p.type ?>}</span>
+
+              <?js
+              // Optionale Parameter-Beschreibung
+              if (p.description) {
+              ?>
+                – <span class="description"><?js= p.description ?></span>
+              <?js } ?>
+            </li>
+          <?js }); ?>
+        </ul>
+      <?js } ?>
+
+<?js
+if (b.params && b.params.length) {
+?>
+  <h5 class="h5-parameters">Parameters</h5>
+  <?js= self.partial('params.tmpl', b.params) ?>
+<?js } ?>
+
+      <?js
+      // returnvalue for an Overload
+      if (b.returns && b.returns.length) {
+      ?>
+        <h6>Returns</h6>
+        <ul>
+          <?js b.returns.forEach(function(r) { ?>
+            <li>
+              <span class="type">{<?js= r.type ?>}</span>
+
+              <?js
+              // Optionale Rückgabe-Beschreibung
+              if (r.description) {
+              ?>
+                – <span class="description"><?js= r.description ?></span>
+              <?js } ?>
+            </li>
+          <?js }); ?>
+        </ul>
+      <?js } ?>
+
+    <!--</div>-->
+    </details>
+  <?js }); ?>
+  </details>
+<?js } ?>

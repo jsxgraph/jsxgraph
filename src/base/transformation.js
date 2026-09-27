@@ -49,19 +49,20 @@ import Type from "../utils/type.js";
  * @constructor
  * @param {JXG.Board} board The board the transformation is part of.
  * @param {String} type Can be
- * <ul><li> 'translate'
- * <li> 'scale'
- * <li> 'reflect'
- * <li> 'rotate'
- * <li> 'shear'
- * <li> 'affine'
- * <li> 'affinematrix'
- * <li> 'generic'
- * <li> 'matrix'
- * </ul>
+ *
+ * - 'translate'
+ * - 'scale'
+ * - 'reflect'
+ * - 'rotate'
+ * - 'shear'
+ * - 'affine'
+ * - 'affinematrix'
+ * - 'generic'
+ * - 'matrix'
+ *
  * @param {Object} params The parameters depend on the transformation type
  *
- * <p>
+ *
  * Translation matrix:
  * <pre>
  * ( 1  0  0)   ( z )
@@ -69,7 +70,7 @@ import Type from "../utils/type.js";
  * ( b  0  1)   ( y )
  * </pre>
  *
- * <p>
+ *
  * Scale matrix:
  * <pre>
  * ( 1  0  0)   ( z )
@@ -77,7 +78,7 @@ import Type from "../utils/type.js";
  * ( 0  0  b)   ( y )
  * </pre>
  *
- * <p>
+ *
  * A rotation matrix with angle a (in Radians)
  * <pre>
  * ( 1    0        0      )   ( z )
@@ -85,7 +86,7 @@ import Type from "../utils/type.js";
  * ( 0    sin(a)   cos(a) )   ( y )
  * </pre>
  *
- * <p>
+ *
  * Shear matrix:
  * <pre>
  * ( 1  0  0)   ( z )
@@ -93,28 +94,28 @@ import Type from "../utils/type.js";
  * ( 0  b  1)   ( y )
  * </pre>
  *
- * <p>Generic affine transformation (4 parameters):
+ * Generic affine transformation (4 parameters):
  * <pre>
  * ( 1  0  0 )   ( z )
  * ( 0  a  b ) * ( x )
  * ( 0  c  d )   ( y )
  * </pre>
  *
- * <p>Affine 2x2 matrix:
+ * Affine 2x2 matrix:
  * <pre>
  * ( 1  0  0 )   ( z )
  * ( 0  M    ) * ( x )
  * ( 0       )   ( y )
  * </pre>
  *
- * <p>Generic transformation (9 parameters):
+ * Generic transformation (9 parameters):
  * <pre>
  * ( a  b  c )   ( z )
  * ( d  e  f ) * ( x )
  * ( g  h  i )   ( y )
  * </pre>
  *
- * <p>3x3 Matrix:
+ * 3x3 Matrix:
  * <pre>
  * (         )   ( z )
  * (    M    ) * ( x )
@@ -191,7 +192,7 @@ JXG.extend(
          *                        'matrix'.
          * @param {Array} params Parameters for the various transformation types.
          *
-         * <p>A transformation with a generic matrix looks like:
+         * A transformation with a generic matrix looks like:
          * <pre>
          * ( a  b  c )   ( z )
          * ( d  e  f ) * ( x )
@@ -199,7 +200,7 @@ JXG.extend(
          * </pre>
          *
          * The transformation matrix then looks like:
-         * <p>
+         *
          * Translation matrix:
          * <pre>
          * ( 1  0  0)   ( z )
@@ -207,7 +208,7 @@ JXG.extend(
          * ( b  0  1)   ( y )
          * </pre>
          *
-         * <p>
+         *
          * Scale matrix:
          * <pre>
          * ( 1  0  0)   ( z )
@@ -215,7 +216,7 @@ JXG.extend(
          * ( 0  0  b)   ( y )
          * </pre>
          *
-         * <p>
+         *
          * A rotation matrix with angle a (in Radians)
          * <pre>
          * ( 1    0        0      )   ( z )
@@ -223,7 +224,7 @@ JXG.extend(
          * ( 0    sin(a)   cos(a) )   ( y )
          * </pre>
          *
-         * <p>
+         *
          * Shear matrix:
          * <pre>
          * ( 1  0  0)   ( z )
@@ -231,28 +232,28 @@ JXG.extend(
          * ( 0  b  1)   ( y )
          * </pre>
          *
-         * <p>Generic affine transformation (4 parameters):
+         * Generic affine transformation (4 parameters):
          * <pre>
          * ( 1  0  0 )   ( z )
          * ( 0  a  b ) * ( x )
          * ( 0  c  d )   ( y )
          * </pre>
          *
-         * <p>Affine 2x2 matrix:
+         * Affine 2x2 matrix:
          * <pre>
          * ( 1  0  0 )   ( z )
          * ( 0  M    ) * ( x )
          * ( 0       )   ( y )
          * </pre>
          *
-         * <p>Generic transformation (9 parameters):
+         * Generic transformation (9 parameters):
          * <pre>
          * ( a  b  c )   ( z )
          * ( d  e  f ) * ( x )
          * ( g  h  i )   ( y )
          * </pre>
          *
-         * <p>3x3 Matrix:
+         * 3x3 Matrix:
          * <pre>
          * (         )   ( z )
          * (    M    ) * ( x )
@@ -493,7 +494,7 @@ JXG.extend(
          *                         'matrix'.
          * @param {Array} params Parameters for the various transformation types.
          *
-         * <p>A transformation with a generic matrix looks like:
+         * A transformation with a generic matrix looks like:
          * <pre>
          * ( a  b  c  d)   ( w )
          * ( e  f  g  h) * ( x )
@@ -502,7 +503,7 @@ JXG.extend(
          * </pre>
          *
          * The transformation matrix then looks like:
-         * <p>
+         *
          * Translation matrix:
          * <pre>
          * ( 1  0  0  0)   ( w )
@@ -511,7 +512,7 @@ JXG.extend(
          * ( c  0  0  1)   ( z )
          * </pre>
          *
-         * <p>
+         *
          * Scale matrix:
          * <pre>
          * ( 1  0  0  0)   ( w )
@@ -520,7 +521,7 @@ JXG.extend(
          * ( 0  0  0  c)   ( z )
          * </pre>
          *
-         * <p>
+         *
          * rotateX: a rotation matrix with angle a (in Radians)
          * <pre>
          * ( 1    0        0             )   ( w )
@@ -529,7 +530,7 @@ JXG.extend(
          * ( 0    0      sin(a)   cos(a) )   ( z )
          * </pre>
          *
-         * <p>
+         *
          * rotateY: a rotation matrix with angle a (in Radians)
          * <pre>
          * ( 1      0       0           )   ( w )
@@ -538,7 +539,7 @@ JXG.extend(
          * ( 0    sin(a)    0    cos(a) )   ( z )
          * </pre>
          *
-         * <p>
+         *
          * rotateZ: a rotation matrix with angle a (in Radians)
          * <pre>
          * ( 1      0                0  )   ( w )
@@ -547,11 +548,11 @@ JXG.extend(
          * ( 0      0         0      1  )   ( z )
          * </pre>
          *
-         * <p>
-         * rotate: a rotation matrix with angle a (in Radians)
-         * and normal <i>n</i>.
          *
-         * <p>Generic affine transformation (9 parameters):
+         * rotate: a rotation matrix with angle *a* (in Radians)
+         * and normal *n*.
+         *
+         * Generic affine transformation (9 parameters):
          * <pre>
          * ( 1  0  0  0 )   ( w )
          * ( 0  a  b  c ) * ( x )
@@ -559,7 +560,7 @@ JXG.extend(
          * ( 0  g  h  i )   ( z )
          * </pre>
          *
-         * <p>Affine 3x3 matrix:
+         * Affine 3x3 matrix:
          * <pre>
          * ( 1  0  0  0 )   ( w )
          * ( 0          ) * ( x )
@@ -567,7 +568,7 @@ JXG.extend(
          * ( 0          )   ( z )
          * </pre>
          *
-         * <p>Generic transformation (16 parameters):
+         * Generic transformation (16 parameters):
          * <pre>
          * ( a  b  c  d )   ( w )
          * ( e  f  ...  ) * ( x )
@@ -575,7 +576,7 @@ JXG.extend(
          * (    ...   p )   ( z )
          * </pre>
          *
-         * <p>Generic 4x4 matrix:
+         * Generic 4x4 matrix:
          * <pre>
          * (            )   ( w )
          * (     M      ) * ( x )
@@ -774,7 +775,7 @@ JXG.extend(
         /**
          * Transform a point element, that are: {@link Point}, {@link Text}, {@link Image}, {@link Point3D}.
          * First, the transformation matrix is updated, then do the matrix-vector-multiplication.
-         * <p>
+         *
          * Restricted to 2D transformations.
          *
          * @private
@@ -801,7 +802,7 @@ JXG.extend(
          * Applies a transformation once to a point element, that are: {@link Point}, {@link Text}, {@link Image}, {@link Point3D} or to an array of such elements.
          * If it is a free 2D point, then it can be dragged around later
          * and will overwrite the transformed coordinates.
-         * @param {JXG.Point|Array} p
+         * @param {Point|Array} p
          */
         applyOnce: function (p) {
             var c, len, i;
@@ -826,7 +827,7 @@ JXG.extend(
          * Binds a transformation to a GeometryElement or an array of elements. In every update of the
          * GeometryElement(s), the transformation is executed. That means, in order to immediately
          * apply the transformation after calling bindTo, a call of board.update() has to follow.
-         * <p>
+         *
          * The transformation is simply appended to the existing list of transformations of the object.
          * It is not fused (melt) with an existing transformation.
          *
@@ -851,7 +852,7 @@ JXG.extend(
          * Binds a transformation to a GeometryElement or an array of elements. In every update of the
          * GeometryElement(s), the transformation is executed. That means, in order to immediately
          * apply the transformation after calling meltTo, a call of board.update() has to follow.
-         * <p>
+         *
          * In case the last transformation of the element and this transformation are static,
          * i.e. the transformation matrices do not depend on other elements,
          * the transformation will be fused into (multiplied with) the last transformation of
@@ -892,7 +893,7 @@ JXG.extend(
         /**
          * Create a copy of the transformation in case it is static, i.e.
          * if the transformation matrix does not depend on other elements.
-         * <p>
+         *
          * If the transformation matrix is not static, null will be returned.
          *
          * @returns {JXG.Transformation}
@@ -966,117 +967,160 @@ JXG.extend(
 
 /**
  * @class Define projective 2D transformations like translation, rotation, reflection.
- * @pseudo
- * @description A transformation consists of a 3x3 matrix, i.e. it is a projective transformation.
- * <p>
- * Internally, a transformation is applied to an element by multiplying the 3x3 matrix from the left to
- * the homogeneous coordinates of the element. JSXGraph represents homogeneous coordinates in the order
- * (z, x, y). The matrix has the form
- * <pre>
- * ( a  b  c )   ( z )
- * ( d  e  f ) * ( x )
- * ( g  h  i )   ( y )
- * </pre>
- * where in general a=1. If b = c = 0, the transformation is called <i>affine</i>.
- * In this case, finite points will stay finite. This is not the case for general projective coordinates.
- * <p>
- * Transformations acting on texts and images are considered to be affine, i.e. b and c are ignored.
+ * A transformation consists of a \\(3\times 3\\) matrix, i.e. it is a projective transformation.
  *
+ * Internally, a transformation is applied to an element by multiplying the \\(3\times 3\\) matrix from the left to
+ * the homogeneous coordinates of the element. JSXGraph represents homogeneous coordinates in the order
+ * \\((z, x, y)\\). The matrix has the form
+ * \\[
+ * \begin{pmatrix}
+ * a & b & c \\\\
+ * d & e & f \\\\
+ * g & h & i
+ * \end{pmatrix}
+ * \cdot
+ * \begin{pmatrix}
+ * z\\\\ x\\\\ y
+ * \end{pmatrix}
+ * \\]
+ * where in general \\(a=1\\). If \\(b = c = 0\\), the transformation is called *affine*.
+ * In this case, finite points will stay finite. This is not the case for general projective coordinates.
+ *
+ * Transformations acting on texts and images are considered to be affine, i.e. `b` and `c` are ignored.
+ *
+ * The parameters of a transformation depend on the transformation type, supplied as attribute `type`.
+ * Possible transformation types are
+ *
+ * - 'translate'
+ * - 'scale'
+ * - 'reflect'
+ * - 'rotate'
+ * - 'shear'
+ * - 'generic'
+ * - 'matrix'
+ *
+ * Valid parameters for these types are:
+ *
+ * - __`type:"translate"`:__ `[x, y]` Translation vector (two numbers or functions).
+ * The transformation matrix for x = a and y = b has the form:
+ * \\[
+ * \begin{pmatrix}
+ * 1 & 0 & 0 \\\\
+ * a & 1 & 0 \\\\
+ * b & 0 & 1
+ * \end{pmatrix}
+ * \cdot
+ * \begin{pmatrix}
+ * z\\\\ x\\\\ y
+ * \end{pmatrix}
+ * \\]
+ * - __`type:"scale"`:__ `[scale_x, scale_y]` Scale vector (two numbers or functions).
+ * The transformation matrix for `scale_x = a` and `scale_y = b` has the form:
+ * \\[
+ * \begin{pmatrix}
+ * 1 & 0 & 0 \\\\
+ * 0 & a & 0 \\\\
+ * 0 & 0 & b
+ * \end{pmatrix}
+ * \cdot
+ * \begin{pmatrix}
+ * z\\\\ x\\\\ y
+ * \end{pmatrix}
+ * \\]
+ * - __`type:"rotate"`__ `[alpha, [point | x, y]]` The parameters are the angle value in Radians
+ *     (a number or function), and optionally a coordinate pair (two numbers or functions) or a point element defining the
+ *                rotation center. If the rotation center is not given, the transformation rotates around (0,0).
+ * The transformation matrix for angle a and rotating around (0, 0) has the form:
+ * \\[
+ * \begin{pmatrix}
+ * 1 & 0 & 0 \\\\
+ * 0 & \cos(a) & -\sin(a) \\\\
+ * 0 & \sin(a) & \cos(a)
+ * \end{pmatrix}
+ * \cdot
+ * \begin{pmatrix}
+ * z\\\\ x\\\\ y
+ * \end{pmatrix}
+ * \\]
+ * - __`type:"shear"`:__ `[shear_x, shear_y]` Shear vector (two numbers or functions).
+ * The transformation matrix for shear_x = a and shear_y = b has the form:
+ * \\[
+ * \begin{pmatrix}
+ * 1 & 0 & 0 \\\\
+ * 0 & 1 & a \\\\
+ * 0 & b & 1
+ * \end{pmatrix}
+ * \cdot
+ * \begin{pmatrix}
+ * z\\\\ x\\\\ y
+ * \end{pmatrix}
+ * \\]
+ * - __`type:"reflect"`:__ The parameters can either be:
+ *   - `line` a line element,
+ *   - `p, q` two point elements,
+ *   - `p_x, p_y, q_x, q_y` four numbers or functions  determining a line through points \\((p_x, p_y)\\) and \\((q_x, q_y)\\).
+ * - __`type:"affine"`:__ `[a, b, c, d]` (numbers or functions).
+ * The transformation matrix has the form
+ * \\[
+ * \begin{pmatrix}
+ * 1 & 0 & 0 \\\\
+ * 0 & a & b \\\\
+ * 0 & c & d
+ * \end{pmatrix}
+ * \cdot
+ * \begin{pmatrix}
+ * z\\\\ x\\\\ y
+ * \end{pmatrix}
+ * \\]
+ * - __`type:"affinematrix"`:__ `M` \\(2\times 2\\) matrix containing numbers or functions.
+ * The full transformation matrix has the form
+ * \\[
+ * \begin{pmatrix}
+ * 1 & 0 & 0 \\\\
+ * 0 & M \\\\
+ * 0 &
+ * \end{pmatrix}
+ * \cdot
+ * \begin{pmatrix}
+ * z\\\\ x\\\\ y
+ * \end{pmatrix}
+ * \\]
+ * - __`type:"generic"`:__ `[a, b, c, d, e, f, g, h, i]` Nine matrix entries (numbers or functions)
+ *  for a generic projective transformation.
+ * The matrix has the form
+ * \\[
+ * \begin{pmatrix}
+ * a & b & c \\\\
+ * d & e & f \\\\
+ * g & h & i
+ * \end{pmatrix}
+ * \cdot
+ * \begin{pmatrix}
+ * z\\\\ x\\\\ y
+ * \end{pmatrix}
+ * \\]
+ * - __`type:"matrix"`:__ `M` \\(3\times 3\\) transformation matrix containing numbers or functions
+ *
+ * @pseudo
  * @name Transformation
+ * @elementclass various
  * @augments JXG.Transformation
  * @constructor
  * @type JXG.Transformation
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {number|function|JXG.GeometryElement} parameters The parameters depend on the transformation type, supplied as attribute 'type'.
- * Possible transformation types are
- * <ul>
- * <li> 'translate'
- * <li> 'scale'
- * <li> 'reflect'
- * <li> 'rotate'
- * <li> 'shear'
- * <li> 'generic'
- * <li> 'matrix'
- * </ul>
- * <p>Valid parameters for these types are:
- * <dl>
- * <dt><b><tt>type:"translate"</tt></b></dt><dd><b>x, y</b> Translation vector (two numbers or functions).
- * The transformation matrix for x = a and y = b has the form:
- * <pre>
- * ( 1  0  0)   ( z )
- * ( a  1  0) * ( x )
- * ( b  0  1)   ( y )
- * </pre>
- * </dd>
- * <dt><b><tt>type:"scale"</tt></b></dt><dd><b>scale_x, scale_y</b> Scale vector (two numbers or functions).
- * The transformation matrix for scale_x = a and scale_y = b has the form:
- * <pre>
- * ( 1  0  0)   ( z )
- * ( 0  a  0) * ( x )
- * ( 0  0  b)   ( y )
- * </pre>
- * </dd>
- * <dt><b><tt>type:"rotate"</tt></b></dt><dd> <b>alpha, [point | x, y]</b> The parameters are the angle value in Radians
- *     (a number or function), and optionally a coordinate pair (two numbers or functions) or a point element defining the
- *                rotation center. If the rotation center is not given, the transformation rotates around (0,0).
- * The transformation matrix for angle a and rotating around (0, 0) has the form:
- * <pre>
- * ( 1    0        0      )   ( z )
- * ( 0    cos(a)  -sin(a) ) * ( x )
- * ( 0    sin(a)   cos(a) )   ( y )
- * </pre>
- * </dd>
- * <dt><b><tt>type:"shear"</tt></b></dt><dd><b>shear_x, shear_y</b> Shear vector (two numbers or functions).
- * The transformation matrix for shear_x = a and shear_y = b has the form:
- * <pre>
- * ( 1  0  0)   ( z )
- * ( 0  1  a) * ( x )
- * ( 0  b  1)   ( y )
- * </pre>
- * </dd>
- * <dt><b><tt>type:"reflect"</tt></b></dt><dd>The parameters can either be:
- *    <ul>
- *      <li> <b>line</b> a line element,
- *      <li> <b>p, q</b> two point elements,
- *      <li> <b>p_x, p_y, q_x, q_y</b> four numbers or functions  determining a line through points (p_x, p_y) and (q_x, q_y).
- *    </ul>
- * </dd>
- * <dt><b><tt>type:"affine"</tt></b></dt><dd><b>a, b, c, d</b> (numbers or functions>.
- * The transformation matrix has the form
- * <pre>
- * ( 1  0  0 )   ( z )
- * ( 0  a  b ) * ( x )
- * ( 0  c  d )   ( y )
- * </pre>
- * </dd>
- * <dt><b><tt>type:"affinematrix"</tt></b></dt><dd><b>M</b> 2x2 matrix containing numbers or functions.
- * The full transformation matrix has the form
- * <pre>
- * ( 1  0  0 )   ( z )
- * ( 0  M    ) * ( x )
- * ( 0       )   ( y )
- * </pre>
- * </dd>
- * <dt><b><tt>type:"generic"</tt></b></dt><dd><b>a, b, c, d, e, f, g, h, i</b> Nine matrix entries (numbers or functions)
- *  for a generic projective transformation.
- * The matrix has the form
- * <pre>
- * ( a  b  c )   ( z )
- * ( d  e  f ) * ( x )
- * ( g  h  i )   ( y )
- * </pre>
- * </dd>
- * <dt><b><tt>type:"matrix"</tt></b></dt><dd><b>M</b> 3x3 transformation matrix containing numbers or functions</dd>
- * </dl>
- *
- *
  * @see JXG.Transformation#setMatrix
+ *
+ */
+/**
+ * @jsxgraphsignature Transformation
+ * @param {number|function|JXG.GeometryElement} parameters
+ *
  *
  * @example
  * // The point B is determined by taking twice the vector A from the origin
  *
  * var p0 = board.create('point', [0, 3], {name: 'A'}),
- *     t = board.create('transform', [function(){ return p0.X(); }, "Y(A)"], {type: 'translate'}),
+ *     t = board.create('transform', [() => p0.X(), "Y(A)"], {type: 'translate'}),
  *     p1 = board.create('point', [p0, t], {color: 'blue'});
  *
  * </pre><div class="jxgbox" id="JXG14167b0c-2ad3-11e5-8dd9-901b0e1b8723" style="width: 300px; height: 300px;"></div>
@@ -1085,7 +1129,7 @@ JXG.extend(
  *         var board = JXG.JSXGraph.initBoard('JXG14167b0c-2ad3-11e5-8dd9-901b0e1b8723',
  *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
  *     var p0 = board.create('point', [0, 3], {name: 'A'}),
- *         t = board.create('transform', [function(){ return p0.X(); }, "Y(A)"], {type:'translate'}),
+ *         t = board.create('transform', [() => p0.X(), "Y(A)"], {type:'translate'}),
  *         p1 = board.create('point', [p0, t], {color: 'blue'});
  *
  *     })();
@@ -1396,110 +1440,134 @@ JXG.registerElement('transform', JXG.createTransform);
 
 /**
  * @class Define projective 3D transformations like translation, rotation, reflection.
- * @pseudo
- * @description A transformation consists of a 4x4 matrix, i.e. it is a projective transformation.
- * <p>
- * Internally, a transformation is applied to an element by multiplying the 4x4 matrix from the left to
- * the homogeneous coordinates of the element. JSXGraph represents homogeneous coordinates in the order
- * (w, x, y, z). If the coordinate is a finite point, w=1. The matrix has the form
- * <pre>
- * ( a b c d)   ( w )
- * ( e f g h) * ( x )
- * ( i j k l)   ( y )
- * ( m n o p)   ( z )
- * </pre>
- * where in general a=1. If b = c = d = 0, the transformation is called <i>affine</i>.
- * In this case, finite points will stay finite. This is not the case for general projective coordinates.
- * <p>
+ * A transformation consists of a \\(4\times 4\\) matrix, i.e. it is a projective transformation.
  *
+ * Internally, a transformation is applied to an element by multiplying the \\(4\times 4\\) matrix from the left to
+ * the homogeneous coordinates of the element. JSXGraph represents homogeneous coordinates in the order
+ * \\((w, x, y, z)\\). If the coordinate is a finite point, \\(w=1\\). The matrix has the form
+ * \\[
+ * \begin{pmatrix}
+ * a & b & c & d\\\\
+ * e & f & g & h\\\\
+ * i & j & k & l\\\\
+ * m & n & o & p
+ * \end{pmatrix}
+ * \cdot
+ * \begin{pmatrix}
+ * w\\\\ x\\\\ y\\\\ z
+ * \end{pmatrix}
+ * \\]
+ * where in general \\(a=1\\). If \\(b = c = d = 0\\), the transformation is called *affine*.
+ * In this case, finite points will stay finite. This is not the case for general projective coordinates.
+ *
+ * Possible transformation types are
+ *
+ * - 'translate'
+ * - 'scale'
+ * - 'rotate'
+ * - 'rotateX'
+ * - 'rotateY'
+ * - 'rotateZ'
+ * - 'affine'
+ * - 'affinematrix'
+ * - 'generic'
+ * - 'matrix'
+ *
+ * Valid parameters for these types are:
+ *
+ * - __`"translate"`:__ `[x, y, z]` Translation vector (three numbers or functions).
+ * The transformation matrix for x = a, y = b, and z = c has the form:
+ * \\[
+ * \begin{pmatrix}
+ * 1 & 0 & 0 & 0\\\\
+ * a & 1 & 0 & 0\\\\
+ * b & 0 & 1 & 0\\\\
+ * c & 0 & 0 & 1
+ * \end{pmatrix}
+ * \cdot
+ * \begin{pmatrix}
+ * w\\\\ x\\\\ y\\\\ z
+ * \end{pmatrix}
+ * \\]
+ * - __`"scale"`:__ `[scale_x, scale_y, scale_z]` Scale vector (three numbers or functions).
+ * The transformation matrix for scale_x = a, scale_y = b, scale_z = c has the form:
+ * \\[
+ * \begin{pmatrix}
+ * 1 & 0 & 0 & 0\\\\
+ * 0 & a & 0 & 0\\\\
+ * 0 & 0 & b & 0\\\\
+ * 0 & 0 & 0 & c
+ * \end{pmatrix}
+ * \cdot
+ * \begin{pmatrix}
+ * w\\\\ x\\\\ y\\\\ z
+ * \end{pmatrix}
+ * \\]
+ * - __`"rotate"`:__ `[a, n, [p=[0,0,0]]]` angle (in radians), normal, [point].
+ * Rotate with angle a around the normal vector n through the point p.
+ * - __`"rotateX"`:__ `[a, [p=[0,0,0]]]` angle (in radians), [point].
+ * Rotate with angle a around the normal vector (1, 0, 0) through the point p.
+ * - __`"rotateY"`:__ `[a, [p=[0,0,0]]]` angle (in radians), [point].
+ * Rotate with angle a around the normal vector (0, 1, 0) through the point p.
+ * - __`"rotateZ"`:__ `[a, [p=[0,0,0]]]` angle (in radians), [point].
+ * Rotate with angle a around the normal vector (0, 0, 1) through the point p.
+ * - __`"affine"`:__ `[a,b,...,i]` generic affine transformation (9 parameters, numbers or functions).
+ * The full transformation matrix has the form
+ * \\[
+ * \begin{pmatrix}
+ * 1 & 0 & 0 & 0\\\\
+ * 0 & a & b & c\\\\
+ * 0 & d & e & f\\\\
+ * 0 & g & h & i
+ * \end{pmatrix}
+ * \cdot
+ * \begin{pmatrix}
+ * w\\\\ x\\\\ y\\\\ z
+ * \end{pmatrix}
+ * \\]
+ * - __`"affinematrix"`:__ `[M]` generic affine 3x3 transformation matrix (containing numbers or functions).
+ * The full transformation matrix has the form
+ * \\[
+ * \begin{pmatrix}
+ * 1 & 0 & 0 & 0\\\\
+ * 0 &   &   &  \\\\
+ * 0 &   & M &  \\\\
+ * 0 &   &   &
+ * \end{pmatrix}
+ * \cdot
+ * \begin{pmatrix}
+ * w\\\\ x\\\\ y\\\\ z
+ * \end{pmatrix}
+ * \\]
+ * - __`"generic"`:__ `[a,b,...,p]` generic transformation (16 parameters, numbers or functions).
+ * The full transformation matrix has the form
+ * \\[
+ * \begin{pmatrix}
+ * a & b & c & d\\\\
+ * e & f & g & h\\\\
+ * i & j & k & l\\\\
+ * m & n & o & p
+ * \end{pmatrix}
+ * \cdot
+ * \begin{pmatrix}
+ * w\\\\ x\\\\ y\\\\ z
+ * \end{pmatrix}
+ * \\]
+ * - __`"matrix"`:__ `[M]` generic 4x4 transformation matrix (containing numbers or functions).
+ *
+ * @pseudo
  * @name Transformation3D
+ * @elementclass 3D
  * @augments JXG.Transformation
  * @constructor
  * @type JXG.Transformation
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {number|function|JXG.GeometryElement3D} parameters The parameters depend on the transformation type, supplied as attribute 'type'.
- *  Possible transformation types are
- * <ul>
- * <li> 'translate'
- * <li> 'scale'
- * <li> 'rotate'
- * <li> 'rotateX'
- * <li> 'rotateY'
- * <li> 'rotateZ'
- * <li> 'affine'
- * <li> 'affinematrix'
- * <li> 'generic'
- * <li> 'matrix'
- * </ul>
- * <p>Valid parameters for these types are:
- * <dl>
- * <dt><b><tt>type:"translate"</tt></b></dt><dd><b>x, y, z</b> Translation vector (three numbers or functions).
- * The transformation matrix for x = a, y = b, and z = c has the form:
- * <pre>
- * ( 1  0  0  0)   ( w )
- * ( a  1  0  0) * ( x )
- * ( b  0  1  0)   ( y )
- * ( c  0  0  c)   ( z )
- * </pre>
- * </dd>
- * <dt><b><tt>type:"scale"</tt></b></dt><dd><b>scale_x, scale_y, scale_z</b> Scale vector (three numbers or functions).
- * The transformation matrix for scale_x = a, scale_y = b, scale_z = c has the form:
- * <pre>
- * ( 1  0  0  0)   ( w )
- * ( 0  a  0  0) * ( x )
- * ( 0  0  b  0)   ( y )
- * ( 0  0  0  c)   ( z )
- * </pre>
- * </dd>
- * <dt><b><tt>type:"rotate"</tt></b></dt><dd><b>a, n, [p=[0,0,0]]</b> angle (in radians), normal, [point].
- * Rotate with angle a around the normal vector n through the point p.
- * </dd>
- * <dt><b><tt>type:"rotateX"</tt></b></dt><dd><b>a, [p=[0,0,0]]</b> angle (in radians), [point].
- * Rotate with angle a around the normal vector (1, 0, 0) through the point p.
- * </dd>
- * <dt><b><tt>type:"rotateY"</tt></b></dt><dd><b>a, [p=[0,0,0]]</b> angle (in radians), [point].
- * Rotate with angle a around the normal vector (0, 1, 0) through the point p.
- * </dd>
- * <dt><b><tt>type:"rotateZ"</tt></b></dt><dd><b>a, [p=[0,0,0]]</b> angle (in radians), [point].
- * Rotate with angle a around the normal vector (0, 0, 1) through the point p.
- * </dd>
- * <dt><b><tt>type:"affine"</tt></b></dt><dd><b>a,b,...,i</b> generic affine transformation (9 parameters, numbers or functions).
- * The full transformation matrix has the form
- * <pre>
- * ( 1  0  0  0 )   ( w )
- * ( 0  a  b  c ) * ( x )
- * ( 0  d  e  f )   ( y )
- * ( 0  g  h  i )   ( z )
- * </pre>
- * </dd>
- * <dt><b><tt>type:"affinematrix"</tt></b></dt><dd><b>M</b> generic affine 3x3 transformation matrix (containing numbers or functions).
- * The full transformation matrix has the form
- * <pre>
- * ( 1  0  0  0 )   ( w )
- * ( 0          ) * ( x )
- * ( 0     M    )   ( y )
- * ( 0          )   ( z )
- * </pre>
- * </dd>
- * <dt><b><tt>type:"generic"</tt></b></dt><dd><b>a,b,...,p</b> generic transformation (16 parameters, numbers or functions).
- * The full transformation matrix has the form
- * <pre>
- * ( a  b  c  d )   ( w )
- * ( e  f  ...  ) * ( x )
- * (    ...     )   ( y )
- * (    ...   p )   ( z )
- * </pre>
- * </dd>
- * <dt><b><tt>type:"matrix"</tt></b></dt><dd><b>M</b> generic 4x4 transformation matrix (containing numbers or functions).
- * The full transformation matrix has the form
- * <pre>
- * (            )   ( w )
- * (     M      ) * ( x )
- * (            )   ( y )
- * (            )   ( z )
- * </pre>
- * </dd>
- * </dl>
+ */
+/**
+ * @jsxgraphsignature Transformation3D
+ * The parameters depend on the transformation type, supplied as attribute `type`.
+ *
+ * @param {number|function|JXG.GeometryElement3D} parameters
  *
  * @example
  * var bound = [-5, 5];

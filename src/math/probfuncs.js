@@ -35,13 +35,15 @@ import Mat from "./math.js";
 import Type from "../utils/type.js";
 
 /**
- * Probability functions, e.g. error function,
- * see: https://en.wikipedia.org/wiki/Error_function
+ * The JXG.Math.ProbFuncs namespace bundles various probability functions, e.g. error function,
+ * see {@link https://en.wikipedia.org/wiki/Error_function}.
  * Ported from
- * by https://github.com/jeremybarnes/cephes/blob/master/cprob/ndtr.c,
+ * by {@link https://github.com/jeremybarnes/cephes/blob/master/cprob/ndtr.c}
  *
+ * ```
  * Cephes Math Library Release 2.9:  November, 2000
  * Copyright 1984, 1987, 1988, 1992, 2000 by Stephen L. Moshier
+ * ```
  *
  * @name JXG.Math.ProbFuncs
  * @exports Mat.ProbFuncs as JXG.Math.ProbFuncs
@@ -91,16 +93,15 @@ Mat.ProbFuncs = {
 
     /**
      *
-     *	Exponential of squared argument
+     * Exponential of squared argument
      *
+     * ```
      * SYNOPSIS:
      *
      * double x, y, expx2();
      * int sign;
      *
      * y = expx2( x, sign );
-     *
-     *
      *
      * DESCRIPTION:
      *
@@ -116,11 +117,13 @@ Mat.ProbFuncs = {
      *                      Relative error:
      * arithmetic    domain     # trials      peak         rms
      *   IEEE      -26.6, 26.6    10^7       3.9e-16     8.9e-17
+     * ```
      *
      * @private
      * @param  {Number} x
      * @param  {Number} sign (int)
      * @returns {Number}
+     * @memberof JXG.Math.ProbFuncs
      */
     expx2: function (x, sign) {
         // double x;
@@ -158,8 +161,9 @@ Mat.ProbFuncs = {
 
     /**
      *
-     *	Evaluate polynomial
+     * Evaluate polynomial
      *
+     * ```
      * SYNOPSIS:
      *
      * int N;
@@ -192,12 +196,14 @@ Mat.ProbFuncs = {
      * the functions in the library.  Depending on available
      * equipment features, the user may wish to rewrite the
      * program in microcode or assembly language.
+     * ```
      *
      * @private
      * @param  {Number} x
      * @param  {Number} coef
      * @param  {Number} N
      * @returns {Number}
+     * @memberof JXG.Math.ProbFuncs
      */
     polevl: function (x, coef, N) {
         var ans, i;
@@ -223,6 +229,7 @@ Mat.ProbFuncs = {
      * @param  {Number} coef
      * @param  {Number} N
      * @returns {Number}
+     * @memberof JXG.Math.ProbFuncs
      */
     p1evl: function (x, coef, N) {
         var ans, i;
@@ -241,8 +248,9 @@ Mat.ProbFuncs = {
 
     /**
      *
-     *	Normal distribution function
+     * Normal distribution function
      *
+     * ```
      * SYNOPSIS:
      *
      * y = ndtr( x );
@@ -278,8 +286,10 @@ Mat.ProbFuncs = {
      *
      *   message         condition         value returned
      * erfc underflow    x > 37.519379347       0.0
+     * ```
      *
      * @param  {Number} a
+     * @memberof JXG.Math.ProbFuncs
      * @returns {Number}
      */
     ndtr: function (a) {
@@ -305,6 +315,7 @@ Mat.ProbFuncs = {
 
     /**
      * @private
+     * @memberof JXG.Math.ProbFuncs
      * @param  {Number} a
      * @returns {Number}
      */
@@ -317,8 +328,9 @@ Mat.ProbFuncs = {
 
     /**
      *
-     *	Complementary error function
+     * Complementary error function
      *
+     * ```
      * SYNOPSIS:
      *
      * double x, y, erfc();
@@ -359,7 +371,9 @@ Mat.ProbFuncs = {
      *
      *   message         condition              value returned
      * erfc underflow    x > 9.231948545 (DEC)       0.0
+     * ```
      *
+     * @memberof JXG.Math.ProbFuncs
      * @param  {Number} a
      * @returns {Number}
      */
@@ -405,13 +419,17 @@ Mat.ProbFuncs = {
 
     /**
      * Exponentially scaled erfc function
+     *
+     * ```
      *   exp(x^2) erfc(x)
      *   valid for x > 1.
      *   Use with ndtr and expx2.
+     * ```
      *
      * @private
      * @param {Number} x
      * @returns {Number}
+     * @memberof JXG.Math.ProbFuncs
      */
     erfce: function (x) {
         var p, q;
@@ -427,8 +445,9 @@ Mat.ProbFuncs = {
     },
 
     /**
-     *	Error function
+     * Error function
      *
+     * ```
      * SYNOPSIS:
      *
      * double x, y, erf();
@@ -459,9 +478,11 @@ Mat.ProbFuncs = {
      * arithmetic   domain     # trials      peak         rms
      *    DEC       0,1         14000       4.7e-17     1.5e-17
      *    IEEE      0,1         30000       3.7e-16     1.0e-16
+     * ```
      *
      * @param  {Number} x
      * @returns {Number}
+     * @memberof JXG.Math.ProbFuncs
      */
     erf: function (x) {
         var y, z;
@@ -518,8 +539,9 @@ Mat.ProbFuncs = {
 
     /**
      *
-     *	Inverse of Normal distribution function
+     * Inverse of Normal distribution function
      *
+     * ```
      * SYNOPSIS:
      *
      * double x, y, ndtri();
@@ -556,9 +578,11 @@ Mat.ProbFuncs = {
      *   message         condition    value returned
      * ndtri domain       x <= 0        -MAXNUM
      * ndtri domain       x >= 1         MAXNUM
+     * ```
      *
      * @param  {Number} y0
      * @returns {Number}
+     * @memberof JXG.Math.ProbFuncs
      */
     ndtri: function (y0) {
         var x, y, z, y2, x0, x1, code;
@@ -610,6 +634,7 @@ Mat.ProbFuncs = {
      *
      * @param  {Number} x
      * @returns {Number}
+     * @memberof JXG.Math.ProbFuncs
      */
     erfi: function (x) {
         return this.ndtri((x + 1) * 0.5) * this.SQRTH;

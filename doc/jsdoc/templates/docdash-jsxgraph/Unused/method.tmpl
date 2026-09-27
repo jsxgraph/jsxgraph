@@ -1,0 +1,161 @@
+<?js
+var data = obj;
+var self = this;
+?>
+
+<?js if (data.kind !== 'module' && !data.hideconstructor && data.kind !== 'class') { ?>
+
+    <?js if (data.kind === 'class' && data.classdesc) { ?>
+    <h2>Constructor</h2>
+    <?js } ?>
+
+    <h4 class="name" id="<?js= id ?>"><?js= data.attribs ?><?js
+      if(kind === 'class' && name.indexOf('module:') === 0) {
+        print('new (require("' + name.slice(7) + '"))');
+      } else if(kind === 'class') {
+        print('new ' + name);
+      } else if(kind === 'event' && data.alias) {
+        print(data.alias);
+      } else {
+        print(name);
+      }
+    ?><?js= (data.signature || '') ?></h4>
+
+    <?js if (data.summary) { ?>
+        <!--<p class="summary usertext"><?js= summary
+            .trim()
+            .replace(/^<p>/, "")
+            .replace(/<\/p>$/, "") ?></p>-->
+    <?js } ?>
+    <?js if (data.description) {?>
+      <p class="tag-description"><?js= data.description ?></p>
+    <?js } ?>
+<?js } ?>
+
+
+<?js
+// only shows signature in class (not in constructor-doclet)
+if (data.kind === 'class') {
+?>
+  <?js= this.partial('signatureblocks.tmpl', data) ?>
+<?js } ?>
+
+<!--
+<?js= this.partial('details.tmpl', data) ?>
+-->
+
+<?js if (data.augments && data.alias && data.alias.indexOf('module:') === 0) { ?>
+    <h3 class="h3-extends">Extends</h3>
+    <?js= self.partial('augments.tmpl', data) ?>
+<?js } ?>
+
+<?js if (kind === 'event' && data.type && data.type.names) {?>
+    <h3 class="h3-types">Type</h3>
+    <ul>
+        <li>
+            <?js= self.partial('type.tmpl', data.type.names) ?>
+        </li>
+    </ul>
+<?js } ?>
+
+<?js if (data['this']) { ?>
+    <h3 class="h3-this">This</h3>
+    <ul><li><?js= this.linkto(data['this'], data['this']) ?></li></ul>
+<?js } ?>
+
+<?js if (data.examples && examples.length) { ?>
+    <h3 class="h3-examples">Example<?js= examples.length > 1? 's':'' ?></h3>
+    <?js= this.partial('examples.tmpl', examples) ?>
+<?js } ?>
+
+
+<?js
+// not show standard-parameter, when own signature blocks
+if (
+  !data.isPseudo &&
+  data.params &&
+  params.length
+  // &&
+  // !(data.signatureBlocks && data.signatureBlocks.length)
+) {
+?>
+  <h3 class="h3-parameters">Parameters</h3>
+  <?js= this.partial('params.tmpl', params) ?>
+<?js } ?>
+
+
+<?js if (data.kind !== 'module' && data.requires && data.requires.length) { ?>
+<h3 class="h3-requires">Requires</h3>
+<ul><?js data.requires.forEach(function(r) { ?>
+    <li><?js= self.linkto(r) ?></li>
+<?js }); ?></ul>
+<?js } ?>
+
+<?js if (data.fires && fires.length) { ?>
+<h3 class="h3-fires">Fires</h3>
+<ul><?js fires.forEach(function(f) { ?>
+    <li><?js= self.linkto(f) ?></li>
+<?js }); ?></ul>
+<?js } ?>
+
+<?js if (data.listens && listens.length) { ?>
+<h3 class="h3-listens">Listens to Events</h3>
+<ul><?js listens.forEach(function(f) { ?>
+    <li><?js= self.linkto(f) ?></li>
+<?js }); ?></ul>
+<?js } ?>
+
+<?js if (data.listeners && listeners.length) { ?>
+<h3 class="h3-listeners">Listeners of This Event</h3>
+<ul><?js listeners.forEach(function(f) { ?>
+    <li><?js= self.linkto(f) ?></li>
+<?js }); ?></ul>
+<?js } ?>
+
+<?js if (data.modifies && modifies.length) {?>
+<h3 class="h3-modifies">Modifies</h3>
+<?js if (modifies.length > 1) { ?><ul><?js
+    modifies.forEach(function(m) { ?>
+        <li><?js= self.partial('modifies.tmpl', m) ?></li>
+    <?js });
+?></ul><?js } else {
+    modifies.forEach(function(m) { ?>
+        <?js= self.partial('modifies.tmpl', m) ?>
+    <?js });
+} } ?>
+
+<?js if (data.exceptions && exceptions.length) { ?>
+<h3 class="h3-throws">Throws</h3>
+<?js if (exceptions.length > 1) { ?><ul><?js
+    exceptions.forEach(function(r) { ?>
+        <li><?js= self.partial('exceptions.tmpl', r) ?></li>
+    <?js });
+?></ul><?js } else {
+    exceptions.forEach(function(r) { ?>
+        <?js= self.partial('exceptions.tmpl', r) ?>
+    <?js });
+} } ?>
+
+<?js if (data.returns && returns.length) { ?>
+<h3 class="h3-returns">Returns</h3>
+<?js if (returns.length > 1) { ?><ul><?js
+    returns.forEach(function(r) { ?>
+        <li><?js= self.partial('returns.tmpl', r) ?></li>
+    <?js });
+?></ul><?js } else {
+    returns.forEach(function(r) { ?>
+        <?js= self.partial('returns.tmpl', r) ?>
+    <?js });
+} } ?>
+
+<?js if (data.yields && yields.length) { ?>
+<h3 class="h3-yields">Yields</h3>
+<?js if (yields.length > 1) { ?><ul><?js
+    yields.forEach(function(r) { ?>
+        <li><?js= self.partial('returns.tmpl', r) ?></li>
+    <?js });
+?></ul><?js } else {
+    yields.forEach(function(r) { ?>
+        <?js= self.partial('returns.tmpl', r) ?>
+    <?js });
+} } ?>

@@ -89,14 +89,46 @@ var bitReverse = [
 JXG.Util = JXG.Util || {};
 
 /**
- * @class Unzip class
+ * @class Unzip class.
  * Class for gunzipping, unzipping and base64 decoding of files.
- * It is used for reading GEONExT, Geogebra and Intergeo files.
- *
+ * The code is based on the source code for `gunzip.c` by Pasi Ojala and is a pure JavaScript
+ * implementation of `gunzip.c`.
+ * It is used e.g. for reading GEONExT, Geogebra and Intergeo files.
  * Only Huffman codes are decoded in gunzip.
- * The code is based on the source code for gunzip.c by Pasi Ojala
+ *
+ * __Note:__ decoding is only implemented for compression level 9.
+ *
+ * Unzip is available as separate sub-project {@link https://jsxgraph.org/home/documentation/jsxcompressor/}
+ * and {@link https://github.com/jsxgraph/jsxgraph/tree/main/JSXCompressor}.
+ *
  * @see http://www.cs.tut.fi/~albert/Dev/gunzip/gunzip.c
  * @see http://www.cs.tut.fi/~albert
+ * @see JXG.Util.Base64
+ * @memberof JXG.Util
+ *
+ * @example <caption>Unzip a base64 encoded zip file</caption>
+ * function(str) {
+ *   return unescape(
+ *       (new JXG.Util.Unzip(JXG.Util.Base64.decodeAsArray(str))).unzip()[0][0]
+ *   );
+ * };
+ *
+ * @example <caption>base64 encode a zip file for being decoded with Unzip (e.g. with PHP)</caption>
+ * &lt;?php
+ * function jxgcompress($filename)
+ * {
+ *    if (file_exists($filename)) {
+ *        $base64 = base64_encode(gzcompress(rawurlencode(file_get_contents($filename)),9));
+ *        echo "var jxgcompressed = " . $base64 . ";\n";
+ *    } else {
+ *        throw new Exception("$filename not found");
+ *    }
+ * }
+ * ?&gt;
+ *
+ * &lt;?php
+ *    jxgcompress("./helloworld.js");
+ * ?&gt;
  */
 JXG.Util.Unzip = function (barray) {
     var gpflags,
@@ -563,9 +595,8 @@ JXG.Util.Unzip = function (barray) {
     }
 
     /**
-     * nextFile:
      * Extract the next file from the compressed archive.
-     * Calls skipdir() to proceed recursively.
+     * Calls `skipdir()` to proceed recursively.
      *
      * @return {Boolean}  false if the end of files' data section has baseElement
      * reached. Then, then all recursive functions are stopped immediately.
@@ -829,6 +860,11 @@ JXG.Util.Unzip = function (barray) {
 
     }
 
+    /**
+     *
+     * @param {String} name
+     * @returns String
+     */
     JXG.Util.Unzip.prototype.unzipFile = function (name) {
         var i;
 
@@ -843,6 +879,10 @@ JXG.Util.Unzip = function (barray) {
         return "";
     };
 
+    /**
+     * @returns {Array}
+     *
+     */
     JXG.Util.Unzip.prototype.unzip = function () {
         nextFile();
         return unzipped;

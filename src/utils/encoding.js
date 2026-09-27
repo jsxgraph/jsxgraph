@@ -32,7 +32,7 @@ var UTF8_ACCEPT = 0,
 JXG.Util = JXG.Util || {};
 
 /**
- * UTF8 encoding routines
+ * JXG.Util.UTF8 namespace for UTF8 en-/decoding routines
  * @namespace
  */
 JXG.Util.UTF8 = {

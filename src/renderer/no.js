@@ -45,18 +45,18 @@ import JXG from "../jxg.js";
 import AbstractRenderer from "./abstract.js";
 
 /**
- * This renderer draws nothing. It is intended to be used in environments where none of our rendering engines
+ * @class This renderer draws nothing. It is intended to be used in environments where none of our rendering engines
  * are available, e.g. WebWorkers. All methods are empty.
  *
- * @class JXG.NoRenderer
  * @augments JXG.AbstractRenderer
- * @see JXG.AbstractRenderer
+ * @see JXG.CanvasRenderer
+ * @see JXG.SVGRenderer
  */
 JXG.NoRenderer = function () {
     /**
-     * If this property is set to <tt>true</tt> the visual properties of the elements are updated
+     * If this property is set to `true` the visual properties of the elements are updated
      * on every update. Visual properties means: All the stuff stored in the
-     * {@link JXG.GeometryElement#visProp} property won't be set if enhancedRendering is <tt>false</tt>
+     * {@link JXG.GeometryElement#visProp} property won't be set if enhancedRendering is `false`
      * @type Boolean
      * @default true
      */

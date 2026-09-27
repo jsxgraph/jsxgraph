@@ -114,7 +114,7 @@ JXG.CoordsElement = function (coordinates, isLabel) {
     /**
      * When used as a glider this member stores the object, where to glide on.
      * To set the object to glide on use the method
-     * {@link JXG.Point#makeGlider} and DO NOT set this property directly
+     * {@link JXG.CoordsElement#makeGlider} and DO NOT set this property directly
      * as it will break the dependency tree.
      * @type JXG.GeometryElement
      */
@@ -123,7 +123,7 @@ JXG.CoordsElement = function (coordinates, isLabel) {
     /**
      * List of elements the element is bound to, i.e. the element glides on.
      * Only the last entry is active.
-     * Use {@link JXG.Point#popSlideObject} to remove the currently active slideObject.
+     * Use {@link JXG.CoordsElement#popSlideObject} to remove the currently active slideObject.
      */
     this.slideObjects = [];
 
@@ -863,12 +863,12 @@ JXG.extend(
         /**
          * Getter method for coordinates x, y and (optional) z.
          * @param {Number|String} [digits='auto'] Truncating rule for the digits in the infobox.
-         * <ul>
-         * <li>'auto': done automatically by JXG.autoDigits()
-         * <li>'none': no truncation
-         * <li>number: truncate after "number digits" with JXG.toFixed()
-         * </ul>
-         * @param {Boolean} [withZ=false] If set to true the return value will be <tt>(x | y | z)</tt> instead of <tt>(x, y)</tt>.
+         *
+         * - 'auto': done automatically by `JXG.autoDigits()`
+         * - 'none': no truncation
+         * - number: truncate after "number digits" with `JXG.toFixed()`
+         *
+         * @param {Boolean} [withZ=false] If set to true the return value will be `(x | y | z)` instead of `(x, y)`.
          * @returns {String} User coordinates of point.
          */
         Coords: function (withZ) {
@@ -963,7 +963,7 @@ JXG.extend(
         /**
          * Getter method for the distance to a second point, this is required for CAS-elements.
          * Here, function inlining seems to be worthwile (for plotting).
-         * @param {JXG.Point} point2 The point to which the distance shall be calculated.
+         * @param {Point} point2 The point to which the distance shall be calculated.
          * @returns {Number} Distance in user coordinate to the given point
          */
         Dist: function (point2) {
@@ -1169,7 +1169,7 @@ JXG.extend(
          * Sets coordinates and calls the elements's update() method.
          * @param {Number} method The type of coordinates used here.
          * Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
-         * @param {Array} coords coordinates <tt>([z], x, y)</tt> in screen/user units
+         * @param {Array} coords coordinates `([z], x, y)` in screen/user units
          * @returns {JXG.CoordsElement} this element
          */
         setPositionDirectly: function (method, coords) {
@@ -1240,7 +1240,7 @@ JXG.extend(
         },
 
         /**
-         * Translates the point by <tt>tv = (x, y)</tt>.
+         * Translates the point by `tv = (x, y)`.
          * @param {Number} method The type of coordinates used here.
          * Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
          * @param {Array} tv (x, y)
@@ -1281,7 +1281,7 @@ JXG.extend(
 
         /**
          * Sets the position of a glider relative to the defining elements
-         * of the {@link JXG.Point#slideObject}.
+         * of the {@link JXG.CoordsElement#slideObject}.
          * @param {Number} x
          * @returns {JXG.Point} Reference to the point element.
          */
@@ -1473,14 +1473,15 @@ JXG.extend(
          * Convert the point to CAS point and call update().
          * @param {Array} terms [[zterm], xterm, yterm] defining terms for the z, x and y coordinate.
          * The z-coordinate is optional and it is used for homogeneous coordinates.
-         * The coordinates may be either <ul>
-         *   <li>a JavaScript function,</li>
-         *   <li>a string containing GEONExT syntax. This string will be converted into a JavaScript
-         *     function here,</li>
-         *   <li>a Number</li>
-         *   <li>a pointer to a slider object. This will be converted into a call of the Value()-method
-         *     of this slider.</li>
-         *   </ul>
+         * The coordinates may be either
+         *
+         * - a JavaScript function,
+         * - a string containing GEONExT syntax. This string will be converted into a JavaScript
+         *     function here,
+         * - a Number
+         * - a pointer to a slider object. This will be converted into a call of the Value()-method
+         *     of this slider.
+         *
          * @see JXG.GeonextParser#geonext2JS
          */
         addConstraint: function (terms) {
@@ -1596,9 +1597,9 @@ JXG.extend(
          * this anchor element.
          * This is handled with this.relativeCoords. If the element is a label
          * relativeCoords are given in scrCoords, otherwise in usrCoords.
-         * @param{Array} coordinates Offset from the anchor element. These are the values for this.relativeCoords.
+         * @param {Array} coordinates Offset from the anchor element. These are the values for this.relativeCoords.
          * In case of a label, coordinates are screen coordinates. Otherwise, coordinates are user coordinates.
-         * @param{Boolean} isLabel Yes/no
+         * @param {Boolean} isLabel Yes/no
          * @private
          */
         addAnchor: function (coordinates, isLabel) {
@@ -1810,11 +1811,13 @@ JXG.extend(
          * var button2 = board.create('button', [1, 5, 'stop animation',function(){p2.stopAnimation()}]);
          * </pre><div class="jxgbox" id="JXG10e885ea-b05d-4e7d-a473-bac2554bce68" style="width: 200px; height: 200px;"></div>
          * <script type="text/javascript">
-         *   var gpex4_board = JXG.JSXGraph.initBoard('JXG10e885ea-b05d-4e7d-a473-bac2554bce68', {boundingbox: [-1, 10, 10, -1], axis: true, showcopyright: false, shownavigation: false});
-         *   var gpex4_c1 = gpex4_board.create('curve',[(u)=>4*Math.cos(u)+4,(u)=>2*Math.sin(u)+2,0,2*Math.PI]);
-         *   var gpex4_p2 = gpex4_board.create('glider', [gpex4_c1]);
-         *   gpex4_board.create('button', [1, 7, 'start animation',function(){gpex4_p2.startAnimation(1,8)}]);
-         *   gpex4_board.create('button', [1, 5, 'stop animation',function(){gpex4_p2.stopAnimation()}]);
+         * (function() {
+         *   var board = JXG.JSXGraph.initBoard('JXG10e885ea-b05d-4e7d-a473-bac2554bce68', {boundingbox: [-1, 10, 10, -1], axis: true, showcopyright: false, shownavigation: false});
+         *   var c1 = board.create('curve',[(u)=>4*Math.cos(u)+4,(u)=>2*Math.sin(u)+2,0,2*Math.PI]);
+         *   var p2 = board.create('glider', [c1]);
+         *   board.create('button', [1, 7, 'start animation',function(){p2.startAnimation(1,8)}]);
+         *   board.create('button', [1, 5, 'stop animation',function(){p2.stopAnimation()}]);
+         * })();
          * </script><pre>
          *
          * @example
@@ -1886,7 +1889,7 @@ JXG.extend(
          * @param {Number} time The time in milliseconds in which to finish the animation
          * @param {Object} [options] Optional settings for the animation.
          * @param {function} [options.callback] A function that is called as soon as the animation is finished.
-         * @param {Boolean} [options.interpolate=true] If <tt>path</tt> is an array moveAlong()
+         * @param {Boolean} [options.interpolate=true] If `path` is an array moveAlong()
          * will interpolate the path
          * using {@link JXG.Math.Numerics.Neville}. Set this flag to false if you don't want to use interpolation.
          * @returns {JXG.CoordsElement} Reference to itself.
@@ -1977,8 +1980,8 @@ JXG.extend(
         },
 
         /**
-         * Starts an animated point movement towards the given coordinates <tt>where</tt>.
-         * The animation is done after <tt>time</tt> milliseconds.
+         * Starts an animated point movement towards the given coordinates `where`.
+         * The animation is done after `time` milliseconds.
          * If the second parameter is not given or is equal to 0, setPosition() is called, see
          * {@link JXG.CoordsElement#setPosition},
          * i.e. the coordinates are changed without animation.
@@ -2111,8 +2114,8 @@ JXG.extend(
         },
 
         /**
-         * Starts an animated point movement towards the given coordinates <tt>where</tt>. After arriving at
-         * <tt>where</tt> the point moves back to where it started. The animation is done after <tt>time</tt>
+         * Starts an animated point movement towards the given coordinates `where`. After arriving at
+         * `where` the point moves back to where it started. The animation is done after `time`
          * milliseconds.
          * @param {Array} where Array containing the x and y coordinate of the target location.
          * @param {Number} time Number of milliseconds the animation should last.
@@ -2498,17 +2501,17 @@ JXG.extend(
  * Generic method to create point, text or image.
  * Determines the type of the construction, i.e. free, or constrained by function,
  * transformation or of glider type.
- * @param{Object} Callback Object type, e.g. JXG.Point, JXG.Text or JXG.Image
- * @param{Object} board Link to the board object
- * @param{Array} coords Array with coordinates. This may be: array of numbers, function
+ * @param {Object} Callback Object type, e.g. {@link Point}, {@link Text} or {@link Image}
+ * @param {Object} board Link to the board object
+ * @param {Array} coords Array with coordinates. This may be: array of numbers, function
  * returning an array of numbers, array of functions returning a number, object and transformation.
  * If the attribute "slideObject" exists, a glider element is constructed.
- * @param{Object} attr Attributes object
- * @param{Object} arg1 Optional argument 1: in case of text this is the text content,
+ * @param {Object} attr Attributes object
+ * @param {Object} arg1 Optional argument 1: in case of text this is the text content,
  * in case of an image this is the url.
- * @param{Array} arg2 Optional argument 2: in case of image this is an array containing the size of
+ * @param {Array} arg2 Optional argument 2: in case of image this is an array containing the size of
  * the image.
- * @returns{Object} returns the created object or false.
+ * @return {Object} returns the created object or false.
  */
 JXG.CoordsElement.create = function (Callback, board, coords, attr, arg1, arg2) {
     var el,

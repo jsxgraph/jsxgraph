@@ -76,16 +76,19 @@ var priv = {
 
 /**
  * @class Slope triangle to visualize the slope of a tangent to a curve, circle or line.
+ *
  * @pseudo
  * @name Slopetriangle
+ * @elementclass line
  * @augments JXG.Line
  * @constructor
  * @type JXG.Polygon
  * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
- * Parameter options:
- * @param {JXG.Line} t A tangent based on a glider on some object, e.g. curve, circle, line or turtle.
- * @param {JXG.Line_JXG.Point} li, p A line and a point on that line.
- *  The user has to take care that the point is a member of the line.
+ */
+/**
+ * @jsxgraphsignature Slopetriangle
+ * @param {Line} t A tangent based on a glider on some object, e.g. curve, circle, line or turtle.
+ *
  * @example
  * // Create a slopetriangle on a tangent
  * var f = board.create('plot', ['sin(x)']),
@@ -105,6 +108,12 @@ var priv = {
  *     st = board.create('slopetriangle', [t]);
  * })();
  * </script><pre>
+ */
+/**
+ * @jsxgraphsignature Slopetriangle
+ * A line and a point on that line. The user has to take care that the point is a member of the line.
+ * @param {Line} line
+ * @param {Point} p
  *
  * @example
  * // Create a on a line and a point on that line
@@ -208,12 +217,12 @@ JXG.createSlopeTriangle = function (board, parents, attributes) {
      * @memberOf Slopetriangle.prototype
      * @function
      * @param {String} [unit='radians'] Unit of the returned values. Possible units are
-     * <ul>
-     * <li> 'radians' (default): angle value in radians
-     * <li> 'degrees': angle value in degrees
-     * <li> 'semicircle': angle value in radians as a multiple of &pi;, e.g. if the angle is 1.5&pi;, 1.5 will be returned.
-     * <li> 'circle': angle value in radians as a multiple of 2&pi;
-     * </ul>
+     *
+     * - `'radians'` (default): angle value in radians
+     * - `'degrees'`: angle value in degrees
+     * - `'semicircle'`: angle value in radians as a multiple of &pi;, e.g. if the angle is 1.5&pi;, 1.5 will be returned.
+     * - `'circle'`: angle value in radians as a multiple of 2&pi;
+     *
      * @returns {Number}
      */
     el.getAngle = priv.getAngle;

@@ -74,7 +74,7 @@ JXG.Expect = {
     /**
      * Normalize points and coord objects into a coord object.
      *
-     * @param {JXG.Point|JXG.Coords} c
+     * @param {Point|JXG.Coords} c
      * @param {Boolean} [copy=false] Return a copy, not a reference
      *
      * @returns {JXG.Coords}
@@ -98,7 +98,7 @@ JXG.Expect = {
     /**
      * Normalize points, coordinate arrays and coord objects into a coordinate array.
      *
-     * @param {JXG.Point|JXG.Coords|Array} c
+     * @param {Point|JXG.Coords|Array} c
      * @param {Boolean} [copy=false] Return a copy, not a reference
      *
      * @returns {Array} Homogeneous coordinates

@@ -56,12 +56,11 @@ import GeometryElement from "./element.js";
 import Type from "../utils/type.js";
 
 /**
+ * @class Creates a new basic line object. Do not use this constructor to create a line.
  * The Line class is a basic class for all kind of line objects, e.g. line, arrow, and axis. It is usually defined by two points and can
  * be intersected with some other geometry elements.
- * @class Creates a new basic line object. Do not use this constructor to create a line.
  * Use {@link JXG.Board#create} with
  * type {@link Line}, {@link Arrow}, or {@link Axis} instead.
- * @constructor
  * @augments JXG.GeometryElement
  * @param {String|JXG.Board} board The board the new line is drawn on.
  * @param {Point} p1 Startpoint of the line.
@@ -86,7 +85,7 @@ JXG.Line = function (board, p1, p2, attributes) {
 
     /**
      * Array of ticks storing all the ticks on this line. Do not set this field directly and use
-     * {@link JXG.Line#addTicks} and {@link JXG.Line#removeTicks} to add and remove ticks to and from the line.
+     * {@link JXG.GeometryElement#addTicks} and {@link JXG.GeometryElement#removeTicks} to add and remove ticks to and from the line.
      * @type Array
      * @see JXG.Ticks
      */
@@ -483,7 +482,7 @@ JXG.extend(
         //  * Used to generate a polynomial for a point p that lies on this line, i.e. p is collinear to
         //  * {@link JXG.Line#point1} and {@link JXG.Line#point2}.
         //  *
-        //  * @param {JXG.Point} p The point for that the polynomial is generated.
+        //  * @param {Point} p The point for that the polynomial is generated.
         //  * @returns {Array} An array containing the generated polynomial.
         //  * @private
         //  */
@@ -556,12 +555,12 @@ JXG.extend(
         /**
          * Determines the angle between the positive x axis and the line.
          * @param {String} [unit='radians'] Unit of the returned values. Possible units are
-         * <ul>
-         * <li> 'radians' (default): angle value in radians
-         * <li> 'degrees': angle value in degrees
-         * <li> 'semicircle': angle value in radians as a multiple of &pi;, e.g. if the angle is 1.5&pi;, 1.5 will be returned.
-         * <li> 'circle': angle value in radians as a multiple of 2&pi;
-         * </ul>
+         *
+         * - `'radians'` (default): angle value in radians
+         * - `'degrees'`: angle value in degrees
+         * - `'semicircle'`: angle value in radians as a multiple of &pi;, e.g. if the angle is 1.5&pi;, 1.5 will be returned.
+         * - `'circle'`: angle value in radians as a multiple of 2&pi;
+         *
          * @returns {Number}
          */
         getAngle: function (unit) {
@@ -590,9 +589,11 @@ JXG.extend(
         /**
          * Returns the direction vector of the line. This is an array of length two
          * containing the direction vector as [x, y]. It is defined as
-         *  <li> the difference of the x- and y-coordinate of the second and first point, in case both points are finite or both points are infinite.
-         *  <li> [x, y] coordinates of point2, in case only point2 is infinite.
-         *  <li> [-x, -y] coordinates of point1, in case only point1 is infinite.
+         *
+         * - the difference of the x- and y-coordinate of the second and first point, in case both points are finite or both points are infinite.
+         * - `[x, y]` coordinates of point2, in case only point2 is infinite.
+         * - `[-x, -y]` coordinates of point1, in case only point1 is infinite.
+         *
          * @function
          * @returns {Array} of length 2.
          */
@@ -1174,86 +1175,39 @@ JXG.extend(
 
 /**
  * @class A general line is given by two points or three coordinates.
- * By setting additional properties a line can be used as an arrow and/or axis.
+ * By setting attributes a line can be used as an arrow and/or axis.
  * @pseudo
  * @name Line
+ * @elementclass line
  * @augments JXG.Line
- * @constructor
  * @type JXG.Line
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {JXG.Point,array,function_JXG.Point,array,function} point1,point2 Parent elements can be two elements either of type {@link JXG.Point} or array of
- * numbers describing the coordinates of a point. In the latter case the point will be constructed automatically as a fixed invisible point.
+ *
+ */
+
+/**
+ * @jsxgraphsignature Line
+ * Create a line from two points, coordinate arrays or functions.
+ *
+ * In the latter two cases the point will be constructed automatically as a fixed invisible point.
  * It is possible to provide a function returning an array or a point, instead of providing an array or a point.
- * @param {Number,function_Number,function_Number,function} a,b,c A line can also be created providing three numbers. The line is then described by
- * the set of solutions of the equation <tt>a*z+b*x+c*y = 0</tt>. For all finite points, z is normalized to the value 1.
- * It is possible to provide three functions returning numbers, too.
- * @param {function} f This function must return an array containing three numbers forming the line's homogeneous coordinates.
- * <p>
- * Additionally, a line can be created by providing a line and a transformation (or an array of transformations).
- * Then, the result is a line which is the transformation of the supplied line.
- * @example
- * // Create a line using point and coordinates/
+ * @param {PointLike} point1 First point
+ * @param {PointLike} point2 Second point
+ * @example <caption>Two points</caption>
+ * // Create a line using point and coordinates
  * // The second point will be fixed and invisible.
  * var p1 = board.create('point', [4.5, 2.0]);
  * var l1 = board.create('line', [p1, [1.0, 1.0]]);
  * </pre><div class="jxgbox" id="JXGc0ae3461-10c4-4d39-b9be-81d74759d122" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
- *   var glex1_board = JXG.JSXGraph.initBoard('JXGc0ae3461-10c4-4d39-b9be-81d74759d122', {boundingbox: [-1, 7, 7, -1], axis: true, showcopyright: false, shownavigation: false});
- *   var glex1_p1 = glex1_board.create('point', [4.5, 2.0]);
- *   var glex1_l1 = glex1_board.create('line', [glex1_p1, [1.0, 1.0]]);
- * </script><pre>
- * @example
- * // Create a line using three coordinates
- * var l1 = board.create('line', [1.0, -2.0, 3.0]);
- * </pre><div class="jxgbox" id="JXGcf45e462-f964-4ba4-be3a-c9db94e2593f" style="width: 300px; height: 300px;"></div>
- * <script type="text/javascript">
- *   var glex2_board = JXG.JSXGraph.initBoard('JXGcf45e462-f964-4ba4-be3a-c9db94e2593f', {boundingbox: [-1, 7, 7, -1], axis: true, showcopyright: false, shownavigation: false});
- *   var glex2_l1 = glex2_board.create('line', [1.0, -2.0, 3.0]);
- * </script><pre>
- * @example
- *         // Create a line (l2) as reflection of another line (l1)
- *         // reflection line
- *         var li = board.create('line', [1,1,1], {strokeColor: '#aaaaaa'});
- *         var reflect = board.create('transform', [li], {type: 'reflect'});
- *
- *         var l1 = board.create('line', [1,-5,1]);
- *         var l2 = board.create('line', [l1, reflect]);
- *
- * </pre><div id="JXGJXGa00d7dd6-d38c-11e7-93b3-901b0e1b8723" class="jxgbox" style="width: 300px; height: 300px;"></div>
- * <script type="text/javascript">
- *     (function() {
- *         var board = JXG.JSXGraph.initBoard('JXGJXGa00d7dd6-d38c-11e7-93b3-901b0e1b8723',
- *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
- *             // reflection line
- *             var li = board.create('line', [1,1,1], {strokeColor: '#aaaaaa'});
- *             var reflect = board.create('transform', [li], {type: 'reflect'});
- *
- *             var l1 = board.create('line', [1,-5,1]);
- *             var l2 = board.create('line', [l1, reflect]);
- *     })();
- *
+ * (function() {
+ *   var board = JXG.JSXGraph.initBoard('JXGc0ae3461-10c4-4d39-b9be-81d74759d122', {boundingbox: [-1, 7, 7, -1], axis: true, showcopyright: false, shownavigation: false});
+ *   var p1 = board.create('point', [4.5, 2.0]);
+ *   var l1 = board.create('line', [p1, [1.0, 1.0]]);
+ * })();
  * </script><pre>
  *
- * @example
- * var t = board.create('transform', [2, 1.5], {type: 'scale'});
- * var l1 = board.create('line', [1, -5, 1]);
- * var l2 = board.create('line', [l1, t]);
- *
- * </pre><div id="d16d5b58-6338-11e8-9fb9-901b0e1b8723" class="jxgbox" style="width: 300px; height: 300px;"></div>
- * <script type="text/javascript">
- *     (function() {
- *         var board = JXG.JSXGraph.initBoard('d16d5b58-6338-11e8-9fb9-901b0e1b8723',
- *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
- *     var t = board.create('transform', [2, 1.5], {type: 'scale'});
- *     var l1 = board.create('line', [1, -5, 1]);
- *     var l2 = board.create('line', [l1, t]);
- *
- *     })();
- *
- * </script><pre>
- *
- * @example
- * //create line between two points
+ * @example <caption>Line displayed as segment</caption>
  * var p1 = board.create('point', [0,0]);
  * var p2 = board.create('point', [2,2]);
  * var l1 = board.create('line', [p1,p2], {straightFirst:false, straightLast:false});
@@ -1262,12 +1216,97 @@ JXG.extend(
  *     (function() {
  *         var board = JXG.JSXGraph.initBoard('d21d5b58-6338-11e8-9fb9-901b0e1b8723',
  *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
- *             var ex5p1 = board.create('point', [0,0]);
- *             var ex5p2 = board.create('point', [2,2]);
- *             var ex5l1 = board.create('line', [ex5p1,ex5p2], {straightFirst:false, straightLast:false});
+ *             var p1 = board.create('point', [0,0]);
+ *             var p2 = board.create('point', [2,2]);
+ *             var l1 = board.create('line', [p1,p2], {straightFirst:false, straightLast:false});
  *     })();
  *
  * </script><pre>
+ */
+
+/**
+ * @jsxgraphsignature Line
+ * Create a line from homogeneous coordinates.
+ *
+ * A line can also be created providing three numbers.
+ * The line is defined as
+ * the set of solutions of the equation $a\cdot z+b \cdot x+c\cdot y = 0$, i.e. a point $(z,x, y)$ is on the line $(a,b,c)$
+ * if and only if $a\cdot z+b \cdot x+c\cdot y = 0$.
+ * In JSXGraph, for all finite points, z is normalized to the value 1.
+ *
+ * It is possible to provide three functions returning numbers, too.
+ * @param {number | function():number} a
+ * @param {number | function():number} b
+ * @param {number | function():number} c
+ *
+ * @example <caption>Three coordinates</caption>
+ * // Create a line using three coordinates
+ * var l1 = board.create('line', [1.0, -2.0, 3.0]);
+ * </pre><div class="jxgbox" id="JXGcf45e462-f964-4ba4-be3a-c9db94e2593f" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ * (function() {
+ *   var board = JXG.JSXGraph.initBoard('JXGcf45e462-f964-4ba4-be3a-c9db94e2593f', {boundingbox: [-1, 7, 7, -1], axis: true, showcopyright: false, shownavigation: false});
+ *   var l1 = board.create('line', [1.0, -2.0, 3.0]);
+ * })();
+ * </script><pre>
+ *
+ */
+/**
+ * @jsxgraphsignature Line
+ * Line by one function
+ * @param {function} f This function must return an array containing three numbers forming the line's homogeneous coordinates.
+ *
+ */
+
+/**
+ * @jsxgraphsignature Line
+ * Create a line providing a line and a transformation (or an array of transformations).
+ * Then, the result is a line which is the transformation of the supplied line.
+ *
+ * @param {Line} l1
+ * @param {Transformation} t
+ *
+ * @example  <caption>New line (red) from line (blue) and transformation</caption>
+ * var t = board.create('transform', [2, 1.5], {type: 'scale'});
+ * var l1 = board.create('line', [4, -2, 1], {strokeColor: 'blue'});
+ * var l2 = board.create('line', [l1, t], {strokeColor: 'red'});
+ *
+ * </pre><div id="d16d5b58-6338-11e8-9fb9-901b0e1b8723" class="jxgbox" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *     (function() {
+ *         var board = JXG.JSXGraph.initBoard('d16d5b58-6338-11e8-9fb9-901b0e1b8723',
+ *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+ *     var t = board.create('transform', [2, 1.5], {type: 'scale'});
+ *     var l1 = board.create('line', [4, -2, 1], {strokeColor: 'blue'});
+ *     var l2 = board.create('line', [l1, t], {strokeColor: 'red'});
+ *
+ *     })();
+ *
+ * </script><pre>
+ *
+ * @example <caption>Reflect line</caption>
+ * // Create line l2 as reflection of another line l1
+ * var li = board.create('line', [1,1,1], {strokeColor: '#aaaaaa'});
+ * var reflectionline = board.create('transform', [li], {type: 'reflect'});
+ *
+ * var l1 = board.create('line', [1,-5,1], {strokeColor: 'blue'});      // Source
+ * var l2 = board.create('line', [l1, reflectionline], {strokeColor: 'red'}); // Image
+ *
+ * </pre><div id="JXGJXGa00d7dd6-d38c-11e7-93b3-901b0e1b8723" class="jxgbox" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *     (function() {
+ *         var board = JXG.JSXGraph.initBoard('JXGJXGa00d7dd6-d38c-11e7-93b3-901b0e1b8723',
+ *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+ *             // reflection line
+ *             var li = board.create('line', [1,1,1], {strokeColor: '#aaaaaa'});
+ *             var reflectionline = board.create('transform', [li], {type: 'reflect'});
+ *
+ *             var l1 = board.create('line', [1,-5,1], {strokeColor: 'blue'});
+ *             var l2 = board.create('line', [l1, reflectionline], {strokeColor: 'red'});
+ *     })();
+ *
+ * </script><pre>
+ *
  */
 JXG.createLine = function (board, parents, attributes) {
     var ps, el, p1, p2, i, attr,
@@ -1507,61 +1546,75 @@ JXG.registerElement("line", JXG.createLine);
 
 /**
  * @class A (line) segment defined by two points.
- * It's strictly spoken just a wrapper for element {@link Line} with {@link Line#straightFirst}
- * and {@link Line#straightLast} properties set to false. If there is a third variable then the
+ *
+ * Strictly spoken, it's just a wrapper for element {@link Line} with {@link Line#straightFirst}
+ * and {@link Line#straightLast} attributes set to false. If there is a third variable then the
  * segment has a fixed length (which may be a function, too) determined by the absolute value of
  * that number.
  * @pseudo
  * @name Segment
- * @augments JXG.Line
- * @constructor
+ * @elementclass line
  * @type JXG.Line
+ * @augments JXG.Line
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {JXG.Point,array_JXG.Point,array} point1,point2 Parent elements can be two elements either of type {@link JXG.Point}
- * or array of numbers describing the
- * coordinates of a point. In the latter case the point will be constructed automatically as a fixed invisible point.
- * @param {number,function} [length] The points are adapted - if possible - such that their distance
- * is equal to the absolute value of this number.
  * @see Line
- * @example
- * // Create a segment providing two points.
- *   var p1 = board.create('point', [4.5, 2.0]);
- *   var p2 = board.create('point', [1.0, 1.0]);
- *   var l1 = board.create('segment', [p1, p2]);
+ *
+ */
+/**
+ * @jsxgraphsignature Segment
+ * Create a segment from two points, coordinate arrays or functions.
+ * In the latter two cases the point will be constructed automatically as a fixed invisible point.
+ * It is possible to provide a function returning an array or a point, instead of providing an array or a point.
+ *
+ * If the third variable is supplied then the
+ * segment has a fixed length (which may be a function, too)
+ * determined by the absolute value of that number.
+ * @param {PointLike} point1 First point
+ * @param {PointLike} point2 Second point
+ * @param {number | function} [length] The points are adapted - if possible - such that their distance is equal
+ * to the absolute value of this number.
+ *
+ * @example  <caption>Create segment providing two points</caption>
+ * var p1 = board.create('point', [4.5, 2.0]);
+ * var p2 = board.create('point', [1.0, 1.0]);
+ * var l1 = board.create('segment', [p1, p2]);
  * </pre><div class="jxgbox" id="JXGd70e6aac-7c93-4525-a94c-a1820fa38e2f" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
- *   var slex1_board = JXG.JSXGraph.initBoard('JXGd70e6aac-7c93-4525-a94c-a1820fa38e2f', {boundingbox: [-1, 7, 7, -1], axis: true, showcopyright: false, shownavigation: false});
- *   var slex1_p1 = slex1_board.create('point', [4.5, 2.0]);
- *   var slex1_p2 = slex1_board.create('point', [1.0, 1.0]);
- *   var slex1_l1 = slex1_board.create('segment', [slex1_p1, slex1_p2]);
+ * (function() {
+ * var board = JXG.JSXGraph.initBoard('JXGd70e6aac-7c93-4525-a94c-a1820fa38e2f', {boundingbox: [-1, 7, 7, -1], axis: true, showcopyright: false, shownavigation: false});
+ * var p1 = board.create('point', [4.5, 2.0]);
+ * var p2 = board.create('point', [1.0, 1.0]);
+ * var l1 = board.create('segment', [p1, p2]);
+ * })();
  * </script><pre>
  *
- * @example
- * // Create a segment providing two points.
- *   var p1 = board.create('point', [4.0, 1.0]);
- *   var p2 = board.create('point', [1.0, 1.0]);
- *   // AB
- *   var l1 = board.create('segment', [p1, p2]);
- *   var p3 = board.create('point', [4.0, 2.0]);
- *   var p4 = board.create('point', [1.0, 2.0]);
- *   // CD
- *   var l2 = board.create('segment', [p3, p4, 3]); // Fixed length
- *   var p5 = board.create('point', [4.0, 3.0]);
- *   var p6 = board.create('point', [1.0, 4.0]);
- *   // EF
- *   var l3 = board.create('segment', [p5, p6, function(){ return l1.L();} ]); // Fixed, but dependent length
+ * @example <caption>Create segments with fixed length</caption>
+ * var p1 = board.create('point', [4.0, 1.0]);
+ * var p2 = board.create('point', [1.0, 1.0]);
+ * // AB
+ * var l1 = board.create('segment', [p1, p2]);
+ * var p3 = board.create('point', [4.0, 2.0]);
+ * var p4 = board.create('point', [1.0, 2.0]);
+ * // CD
+ * var l2 = board.create('segment', [p3, p4, 3]); // Fixed length
+ * var p5 = board.create('point', [4.0, 3.0]);
+ * var p6 = board.create('point', [1.0, 4.0]);
+ * // EF
+ * var l3 = board.create('segment', [p5, p6, function(){ return l1.L();} ]); // Fixed, but dependent length
  * </pre><div class="jxgbox" id="JXG617336ba-0705-4b2b-a236-c87c28ef25be" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
- *   var slex2_board = JXG.JSXGraph.initBoard('JXG617336ba-0705-4b2b-a236-c87c28ef25be', {boundingbox: [-1, 7, 7, -1], axis: true, showcopyright: false, shownavigation: false});
- *   var slex2_p1 = slex2_board.create('point', [4.0, 1.0]);
- *   var slex2_p2 = slex2_board.create('point', [1.0, 1.0]);
- *   var slex2_l1 = slex2_board.create('segment', [slex2_p1, slex2_p2]);
- *   var slex2_p3 = slex2_board.create('point', [4.0, 2.0]);
- *   var slex2_p4 = slex2_board.create('point', [1.0, 2.0]);
- *   var slex2_l2 = slex2_board.create('segment', [slex2_p3, slex2_p4, 3]);
- *   var slex2_p5 = slex2_board.create('point', [4.0, 2.0]);
- *   var slex2_p6 = slex2_board.create('point', [1.0, 2.0]);
- *   var slex2_l3 = slex2_board.create('segment', [slex2_p5, slex2_p6, function(){ return slex2_l1.L();}]);
+ * (function() {
+ * var board = JXG.JSXGraph.initBoard('JXG617336ba-0705-4b2b-a236-c87c28ef25be', {boundingbox: [-1, 7, 7, -1], axis: true, showcopyright: false, shownavigation: false});
+ * var p1 = board.create('point', [4.0, 1.0]);
+ * var p2 = board.create('point', [1.0, 1.0]);
+ * var l1 = board.create('segment', [p1, p2]);
+ * var p3 = board.create('point', [4.0, 2.0]);
+ * var p4 = board.create('point', [1.0, 2.0]);
+ * var l2 = board.create('segment', [p3, p4, 3]);
+ * var p5 = board.create('point', [4.0, 3.0]);
+ * var p6 = board.create('point', [1.0, 4.0]);
+ * var l3 = board.create('segment', [p5, p6, function(){ return l1.L();}]);
+ * })();
  * </script><pre>
  *
  */
@@ -1633,27 +1686,53 @@ JXG.registerElement("segment", JXG.createSegment);
  * and {@link Line#straightLast} properties set to false and {@link Line#lastArrow} set to true.
  * @pseudo
  * @name Arrow
- * @augments JXG.Line
- * @constructor
+ * @elementclass line
  * @type JXG.Line
+ * @augments JXG.Line
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {JXG.Point,array_JXG.Point,array} point1,point2 Parent elements can be two elements either of type {@link JXG.Point} or array of numbers describing the
- * coordinates of a point. In the latter case the point will be constructed automatically as a fixed invisible point.
- * @param {Number_Number_Number} a,b,c A line can also be created providing three numbers. The line is then described by the set of solutions
- * of the equation <tt>a*x+b*y+c*z = 0</tt>.
  * @see Line
+ */
+/**
+ * @jsxgraphsignature Arrow
+ * Create an arrow from two points, coordinate arrays or functions.
+ * In the latter two cases the point will be constructed automatically as a fixed invisible point.
+ * It is possible to provide a function returning an array or a point, instead of providing an array or a point.
+ * @param {PointLike} point1 First point
+ * @param {PointLike} point2 Second point
  * @example
  * // Create an arrow providing two points.
- *   var p1 = board.create('point', [4.5, 2.0]);
- *   var p2 = board.create('point', [1.0, 1.0]);
- *   var l1 = board.create('arrow', [p1, p2]);
+ * var p1 = board.create('point', [4.5, 2.0]);
+ * var p2 = board.create('point', [1.0, 1.0]);
+ * var l1 = board.create('arrow', [p1, p2]);
  * </pre><div class="jxgbox" id="JXG1d26bd22-7d6d-4018-b164-4c8bc8d22ccf" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
- *   var alex1_board = JXG.JSXGraph.initBoard('JXG1d26bd22-7d6d-4018-b164-4c8bc8d22ccf', {boundingbox: [-1, 7, 7, -1], axis: true, showcopyright: false, shownavigation: false});
- *   var alex1_p1 = alex1_board.create('point', [4.5, 2.0]);
- *   var alex1_p2 = alex1_board.create('point', [1.0, 1.0]);
- *   var alex1_l1 = alex1_board.create('arrow', [alex1_p1, alex1_p2]);
+ * (function() {
+ * var board = JXG.JSXGraph.initBoard('JXG1d26bd22-7d6d-4018-b164-4c8bc8d22ccf', {boundingbox: [-1, 7, 7, -1], axis: true, showcopyright: false, shownavigation: false});
+ * var p1 = board.create('point', [4.5, 2.0]);
+ * var p2 = board.create('point', [1.0, 1.0]);
+ * var l1 = board.create('arrow', [p1, p2]);
+ * })();
  * </script><pre>
+*/
+/**
+ * @jsxgraphsignature Arrow
+ * Create an arrow from homogeneous coordinates.
+ * An arrow can also be created providing three numbers.
+ * The arrow is then described by
+ * the set of solutions of the equation $a\cdot z+b \cdot x+c\cdot y = 0$, i.e. a point $(z,x, y)$ is on the line $(a,b,c)$
+ * if and only if $a\cdot z+b \cdot x+c\cdot y = 0$.
+ * In JSXGraph, for all finite points, z is normalized to the value 1.
+ *
+ * It is possible to provide three functions returning numbers, too.
+ * @param {number | function():number} a
+ * @param {number | function():number} b
+ * @param {number | function():number} c
+ */
+/**
+ * @jsxgraphsignature Arrow
+ * Arrow by one function
+ * @param {function} f This function must return an array containing three numbers forming the arrow's homogeneous coordinates.
+ *
  */
 JXG.createArrow = function (board, parents, attributes) {
     var el, attr;
@@ -1673,48 +1752,56 @@ JXG.registerElement("arrow", JXG.createArrow);
 
 /**
  * @class Axis is a line with optional ticks and labels.
- * It's strictly spoken just a wrapper for element {@link Line} with {@link Line#straightFirst}
- * and {@link Line#straightLast} properties set to true. Additionally {@link Line#lastArrow} is set to true and default {@link Ticks} will be created.
+ *
+ * Strictly spoken, it's just a wrapper for element {@link Line} with {@link Line#straightFirst}
+ * and {@link Line#straightLast} attributes set to true. Additionally {@link Line#lastArrow} is set to true and default {@link Ticks} are added.
  * @pseudo
  * @name Axis
- * @augments JXG.Line
- * @constructor
+ * @elementclass line
  * @type JXG.Line
+ * @augments JXG.Line
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {JXG.Point,array_JXG.Point,array} point1,point2 Parent elements can be two elements either of type {@link JXG.Point} or array of numbers describing the
+ *
+ */
+/**
+ * @jsxgraphsignature Axis
+ * Parent elements can be two elements either of type {@link JXG.Point} or array of numbers describing the
  * coordinates of a point. In the latter case, the point will be constructed automatically as a fixed invisible point.
- * @param {Number_Number_Number} a,b,c A line can also be created providing three numbers. The line is then described by the set of solutions
- * of the equation <tt>a*x+b*y+c*z = 0</tt>.
+ * @param {PointLike} point1 First point
+ * @param {PointLike} point2 Second point
  * @example
- * // Create an axis providing two coords pairs.
- *   var l1 = board.create('axis', [[0.0, 1.0], [1.0, 1.3]]);
+ * // Create an axis providing two coordinate pairs.
+ * var l1 = board.create('axis', [[0.0, 1.0], [1.0, 1.3]]);
  * </pre><div class="jxgbox" id="JXG4f414733-624c-42e4-855c-11f5530383ae" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
- *   var axex1_board = JXG.JSXGraph.initBoard('JXG4f414733-624c-42e4-855c-11f5530383ae', {boundingbox: [-1, 7, 7, -1], axis: true, showcopyright: false, shownavigation: false});
- *   var axex1_l1 = axex1_board.create('axis', [[0.0, 1.0], [1.0, 1.3]]);
+ * (function() {
+ * var board = JXG.JSXGraph.initBoard('JXG4f414733-624c-42e4-855c-11f5530383ae', {boundingbox: [-1, 7, 7, -1], axis: false, showcopyright: false, shownavigation: false});
+ * var l1 = board.create('axis', [[0.0, 1.0], [1.0, 1.3]]);
+ * })();
  * </script><pre>
  * @example
- *  // Create ticks labels as fractions
- *  board.create('axis', [[0,1], [1,1]], {
- *      ticks: {
- *          label: {
- *              toFraction: true,
- *              useMathjax: false,
- *              anchorX: 'middle',
- *              offset: [0, -10]
- *          }
- *      }
- *  });
- *
+ * // Create ticks labels as fractions
+ * board.create('axis', [[0,1], [1,1]], {
+ *     ticks: {
+ *         drawZero: true,
+ *         label: {
+ *             toFraction: true,
+ *             useMathjax: false,
+ *             anchorX: 'middle',
+ *             offset: [0, -10]
+ *         }
+ *     }
+ * });
  *
  * </pre><div id="JXG34174cc4-0050-4ab4-af69-e91365d0666f" class="jxgbox" style="width: 300px; height: 300px;"></div>
- * <script src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" id="MathJax-script"></script>
+ * <!--<script src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" id="MathJax-script"></script>-->
  * <script type="text/javascript">
  *     (function() {
  *         var board = JXG.JSXGraph.initBoard('JXG34174cc4-0050-4ab4-af69-e91365d0666f',
- *             {boundingbox: [-1.2, 2.3, 1.2, -2.3], axis: true, showcopyright: false, shownavigation: false});
+ *             {boundingbox: [-1.2, 2.3, 1.2, -2.3], axis: false, showcopyright: false, shownavigation: false});
  *             board.create('axis', [[0,1], [1,1]], {
  *                 ticks: {
+ *         drawZero: true,
  *                     label: {
  *                         toFraction: true,
  *                         useMathjax: false,
@@ -1728,6 +1815,17 @@ JXG.registerElement("arrow", JXG.createArrow);
  *     })();
  *
  * </script><pre>
+ */
+/**
+ * @jsxgraphsignature Axis
+ * An axis can also be created providing three numbers.
+ * The line is defined as
+ * the set of solutions of the equation $a\cdot z+b \cdot x+c\cdot y = 0$, i.e. a point $(z,x, y)$ is on the axis line $(a,b,c)$
+ * if and only if $a\cdot z+b \cdot x+c\cdot y = 0$.
+ * In JSXGraph, for all finite points, z is normalized to the value 1.
+ * @param {number | function():number} a
+ * @param {number | function():number} b
+ * @param {number | function():number} c
  *
  */
 JXG.createAxis = function (board, parents, attributes) {
@@ -2039,19 +2137,24 @@ JXG.registerElement("axis", JXG.createAxis);
  * @class The tangent line at a point on a line, circle, conic, turtle, or curve.
  * A tangent line is always constructed
  * by a point on a line, circle, or curve and describes the tangent in the point on that line, circle, or curve.
- * <p>
+ *
  * If the point is not on the object (line, circle, conic, curve, turtle) the output depends on the type of the object.
  * For conics and circles, the polar line will be constructed. For function graphs,
  * the tangent of the vertical projection of the point to the function graph is constructed. For all other objects, the tangent
  * in the orthogonal projection of the point to the object will be constructed.
  * @pseudo
  * @name Tangent
- * @augments JXG.Line
- * @constructor
+ * @elementclass line
  * @type JXG.Line
+ * @augments JXG.Line
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
+ *
+ */
+/**
+ * @jsxgraphsignature Tangent
  * @param {Glider} g A glider on a line, circle, or curve.
  * @param {JXG.GeometryElement} [c] Optional element for which the tangent is constructed
+ *
  * @example
  * // Create a tangent providing a glider on a function graph
  *   var c1 = board.create('curve', [function(t){return t},function(t){return t*t*t;}]);
@@ -2059,10 +2162,12 @@ JXG.registerElement("axis", JXG.createAxis);
  *   var t1 = board.create('tangent', [g1]);
  * </pre><div class="jxgbox" id="JXG7b7233a0-f363-47dd-9df5-4018d0d17a98" style="width: 400px; height: 400px;"></div>
  * <script type="text/javascript">
- *   var tlex1_board = JXG.JSXGraph.initBoard('JXG7b7233a0-f363-47dd-9df5-4018d0d17a98', {boundingbox: [-6, 6, 6, -6], axis: true, showcopyright: false, shownavigation: false});
- *   var tlex1_c1 = tlex1_board.create('curve', [function(t){return t},function(t){return t*t*t;}]);
- *   var tlex1_g1 = tlex1_board.create('glider', [0.6, 1.2, tlex1_c1]);
- *   var tlex1_t1 = tlex1_board.create('tangent', [tlex1_g1]);
+ * (function() {
+ *   var board = JXG.JSXGraph.initBoard('JXG7b7233a0-f363-47dd-9df5-4018d0d17a98', {boundingbox: [-6, 6, 6, -6], axis: true, showcopyright: false, shownavigation: false});
+ *   var c1 = board.create('curve', [function(t){return t},function(t){return t*t*t;}]);
+ *   var g1 = board.create('glider', [0.6, 1.2, c1]);
+ *   var t1 = board.create('tangent', [g1]);
+ * })();
  * </script><pre>
  */
 JXG.createTangent = function (board, parents, attributes) {
@@ -2201,7 +2306,6 @@ JXG.createTangent = function (board, parents, attributes) {
         } else {
             // curveType 'plot': discrete data
             /**
-             * @ignore
              *
              * In case of bezierDegree == 1:
              * Find two points p1, p2 enclosing the glider.
@@ -2212,6 +2316,7 @@ JXG.createTangent = function (board, parents, attributes) {
              * The slope dy / dx of the tangent is determined. Then the
              * tangent is computed as cross product between
              * the glider p and [1, p.X() + dx, p.Y() + dy]
+             * @ignore
              *
              */
             getCurveTangentDir = function (position, c, num) {
@@ -2390,16 +2495,24 @@ JXG.createTangent = function (board, parents, attributes) {
 
 /**
  * @class A normal is the line perpendicular to a line or to a tangent of a circle or curve.
+ * A normal is a line through a given point on an element of type line, circle, curve, or turtle and orthogonal to that object.
+ *
  * @pseudo
- * @description A normal is a line through a given point on an element of type line, circle, curve, or turtle and orthogonal to that object.
- * @constructor
  * @name Normal
+ * @elementclass line
  * @type JXG.Line
  * @augments JXG.Line
+ *
  * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {JXG.Line,JXG.Circle,JXG.Curve,JXG.Turtle_JXG.Point} o,p The constructed line contains p which lies on the object and is orthogonal
+ *
+ */
+/**
+ * @jsxgraphsignature Normal
+ * The constructed line contains p which lies on the object o and is orthogonal
  * to the tangent to the object in the given point.
- * @param {Glider} p Works like above, however the object is given by {@link JXG.CoordsElement#slideObject}.
+ * @param {Line | Circle | Curve | Turtle} o
+ * @param {Point} p
+ *
  * @example
  * // Create a normal to a circle.
  * var p1 = board.create('point', [2.0, 2.0]);
@@ -2409,13 +2522,40 @@ JXG.createTangent = function (board, parents, attributes) {
  * var norm1 = board.create('normal', [c1, p2]);
  * </pre><div class="jxgbox" id="JXG4154753d-3d29-40fb-a860-0b08aa4f3743" style="width: 400px; height: 400px;"></div>
  * <script type="text/javascript">
- *   var nlex1_board = JXG.JSXGraph.initBoard('JXG4154753d-3d29-40fb-a860-0b08aa4f3743', {boundingbox: [-1, 9, 9, -1], axis: true, showcopyright: false, shownavigation: false});
- *   var nlex1_p1 = nlex1_board.create('point', [2.0, 2.0]);
- *   var nlex1_p2 = nlex1_board.create('point', [3.0, 2.0]);
- *   var nlex1_c1 = nlex1_board.create('circle', [nlex1_p1, nlex1_p2]);
+ * (function() {
+ *   var board = JXG.JSXGraph.initBoard('JXG4154753d-3d29-40fb-a860-0b08aa4f3743', {boundingbox: [-1, 9, 9, -1], axis: true, showcopyright: false, shownavigation: false});
+ *   var p1 = board.create('point', [2.0, 2.0]);
+ *   var p2 = board.create('point', [3.0, 2.0]);
+ *   var c1 = board.create('circle', [p1, p2]);
  *
- *   // var nlex1_p3 = nlex1_board.create('point', [1.0, 2.0]);
- *   var nlex1_norm1 = nlex1_board.create('normal', [nlex1_c1, nlex1_p2]);
+ *   // var p3 = board.create('point', [1.0, 2.0]);
+ *   var norm1 = board.create('normal', [c1, p2]);
+ * })();
+ * </script><pre>
+ */
+/**
+ * @jsxgraphsignature Normal
+ * Works like above, however the object is given by {@link JXG.CoordsElement#slideObject}, i.e. the element
+ * to which the glider is bound to.
+ * @param {Glider} p
+ *
+ * @example
+ * // Create a normal to a circle.
+ * var p1 = board.create('point', [2.0, 2.0]);
+ * var c1 = board.create('circle', [p1, 2]);
+ * var gl = board.create('glider', [4, 4, c1]);
+ *
+ * var norm1 = board.create('normal', [gl]);
+ * </pre><div class="jxgbox" id="JXGcdda7b92-2a5d-409f-972a-83fa34605efd" style="width: 400px; height: 400px;"></div>
+ * <script type="text/javascript">
+ * (function() {
+ *   var board = JXG.JSXGraph.initBoard('JXGcdda7b92-2a5d-409f-972a-83fa34605efd', {boundingbox: [-1, 9, 9, -1], axis: true, showcopyright: false, shownavigation: false});
+ *   var p1 = board.create('point', [2.0, 2.0]);
+ *   var c1 = board.create('circle', [p1, 2]);
+ *   var gl = board.create('glider', [4, 4, c1]);
+ *
+ *   var norm1 = board.create('normal', [gl]);
+ * })();
  * </script><pre>
  */
 JXG.createNormal = function (board, parents, attributes) {
@@ -2480,7 +2620,7 @@ JXG.createNormal = function (board, parents, attributes) {
 
         /**
          * A helper point used to create a normal to a {@link JXG.Line} object. For normals to circles or curves this
-         * element is <tt>undefined</tt>.
+         * element is `undefined`.
          * @type JXG.Point
          * @name point
          * @memberOf Normal.prototype
@@ -2802,38 +2942,45 @@ JXG.createNormal = function (board, parents, attributes) {
 };
 
 /**
- * @class The radical axis is the line connecting the two interstion points of two circles with distinct centers.
+ * @class The radical axis is the line connecting the two intersection points of two circles with distinct centers.
  * The angular bisector of the polar lines of the circle centers with respect to the other circle is always the radical axis.
  * The radical axis passes through the intersection points when the circles intersect.
  * When a circle about the midpoint of circle centers, passing through the circle centers, intersects the circles, the polar lines pass through those intersection points.
  * @pseudo
  * @name RadicalAxis
- * @augments JXG.Line
- * @constructor
+ * @elementclass line
  * @type JXG.Line
+ * @augments JXG.Line
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {JXG.Circle} circle one of the two respective circles.
- * @param {JXG.Circle} circle the other of the two respective circles.
+ *
+ */
+/**
+ * @jsxgraphsignature RadicalAxis
+ * @param {Circle} circle one of the two respective circles.
+ * @param {Circle} circle the other of the two respective circles.
+ *
  * @example
  * // Create the radical axis line with respect to two circles
- *   var board = JXG.JSXGraph.initBoard('7b7233a0-f363-47dd-9df5-5018d0d17a98', {boundingbox: [-1, 9, 9, -1], axis: true, showcopyright: false, shownavigation: false});
- *   var p1 = board.create('point', [2, 3]);
- *   var p2 = board.create('point', [1, 4]);
- *   var c1 = board.create('circle', [p1, p2]);
- *   var p3 = board.create('point', [6, 5]);
- *   var p4 = board.create('point', [8, 6]);
- *   var c2 = board.create('circle', [p3, p4]);
- *   var r1 = board.create('radicalaxis', [c1, c2]);
+ * var board = JXG.JSXGraph.initBoard('7b7233a0-f363-47dd-9df5-5018d0d17a98', {boundingbox: [-1, 9, 9, -1], axis: true, showcopyright: false, shownavigation: false});
+ * var p1 = board.create('point', [2, 3]);
+ * var p2 = board.create('point', [1, 4]);
+ * var c1 = board.create('circle', [p1, p2]);
+ * var p3 = board.create('point', [6, 5]);
+ * var p4 = board.create('point', [8, 6]);
+ * var c2 = board.create('circle', [p3, p4]);
+ * var r1 = board.create('radicalaxis', [c1, c2]);
  * </pre><div class="jxgbox" id="JXG7b7233a0-f363-47dd-9df5-5018d0d17a98" class="jxgbox" style="width:400px; height:400px;"></div>
  * <script type='text/javascript'>
- *   var rlex1_board = JXG.JSXGraph.initBoard('JXG7b7233a0-f363-47dd-9df5-5018d0d17a98', {boundingbox: [-1, 9, 9, -1], axis: true, showcopyright: false, shownavigation: false});
- *   var rlex1_p1 = rlex1_board.create('point', [2, 3]);
- *   var rlex1_p2 = rlex1_board.create('point', [1, 4]);
- *   var rlex1_c1 = rlex1_board.create('circle', [rlex1_p1, rlex1_p2]);
- *   var rlex1_p3 = rlex1_board.create('point', [6, 5]);
- *   var rlex1_p4 = rlex1_board.create('point', [8, 6]);
- *   var rlex1_c2 = rlex1_board.create('circle', [rlex1_p3, rlex1_p4]);
- *   var rlex1_r1 = rlex1_board.create('radicalaxis', [rlex1_c1, rlex1_c2]);
+ * (function() {
+ * var board = JXG.JSXGraph.initBoard('JXG7b7233a0-f363-47dd-9df5-5018d0d17a98', {boundingbox: [-1, 9, 9, -1], axis: true, showcopyright: false, shownavigation: false});
+ * var p1 = board.create('point', [2, 3]);
+ * var p2 = board.create('point', [1, 4]);
+ * var c1 = board.create('circle', [p1, p2]);
+ * var p3 = board.create('point', [6, 5]);
+ * var p4 = board.create('point', [8, 6]);
+ * var c2 = board.create('circle', [p3, p4]);
+ * var r1 = board.create('radicalaxis', [c1, c2]);
+ * })();
  * </script><pre>
  */
 JXG.createRadicalAxis = function (board, parents, attributes) {
@@ -2885,20 +3032,26 @@ JXG.createRadicalAxis = function (board, parents, attributes) {
 
 /**
  * @class The polar line of a point with respect to a conic or a circle.
- * @pseudo
- * @description The polar line is the unique reciprocal relationship of a point with respect to a conic.
+ * The polar line is the unique reciprocal relationship of a point with respect to a conic.
  * The lines through the intersections of a conic and the polar line of a point
  * with respect to that conic and through that point are tangent to the conic.
  * A point on a conic has the polar line of that point with respect to that
  * conic as the tangent line to that conic at that point.
  * See {@link https://en.wikipedia.org/wiki/Pole_and_polar} for more information on pole and polar.
+ * @pseudo
  * @name PolarLine
+ * @elementclass line
  * @augments JXG.Line
- * @constructor
  * @type JXG.Line
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {JXG.Conic,JXG.Circle_JXG.Point} el1,el2 or
- * @param {JXG.Point_JXG.Conic,JXG.Circle} el1,el2 The result will be the polar line of the point with respect to the conic or the circle.
+ *
+ */
+/**
+ * @jsxgraphsignature PolarLine
+ * The result will be the polar line of the point with respect to the conic or the circle. The order of the parameters does not matter.
+ * @param {Conic | Circle} conic
+ * @param {Point} point
+ *
  * @example
  * // Create the polar line of a point with respect to a conic
  * var p1 = board.create('point', [-1, 2]);
@@ -2911,15 +3064,17 @@ JXG.createRadicalAxis = function (board, parents, attributes) {
  * var l1 = board.create('polarline', [c1, p6]);
  * </pre><div class="jxgbox" id="JXG7b7233a0-f363-47dd-9df5-6018d0d17a98" class="jxgbox" style="width:400px; height:400px;"></div>
  * <script type='text/javascript'>
- * var plex1_board = JXG.JSXGraph.initBoard('JXG7b7233a0-f363-47dd-9df5-6018d0d17a98', {boundingbox: [-3, 5, 5, -3], axis: true, showcopyright: false, shownavigation: false});
- * var plex1_p1 = plex1_board.create('point', [-1, 2]);
- * var plex1_p2 = plex1_board.create('point', [ 1, 4]);
- * var plex1_p3 = plex1_board.create('point', [-1,-2]);
- * var plex1_p4 = plex1_board.create('point', [ 0, 0]);
- * var plex1_p5 = plex1_board.create('point', [ 4,-2]);
- * var plex1_c1 = plex1_board.create('conic',[plex1_p1,plex1_p2,plex1_p3,plex1_p4,plex1_p5]);
- * var plex1_p6 = plex1_board.create('point', [-1, 1]);
- * var plex1_l1 = plex1_board.create('polarline', [plex1_c1, plex1_p6]);
+ * (function() {
+ * var board = JXG.JSXGraph.initBoard('JXG7b7233a0-f363-47dd-9df5-6018d0d17a98', {boundingbox: [-3, 5, 5, -3], axis: true, showcopyright: false, shownavigation: false});
+ * var p1 = board.create('point', [-1, 2]);
+ * var p2 = board.create('point', [ 1, 4]);
+ * var p3 = board.create('point', [-1,-2]);
+ * var p4 = board.create('point', [ 0, 0]);
+ * var p5 = board.create('point', [ 4,-2]);
+ * var c1 = board.create('conic',[p1,p2,p3,p4,p5]);
+ * var p6 = board.create('point', [-1, 1]);
+ * var l1 = board.create('polarline', [c1, p6]);
+ * })();
  * </script><pre>
  * @example
  * // Create the polar line of a point with respect to a circle.
@@ -2930,12 +3085,14 @@ JXG.createRadicalAxis = function (board, parents, attributes) {
  * var l1 = board.create('polarline', [c1, p3]);
  * </pre><div class="jxgbox" id="JXG7b7233a0-f363-47dd-9df5-7018d0d17a98" class="jxgbox" style="width:400px; height:400px;"></div>
  * <script type='text/javascript'>
- * var plex2_board = JXG.JSXGraph.initBoard('JXG7b7233a0-f363-47dd-9df5-7018d0d17a98', {boundingbox: [-3, 7, 7, -3], axis: true, showcopyright: false, shownavigation: false});
- * var plex2_p1 = plex2_board.create('point', [ 1, 1]);
- * var plex2_p2 = plex2_board.create('point', [ 2, 3]);
- * var plex2_c1 = plex2_board.create('circle',[plex2_p1,plex2_p2]);
- * var plex2_p3 = plex2_board.create('point', [ 6, 6]);
- * var plex2_l1 = plex2_board.create('polarline', [plex2_c1, plex2_p3]);
+ * (function() {
+ * var board = JXG.JSXGraph.initBoard('JXG7b7233a0-f363-47dd-9df5-7018d0d17a98', {boundingbox: [-3, 7, 7, -3], axis: true, showcopyright: false, shownavigation: false});
+ * var p1 = board.create('point', [ 1, 1]);
+ * var p2 = board.create('point', [ 2, 3]);
+ * var c1 = board.create('circle',[p1,p2]);
+ * var p3 = board.create('point', [ 6, 6]);
+ * var l1 = board.create('polarline', [c1, p3]);
+ * })();
  * </script><pre>
  */
 JXG.createPolarLine = function (board, parents, attributes) {
@@ -2995,27 +3152,33 @@ JXG.createPolarLine = function (board, parents, attributes) {
 /**
  *
  * @class One of the two tangent lines to a conic or a circle through an external point.
- * @pseudo
- * @description Construct the tangent line through a point to a conic or a circle. There will be either two, one or no
+ * Construct the tangent line through a point to a conic or a circle. There will be either two, one or no
  * such tangent, depending if the point is outside of the conic, on the conic, or inside of the conic.
  * Similar to the intersection of a line with a circle, the specific tangent can be chosen with a third (optional) parameter
- * <i>number</i>.
- * <p>
+ * `number`.
+ *
  * Attention: from a technical point of view, the point from which the tangent to the conic/circle is constructed is not an element of
  * the tangent line.
+ * @pseudo
  * @name TangentTo
+ * @elementclass line
  * @augments JXG.Line
- * @constructor
  * @type JXG.Line
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {JXG.Conic,JXG.Circle_JXG.Point_Number} conic,point,[number=0] The result will be the tangent line through
- * the point with respect to the conic or circle.
+ *
+ */
+/**
+ * @jsxgraphsignature TangentTo
+ * The result will be the tangent line through the point with respect to the conic or circle.
+ * @param {Conic | Circle} conic
+ * @param {Point} point
+ * @param {Number} [number=0]
  *
  * @example
- *  var c = board.create('circle', [[3, 0], [3, 4]]);
- *  var p = board.create('point', [0, 6]);
- *  var t0 = board.create('tangentto', [c, p, 0], { color: 'black', polar: {visible: true}, point: {visible: true} });
- *  var t1 = board.create('tangentto', [c, p, 1], { color: 'black' });
+ * var c = board.create('circle', [[3, 0], [3, 4]]);
+ * var p = board.create('point', [0, 6]);
+ * var t0 = board.create('tangentto', [c, p, 0], { color: 'black', polar: {visible: true}, point: {visible: true} });
+ * var t1 = board.create('tangentto', [c, p, 1], { color: 'black' });
  *
  * </pre><div id="JXGd4b359c7-3a29-44c3-a19d-d51b42a00c8b" class="jxgbox" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
@@ -3032,10 +3195,10 @@ JXG.createPolarLine = function (board, parents, attributes) {
  * </script><pre>
  *
  * @example
- *  var p = board.create('point', [0, 6]);
- *  var ell = board.create('ellipse', [[-5, 1], [-2, -1], [-3, 2]]);
- *  var t0 = board.create('tangentto', [ell, p, 0]);
- *  var t1 = board.create('tangentto', [ell, p, 1]);
+ * var p = board.create('point', [0, 6]);
+ * var ell = board.create('ellipse', [[-5, 1], [-2, -1], [-3, 2]]);
+ * var t0 = board.create('tangentto', [ell, p, 0]);
+ * var t1 = board.create('tangentto', [ell, p, 1]);
  *
  * </pre><div id="JXG6e625663-1c3e-4e08-a9df-574972a374e8" class="jxgbox" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">

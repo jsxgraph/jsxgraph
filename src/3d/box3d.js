@@ -37,19 +37,24 @@ import Type from "../utils/type.js";
 
 /**
  * @class A container element that creates the axes and rear and front planes of a 3D view.
- * @pseudo
- * @description This element "axes3d" is used to create
- *  <ul>
- *   <li> 3D coordinate axes (either "axesPosition:'border'" or "axesPosition:'center'")
- *   <li> A point3d "O" (origin) if "axesPosition:'center'"
- *   <li> Rear and front planes in all three directions of the view3d element.
- *   <li> Coordinate axes on the rear and front planes
- *  </ul>
  *
+ * Element `axes3d` is used to create
+ *
+ * - 3D coordinate axes (either `axesPosition:'border'` or `axesPosition:'center'`)
+ * - A point3d `O` (origin) if `axesPosition:'center'`
+ * - Rear and front planes in all three directions of the view3d element.
+ * - Coordinate axes on the rear and front planes
+ *
+ * @pseudo
  * @name Axes3D
+ * @elementclass 3D
  * @constructor
  * @type Object
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
+ *
+ */
+/**
+ * @jsxgraphsignature Axes3D
  *
  */
 JXG.createAxes3D = function (board, parents, attributes) {
@@ -212,17 +217,22 @@ JXG.registerElement("axes3d", JXG.createAxes3D);
 
 /**
  * @class A 3D axis element is a line together with optional ticks and labels.
- * @pseudo
- * @description Simple element 3d axis as used with "axesPosition:center". No ticks and no label (yet).
- * <p>
+ * Simple element 3d axis as used with `axesPosition:center`. No ticks (yet).
+ *
  * At the time being, the input arrays are NOT dynamic, i.e. can not be given as functions.
  *
+ * @pseudo
  * @name Axis3D
- * @augments Arrow
+ * @elementclass 3D
  * @constructor
  * @type Object
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {Array_Array} start,end Two arrays of length 3 for the start point and the end point of the axis.
+ */
+/**
+ * @jsxgraphsignature Axis3D
+ * Two arrays of length 3 of type `[x, y, z]` for the start point and the end point of the axis.
+ * @param {Array} start
+ * @param {Array} end
  *
  */
 JXG.createAxis3D = function (board, parents, attributes) {
@@ -290,21 +300,28 @@ JXG.registerElement('axis3d', JXG.createAxis3D);
 
 /**
  * @class Display a rectangular mesh on a 3D plane element.
- * @pseudo
- * @description Create a (rectangular) mesh - i.e. grid lines - on a plane3D element.
- * <p>
+ * Create a (rectangular) mesh - i.e. grid lines - on a plane3D element.
+ *
  * At the time being, the mesh is not connected to the plane. The connecting element is simply the
  * parameter point.
  *
+ * @pseudo
  * @name Mesh3D
- * @augments Curve
+ * @elementclass 3D
  * @constructor
  * @type Object
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {Array_Array_Array_Array_Array} point,direction1,direction2,range1,range2 point is an array of length 3
- * determining the starting point of the grid. direction1 and direction2 are arrays of length 3 for the directions of the grid.
- * range1 and range2 (arrays of length 2) give the respective ranges.
+ */
+/**
+ * @jsxgraphsignature Mesh3D
+ * `range1` and `range2` (arrays of length 2) give the respective ranges.
  * All parameters can be supplied as functions returning an appropriate data type.
+ *
+ * @param {Array} point Array of length 3 determining the starting point of the grid
+ * @param {Array} direction1 Array of length 3 for the directions of the grid
+ * @param {Array} direction2 Array of length 3 for the directions of the grid
+ * @param {Array} range1
+ * @param {Array} range2
  *
  */
 JXG.createMesh3D = function (board, parents, attributes) {

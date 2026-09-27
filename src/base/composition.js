@@ -36,6 +36,7 @@ import JXG from "../jxg.js";
 import Type from "../utils/type.js";
 
 /**
+ * @class
  * A composition is a simple container that manages none or more {@link JXG.GeometryElement}s.
  * @param {Object} elements A list of elements with a descriptive name for the element as the key and a reference
  * to the element as the value of every list entry. The name is used to access the element later on.

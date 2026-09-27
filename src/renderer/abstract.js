@@ -56,34 +56,34 @@ import Type from "../utils/type.js";
 import Env from "../utils/env.js";
 
 /**
- * <p>This class defines the interface to the graphics part of JSXGraph. This class is an abstract class, it
+ * @class This class defines the interface to the graphics part of JSXGraph. This class is an abstract class, it
  * actually does not render anything. This is up to the {@link JXG.SVGRenderer}, {@link JXG.VMLRenderer},
  * and {@link JXG.CanvasRenderer} classes. We strongly discourage you from using the methods in these classes
  * directly. Only the methods which are defined in this class and are not marked as private are guaranteed
  * to exist in any renderer instance you can access via {@link JXG.Board#renderer}. But not all methods may
- * work as expected.</p>
- * <p>The methods of this renderer can be divided into different categories:
- * <dl>
- *     <dt>Draw basic elements</dt>
- *     <dd>In this category we find methods to draw basic elements like {@link JXG.Point}, {@link JXG.Line},
- *     and {@link JXG.Curve} as well as assisting methods tightly bound to these basic painters. You do not
+ * work as expected.
+ *
+ * The methods of this renderer can be divided into different categories:
+ *
+ * - __Draw basic elements__
+ *     In this category we find methods to draw basic elements like {@link Point}, {@link Line},
+ *     and {@link Curve} as well as assisting methods tightly bound to these basic painters. You do not
  *     need to implement these methods in a descendant renderer but instead implement the primitive drawing
  *     methods described below. This approach is encouraged when you're using a XML based rendering engine
  *     like VML and SVG. If you want to use a bitmap based rendering technique you are supposed to override
- *     these methods instead of the primitive drawing methods.</dd>
- *     <dt>Draw primitives</dt>
- *     <dd>This category summarizes methods to handle primitive nodes. As creation and management of these nodes
+ *     these methods instead of the primitive drawing methods.
+ * - __Draw primitives__
+ *     This category summarizes methods to handle primitive nodes. As creation and management of these nodes
  *     is different among different the rendering techniques most of these methods are purely virtual and need
- *     proper implementation if you choose to not overwrite the basic element drawing methods.</dd>
- *     <dt>Attribute manipulation</dt>
- *     <dd>In XML based renders you have to manipulate XML nodes and their attributes to change the graphics.
+ *     proper implementation if you choose to not overwrite the basic element drawing methods.
+ * - __Attribute manipulation__
+ *     In XML based renders you have to manipulate XML nodes and their attributes to change the graphics.
  *     For that purpose attribute manipulation methods are defined to set the color, opacity, and other things.
  *     Please note that some of these methods are required in bitmap based renderers, too, because some elements
- *     like {@link JXG.Text} can be HTML nodes floating over the construction.</dd>
- *     <dt>Renderer control</dt>
- *     <dd>Methods to clear the drawing board or to stop and to resume the rendering engine.</dd>
- * </dl></p>
- * @class JXG.AbstractRenderer
+ *     like {@link Text} can be HTML nodes floating over the construction.
+ * - __Renderer control__
+ *     Methods to clear the drawing board or to stop and to resume the rendering engine.
+ *
  * @constructor
  * @see JXG.SVGRenderer
  * @see JXG.VMLRenderer
@@ -124,9 +124,9 @@ JXG.AbstractRenderer = function () {
     this.vOffsetText = 0;
 
     /**
-     * If this property is set to <tt>true</tt> the visual properties of the elements are updated
+     * If this property is set to `true` the visual properties (attributes) of the elements are updated
      * on every update. Visual properties means: All the stuff stored in the
-     * {@link JXG.GeometryElement#visProp} property won't be set if enhancedRendering is <tt>false</tt>
+     * {@link JXG.GeometryElement#visProp} property won't be set if enhancedRendering is `false`
      * @type Boolean
      * @default true
      */
@@ -160,15 +160,15 @@ JXG.AbstractRenderer = function () {
     /**
      * Defines dash patterns. Sizes are in pixel.
      * Defined styles are:
-     * <ol>
-     * <li> 2 dash, 2 space</li>
-     * <li> 5 dash, 5 space</li>
-     * <li> 10 dash, 10 space</li>
-     * <li> 20 dash, 20 space</li>
-     * <li> 20 dash, 10 space, 10 dash, 10 space</li>
-     * <li> 20 dash, 5 space, 10 dash, 5 space</li>
-     * <li> 0 dash, 5 space (dotted line)</li>
-     * </ol>
+     *
+     * - `1`: 2 dash, 2 space
+     * - `2`: 5 dash, 5 space
+     * - `3`: 10 dash, 10 space
+     * - `4`: 20 dash, 20 space
+     * - `5`: 20 dash, 10 space, 10 dash, 10 space
+     * - `6`: 20 dash, 5 space, 10 dash, 5 space
+     * - `7`: 0 dash, 5 space (dotted line)
+     *
      * This means, the numbering is <b>1-based</b>.
      * Solid lines are set with dash:0.
      * If the object's attribute "dashScale:true" the dash pattern is multiplied by
@@ -197,10 +197,10 @@ JXG.extend(
         /* ********* Private methods *********** */
 
         /**
-         * Update visual properties, but only if {@link JXG.AbstractRenderer#enhancedRendering} or <tt>enhanced</tt> is set to true.
+         * Update visual properties, but only if {@link JXG.AbstractRenderer#enhancedRendering} or `enhanced` is set to true.
          * @param {JXG.GeometryElement} el The element to update
-         * @param {Object} [not={}] Select properties you don't want to be updated: <tt>{fill: true, dash: true}</tt> updates
-         * everything except for fill and dash. Possible values are <tt>stroke, fill, dash, shadow, gradient</tt>.
+         * @param {Object} [not={}] Select properties you don't want to be updated: `{fill: true, dash: true}` updates
+         * everything except for fill and dash. Possible values are `stroke, fill, dash, shadow, gradient`.
          * @param {Boolean} [enhanced=false] If true, {@link JXG.AbstractRenderer#enhancedRendering} is assumed to be true.
          * @private
          */
@@ -309,7 +309,7 @@ JXG.extend(
 
         /**
          * Draws a point on the {@link JXG.Board}.
-         * @param {JXG.Point} el Reference to a {@link JXG.Point} object that has to be drawn.
+         * @param {Point} el Reference to a {@link Point} object that has to be drawn.
          * @see Point
          * @see JXG.Point
          * @see JXG.AbstractRenderer#updatePoint
@@ -348,9 +348,9 @@ JXG.extend(
 
         /**
          * Updates visual appearance of the renderer element assigned to the given {@link JXG.Point}.
-         * @param {JXG.Point} el Reference to a {@link JXG.Point} object, that has to be updated.
+         * @param {Point} el Reference to a {@link Point} object, that has to be updated.
          * @see Point
-         * @see JXG.Point
+         * @see Point
          * @see JXG.AbstractRenderer#drawPoint
          * @see JXG.AbstractRenderer#changePointStyle
          */
@@ -402,13 +402,13 @@ JXG.extend(
         },
 
         /**
-         * Changes the style of a {@link JXG.Point}. This is required because the point styles differ in what
+         * Changes the style of a {@link Point}. This is required because the point styles differ in what
          * elements have to be drawn, e.g. if the point is marked by a "x" or a "+" two lines are drawn, if
          * it's marked by spot a circle is drawn. This method removes the old renderer element(s) and creates
          * the new one(s).
-         * @param {JXG.Point} el Reference to a {@link JXG.Point} object, that's style is changed.
+         * @param {Point} el Reference to a {@link Point} object, that's style is changed.
          * @see Point
-         * @see JXG.Point
+         * @see Point
          * @see JXG.AbstractRenderer#updatePoint
          * @see JXG.AbstractRenderer#drawPoint
          */
@@ -437,7 +437,7 @@ JXG.extend(
 
         /**
          * Draws a line on the {@link JXG.Board}.
-         * @param {JXG.Line} el Reference to a line object, that has to be drawn.
+         * @param {Line} el Reference to a line object, that has to be drawn.
          * @see Line
          * @see JXG.Line
          * @see JXG.AbstractRenderer#updateLine
@@ -453,7 +453,7 @@ JXG.extend(
 
         /**
          * Updates visual appearance of the renderer element assigned to the given {@link JXG.Line}.
-         * @param {JXG.Line} el Reference to the {@link JXG.Line} object that has to be updated.
+         * @param {Line} el Reference to the {@link Line} object that has to be updated.
          * @see Line
          * @see JXG.Line
          * @see JXG.AbstractRenderer#drawLine
@@ -547,7 +547,7 @@ JXG.extend(
          * This method determines some data about the line endings of this element.
          * If there are arrow heads, the offset is determined so that no parts of the line stroke
          * lap over the arrow head.
-         * <p>
+         *
          * The returned object also contains the types of the arrow heads.
          *
          * @param {JXG.GeometryElement} el JSXGraph line or curve element
@@ -679,7 +679,7 @@ JXG.extend(
          * the arrow ends exactly at the intended position.
          * Calls the renderer method to draw the line.
          *
-         * @param {JXG.Line} el Reference to a line object, that has to be drawn
+         * @param {Line} el Reference to a line object, that has to be drawn
          * @param {Object} arrowData Data concerning possible arrow heads
          *
          * @returns {JXG.AbstractRenderer} Reference to the renderer
@@ -747,11 +747,11 @@ JXG.extend(
          * Shorten the length of a line element such that the arrow head touches
          * the start or end point and such that the arrow head ends exactly
          * at the start / end position of the line.
-         * <p>
+         *
          * The Coords objects c1 and c2 are changed in place. In object a, the Boolean properties
          * 'showFirst' and 'showLast' are set.
          *
-         * @param  {JXG.Line} el Reference to the line object that gets arrow heads.
+         * @param  {Line} el Reference to the line object that gets arrow heads.
          * @param  {JXG.Coords} c1  Coords of the first point of the line (after {@link JXG.Math.Geometry#calcStraight}).
          * @param  {JXG.Coords} c2  Coords of the second point of the line (after {@link JXG.Math.Geometry#calcStraight}).
          * @param  {Object}  a Object { evFirst: Boolean, evLast: Boolean} containing information about arrow heads.
@@ -900,7 +900,7 @@ JXG.extend(
          * Possible values for the attribute 'linecap' are: 'butt', 'round', 'square'.
          * The default value is 'butt'. Not available for VML renderer.
          *
-         * @param {JXG.Line} element A arbitrary line.
+         * @param {Line} element A arbitrary line.
          * @see Line
          * @see JXG.Line
          * @see JXG.AbstractRenderer#updateLine
@@ -911,7 +911,7 @@ JXG.extend(
 
         /**
          * Creates a rendering node for ticks added to a line.
-         * @param {JXG.Line} el A arbitrary line.
+         * @param {Line} el A arbitrary line.
          * @see Line
          * @see Ticks
          * @see JXG.Line
@@ -941,10 +941,10 @@ JXG.extend(
         /* ********* Circle related stuff *********** */
 
         /**
-         * Draws a {@link JXG.Circle}
-         * @param {JXG.Circle} el Reference to a {@link JXG.Circle} object that has to be drawn.
+         * Draws a {@link Circle}
+         * @param {Circle} el Reference to a {@link Circle} object that has to be drawn.
          * @see Circle
-         * @see JXG.Circle
+         * @see Circle
          * @see JXG.AbstractRenderer#updateEllipse
          */
         drawEllipse: function (el) {
@@ -957,8 +957,8 @@ JXG.extend(
         },
 
         /**
-         * Updates visual appearance of a given {@link JXG.Circle} on the {@link JXG.Board}.
-         * @param {JXG.Circle} el Reference to a {@link JXG.Circle} object, that has to be updated.
+         * Updates visual appearance of a given {@link Circle} on the {@link JXG.Board}.
+         * @param {Circle} el Reference to a {@link Circle} object, that has to be updated.
          * @see Circle
          * @see JXG.Circle
          * @see JXG.AbstractRenderer#drawEllipse
@@ -989,7 +989,7 @@ JXG.extend(
 
         /**
          * Draws a {@link JXG.Polygon} on the {@link JXG.Board}.
-         * @param {JXG.Polygon} el Reference to a Polygon object, that is to be drawn.
+         * @param {Polygon} el Reference to a Polygon object, that is to be drawn.
          * @see Polygon
          * @see JXG.Polygon
          * @see JXG.AbstractRenderer#updatePolygon
@@ -1005,7 +1005,7 @@ JXG.extend(
 
         /**
          * Updates properties of a {@link JXG.Polygon}'s rendering node.
-         * @param {JXG.Polygon} el Reference to a {@link JXG.Polygon} object, that has to be updated.
+         * @param {Polygon} el Reference to a {@link JXG.Polygon} object, that has to be updated.
          * @see Polygon
          * @see JXG.Polygon
          * @see JXG.AbstractRenderer#drawPolygon
@@ -1038,10 +1038,10 @@ JXG.extend(
         displayLogo: function (str, fontsize) { /* stub */ },
 
         /**
-         * An internal text is a {@link JXG.Text} element which is drawn using only
+         * An internal text is a {@link Text} element which is drawn using only
          * the given renderer but no HTML. This method is only a stub, the drawing
          * is done in the special renderers.
-         * @param {JXG.Text} el Reference to a {@link JXG.Text} object
+         * @param {Text} el Reference to a {@link JXG.Text} object
          * @see Text
          * @see JXG.Text
          * @see JXG.AbstractRenderer#updateInternalText
@@ -1052,8 +1052,8 @@ JXG.extend(
         drawInternalText: function (el) { /* stub */ },
 
         /**
-         * Updates visual properties of an already existing {@link JXG.Text} element.
-         * @param {JXG.Text} el Reference to an {@link JXG.Text} object, that has to be updated.
+         * Updates visual properties of an already existing {@link Text} element.
+         * @param {Text} el Reference to an {@link JXG.Text} object, that has to be updated.
          * @see Text
          * @see JXG.Text
          * @see JXG.AbstractRenderer#drawInternalText
@@ -1065,7 +1065,7 @@ JXG.extend(
 
         /**
          * Displays a {@link JXG.Text} on the {@link JXG.Board} by putting a HTML div over it.
-         * @param {JXG.Text} el Reference to an {@link JXG.Text} object, that has to be displayed
+         * @param {Text} el Reference to an {@link JXG.Text} object, that has to be displayed
          * @see Text
          * @see JXG.Text
          * @see JXG.AbstractRenderer#drawInternalText
@@ -1125,7 +1125,7 @@ JXG.extend(
          *
          * TODO clipping for transformed texts
          *
-         * @param {JXG.Text} el Reference to an {@link JXG.Text} object that has to be clipped.
+         * @param {Text} el Reference to an {@link JXG.Text} object that has to be clipped.
          * @param {Boolean} [val=undefined] Set an explicit value, overwrites the element's attribute 'clip'. This is useful for handling the value 'inherit'.
          * @see Text
          * @see JXG.Text
@@ -1169,8 +1169,8 @@ JXG.extend(
         },
 
         /**
-         * Updates visual properties of an already existing {@link JXG.Text} element.
-         * @param {JXG.Text} el Reference to an {@link JXG.Text} object that has to be updated.
+         * Updates visual properties of an already existing {@link Text} element.
+         * @param {Text} el Reference to an {@link JXG.Text} object that has to be updated.
          * @see Text
          * @see JXG.Text
          * @see JXG.AbstractRenderer#drawText
@@ -1389,9 +1389,9 @@ JXG.extend(
         },
 
         /**
-         * Updates font-size, color and opacity properties and CSS style properties of a {@link JXG.Text} node.
+         * Updates font-size, color and opacity properties and CSS style properties of a {@link Text} node.
          * This function is also called by highlight() and nohighlight().
-         * @param {JXG.Text} el Reference to the {@link JXG.Text} object, that has to be updated.
+         * @param {Text} el Reference to the {@link JXG.Text} object, that has to be updated.
          * @param {Boolean} doHighlight
          * @see Text
          * @see JXG.Text
@@ -1515,9 +1515,9 @@ JXG.extend(
         /* ********* Image related stuff *********** */
 
         /**
-         * Draws an {@link JXG.Image} on a board; This is just a template that has to be implemented by special
+         * Generates an {@link Image} on a board; This is just a template that has to be implemented by special
          * renderers.
-         * @param {JXG.Image} el Reference to the image object that is to be drawn
+         * @param {Image} el Reference to the image object that is to be drawn
          * @see Image
          * @see JXG.Image
          * @see JXG.AbstractRenderer#updateImage
@@ -1525,8 +1525,8 @@ JXG.extend(
         drawImage: function (el) { /* stub */ },
 
         /**
-         * Updates the properties of an {@link JXG.Image} element.
-         * @param {JXG.Image} el Reference to an {@link JXG.Image} object, that has to be updated.
+         * Updates the properties of an {@link Image} element.
+         * @param {Image} el Reference to an {@link JXG.Image} object, that has to be updated.
          * @see Image
          * @see JXG.Image
          * @see JXG.AbstractRenderer#drawImage
@@ -1547,7 +1547,7 @@ JXG.extend(
 
         /**
          * Multiplication of transformations without updating. That means, at that point it is expected that the
-         * matrices contain numbers only. First, the origin in user coords is translated to <tt>(0,0)</tt> in screen
+         * matrices contain numbers only. First, the origin in user coords is translated to `(0,0)` in screen
          * coords. Then, the stretch factors are divided out. After the transformations in user coords, the stretch
          * factors are multiplied in again, and the origin in user coords is translated back to its position. This
          * method does not have to be implemented in a new renderer.
@@ -1589,31 +1589,31 @@ JXG.extend(
         /**
          * Applies transformations on images and text elements. This method has to implemented in
          * all descendant classes where text and image transformations are to be supported.
-         * <p>
+         *
          * Only affine transformation are supported, no proper projective transformations. This means, the
          * respective entries of the transformation matrix are simply ignored.
          *
-         * @param {JXG.Image|JXG.Text} el A {@link JXG.Image} or {@link JXG.Text} object.
+         * @param {Image|Text} el A {@link JXG.Image} or {@link JXG.Text} object.
          * @param {Array} transformations An array of {@link JXG.Transformation} objects. This is usually the
-         * transformations property of the given element <tt>el</tt>.
+         * transformations property of the given element `el`.
          */
         transformRect: function (el, transformations) { /* stub */ },
 
         /**
          * If the URL of the image is provided by a function the URL has to be updated during updateImage()
-         * @param {JXG.Image} el Reference to an image object.
+         * @param {Image} el Reference to an image object.
          * @see JXG.AbstractRenderer#updateImage
          */
         updateImageURL: function (el) { /* stub */ },
 
         /**
-         * Updates CSS style properties of a {@link JXG.Image} node.
+         * Updates CSS style properties of a {@link Image} node.
          * In SVGRenderer opacity is the only available style element.
          * This function is called by highlight() and nohighlight().
          * This function works for VML.
          * It does not work for Canvas.
          * SVGRenderer overwrites this method.
-         * @param {JXG.Text} el Reference to the {@link JXG.Image} object, that has to be updated.
+         * @param {Text} el Reference to the {@link JXG.Image} object, that has to be updated.
          * @param {Boolean} doHighlight
          * @see Image
          * @see JXG.Image
@@ -1636,16 +1636,16 @@ JXG.extend(
 
         /**
          * Appends a node to a specific layer level. This is just an abstract method and has to be implemented
-         * in all renderers that want to use the <tt>createPrim</tt> model to draw.
+         * in all renderers that want to use the `createPrim` model to draw.
          * @param {Node} node A DOM tree node.
          * @param {Number} level The layer the node is attached to. This is the index of the layer in
-         * {@link JXG.SVGRenderer#layer} or the <tt>z-index</tt> style property of the node in VMLRenderer.
+         * {@link JXG.SVGRenderer#layer} or the `z-index` style property of the node in VMLRenderer.
          */
         appendChildPrim: function (node, level) { /* stub */ },
 
         /**
          * Stores the rendering nodes. This is an abstract method which has to be implemented in all renderers that use
-         * the <tt>createPrim</tt> method.
+         * the `createPrim` method.
          * @param {JXG.GeometryElement} el A JSXGraph element.
          * @param {String} type The XML node name. Only used in VMLRenderer.
          */
@@ -1684,7 +1684,7 @@ JXG.extend(
 
         /**
          * Updates an ellipse node primitive. This is an abstract method which has to be implemented in all renderers
-         * that use the <tt>createPrim</tt> method.
+         * that use the `createPrim` method.
          * @param {Node} node Reference to the node.
          * @param {Number} x Centre X coordinate
          * @param {Number} y Centre Y coordinate
@@ -1695,7 +1695,7 @@ JXG.extend(
 
         /**
          * Refreshes a line node. This is an abstract method which has to be implemented in all renderers that use
-         * the <tt>createPrim</tt> method.
+         * the `createPrim` method.
          * @param {Node} node The node to be refreshed.
          * @param {Number} p1x The first point's x coordinate.
          * @param {Number} p1y The first point's y coordinate.
@@ -1707,7 +1707,7 @@ JXG.extend(
 
         /**
          * Updates a path element. This is an abstract method which has to be implemented in all renderers that use
-         * the <tt>createPrim</tt> method.
+         * the `createPrim` method.
          * @param {Node} node The path node.
          * @param {String} pathString A string formatted like e.g. <em>'M 1,2 L 3,1 L5,5'</em>. The format of the string
          * depends on the rendering engine.
@@ -1720,11 +1720,11 @@ JXG.extend(
          * the format of such a string usually depends on the renderer this method
          * is only an abstract method. Therefore, it has to be implemented in the descendant renderer itself unless
          * the renderer does not use the createPrim interface but the draw* interfaces to paint.
-         * @param {JXG.Point} el The point element
+         * @param {Point} el The point element
          * @param {Number} size A positive number describing the size. Usually the half of the width and height of
          * the drawn point.
          * @param {String} type A string describing the point's face. This method only accepts the shortcut version of
-         * each possible face: <tt>x, +, |, -, [], <>, <<>>,^, v, >, < </tt>
+         * each possible face: `x, +, |, -, [], <>, <<>>,^, v, >, < `
          */
         updatePathStringPoint: function (el, size, type) { /* stub */ },
 
@@ -1748,7 +1748,7 @@ JXG.extend(
         /**
          * Update a polygon primitive.
          * @param {Node} node
-         * @param {JXG.Polygon} el A JSXGraph element of type {@link JXG.Polygon}
+         * @param {Polygon} el A JSXGraph element of type {@link JXG.Polygon}
          */
         updatePolygonPrim: function (node, el) { /* stub */ },
 
@@ -1916,8 +1916,8 @@ JXG.extend(
          * Set ARIA related properties of an element. The attribute "aria" of an element contains at least the
          * properties "enabled", "label", and "live". Additionally, all available properties from
          * {@link https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA} may be set.
-         * <p>
-         * In JSXGraph, the available properties are used without the leading 'aria-'.
+         *
+         * In JSXGraph, the available attributes are used without the leading 'aria-'.
          * For example, the value of the JSXGraph attribute 'aria.label' will be set to the
          * HTML attribute 'aria-label'.
          *
@@ -2097,10 +2097,10 @@ JXG.extend(
         /**
          * The tiny zoom bar shown on the bottom of a board (if board attribute "showNavigation" is true).
          * It is a div element and gets the CSS class "JXG_navigation" and the id {board id}_navigationbar.
-         * <p>
+         *
          * The buttons get the CSS class "JXG_navigation_button" and the id {board_id}_name where name is
          * one of [top, down, left, right, out, 100, in, fullscreen, screenshot, reload, cleartraces].
-         * <p>
+         *
          * The symbols for zoom, navigation and reload are hard-coded.
          *
          * @param {JXG.Board} board Reference to a JSXGraph board.

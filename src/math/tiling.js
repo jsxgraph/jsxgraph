@@ -38,9 +38,9 @@
 import Mat from "./math.js";
 
 /**
- * The JXG.Math.Tiling namespace.
+ * The JXG.Math.Tiling namespace. Used to prepare tilings used to plot {@link Surface3D} with {@link Polyhedron3D}.
  * @name JXG.Math.Tiling
- * @exports Mat.Numerics as JXG.Math.Tiling
+ * @exports Mat.Tiling as JXG.Math.Tiling
  * @namespace
  */
 Mat.Tiling = {
@@ -51,7 +51,7 @@ Mat.Tiling = {
      * If the optional parameter stepsV is not given or is equal to 0, the rectangle is partitioned into
      * nearly equilateral triangles.
      * Otherwise, the shape of the triangles depends on the ratio of stepsU / stepsV.
-     * @name triangulation
+     *
      * @param {JXG.ParametricSurface3D|JXG.Plane3D} el element which is displayed using a polyhedron3d.
      * From this element its function F is used.
      * @param {Array} rg_u Begin and end of first direction (numbers or functions)
@@ -208,7 +208,7 @@ Mat.Tiling = {
      * Rectangulate (partition it into rectangles) a given two dimensional domain.
      * The number of rectangles the original rectangle is divided into depends on the parameters stepsU and stepsV.
      * Input are the ranges of u and v, as well as stepsU and stepsV which are static.
-     * @name rectangulation
+     *
      * @param {JXG.ParametricSurface3D|JXG.Plane3D} el element which is displayed using a polyhedron3d.
      * From this element its function F is used.
      * @param {Array} rg_u Begin and end of first direction (numbers or functions)

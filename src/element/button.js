@@ -52,30 +52,38 @@ var priv = {
 
 /**
  * @class A text element that contains an HTML button tag.
- * For this element, the attribute "display" has to have the value 'html' (which is the default).
+ * For this element, the attribute `display` has to have the value 'html' (which is the default).
  *
- * <p><b>Setting a CSS class:</b> The attribute <tt>cssClass</tt> affects the HTML div element that contains the button element. To change the CSS properties of the HTML button element a selector of the form
- * <tt>.mybutton > button { ... }</tt> has to be used. See the example below.
+ * __Setting a CSS class:__ The attribute `cssClass` affects the HTML div element that contains the button element. To change the CSS properties of the HTML button element a selector of the form
+ * `.mybutton > button { ... }` has to be used. See the example below.
  *
- * <p><b>Access the button element with JavaScript:</b>
- * The underlying HTML button element can be accessed through the sub-object 'rendNodeButton', e.g. to
+ * __Access the button element with JavaScript:__
+ * The underlying HTML button element can be accessed through the sub-object `rendNodeButton`, e.g. to
  * add event listeners.
  *
  * @pseudo
  * @name Button
- * @augments Text
+ * @elementclass control
+ * @augments JXG.Text
  * @constructor
  * @type JXG.Text
+ * @see Checkbox
+ * @see Input
  *
- * @param {number,function_number,function_String,function_function} x,y,label,handler Parent elements for button elements.
- *  <p>
- *  x and y are the coordinates of the lower left corner of the text box.
- *   The position of the text is fixed,
- *  x and y are numbers. The position is variable if x or y are functions.
- *  <p>
- *  The label of the input element may be given  as string.
- *  <p>
- *  The (optional) handler function which is called when the button is pressed.
+ */
+/**
+ * @jsxgraphsignature Button
+ * `x` and `y` are the coordinates of the lower left corner of the text box.
+ * The position of the text is fixed,
+ * if `x` and `y` are numbers. The position is variable if `x` or `y` are functions.
+ *
+ * The label of the input element may be given  as string.
+ *
+ * The (optional) handler function which is called when the button is pressed.
+ * @param {NumberLike} x
+ * @param {NumberLike} y
+ * @param {String|Function} label
+ * @param {Function} [handler]
  *
  * @example
  *  var p = board.create('point', [0.5, 0.5], {id: 'p1'});
@@ -92,18 +100,20 @@ var priv = {
  *
  * </pre><div class="jxgbox" id="JXGf19b1bce-dd00-4e35-be97-ff1817d11514" style="width: 500px; height: 300px;"></div>
  * <script type="text/javascript">
- *  var t1_board = JXG.JSXGraph.initBoard('JXGf19b1bce-dd00-4e35-be97-ff1817d11514', {boundingbox: [-3, 6, 5, -3], axis: true, showcopyright: false, shownavigation: false});
- *  var p = t1_board.create('point', [0, -1], {id: 'p1'});
+ * (function() {
+ *  var board = JXG.JSXGraph.initBoard('JXGf19b1bce-dd00-4e35-be97-ff1817d11514', {boundingbox: [-3, 6, 5, -3], axis: true, showcopyright: false, shownavigation: false});
+ *  var p = board.create('point', [0, -1], {id: 'p1'});
  *
  *  // Create a button element at position [1,2].
- *  var button1 = t1_board.create('button', [1, 2, 'Change Y with JavaScript', function() {
+ *  var button1 = board.create('button', [1, 2, 'Change Y with JavaScript', function() {
  *      p.moveTo([p.X(), p.Y() + 0.5], 100);
  *  }], {});
  *
  *  // Create a button element at position [1,4].
- *  var button2 = t1_board.create('button', [1, 4, 'Change Y with JessieCode',
+ *  var button2 = board.create('button', [1, 4, 'Change Y with JessieCode',
  *      "$('p1').Y = $('p1').Y() - 0.5;"
  *  ], {});
+ * })();
  *
  * </script><pre>
  *
@@ -128,8 +138,6 @@ var priv = {
  * var p = board.create('point', [2, -2], {
  * 	visible: () => butt.value
  * });
- *
- *
  *
  * </pre><div id="JXGa1eaab8f-c73b-4660-96ce-4ca17bcac4d6" class="jxgbox" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
@@ -212,7 +220,7 @@ var priv = {
  *     [1, 4, 'answers', function () {}],
  *     {cssClass:'mybutton', highlightCssClass: 'mybutton'});
  *
- * </pre>
+ * </pre><div id="JXG2da6cf73-8c2e-495c-bd31-42de43b71cf8" class="jxgbox" style="width: 300px; height: 300px;"></div>
  * <style>
  * .mybutton > button {
  *   background-color: #04AA6D;
@@ -225,7 +233,6 @@ var priv = {
  *   font-size: 16px;
  * }
  * </style>
- * <div id="JXG2da6cf73-8c2e-495c-bd31-42de43b71cf8" class="jxgbox" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
  *     (function() {
  *         var board = JXG.JSXGraph.initBoard('JXG2da6cf73-8c2e-495c-bd31-42de43b71cf8',

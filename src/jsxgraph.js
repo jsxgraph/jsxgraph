@@ -211,7 +211,7 @@ JXG.JSXGraph = {
     },
 
     /**
-     * Further initialization of the board. Set some properties from attribute values.
+     * Further initialization of the board, e.g. set some attributes.
      *
      * @param {JXG.Board} board
      * @param {Object} attr attributes object
@@ -232,7 +232,7 @@ JXG.JSXGraph = {
     /**
      *
      * @param {String|Object} container id of or reference to the HTML element in which the board is painted.
-     * @param {Object} attr An object that sets some of the board properties.
+     * @param {Object} attr An object that sets some of the board attributes.
      *
      * @private
      */
@@ -293,7 +293,7 @@ JXG.JSXGraph = {
      * Initialize a new board.
      *
      * @param {String|Object} box id of or reference to the HTML element in which the board is painted.
-     * @param {Object} attributes An object that sets some of the board properties.
+     * @param {Object} attributes An object that sets some of the board attributes.
      * See {@link JXG.Board} for a list of available attributes of the board.
      * Most of these attributes can also be set via {@link JXG.Options},
      *
@@ -488,7 +488,7 @@ JXG.JSXGraph = {
      */
     //  *
     //  * @param {Array} [attributes.boundingbox=[-5, 5, 5, -5]] An array containing four numbers describing the left, top, right and bottom boundary of the board in user coordinates
-    //  * @param {Boolean} [attributes.keepaspectratio=false] If <tt>true</tt>, the bounding box is adjusted to the same aspect ratio as the aspect ratio of the div containing the board.
+    //  * @param {Boolean} [attributes.keepaspectratio=false] If `true`, the bounding box is adjusted to the same aspect ratio as the aspect ratio of the div containing the board.
     //  * @param {Boolean} [attributes.showCopyright=false] Show the copyright string in the top left corner.
     //  * @param {Boolean} [attributes.showNavigation=false] Show the navigation buttons in the bottom right corner.
     //  * @param {Object} [attributes.zoom] Allow the user to zoom with the mouse wheel or the two-fingers-zoom gesture.

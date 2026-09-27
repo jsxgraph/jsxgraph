@@ -1,0 +1,2335 @@
+/* ==========================================================================
+   JSXGraph API reference - docdash / JSDoc stylesheet
+   --------------------------------------------------------------------------
+   Colour and typography scheme follow jsxgraph.org
+     primary   #10427C   secondary #08648f   accent  #aedcef
+     Fonts     Fira Sans (400/400i/600) + Fira Code (400/600)
+     Radius    0.7rem 0 0.7rem 0  (asymmetric, like the buttons and inputs
+                                   on the website)
+
+   Only selectors and classes that already exist in the generated markup are
+   used - no new class names, no changes to the HTML required.
+
+   Robustness: every declaration that uses a custom property appears twice -
+   first with a literal value, then with var(). Environments without support
+   for custom properties (old engines, HTML-to-PDF converters, mail and
+   preview renderers) therefore still get the intended colours and fonts.
+   For the same reason clamp() and inset() are avoided.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. Design tokens
+   -------------------------------------------------------------------------- */
+:root {
+    color-scheme: light dark;
+
+    /* Brand and surface colours */
+    --jxg-primary:        #10427c;
+    --jxg-primary-dark:   #0a2c54;
+    --jxg-primary-light:  #2a6bb5;
+    --jxg-secondary:      #08648f;
+    --jxg-accent:         #aedcef;
+    --jxg-accent-soft:    #e4f1f8;
+
+    --jxg-bg:             #ffffff;
+    --jxg-bg-subtle:      #f3f6f8;
+    --jxg-bg-inline-code: #eaf1f5;
+    --jxg-code-bg:        #f5f8fa;
+    --jxg-code-fg:        #24303d;
+    --jxg-code-gutter:    #dce5ee;
+
+    /* Text */
+    --jxg-text:           #1d2733;
+    --jxg-text-muted:     #5d6b7a;
+    --jxg-text-invert:    #ffffff;
+    --jxg-link:           var(--jxg-primary);
+    --jxg-param:          #9c4221;
+    --jxg-element:        #0b7a5a;
+    --jxg-link-hover:     var(--jxg-secondary);
+
+    /* Lines and signal colours */
+    --jxg-border:         #d7e0e8;
+    --jxg-border-strong:  #b6c6d4;
+    --jxg-danger:         #a3231b;
+
+    /* Typography */
+    --jxg-font-sans:  'Fira Sans', 'Source Sans Pro', -apple-system, BlinkMacSystemFont,
+    'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    --jxg-font-head:  var(--jxg-font-sans);
+    --jxg-font-mono:  'Fira Code', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+    --jxg-fs-base:     1rem;
+    --jxg-fs-small:    0.875rem;
+    --jxg-fs-tiny:     0.8rem;
+    --jxg-lh:          1.6;
+
+    /* Shape, spacing, depth */
+    --jxg-radius:        0.6rem;
+    --jxg-radius-brand:  0.7rem 0 0.7rem 0;
+    --jxg-shadow-sm:     0 1px 2px rgba(16, 66, 124, 0.08);
+    --jxg-shadow:        0 2px 10px rgba(16, 66, 124, 0.10);
+    --jxg-shadow-lg:     0 10px 30px rgba(16, 66, 124, 0.18);
+
+    --jxg-nav-width:     17.5rem;
+    --jxg-gutter:        2.5rem;
+    --jxg-content-max:   80rem;
+}
+
+/* --------------------------------------------------------------------------
+   2. Foundation
+   -------------------------------------------------------------------------- */
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    height: auto;
+    min-height: 100%;
+    width: 100%;
+    scroll-behavior: smooth;
+    scroll-padding-top: 7.5rem;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    color: #1d2733;
+    color: var(--jxg-text);
+    background-color: #ffffff;
+    background-color: var(--jxg-bg);
+    font-family: 'Fira Sans', 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-family: var(--jxg-font-sans);
+    font-size: 1rem;
+    font-size: var(--jxg-fs-base);
+    line-height: 1.6;
+    line-height: var(--jxg-lh);
+    -webkit-text-size-adjust: 100%;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* --------------------------------------------------------------------------
+   3. Links
+   -------------------------------------------------------------------------- */
+a,
+a:active {
+    color: #10427c;
+    color: var(--jxg-link);
+    text-decoration: none;
+    border-bottom: 0;
+    transition: color .15s ease, background-color .15s ease;
+}
+
+a:hover {
+    color: #08648f;
+    color: var(--jxg-link-hover);
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.15em;
+    border-bottom: 0;
+}
+
+article a {
+    border-bottom: 0;
+    text-decoration: underline;
+    text-decoration-color: #aedcef;
+    text-decoration-color: var(--jxg-accent);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.15em;
+}
+
+article a:hover,
+article a:active {
+    border-bottom: 0;
+    text-decoration-color: currentColor;
+}
+
+article .description a {
+    word-break: break-word;
+}
+
+/* --------------------------------------------------------------------------
+   4. Typography
+   -------------------------------------------------------------------------- */
+p, ul, ol, blockquote {
+    margin-block: 0 1em;
+    line-height: 1.6;
+    line-height: var(--jxg-lh);
+}
+
+blockquote {
+    margin-inline: 0;
+    padding: .6em 1.1em;
+    border-left: 4px solid #aedcef;
+    border-left: 4px solid var(--jxg-accent);
+    background: #f3f6f8;
+    background: var(--jxg-bg-subtle);
+    border-radius: 0.7rem 0 0.7rem 0;
+    border-radius: var(--jxg-radius-brand);
+    color: #5d6b7a;
+    color: var(--jxg-text-muted);
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Fira Sans', 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-family: var(--jxg-font-head);
+}
+
+h1, h2, h3, h4, h5, h6 {
+    color: #10427c;
+    color: var(--jxg-primary);
+    font-weight: 600;
+    line-height: 1.2;
+    margin: 0;
+    overflow-wrap: break-word;
+}
+
+h1 {
+    font-size: 2.1rem;
+    margin: 1em 0 .5em;
+    letter-spacing: -0.01em;
+}
+
+h1.page-title {
+    position: -webkit-sticky;
+    position: sticky;
+    /* #main no longer has top padding, so the title naturally sits at 0 and
+       does not shift when it becomes stuck. The symmetric padding centres the
+       line so that the rule below it lines up exactly with the top edge of the
+       search field (nav padding + logo height + gap). */
+    top: 0;
+    z-index: 4;
+    font-size: 1.55rem;
+    font-weight: 400;
+    margin: 0 0 .8rem;
+    padding: 1.35rem 0 1.15rem 0;
+    line-height: 1.1;
+    word-wrap: break-word;
+    background-color: #ffffff;
+    background-color: var(--jxg-bg);
+    border-bottom: 1px solid #d7e0e8;
+    border-bottom: 1px solid var(--jxg-border);
+}
+
+h2 {
+    font-size: 1.6rem;
+    margin: 1.8em 0 .4em;
+}
+
+h3 {
+    font-size: 1.25rem;
+    margin: 1.6em 0 .4em;
+}
+
+h4 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 1.4em 0 .4em;
+    color: #1d2733;
+    color: var(--jxg-text);
+}
+
+/* Signature heading of a member or method */
+h4.name {
+    display: block;
+    color: #10427c;
+    color: var(--jxg-primary);
+    background: #f3f6f8;
+    background: var(--jxg-bg-subtle);
+    box-shadow: 0 1px 2px rgba(16, 66, 124, 0.08);
+    box-shadow: var(--jxg-shadow-sm);
+    border: 1px solid #d7e0e8;
+    border: 1px solid var(--jxg-border);
+    border-radius: 0.6rem;
+    border-radius: var(--jxg-radius);
+    margin: 2.25em 0 .75em;
+    padding: .4rem .85rem;
+    font-family: 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-family: var(--jxg-font-mono);
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1.45;
+    scroll-margin-top: 7.5rem;
+    overflow-wrap: anywhere;
+}
+
+/* The signature heading becomes the header row of the detail table:
+   square at the bottom, no gap - its border-bottom is the separator */
+h4.name:has(+ .details) {
+    margin-bottom: 0;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+h4.name + .details {
+    margin-top: 0;
+    border-top: 0;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+
+h4.name a {
+    color: #08648f;
+    color: var(--jxg-secondary);
+    border-bottom: 0;
+}
+
+h4.name a:hover {
+    color: #2a6bb5;
+    color: var(--jxg-primary-light);
+    border-bottom: 0;
+}
+
+/* h5 = "Parameters", "Returns", "Example", "Type" ...
+   plus the sub-headings of the overview lists */
+h5,
+.h3-parameters,
+.h3-returns,
+.h3-examples,
+.h3-throws,
+.h3-types,
+.h3-details,
+h3.subsection-title,
+h4.subsection-title,
+.container-overview .subsection-title {
+    font-family: 'Fira Sans', 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-family: var(--jxg-font-head);
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: 0;
+    color: #5d6b7a;
+    color: var(--jxg-text-muted);
+    margin: 1.6em 0 .5em;
+}
+
+h6 {
+    font-size: 1rem;
+    letter-spacing: 0;
+    margin: 1.2em 0 .3em;
+    font-style: normal;
+    color: #5d6b7a;
+    color: var(--jxg-text-muted);
+}
+
+/* --------------------------------------------------------------------------
+   5. Code (inline)
+   -------------------------------------------------------------------------- */
+tt, code, kbd, samp, pre {
+    font-family: 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-family: var(--jxg-font-mono);
+    /* same size as the surrounding text - Fira Code has almost the same
+       x-height as Fira Sans, so no reduction is needed here */
+    font-size: 1em;
+    background: #eaf1f5;
+    background: var(--jxg-bg-inline-code);
+}
+
+tt, code, kbd, samp {
+    padding: .12em .4em;
+    border-radius: 0.6rem;
+    border-radius: var(--jxg-radius);
+    color: #0a2c54;
+    color: var(--jxg-primary-dark);
+    overflow-wrap: break-word;
+}
+
+pre {
+    padding-bottom: 0;
+    margin: 0 0 1em;
+    border-radius: 0.6rem;
+    border-radius: var(--jxg-radius);
+    max-width: 100%;
+}
+
+/* --------------------------------------------------------------------------
+   6. Layout: main area and sections
+   -------------------------------------------------------------------------- */
+#main {
+    float: none;
+    width: auto;
+    max-width: 80rem;
+    max-width: var(--jxg-content-max);
+    margin-left: 17.5rem;
+    margin-left: var(--jxg-nav-width);
+    padding: 2.5rem 2.5rem 4rem;
+    padding: 0 var(--jxg-gutter) 4rem;
+    min-width: 0;
+}
+
+header {
+    display: block;
+}
+
+section {
+    display: block;
+    background-color: #ffffff;
+    background-color: var(--jxg-bg);
+    padding: 0;
+}
+
+article {
+    min-width: 0;
+}
+
+.class-description {
+    margin: 1em 0 1.5em;
+}
+
+.class-description:empty {
+    margin: 0;
+}
+
+.description {
+    margin: 1em 0;
+}
+
+.variation {
+    display: none;
+}
+
+.clear {
+    clear: both;
+}
+
+.important {
+    font-weight: 600;
+    color: #a3231b;
+    color: var(--jxg-danger);
+}
+
+.yes-def {
+    text-indent: -1000px;
+}
+
+.disabled {
+    color: #5d6b7a;
+    color: var(--jxg-text-muted);
+}
+
+.ancestors {
+    color: #5d6b7a;
+    color: var(--jxg-text-muted);
+    font-weight: 400;
+}
+
+.ancestors a {
+    color: #5d6b7a !important;
+    color: var(--jxg-text-muted) !important;
+    text-decoration: none;
+}
+
+/* --------------------------------------------------------------------------
+   7. Navigation (sidebar)
+   -------------------------------------------------------------------------- */
+nav {
+    float: none;
+    display: flex;
+    flex-direction: column;
+    width: 17.5rem;
+    width: var(--jxg-nav-width);
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    z-index: 4;
+    background: #f3f6f8;
+    background: var(--jxg-bg-subtle);
+    border-right: 1px solid #d7e0e8;
+    border-right: 1px solid var(--jxg-border);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: .6rem .6rem 3rem;
+    /* Reserve the scrollbar track on both sides, so the entries sit in exactly
+       the same place whether the sidebar currently scrolls or not - with all
+       groups collapsed the bar disappears and the content would otherwise
+       shift sideways. */
+    scrollbar-gutter: stable both-edges;
+    scrollbar-width: thin;
+    scrollbar-color: #b6c6d4 transparent;
+    scrollbar-color: var(--jxg-border-strong) transparent;
+}
+
+/* Logo above the search field, as a pseudo element of the navigation so
+   that no markup change is needed. It is pure branding, not a link - making
+   it clickable would require an <a> in the template. */
+nav::before {
+    content: "";
+    display: block;
+    -webkit-box-flex: 0;
+    -ms-flex: none;
+    flex: none;
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+    z-index: 3;
+    /* Height and the gap below always add up to 4rem. Together with the 0.6rem
+       padding of the nav that puts the top edge of the search field at 4.6rem,
+       which is where the rule below the page title sits. Change the height and
+       the gap has to compensate - and the sticky top of the search field below
+       follows the height alone. */
+    height: 2.6rem;
+    /* Pulled up against the .6rem padding of the nav so the wordmark lines up
+       with the page title on the right. The image file carries some empty space
+       of its own at the top, which is why the value is negative rather than the
+       difference to the title padding. The bottom value compensates, so padding
+       + margins + height still add up to the 4.6rem where the search field
+       starts. */
+    margin: .3rem 0 1.1rem;
+    background-color: #f3f6f8;
+    background-color: var(--jxg-bg-subtle);
+    box-shadow: 0 -1rem 0 #f3f6f8;
+    box-shadow: 0 -1rem 0 var(--jxg-bg-subtle);
+    background-image: url('../images/jsxgraph-api-logo_blue-text-solid-250.png');
+    background-image: -webkit-image-set(
+            url('../images/jsxgraph-api-logo_blue-text-solid-250.png') 1x,
+            url('../images/jsxgraph-api-logo_blue-text-solid-500.png') 2x);
+    background-image: image-set(
+            url('../images/jsxgraph-api-logo_blue-text-solid-250.png') 1x,
+            url('../images/jsxgraph-api-logo_blue-text-solid-500.png') 2x);
+    background-repeat: no-repeat;
+    /* Anchored at the top, not centred: contain scales the image by its width,
+       so it is usually shorter than the box. Centring would split the leftover
+       space above and below, and the visible gap at the top would change with
+       every adjustment to the height or the padding. Anchored at the top it is
+       always exactly the padding of the nav; the leftover falls below, where
+       the margin sits anyway. */
+    background-position: left top;
+    background-size: contain;
+}
+
+nav #nav-search {
+    position: sticky;
+    top: 3.5rem;
+    z-index: 2;
+    width: 100%;
+    height: auto;
+    margin: 0 0 1rem;
+    padding: .6rem .75rem;
+    font-family: inherit;
+    font-size: 0.875rem;
+    font-size: var(--jxg-fs-small);
+    line-height: 1.4;
+    color: #1d2733;
+    color: var(--jxg-text);
+    background: #ffffff;
+    background: var(--jxg-bg);
+    border: 1px solid #d7e0e8;
+    border: 1px solid var(--jxg-border);
+    border-radius: 0.6rem;
+    border-radius: var(--jxg-radius);
+    box-shadow: 0 -1.1rem 0 #f3f6f8;
+    box-shadow: 0 -1.1rem 0 var(--jxg-bg-subtle);
+    outline-offset: 2px;
+}
+
+nav.wrap a {
+    word-wrap: break-word;
+}
+
+nav h2 {
+    font-family: 'Fira Sans', 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-family: var(--jxg-font-head);
+    font-size: 0.875rem;
+    font-size: var(--jxg-fs-small);
+    font-weight: 600;
+    margin: 0 0 .2rem;
+    padding: 0;
+}
+
+nav > h2 > a {
+    display: block;
+    margin: 0;
+    padding: .35rem .55rem;
+    border-radius: 0.6rem;
+    border-radius: var(--jxg-radius);
+    color: #10427c !important;
+    color: var(--jxg-primary) !important;
+}
+
+nav h3 {
+    margin: 1.6rem 0 .5rem;
+    padding: 0 .55rem;
+    font-family: 'Fira Sans', 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-family: var(--jxg-font-head);
+    font-size: 0.8rem;
+    font-size: var(--jxg-fs-tiny);
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    font-weight: 600;
+    line-height: 1.4;
+    color: #5d6b7a;
+    color: var(--jxg-text-muted);
+}
+
+nav h3.collapsed_header {
+    cursor: pointer;
+}
+
+nav ul {
+    font-family: 'Fira Sans', 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-family: var(--jxg-font-sans);
+    font-size: 0.875rem;
+    font-size: var(--jxg-fs-small);
+    line-height: 1.4;
+    padding: 0;
+    margin: 0;
+    list-style-type: none;
+}
+
+nav ul a,
+nav ul a:active {
+    font-family: 'Fira Sans', 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-family: var(--jxg-font-sans);
+    display: block;
+    padding: .3rem .55rem;
+    margin: 1px 0;
+    border-radius: 0.6rem;
+    border-radius: var(--jxg-radius);
+    font-size: 0.875rem;
+    font-size: var(--jxg-fs-small);
+    line-height: 1.45;
+    color: #1d2733;
+    color: var(--jxg-text);
+    overflow-wrap: break-word;
+}
+
+nav a:hover,
+nav a:active {
+    color: #10427c;
+    color: var(--jxg-primary);
+    background: #e4f1f8;
+    background: var(--jxg-accent-soft);
+    text-decoration: none;
+}
+
+nav > ul {
+    padding: 0;
+    margin-bottom: .5rem;
+}
+
+nav > ul > li > a {
+    color: #1d2733;
+    color: var(--jxg-text);
+    margin-top: 0;
+}
+
+nav ul ul a {
+    color: #5d6b7a;
+    color: var(--jxg-text-muted);
+    border-left: 2px solid #d7e0e8;
+    border-left: 2px solid var(--jxg-border);
+    border-radius: 0 0.6rem 0.6rem 0;
+    border-radius: 0 var(--jxg-radius) var(--jxg-radius) 0;
+}
+
+nav ul ul a,
+nav ul ul a:active {
+    padding-left: 1.1rem;
+}
+
+/* --------------------------------------------------------------------------
+   7b. Collapsible groups INSIDE the navigation
+   The top-level groups (ELEMENTS, CLASSES, NAMESPACES ...) keep the boxed
+   look of the main area, only more compact. The nested groups carrying
+   .nav_element_class are flat and read as sub-headings.
+   Every rule is prefixed with "nav ", so the main area is untouched.
+   -------------------------------------------------------------------------- */
+nav details {
+    margin: .75rem 0;
+    padding: 0 .5rem;
+    border: 1px solid #d7e0e8;
+    border: 1px solid var(--jxg-border);
+    border-radius: 0.6rem;
+    border-radius: var(--jxg-radius);
+    background-color: #ffffff;
+    background-color: var(--jxg-bg);
+}
+
+nav details[open] {
+    padding-bottom: .5rem;
+}
+
+nav summary {
+    position: relative;
+    top: auto;
+    z-index: auto;
+    margin: 0 -.5rem;
+    padding: .6rem 2.1rem .6rem .75rem;
+    background-color: #f3f6f8;
+    background-color: var(--jxg-bg-subtle);
+    border: 0;
+    border-radius: 0.6rem;
+    border-radius: var(--jxg-radius);
+    box-shadow: none;
+    font-family: 'Fira Sans', 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-family: var(--jxg-font-head);
+    font-size: 0.8rem;
+    font-size: var(--jxg-fs-tiny);
+    font-weight: 600;
+    line-height: 1.4;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: #5d6b7a;
+    color: var(--jxg-text-muted);
+}
+
+nav details[open] > summary {
+    border-radius: 0.6rem 0.6rem 0 0;
+    border-radius: var(--jxg-radius) var(--jxg-radius) 0 0;
+    border-bottom: 1px solid #d7e0e8;
+    border-bottom: 1px solid var(--jxg-border);
+    margin-bottom: .5rem;
+}
+
+nav summary:hover {
+    background-color: #e4f1f8;
+    background-color: var(--jxg-accent-soft);
+    color: #10427c;
+    color: var(--jxg-primary);
+}
+
+/* Nested groups: no box. The class may sit on the <details> or on the
+   <summary> - both cases are covered. */
+nav .nav_element_class,
+nav details:has(> summary.nav_element_class) {
+    margin: .1rem 0;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background-color: transparent;
+}
+
+nav .nav_element_class[open],
+nav details[open]:has(> summary.nav_element_class) {
+    padding-bottom: 0;
+}
+
+/* ... but set noticeably stronger than the plain entries: primary colour,
+   semibold, and a hairline below. */
+nav .nav_element_class > summary,
+nav summary.nav_element_class {
+    margin: .5rem -.5rem .1rem 0;
+    padding: .3rem 1.9rem .25rem .55rem;
+    background-color: transparent;
+    border-radius: 0;
+    border-bottom: 0;
+    /* The separator is a background image rather than a border: that way it
+       can be inset equally on both sides without moving the box - and with it
+       the plus circle. */
+    background-image: -webkit-linear-gradient(#d7e0e8, #d7e0e8);
+    background-image: linear-gradient(#d7e0e8, #d7e0e8);
+    background-image: linear-gradient(var(--jxg-border), var(--jxg-border));
+    background-size: calc(100% - .85rem) 1px;
+    background-position: .25rem 100%;
+    background-repeat: no-repeat;
+    font-family: 'Fira Sans', 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-family: var(--jxg-font-sans);
+    font-size: 0.875rem;
+    font-size: var(--jxg-fs-small);
+    font-weight: 600;
+    line-height: 1.45;
+    letter-spacing: 0;
+    text-transform: none;
+    color: #10427c;
+    color: var(--jxg-primary);
+}
+
+nav .nav_element_class[open] > summary,
+nav details[open] > summary.nav_element_class {
+    border-radius: 0;
+    border-bottom: 0;
+    margin-bottom: .1rem;
+}
+
+nav .nav_element_class > summary:hover,
+nav summary.nav_element_class:hover {
+    background-color: #e4f1f8;
+    background-color: var(--jxg-accent-soft);
+    background-image: -webkit-linear-gradient(#aedcef, #aedcef);
+    background-image: linear-gradient(#aedcef, #aedcef);
+    background-image: linear-gradient(var(--jxg-accent), var(--jxg-accent));
+    color: #08648f;
+    color: var(--jxg-secondary);
+}
+
+/* Indent nested groups and their entries */
+nav details details {
+    margin-left: .6rem;
+}
+
+nav details details ul a,
+nav details details ul a:active {
+    padding-left: .95rem;
+}
+
+/* Marker: the same circle as in the main area. Size and position are given
+   in rem rather than em so that the differing font sizes of the two levels
+   do not scale it - all circles end up identical.
+   Thanks to their negative side margins both levels reach the group border,
+   so a single value is enough: the circles line up vertically and keep the
+   same distance to the right as to the top and bottom. */
+nav summary::after {
+    right: .53rem;
+    width: 1.15rem;
+    height: 1.15rem;
+    background-size: .55rem 1px;
+}
+
+nav summary::before {
+    right: .83rem;
+    width: .55rem;
+    height: 1px;
+}
+
+/* --------------------------------------------------------------------------
+   8. Footer
+   -------------------------------------------------------------------------- */
+footer {
+    color: #5d6b7a;
+    color: var(--jxg-text-muted);
+    margin-left: 17.5rem;
+    margin-left: var(--jxg-nav-width);
+    display: block;
+    padding: 1.25rem 2.5rem;
+    padding: 1.25rem var(--jxg-gutter);
+    border-top: 1px solid #d7e0e8;
+    border-top: 1px solid var(--jxg-border);
+    background: #f3f6f8;
+    background: var(--jxg-bg-subtle);
+    font-style: normal;
+    font-size: 0.875rem;
+    font-size: var(--jxg-fs-small);
+}
+
+/* --------------------------------------------------------------------------
+   9. Signatures and type annotations
+   -------------------------------------------------------------------------- */
+/* "opt" / "nullable" following a parameter name. Superscript instead of
+   italic and glued on, otherwise "startopt" reads as a single word.
+   line-height: 0 keeps the line height of the signature unchanged. */
+.signature-attributes {
+    font-size: .7em;
+    font-style: normal;
+    font-weight: 400;
+    vertical-align: super;
+    line-height: 0;
+    margin-left: .15em;
+    color: #08648f;
+    color: var(--jxg-secondary);
+}
+
+.type-signature {
+    color: #08648f;
+    color: var(--jxg-secondary);
+    font-weight: 400;
+}
+
+.type-signature:last-child {
+    color: #5d6b7a;
+    color: var(--jxg-text-muted);
+}
+
+.name, span.signature {
+    font-family: 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-family: var(--jxg-font-mono);
+}
+
+/* Like .signature but in its own colour - for the parameters inside a
+   signature and for the same names in the parameter table below.
+   The second selector is required because .name code from the table rule
+   would otherwise be more specific. */
+.signature-param,
+.name code.signature-param {
+    font-family: 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-family: var(--jxg-font-mono);
+    font-size: 1em;
+    font-weight: 600;
+    color: #9c4221;
+    color: var(--jxg-param);
+}
+
+/* Signature blocks in the usage section: no box, just flat rows separated
+   by a hairline. */
+details.signature {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-bottom: 1px solid #d7e0e8;
+    border-bottom: 1px solid var(--jxg-border);
+    border-radius: 0;
+    background-color: transparent;
+}
+
+details.signature:last-of-type {
+    border-bottom: 0;
+}
+
+details.signature[open] {
+    padding: 0 0 .9rem .9rem;
+}
+
+summary .signature {
+    color: inherit;
+}
+
+summary.signature {
+    position: relative;
+    top: auto;
+    z-index: auto;
+    background-color: transparent;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    margin: 0;
+    padding: .6rem 1.2rem .6rem .1rem;
+    font-family: 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-family: var(--jxg-font-mono);
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+    color: #10427c;
+    color: var(--jxg-primary);
+}
+
+summary.signature:hover {
+    background-color: transparent;
+    color: #08648f;
+    color: var(--jxg-secondary);
+}
+
+/* Element type inside the signature, i.e. the name in board.create('...') */
+.signature-element {
+    font-family: 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-family: var(--jxg-font-mono);
+    font-size: 1em;
+    font-weight: 600;
+    color: #0b7a5a;
+    color: var(--jxg-element);
+}
+
+summary.signature:hover .signature-param {
+    color: #9c4221;
+    color: var(--jxg-param);
+}
+
+summary.signature:hover .signature-element {
+    color: #0b7a5a;
+    color: var(--jxg-element);
+}
+
+/* The content is indented via the padding of the details element; the
+   header pulls that indent back with a negative margin, so it stays in the
+   same place in both states. */
+details.signature[open] > summary {
+    border-radius: 0;
+    border-bottom: 0;
+    margin: 0 0 .6rem -.9rem;
+}
+
+/* Marker: the size comes from the base rule, only the border is quieter.
+   The signature rows end 1.1rem further in than the header of the usage box
+   (its padding). To line the circles of both levels up exactly, the inner
+   one sticks out by precisely that amount - hence the negative value. */
+summary.signature::after {
+    right: -.4rem;
+    border-color: #d7e0e8;
+    border-color: var(--jxg-border);
+}
+
+summary.signature::before {
+    right: -.1rem;
+}
+
+/* --------------------------------------------------------------------------
+   9b. Page header and trailing block of the container structure
+   -------------------------------------------------------------------------- */
+
+/* Page header: the same box as the trailing block at the end of the article */
+.container-section-header {
+    margin: 0 0 1.5rem;
+    padding: 0.9rem;
+    border: 1px solid #d7e0e8;
+    border: 1px solid var(--jxg-border);
+    border-radius: 0.6rem;
+    border-radius: var(--jxg-radius);
+    background-color: #ffffff;
+    background-color: var(--jxg-bg);
+}
+
+.container-section-header > :first-child,
+.container-section-header h2 {
+    margin-top: 0;
+}
+
+.container-section-header > :last-child,
+.container-section-header .class-description {
+    margin-bottom: 0;
+}
+
+.container-section-header .class-description > :last-child {
+    margin-bottom: 0;
+}
+
+/* "Element" / "Class" in front of the page title: a pill-shaped badge.
+   The template now emits .container-main-type consistently; .main-type is
+   kept so that already generated pages still look right. */
+.main-type,
+.container-main-type {
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: .45em;
+    padding: .2em .8em;
+    border: 1px solid #d7e0e8;
+    border: 1px solid var(--jxg-border);
+    border-radius: 999px;
+    background-color: #f3f6f8;
+    background-color: var(--jxg-bg-subtle);
+    color: #5d6b7a;
+    color: var(--jxg-text-muted);
+    font-family: 'Fira Sans', 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-family: var(--jxg-font-sans);
+    font-size: 0.8rem;
+    font-size: var(--jxg-fs-tiny);
+    font-weight: 600;
+    line-height: 1.6;
+    letter-spacing: .02em;
+    white-space: nowrap;
+}
+
+/* Trailing block of the article (Throws, Extends, Parameters ...):
+   the same box as the detail tables above. */
+.container-article-other {
+    margin: 1.75rem 0 0;
+    padding: 0.9rem;
+    border: 1px solid #d7e0e8;
+    border: 1px solid var(--jxg-border);
+    border-radius: 0.6rem;
+    border-radius: var(--jxg-radius);
+    background-color: #ffffff;
+    background-color: var(--jxg-bg);
+}
+
+/* "Throws", "Extends", "Parameters" in here are proper section headings,
+   not labels - so they use the style and size of the summary headers
+   above them. */
+.container-article-other h3,
+.container-article-other .container-overview h3 {
+    font-family: 'Fira Sans', 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-family: var(--jxg-font-head);
+    font-size: 1.05rem;
+    font-weight: 600;
+    line-height: 1.4;
+    letter-spacing: 0;
+    text-transform: none;
+    color: #10427c;
+    color: var(--jxg-primary);
+    /* No top margin: inside the trailing block the spacing comes entirely from
+       the bottom margins of the preceding part. Keeping it here would beat the
+       reset below on specificity, since that rule matches through the
+       universal selector. */
+    margin: 0 0 .5em;
+}
+
+/* Uniform rhythm inside the trailing block: no top margins at all, the
+   spacing comes from the bottom margins alone, and the last part has none.
+
+   The nesting varies with the page. "Extends", "See" and "Requires" are
+   direct children of .container-article-other, while "Throws" and the
+   parameter tables sit two or three levels down inside .container-overview
+   and .container-method - hence the three selector levels. The deepest one
+   also has to out-specify the heading rule further down, which sets its top
+   margin through the margin shorthand. */
+.container-article-other > *,
+.container-article-other .container-overview > *,
+.container-article-other .container-overview .container-method > * {
+    margin-top: 0;
+}
+
+.container-article-other > :last-child,
+.container-article-other > :last-child > :last-child,
+.container-article-other > :last-child > :last-child > :last-child {
+    margin-bottom: 0;
+}
+
+/* method.tmpl always emits its wrapper, even when there is nothing to show.
+   An empty one would still contribute its margin. */
+.container-article-other .container-method:not(:has(*)) {
+    display: none;
+}
+
+/* On some pages the wrapper stays empty - do not leave an empty box behind. */
+.container-article-other:not(:has(h3, h4, table, p)) {
+    display: none;
+}
+
+.details:not(:has(dt)) {
+    display: none;
+}
+
+/* --------------------------------------------------------------------------
+   9c. Method entries
+
+   One box per entry. The .container-method wrapper comes from method.tmpl -
+   a method entry is a run of sibling elements (signature, description,
+   parameter table, examples, return value), and CSS cannot enclose a run of
+   siblings. The signature heading sits flush inside it as the header row,
+   the same construction as the page header and the usage section.
+   -------------------------------------------------------------------------- */
+.container-method {
+    margin: 1.5em 0;
+    padding: 0 1.1rem 1.1rem;
+    border: 1px solid #d7e0e8;
+    border: 1px solid var(--jxg-border);
+    border-radius: 0.6rem;
+    border-radius: var(--jxg-radius);
+    background-color: #ffffff;
+    background-color: var(--jxg-bg);
+}
+
+.container-method h4.name {
+    margin: 0 -1.1rem 1.1rem;
+    border-width: 0 0 1px;
+    border-radius: 0.6rem 0.6rem 0 0;
+    border-radius: var(--jxg-radius) var(--jxg-radius) 0 0;
+    box-shadow: none;
+}
+
+.container-method > :last-child {
+    margin-bottom: 0;
+}
+
+/* At the end of an article the same partial is rendered inside
+   .container-article-other, which already draws a box. A second frame there
+   would double up, so the wrapper goes flat in that context. */
+.container-article-other .container-method {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background-color: transparent;
+}
+
+/* The type line of an exception needs less room above it than a free-standing
+   type annotation, but it still has to keep its distance to whatever section
+   follows - "Extends" and "See" come right after it on many pages. Where it
+   really is the last thing in the box, the :last-child chain above removes
+   the bottom margin again. */
+.container-article-other .param-type {
+    margin: .4rem 0 1em;
+}
+
+.container-article-other .container-method h4.name {
+    margin: 0 0 .75em;
+    border-width: 1px;
+    border-radius: 0.6rem;
+    border-radius: var(--jxg-radius);
+    box-shadow: 0 1px 2px rgba(16, 66, 124, 0.08);
+    box-shadow: var(--jxg-shadow-sm);
+}
+
+/* --------------------------------------------------------------------------
+   9d. Home page (readme)
+
+   The start page has no h1.page-title - its content comes straight from the
+   markdown file. These rules give its headings the same look as on every
+   other page: the h1 behaves like the page title, the h2 like a section
+   header.
+   -------------------------------------------------------------------------- */
+
+/* docdash emits an empty package section above the readme; its heading would
+   push the sticky title out of place */
+section.package {
+    display: none;
+}
+
+.readme h1 {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+    z-index: 4;
+    font-size: 1.55rem;
+    font-weight: 400;
+    margin: 0 0 .8rem;
+    padding: 1.35rem 0 1.15rem 0;
+    line-height: 1.1;
+    background-color: #ffffff;
+    background-color: var(--jxg-bg);
+    border-bottom: 1px solid #d7e0e8;
+    border-bottom: 1px solid var(--jxg-border);
+}
+
+.readme h2 {
+    font-family: 'Fira Sans', 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-family: var(--jxg-font-head);
+    font-size: 1.05rem;
+    font-weight: 600;
+    line-height: 1.4;
+    margin: 1.5rem 0 .75rem;
+    padding: .45rem .85rem;
+    border: 1px solid #d7e0e8;
+    border: 1px solid var(--jxg-border);
+    border-radius: 0.6rem;
+    border-radius: var(--jxg-radius);
+    background-color: #f3f6f8;
+    background-color: var(--jxg-bg-subtle);
+}
+
+/* the section bars already separate the parts */
+.readme hr {
+    display: none;
+}
+
+.readme article > :last-child {
+    margin-bottom: 0;
+}
+
+/* --------------------------------------------------------------------------
+   10. Detail lists (Description / Type / Source / See / Default ...)
+   -------------------------------------------------------------------------- */
+.details {
+    display: grid;
+    grid-template-columns: max-content minmax(0, 1fr);
+    margin: .75rem 0 1.5rem !important;
+    padding: 0;
+    border: 1px solid #d7e0e8;
+    border: 1px solid var(--jxg-border);
+    border-radius: 0.6rem;
+    border-radius: var(--jxg-radius);
+    box-shadow: 0 1px 2px rgba(16, 66, 124, 0.08);
+    box-shadow: var(--jxg-shadow-sm);
+    background-color: #ffffff;
+    background-color: var(--jxg-bg);
+    overflow: hidden;
+    line-height: 1.6;
+}
+
+/* Label column of the "table" */
+.details dt {
+    width: auto;
+    float: none;
+    padding: .7rem .85rem;
+    border-top: 1px solid #d7e0e8;
+    border-top: 1px solid var(--jxg-border);
+    background-color: #ffffff;
+    background-color: var(--jxg-bg);
+    color: #5d6b7a;
+    color: var(--jxg-text-muted);
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.details dd {
+    margin: 0;
+    min-width: 0;
+    padding: .7rem .85rem;
+    border-top: 1px solid #d7e0e8;
+    border-top: 1px solid var(--jxg-border);
+    color: #1d2733;
+    color: var(--jxg-text);
+}
+
+/* Values that would appear verbatim in source code are set in monospace:
+   default values (false, null, 0, '#0000ff') and overridden members. Source
+   and See stay in the body font - they hold sometimes an identifier and
+   sometimes a sentence, and the link already carries the emphasis. */
+.details dd.tag-default,
+.details dd.tag-overrides {
+    font-family: 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-family: var(--jxg-font-mono);
+}
+
+/* first row without a separator, otherwise it doubles up with the border */
+.details dt:first-of-type,
+.details dd:first-of-type {
+    border-top: 0;
+}
+
+/*
+.details ul {
+  margin: 0;
+}
+
+.details ul {
+  list-style-type: none;
+  padding-left: 0;
+}
+*/
+
+.details li {
+    list-style-type: disc;
+    margin-left: 1.1rem;
+}
+
+.details pre.prettyprint {
+    margin: 0;
+}
+
+.details .object-value {
+    padding-top: 0;
+}
+
+.details p:first-child {
+    margin-top: 0;
+}
+
+.details p:last-child {
+    margin-bottom: 0;
+}
+
+/* --------------------------------------------------------------------------
+   11. Examples and source code
+   -------------------------------------------------------------------------- */
+.code-caption {
+    font-style: normal;
+    font-size: 0.875rem;
+    font-size: var(--jxg-fs-small);
+    font-weight: 600;
+    color: #5d6b7a;
+    color: var(--jxg-text-muted);
+    margin: 1.25em 0 .4em;
+}
+
+.prettyprint {
+    font-size: 0.875rem;
+    font-size: var(--jxg-fs-small);
+    overflow: auto;
+    border: 1px solid #d7e0e8;
+    border: 1px solid var(--jxg-border);
+    border-radius: 0.6rem;
+    border-radius: var(--jxg-radius);
+    background: #f5f8fa;
+    background: var(--jxg-code-bg);
+    box-shadow: none;
+    margin: 0 0 1.25em;
+    max-width: 100%;
+    tab-size: 4;
+    scrollbar-width: thin;
+    scrollbar-color: #b6c6d4 transparent;
+    scrollbar-color: var(--jxg-border-strong) transparent;
+}
+
+/* discreet scrollbars for code blocks and the navigation (WebKit/Blink) */
+.prettyprint::-webkit-scrollbar,
+nav::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+.prettyprint::-webkit-scrollbar-track,
+nav::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.prettyprint::-webkit-scrollbar-thumb,
+nav::-webkit-scrollbar-thumb {
+    background-color: #b6c6d4;
+    background-color: var(--jxg-border-strong);
+    border-radius: 999px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+}
+
+.prettyprint::-webkit-scrollbar-thumb:hover,
+nav::-webkit-scrollbar-thumb:hover {
+    background-color: #5d6b7a;
+    background-color: var(--jxg-text-muted);
+    background-clip: padding-box;
+}
+
+.prettyprint.source {
+    width: inherit;
+    line-height: 1.55;
+    display: block;
+    background-color: #f5f8fa;
+    background-color: var(--jxg-code-bg);
+    color: #24303d;
+    color: var(--jxg-code-fg);
+}
+
+.prettyprint code {
+    line-height: 1.55;
+    display: block;
+    background-color: #f5f8fa;
+    background-color: var(--jxg-code-bg);
+    color: #24303d;
+    color: var(--jxg-code-fg);
+    padding: 0;
+    border-radius: 0;
+}
+
+.prettyprint > code {
+    padding: 1rem 1.1rem;
+}
+
+.prettyprint .linenums code {
+    padding: 0 1rem;
+}
+
+.prettyprint .linenums li:first-of-type code {
+    padding-top: 1rem;
+}
+
+.prettyprint code span.line {
+    display: inline-block;
+}
+
+.prettyprint.linenums {
+    padding-left: 3.5em;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.prettyprint.linenums ol {
+    padding-left: 0;
+    margin: 0;
+}
+
+.prettyprint.linenums li {
+    border-left: 3px solid #dce5ee;
+    border-left: 3px solid var(--jxg-code-gutter);
+    color: #5d6b7a;
+    color: var(--jxg-text-muted);
+}
+
+.prettyprint.linenums li.selected,
+.prettyprint.linenums li.selected * {
+    background-color: #dce5ee;
+    background-color: var(--jxg-code-gutter);
+}
+
+.prettyprint.linenums li * {
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
+}
+
+.prettyprint.linenums li code:empty:after {
+    content: "";
+    display: inline-block;
+    width: 0;
+}
+
+/* --------------------------------------------------------------------------
+   Copy button on code blocks.
+
+   The .code-wrap wrapper and the button itself are created by
+   scripts/copycode.js - .prettyprint scrolls horizontally, so a button
+   placed inside it would scroll away with the content.
+
+   The button is always visible rather than appearing on hover: on touch
+   devices there is no hover state, so a hidden control would be unreachable.
+   It carries two inline SVG icons, sheets and a check mark; only one of them
+   is shown at a time. Both are stroked in currentColor, so they follow the
+   button colour without extra rules.
+   -------------------------------------------------------------------------- */
+.code-wrap {
+    position: relative;
+    margin: 0 0 1.25em;
+}
+
+.code-wrap .prettyprint {
+    margin: 0;
+}
+
+.copy-button {
+    position: absolute;
+    top: .4rem;
+    right: .4rem;
+    z-index: 1;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    width: 1.9rem;
+    height: 1.9rem;
+    padding: 0;
+    border: 1px solid #d7e0e8;
+    border: 1px solid var(--jxg-border);
+    border-radius: 0.6rem;
+    border-radius: var(--jxg-radius);
+    background-color: #ffffff;
+    background-color: var(--jxg-bg);
+    color: #5d6b7a;
+    color: var(--jxg-text-muted);
+    cursor: pointer;
+    transition: color .15s ease, border-color .15s ease, background-color .15s ease;
+}
+
+.copy-button svg {
+    width: .95rem;
+    height: .95rem;
+    display: block;
+}
+
+.copy-button .copy-icon-done {
+    display: none;
+}
+
+.copy-button:hover {
+    color: #08648f;
+    color: var(--jxg-secondary);
+    border-color: #08648f;
+    border-color: var(--jxg-secondary);
+}
+
+.copy-button.is-done {
+    color: #0b7a5a;
+    color: var(--jxg-element);
+    border-color: #0b7a5a;
+    border-color: var(--jxg-element);
+}
+
+.copy-button.is-done .copy-icon-copy {
+    display: none;
+}
+
+.copy-button.is-done .copy-icon-done {
+    display: block;
+}
+
+/* Clipboard access refused - the title attribute explains what to do */
+.copy-button.is-failed {
+    color: #a3231b;
+    color: var(--jxg-danger);
+    border-color: #a3231b;
+    border-color: var(--jxg-danger);
+}
+
+/* --------------------------------------------------------------------------
+   Bring embedded JSXGraph constructions in line with the code blocks.
+   Width and height stay at the values from the style attribute, so the
+   construction is not stretched; max-width only prevents overflow on narrow
+   screens.
+   Since jsxgraph.css is loaded BEFORE jsdoc.css in the <head> and the inline
+   .jxgbox { margin: auto } block has been removed from the layout, the normal
+   cascade is enough - !important is no longer needed here.
+   JSXGraph reads the border-radius and clips the SVG accordingly.
+   -------------------------------------------------------------------------- */
+.jxgbox {
+    max-width: 100%;
+    margin: 1.25em auto;
+    border: 1px solid #d7e0e8;
+    border: 1px solid var(--jxg-border);
+    border-radius: 0.6rem;
+    border-radius: var(--jxg-radius);
+    background-color: #ffffff;
+}
+
+/* --------------------------------------------------------------------------
+   Syntax colours for the light code scheme.
+   These classes come from styles/prettify.css, which is built for a dark
+   background. jsdoc.css is loaded later and overrides them. To keep the
+   separation clean, this block can be moved into prettify.css - nothing
+   changes in terms of output.
+   -------------------------------------------------------------------------- */
+.pln {
+    color: #24303d;
+    color: var(--jxg-code-fg);
+}
+
+.str, .atv {
+    color: #0b7a5a;
+}
+
+.kwd, .tag {
+    color: #10427c;
+    color: var(--jxg-primary);
+    font-weight: 600;
+}
+
+.com {
+    color: #7b8a99;
+    font-style: italic;
+}
+
+.typ, .fun {
+    color: #08648f;
+    color: var(--jxg-secondary);
+}
+
+.lit, .dec, .var {
+    color: #9c4221;
+}
+
+.pun, .opn, .clo {
+    color: #5d6b7a;
+    color: var(--jxg-text-muted);
+}
+
+.atn {
+    color: #9c4221;
+}
+
+/* --------------------------------------------------------------------------
+   12. Tables (parameters, properties)
+   -------------------------------------------------------------------------- */
+table {
+    border-spacing: 0;
+    border: 1px solid #d7e0e8;
+    border: 1px solid var(--jxg-border);
+    border-collapse: separate;
+    border-radius: 0.6rem;
+    border-radius: var(--jxg-radius);
+    box-shadow: 0 1px 2px rgba(16, 66, 124, 0.08);
+    box-shadow: var(--jxg-shadow-sm);
+    overflow: hidden;
+    width: 100%;
+    margin: 1em 0 1.5em;
+    background: #ffffff;
+    background: var(--jxg-bg);
+}
+
+td, th {
+    margin: 0;
+    text-align: left;
+    vertical-align: top;
+    padding: .7rem .85rem;
+    display: table-cell;
+}
+
+th {
+    padding-top: .4rem;
+    padding-bottom: .4rem;
+}
+
+thead tr, thead tr {
+    background-color: #f3f6f8;
+    background-color: var(--jxg-bg-subtle);
+    color: #5d6b7a;
+    color: var(--jxg-text-muted);
+    font-weight: 600;
+    border-bottom: 1px solid #d7e0e8;
+    border-bottom: 1px solid var(--jxg-border);
+}
+
+.params .type {
+    white-space: nowrap;
+}
+
+.params code {
+    white-space: pre;
+    background: transparent;
+    padding: 0;
+}
+
+.params td, .params .name, .props .name, .name code {
+    color: #1d2733;
+    color: var(--jxg-text);
+    font-family: 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-family: var(--jxg-font-mono);
+}
+
+.params td {
+    border-top: 1px solid #d7e0e8;
+    border-top: 1px solid var(--jxg-border);
+}
+
+.params td.description > p:first-child,
+.props td.description > p:first-child {
+    margin-top: 0;
+    padding-top: 0;
+}
+
+.params td.description > p:last-child,
+.props td.description > p:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    font-family: 'Fira Sans', 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-family: var(--jxg-font-sans);
+}
+
+span.param-type, .params td .param-type, .param-type dd {
+    color: #08648f;
+    color: var(--jxg-secondary);
+    font-family: 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-family: var(--jxg-font-mono);
+}
+
+.param-type dt, .param-type dd {
+    display: inline-block;
+}
+
+.param-type {
+    margin: .75rem 0;
+}
+
+/* --------------------------------------------------------------------------
+   13. Mobile navigation (burger button, overlay)
+   -------------------------------------------------------------------------- */
+.navicon-button {
+    display: none;
+    position: relative;
+    align-items: center;
+    justify-content: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    padding: 0;
+    background: #10427c;
+    background: var(--jxg-primary);
+    border-radius: 0.7rem 0 0.7rem 0;
+    border-radius: var(--jxg-radius-brand);
+    box-shadow: 0 2px 10px rgba(16, 66, 124, 0.10);
+    box-shadow: var(--jxg-shadow);
+    transition: .25s;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    opacity: .95;
+}
+
+.navicon-button .navicon:before,
+.navicon-button .navicon:after {
+    transition: .25s;
+}
+
+.navicon-button:hover {
+    transition: .3s;
+    opacity: 1;
+    background: #2a6bb5;
+    background: var(--jxg-primary-light);
+}
+
+.navicon-button:hover .navicon:before,
+.navicon-button:hover .navicon:after {
+    transition: .25s;
+}
+
+.navicon-button:hover .navicon:before {
+    top: .5rem;
+}
+
+.navicon-button:hover .navicon:after {
+    top: -.5rem;
+}
+
+.navicon {
+    position: relative;
+    width: 1.4rem;
+    height: 2px;
+    background: #ffffff;
+    background: var(--jxg-text-invert);
+    transition: .3s;
+    border-radius: 2px;
+}
+
+.navicon:before, .navicon:after {
+    display: block;
+    content: "";
+    height: 2px;
+    width: 1.4rem;
+    background: #ffffff;
+    background: var(--jxg-text-invert);
+    position: absolute;
+    z-index: 1;
+    transition: .3s .2s;
+    border-radius: 2px;
+}
+
+.navicon:before {
+    top: .42rem;
+}
+
+.navicon:after {
+    top: -.42rem;
+}
+
+/* open state */
+.nav-trigger:checked + label:not(.steps) .navicon:before,
+.nav-trigger:checked + label:not(.steps) .navicon:after {
+    top: 0 !important;
+}
+
+.nav-trigger:checked + label .navicon:before,
+.nav-trigger:checked + label .navicon:after {
+    transition: .4s;
+}
+
+.nav-trigger:checked + label {
+    -webkit-transform: scale(.9);
+    transform: scale(.9);
+}
+
+.nav-trigger:checked + label.plus .navicon,
+.nav-trigger:checked + label.x .navicon {
+    background: transparent;
+}
+
+.nav-trigger:checked + label.plus .navicon:before,
+.nav-trigger:checked + label.x .navicon:before {
+    -webkit-transform: rotate(-45deg);
+    transform: rotate(-45deg);
+    background: #ffffff;
+    background: var(--jxg-text-invert);
+}
+
+.nav-trigger:checked + label.plus .navicon:after,
+.nav-trigger:checked + label.x .navicon:after {
+    -webkit-transform: rotate(45deg);
+    transform: rotate(45deg);
+    background: #ffffff;
+    background: var(--jxg-text-invert);
+}
+
+.nav-trigger:checked + label.plus {
+    -webkit-transform: scale(.9) rotate(45deg);
+    transform: scale(.9) rotate(45deg);
+}
+
+.nav-trigger:checked ~ nav {
+    left: 0 !important;
+    box-shadow: 0 10px 30px rgba(16, 66, 124, 0.18);
+    box-shadow: var(--jxg-shadow-lg);
+}
+
+.nav-trigger:checked ~ .overlay {
+    display: block;
+}
+
+.nav-trigger {
+    position: fixed;
+    top: 0;
+    clip: rect(0, 0, 0, 0);
+}
+
+.overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(10, 44, 84, .45);
+    -webkit-backdrop-filter: blur(2px);
+    backdrop-filter: blur(2px);
+    z-index: 3;
+}
+
+/* search mode of the navigation */
+.level-hide {
+    display: none;
+}
+
+html[data-search-mode] .level-hide {
+    display: block;
+}
+
+/* --------------------------------------------------------------------------
+   14. Collapsible sections (Attributes / Members / Methods)
+   -------------------------------------------------------------------------- */
+details {
+    margin: 1.5rem 0;
+    padding: 0 1.1rem;
+    border: 1px solid #d7e0e8;
+    border: 1px solid var(--jxg-border);
+    border-radius: 0.6rem;
+    border-radius: var(--jxg-radius);
+    background-color: #ffffff;
+    background-color: var(--jxg-bg);
+}
+
+details[open] {
+    padding-bottom: 1.1rem;
+}
+
+summary {
+    font-family: 'Fira Sans', 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-family: var(--jxg-font-head);
+    color: #10427c;
+    color: var(--jxg-primary);
+    background-color: #f3f6f8;
+    background-color: var(--jxg-bg-subtle);
+    border: 0;
+    border-radius: 0.6rem;
+    border-radius: var(--jxg-radius);
+    font-weight: 600;
+    font-size: 1.05rem;
+    line-height: 1.4;
+    padding: .45rem 2.3rem .45rem .85rem;
+    margin: 0 -1.1rem;
+    position: -webkit-sticky;
+    position: sticky;
+    /* Just below the bottom edge of the page title, deliberately a few
+       hundredths above it: the title has the higher z-index and covers the
+       overlap. At exactly the same value, rounding to device pixels would
+       leave a hairline gap for text to scroll through. */
+    top: 4.15rem;
+    z-index: 2;
+    cursor: pointer;
+    transition: background-color .15s ease, border-color .15s ease, color .15s ease;
+    list-style: none;
+}
+
+summary:hover {
+    background-color: #e4f1f8;
+    background-color: var(--jxg-accent-soft);
+}
+
+/* open: the header merges with the box below it */
+details[open] > summary {
+    border-radius: 0.6rem 0.6rem 0 0;
+    border-radius: var(--jxg-radius) var(--jxg-radius) 0 0;
+    border-bottom: 1px solid #d7e0e8;
+    border-bottom: 1px solid var(--jxg-border);
+    margin-bottom: 1.1rem;
+}
+
+/* hide the default disclosure triangle (WebKit/Blink and Gecko) */
+summary::-webkit-details-marker {
+    display: none;
+}
+
+summary::marker {
+    content: "";
+}
+
+/* ... and replace it on the right with a plus inside a circle whose
+   vertical bar rotates into the horizontal when opened (like the burger
+   menu). ::after = circle plus horizontal bar, ::before = rotating bar. */
+summary::after {
+    content: "";
+    box-sizing: border-box;
+    position: absolute;
+    right: .7rem;
+    top: 50%;
+    -webkit-transform: translateY(-50%);
+    transform: translateY(-50%);
+    width: 1.15rem;
+    height: 1.15rem;
+    border: 1px solid #d7e0e8;
+    border: 1px solid var(--jxg-border);
+    border-radius: 50%;
+    background-color: transparent;
+    background-image: -webkit-linear-gradient(currentColor, currentColor);
+    background-image: linear-gradient(currentColor, currentColor);
+    background-size: .55rem 1px;
+    background-position: center;
+    background-repeat: no-repeat;
+    color: #5d6b7a;
+    color: var(--jxg-text-muted);
+    z-index: 0;
+    transition: background-color .2s ease, border-color .2s ease, color .2s ease;
+}
+
+summary::before {
+    content: "";
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    width: .55rem;
+    height: 1px;
+    border-radius: 0;
+    background-color: #5d6b7a;
+    background-color: var(--jxg-text-muted);
+    -webkit-transform: translateY(-50%) rotate(90deg);
+    transform: translateY(-50%) rotate(90deg);
+    z-index: 1;
+    transition: -webkit-transform .25s ease, transform .25s ease, background-color .2s ease;
+}
+
+details[open] > summary::before {
+    -webkit-transform: translateY(-50%) rotate(0deg);
+    transform: translateY(-50%) rotate(0deg);
+}
+
+summary:hover::after {
+    border-color: #08648f;
+    border-color: var(--jxg-secondary);
+    background-color: transparent;
+    color: #08648f;
+    color: var(--jxg-secondary);
+}
+
+summary:hover::before {
+    background-color: #08648f;
+    background-color: var(--jxg-secondary);
+}
+
+/* --------------------------------------------------------------------------
+   15. Multi-column index lists (attributes, members, methods)
+   -------------------------------------------------------------------------- */
+.list_container {
+    max-width: 100%;
+    overflow: hidden;
+    column-width: 13rem;
+    column-gap: 2rem;
+    column-rule: 1px solid #d7e0e8;
+    column-rule: 1px solid var(--jxg-border);
+    margin-bottom: 1.75rem;
+}
+
+.columntext {
+    width: auto;
+    max-width: 100%;
+    margin: 0;
+    padding: .15rem 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-family: 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-family: var(--jxg-font-mono);
+    -webkit-column-break-inside: avoid;
+    break-inside: avoid;
+}
+
+/* Placeholder shown when an "Own" or "Inherited" list has no entries */
+.columntext.no-items {
+    font-family: 'Fira Sans', 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-family: var(--jxg-font-sans);
+    font-style: italic;
+    color: #5d6b7a;
+    color: var(--jxg-text-muted);
+}
+
+/* hash in front of static members in the navigation */
+[data-type="member"] a::before {
+    content: '#';
+    display: inline-block;
+    margin-right: .3rem;
+    color: #5d6b7a;
+    color: var(--jxg-text-muted);
+}
+
+#disqus_thread {
+    margin-left: 0;
+    margin-top: 2rem;
+}
+
+/* --------------------------------------------------------------------------
+   16. Responsiveness
+   -------------------------------------------------------------------------- */
+
+/* Large screens: a little more room and a larger base font */
+@media only screen and (min-width: 1600px) {
+    :root {
+        --jxg-nav-width: 19rem;
+        --jxg-fs-base: 1.05rem;
+    }
+}
+
+/* Smaller desktops and landscape tablets: narrower sidebar */
+@media only screen and (max-width: 1100px) {
+    :root {
+        --jxg-nav-width: 14.5rem;
+    }
+}
+
+/* Portrait tablets and phones: the sidebar becomes an off-canvas menu */
+@media only screen and (max-width: 880px) {
+    body {
+        overflow-x: hidden;
+        overflow-x: clip;
+    }
+
+    nav {
+        background: #f3f6f8;
+        background: var(--jxg-bg-subtle);
+        width: min(20rem, 85vw);
+        height: 100%;
+        position: fixed;
+        top: 0;
+        right: auto;
+        bottom: 0;
+        left: -100%;
+        z-index: 5;
+        padding: 1rem;
+        transition: left .25s ease;
+    }
+
+    .navicon-button {
+        display: inline-flex;
+        position: fixed;
+        top: 1rem;
+        right: 1rem;
+        z-index: 6;
+    }
+
+    #main {
+        width: 100%;
+        margin-left: 0;
+        padding: 0 1.1rem 3rem;
+    }
+
+    #main h1.page-title {
+        margin: 0 3.5rem .9rem 0;
+    }
+
+    h1,
+    h1.page-title {
+        font-size: 1.6rem;
+    }
+
+    summary {
+        top: 4.1rem;
+    }
+
+    h2 {
+        font-size: 1.35rem;
+    }
+
+    h3,
+    summary {
+        font-size: 1rem;
+    }
+
+    #main section {
+        padding: 0;
+    }
+
+    footer {
+        margin-left: 0;
+    }
+
+    /* label on its own line above the value */
+    .details {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .details dt {
+        white-space: normal;
+        padding: .45rem .75rem;
+    }
+
+    .details dd {
+        border-top: 0;
+        padding: .7rem .75rem;
+    }
+
+    /* Tables stay tables and wrap.
+       display: block would be wrong here: the row groups then get an anonymous
+       table as their parent box, which shrinks to fit its content - leaving
+       half the width empty on the right. */
+    table {
+        display: table;
+        width: 100%;
+    }
+
+    td, th {
+        overflow-wrap: anywhere;
+        word-break: break-word;
+    }
+
+    .params .type {
+        white-space: normal;
+    }
+
+    h4.name {
+        font-size: 0.875rem;
+        padding: .6em .7em;
+    }
+
+    .prettyprint.linenums {
+        padding-left: 2.8em;
+    }
+
+    .list_container {
+        column-width: 10rem;
+        column-gap: 1.25rem;
+    }
+}
+
+/* Very narrow devices */
+@media only screen and (max-width: 420px) {
+    :root {
+        --jxg-fs-base: .95rem;
+    }
+
+    #main {
+        padding: 0 .85rem 2.5rem;
+    }
+
+    .list_container {
+        column-width: auto;
+        columns: 1;
+        column-rule: none;
+    }
+
+    td, th {
+        padding: .55rem .6rem;
+    }
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        transition: none !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* Print */
+@media print {
+    nav, .navicon-button, .overlay {
+        display: none !important;
+    }
+
+    #main, footer {
+        margin-left: 0;
+        max-width: none;
+    }
+
+    .prettyprint, .prettyprint code, .prettyprint.source {
+        background: #f3f6f8;
+        background: var(--jxg-bg-subtle);
+        color: #1d2733;
+        color: var(--jxg-text);
+    }
+}
+
+/* --------------------------------------------------------------------------
+   16b. Dark colour scheme
+
+   Switched purely by the system setting. Only the tokens are reassigned -
+   not a single building block of the layout changes. The literal values that
+   precede every var() in the rest of the stylesheet are a fallback for
+   environments without custom properties; wherever var() works, the values
+   from here win.
+
+   Two things need special treatment: the syntax colours, which were computed
+   for a light background, and the JSXGraph constructions - those keep their
+   white background, because the library draws axes and labels in dark
+   colours.
+   -------------------------------------------------------------------------- */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --jxg-primary:        #79b8ff;
+        --jxg-primary-dark:   #b8d8ff;
+        --jxg-primary-light:  #9ccbff;
+        --jxg-secondary:      #6ec3e2;
+        --jxg-accent:         #3d7099;
+        --jxg-accent-soft:    #1b3b55;
+
+        --jxg-bg:             #0f1720;
+        --jxg-bg-subtle:      #1a2531;
+        --jxg-bg-inline-code: #1f2c3a;
+        --jxg-code-bg:        #151f2a;
+        --jxg-code-fg:        #d4dee8;
+        --jxg-code-gutter:    #2e4053;
+
+        --jxg-text:           #dce5ef;
+        --jxg-text-muted:     #9aabbd;
+        --jxg-text-invert:    #0f1720;
+        --jxg-param:          #e3a874;
+        --jxg-element:        #86d2a8;
+
+        --jxg-border:         #3a4b5d;
+        --jxg-border-strong:  #586b80;
+        --jxg-danger:         #ef9189;
+
+        --jxg-shadow-sm:      0 1px 2px rgba(0, 0, 0, .40);
+        --jxg-shadow:         0 2px 10px rgba(0, 0, 0, .45);
+        --jxg-shadow-lg:      0 10px 30px rgba(0, 0, 0, .55);
+    }
+
+    /* Syntax colours with enough contrast on a dark background */
+    .str, .atv {
+        color: #86d2a8;
+    }
+
+    .com {
+        color: #8b9bab;
+    }
+
+    .lit, .dec, .var, .atn {
+        color: #e3a874;
+    }
+
+    /* Logo with the light wordmark */
+    nav::before {
+        background-image: url('../images/jsxgraph-api-logo_white-text-solid-250.png');
+        background-image: -webkit-image-set(
+                url('../images/jsxgraph-api-logo_white-text-solid-250.png') 1x,
+                url('../images/jsxgraph-api-logo_white-text-solid-500.png') 2x);
+        background-image: image-set(
+                url('../images/jsxgraph-api-logo_white-text-solid-250.png') 1x,
+                url('../images/jsxgraph-api-logo_white-text-solid-500.png') 2x);
+    }
+
+    /* The scrim over the mobile navigation may be darker */
+    .overlay {
+        background: rgba(0, 0, 0, .55);
+    }
+}
+
+/* --------------------------------------------------------------------------
+   17. Fonts
+
+   Deliberately lean: two families, five files. Headings and body text share
+   Fira Sans and differ only in size, colour and weight - that calms the
+   typography and saves two downloads compared with the earlier version that
+   used Fira Sans Condensed.
+
+     Fira Sans  400, 400 italic, 600   -> fonts/Fira-Sans/
+     Fira Code  400, 600               -> fonts/Fira-Code/
+
+   Source Sans Pro remains as a fallback in the stack. A browser only
+   downloads a fallback font if the preceding one fails, so in normal
+   operation the file costs nothing.
+   -------------------------------------------------------------------------- */
+@font-face {
+    font-family: 'Fira Sans';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url('../fonts/Fira-Sans/FiraSans-Regular.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'Fira Sans';
+    font-style: italic;
+    font-weight: 400;
+    font-display: swap;
+    src: url('../fonts/Fira-Sans/FiraSans-Italic.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'Fira Sans';
+    font-style: normal;
+    font-weight: 600;
+    font-display: swap;
+    src: url('../fonts/Fira-Sans/FiraSans-SemiBold.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'Fira Code';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url('../fonts/Fira-Code/FiraCode-Regular.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'Fira Code';
+    font-style: normal;
+    font-weight: 600;
+    font-display: swap;
+    src: url('../fonts/Fira-Code/FiraCode-SemiBold.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'Source Sans Pro';
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+    src: url('../fonts/Source-Sans-Pro/sourcesanspro-regular-webfont.woff2') format('woff2'),
+    url('../fonts/Source-Sans-Pro/sourcesanspro-regular-webfont.woff') format('woff'),
+    url('../fonts/Source-Sans-Pro/sourcesanspro-regular-webfont.ttf') format('truetype');
+}

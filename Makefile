@@ -40,6 +40,10 @@ JSDOC2TPL=doc/jsdoc-tk/template
 JSDOC2TPLSTAT=$(JSDOC2TPL)/static
 JSDOC2FLAGS=-v -p -t=$(JSDOC2TPL) -d=$(TMP)/docs
 
+# jsdoc4
+JSDOCTPL=doc/jsdoc/templates/docdash-jsxgraph/tmpl
+JSDOCTPLSTAT=doc/jsdoc/templates/docdash-jsxgraph/static
+
 # Flags
 MKDIRFLAGS=-p
 RMFLAGS=-rf
@@ -114,8 +118,9 @@ beta: docs
 	cat COPYRIGHT $(BETA)/jsxgraphcore.js >$(BETA)/tmp.file; mv $(BETA)/tmp.file $(BETA)/jsxgraphcore.js
 	cat COPYRIGHT $(BETA)/jsxgraphcore.mjs >$(BETA)/tmp.file; mv $(BETA)/tmp.file $(BETA)/jsxgraphcore.mjs
 
-docs: core docsonly
+docs: core docs4only
 
+# jsdoc 2 documentation
 docsonly:
 	# Set up tmp dir
 	$(MKDIR) $(MKDIRFLAGS) $(TMP)
@@ -147,6 +152,33 @@ docsonly:
 	# Test
 	$(CD) $(OUTPUT) && $(UNZIP) -o docs.zip
 
+# jsdoc 4 documentation
+docs4only:
+	# Set up tmp dir
+	$(MKDIR) $(MKDIRFLAGS) $(TMP)
+	$(MKDIR) $(MKDIRFLAGS) $(OUTPUT)
+
+	$(CP) $(OUTPUT)/jsxgraphcore.js   $(JSDOCTPLSTAT)/scripts/jsxgraphcore.js
+	$(CP) $(OUTPUT)/jsxgraph.css      $(JSDOCTPLSTAT)/styles/jsxgraph.css
+
+	# Run node-jsdoc4
+	sed -i '3 s/JSXGraph version .*/JSXGraph version $(VERSION), API reference generated '`date +"%Y-%m-%d"`'*/' ./doc/jsdoc/README.md
+	# sed -i '3 s/JSXGraph version .*$/'"$(date)"'/g' ./doc/jsdoc/README.md
+	node_modules/.bin/jsdoc -a all --verbose --pedantic --readme ./doc/jsdoc/README.md -c ./doc/jsdoc/jsdoc.json $(FILELIST)
+
+	# Compress the result: zip -r tmp/docs.zip docs/
+	$(CD) $(TMP) && $(ZIP) $(ZIPFLAGS) docs.zip docs/
+	$(CP) $(TMP)/docs.zip $(OUTPUT)/docs.zip
+	$(RM) $(RMFLAGS) tmp
+
+	# Test
+	$(RM) $(RMFLAGS) $(OUTPUT)/docs
+	$(CD) $(OUTPUT) && $(UNZIP) -o docs.zip
+
+d:
+	sed -i '3 s/JSXGraph version .*/JSXGraph version $(VERSION), API reference generated '`date +"%Y-%m-%d"`'*/' ./doc/jsdoc/README.md
+	node_modules/.bin/jsdoc -a all --verbose --pedantic --readme ./doc/jsdoc/README.md -c ./doc/jsdoc/jsdoc.json $(FILELIST)
+
 # prettier:
 # 	$(PRETTIER) $(PRETTIERFLAGS) src
 
@@ -165,7 +197,7 @@ compressor: core
 
 plot:
 	$(MKDIR) $(MKDIRFLAGS) $(BUILDBIN)
-	$(WEBPACK) --config config/webpack.config.plot.js
+	$(WEBPACK) --verbose --config config/webpack.config.plot.js
 
 hint:
 	$(HINT) $(LINTLIST)

@@ -37,13 +37,13 @@ import Const from "../base/constants.js";
 import Type from "../utils/type.js";
 
 /**
- * Parser helper routines. The methods in here are for parsing expressions in Geonext Syntax.
+ * JXG.GeonextParser namespce with Parser helper routines. The methods in here are for parsing expressions in Geonext syntax.
  * @namespace
  */
 JXG.GeonextParser = {
     /**
-     * Converts expression of the form <i>leftop^rightop</i> into <i>Math.pow(leftop,rightop)</i>.
-     * @param {String} te Expression of the form <i>leftop^rightop</i>
+     * Converts expression of the form `leftop^rightop` into `Math.pow(leftop,rightop)`.
+     * @param {String} te Expression of the form `leftop^rightop`
      * @returns {String} Converted expression.
      */
     replacePow: function (te) {
@@ -146,8 +146,8 @@ JXG.GeonextParser = {
     },
 
     /**
-     * Converts expression of the form <i>If(a,b,c)</i> into <i>(a)?(b):(c)/i>.
-     * @param {String} te Expression of the form <i>If(a,b,c)</i>
+     * Converts expression of the form `If(a,b,c)` into `(a)?(b):(c)`.
+     * @param {String} te Expression of the form `If(a,b,c)`
      * @returns {String} Converted expression.
      */
     replaceIf: function (te) {
@@ -237,7 +237,7 @@ JXG.GeonextParser = {
      * Replace an element's name in terms by an element's id.
      * @param {String} term Term containing names of elements.
      * @param {JXG.Board} board Reference to the board the elements are on.
-     * @param {Boolean} [jc=false] If true, all id's will be surrounded by <tt>$('</tt> and <tt>')</tt>.
+     * @param {Boolean} [jc=false] If true, all id's will be surrounded by `$('` and `')`.
      * @returns {String} The same string with names replaced by ids.
      **/
     replaceNameById: function (term, board, jc) {

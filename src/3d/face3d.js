@@ -34,8 +34,7 @@ import Type from "../utils/type.js";
 import Mat from "../math/math.js";
 
 /**
- * 3D faces
- * @class Creates a new 3D face object. Do not use this constructor to create a 3D curve. Use {@link JXG.View3D#create} with type {@link Face3D} instead.
+ * @class Creates a new 3D face object. 3D faces are part of a {@link JXG.Polyhedron3D}. Do not use this constructor to create a 3D face.
  *
  * @augments JXG.GeometryElement3D
  * @augments JXG.GeometryElement
@@ -357,7 +356,7 @@ JXG.extend(
 
         /**
          * Determines the lightness of the face (in the HSL color scheme).
-         * <p>
+         *
          * Sets the fillColor of the adjoint 2D curve.
          * @name shader
          * @memberOf Face3D
@@ -432,13 +431,15 @@ JXG.extend(
 
 /**
  * @class This element creates a 3D face.
- * @pseudo
- * @description A 3D faces is TODO
+ * This is not a standalone object, but a part of a {@link Polyhedron3D}.
  *
+ * @pseudo
  * @name Face3D
- * @augments Curve
+ * @elementclass 3D
+ * @augments JXG.Curve
  * @constructor
  * @type Object
+ * @private
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
   */
 JXG.createFace3D = function (board, parents, attributes) {

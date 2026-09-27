@@ -42,7 +42,7 @@ import Type from "../utils/type.js";
  * @name JXG.Math.Quadtree
  * @exports Mat.Quadtree as JXG.Math.Quadtree
  * @param {Array} bbox Bounding box of the new quad (sub)tree.
- * @param {Object} config Configuration object. Default value: to {capacity: 10}
+ * @param {Object} config Configuration object. Defaults to `{capacity: 10, pointType: 'coords'}`
  * @param {Object} [parent] Parent object or null if root.
  *
  * @constructor

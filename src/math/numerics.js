@@ -404,7 +404,7 @@ Mat.Numerics = {
      *   return x*x;
      * }
      *
-     * // calculates integral of <tt>f</tt> from 0 to 2.
+     * // calculates integral of `f` from 0 to 2.
      * var area1 = JXG.Math.Numerics.NewtonCotes([0, 2], f);
      *
      * // the same with an anonymous function
@@ -518,7 +518,7 @@ Mat.Numerics = {
      *   return x*x;
      * }
      *
-     * // calculates integral of <tt>f</tt> from 0 to 2.
+     * // calculates integral of `f` from 0 to 2.
      * var area1 = JXG.Math.Numerics.Romberg([0, 2], f);
      *
      * // the same with an anonymous function
@@ -592,7 +592,7 @@ Mat.Numerics = {
      *   return x*x;
      * }
      *
-     * // calculates integral of <tt>f</tt> from 0 to 2.
+     * // calculates integral of `f` from 0 to 2.
      * var area1 = JXG.Math.Numerics.GaussLegendre([0, 2], f);
      *
      * // the same with an anonymous function
@@ -1289,7 +1289,7 @@ Mat.Numerics = {
      *   return x*x;
      * }
      *
-     * // calculates integral of <tt>f</tt> from 0 to 2.
+     * // calculates integral of `f` from 0 to 2.
      * var area1 = JXG.Math.Numerics.Qag([0, 2], f);
      *
      * // the same with an anonymous function
@@ -1573,36 +1573,36 @@ Mat.Numerics = {
      * Compute an intersection of the curves c1 and c2
      * with a generalized Newton method (Newton-Raphson).
      * We want to find values t1, t2 such that
-     * c1(t1) = c2(t2), i.e.
-     * <br>
-     * (c1_x(t1) - c2_x(t2), c1_y(t1) - c2_y(t2)) = (0, 0).
-     * <p>
+     * `c1(t1) = c2(t2)`, i.e.
+     *
+     * `(c1_x(t1) - c2_x(t2), c1_y(t1) - c2_y(t2)) = (0, 0).`
+     *
      * We set
-     * (e, f) := (c1_x(t1) - c2_x(t2), c1_y(t1) - c2_y(t2))
-     * <p>
+     * `(e, f) := (c1_x(t1) - c2_x(t2), c1_y(t1) - c2_y(t2))`
+     *
      * The Jacobian J is defined by
-     * <pre>
+     * ```
      * J = (a, b)
      *     (c, d)
-     * </pre>
+     * ```
      * where
-     * <ul>
-     * <li> a = c1_x'(t1)
-     * <li> b = -c2_x'(t2)
-     * <li> c = c1_y'(t1)
-     * <li> d = -c2_y'(t2)
-     * </ul>
+     *
+     * - a = c1_x'(t1)
+     * - b = -c2_x'(t2)
+     * - c = c1_y'(t1)
+     * - d = -c2_y'(t2)
+     *
      * The inverse J^(-1) of J is equal to
-     * <pre>
+     *
+     * ```
      *  (d, -b) / (ad - bc)
      *  (-c, a) / (ad - bc)
-     * </pre>
+     * ```
      *
-     * Then, (t1new, t2new) := (t1,t2) - J^(-1)*(e,f).
-     * <p>
+     * Then, `(t1new, t2new) := (t1,t2) - J^(-1)*(e,f)`.
      *
-     * @param {JXG.Curve} c1 Curve, Line or Circle
-     * @param {JXG.Curve} c2 Curve, Line or Circle
+     * @param {Curve|Line|Circle} c1 Curve, Line or Circle
+     * @param {Curve|Line|Circle} c2 Curve, Line or Circle
      * @param {Number} t1ini start value for t1
      * @param {Number} t2ini start value for t2
      * @returns {JXG.Coords} intersection point
@@ -1661,12 +1661,12 @@ Mat.Numerics = {
      * Apply damped Newton-Raphson algorithm to determine the intersection
      * between the curve elements c1 and c2. Transformations of the curves
      * are already taken into regard.
-     * <p>
+     *
      * We use a very high accuracy: Mat.eps**3
      *
      * @deprecated
-     * @param {JXG.Curve} c1 Curve, Line or Circle
-     * @param {JXG.Curve} c2 Curve, Line or Circle
+     * @param {Curve|Line|Circle} c1 Curve, Line or Circle
+     * @param {Curve|Line|Circle} c2 Curve, Line or Circle
      * @param {Number} t1ini Start value for curve c1
      * @param {Number} t2ini Start value for curve c2
      * @param {Number} gamma Damping factor, should be in the open interval (0, 1)
@@ -1814,7 +1814,7 @@ Mat.Numerics = {
      * Jean-Paul Berrut, Lloyd N. Trefethen: Barycentric Lagrange Interpolation,
      * SIAM Review, Vol 46, No 3, (2004) 501-517.
      * The graph of the parametric curve [x(t),y(t)] runs through the given points.
-     * @param {Array} p Array of JXG.Points
+     * @param {Array} p Array of {@link Point}s
      * @returns {Array} An array consisting of two functions x(t), y(t) which define a parametric curve
      * f(t) = (x(t), y(t)), a number x1 (which equals 0) and a function x2 defining the curve's domain.
      * That means the curve is defined between x1 and x2(). x2 returns the (length of array p minus one).
@@ -2073,10 +2073,10 @@ Mat.Numerics = {
      * Returns the Lagrange polynomials, see
      * Jean-Paul Berrut, Lloyd N. Trefethen: Barycentric Lagrange Interpolation,
      * SIAM Review, Vol 46, No 3, (2004) 501-517.
-     * <p>
+     *
      * It possesses the method getTerm() which returns the string containing the function term of the polynomial and
      * the method getCoefficients() which returns an array containing the coefficients of the polynomial.
-     * @param {Array} p Array of JXG.Points
+     * @param {Array} p Array of {@link Point}s
      * @returns {function} A function of one parameter which returns the value of the polynomial, whose graph runs through the given points.
      * @memberof JXG.Math.Numerics
      *
@@ -2278,7 +2278,7 @@ Mat.Numerics = {
      * Determine the Lagrange polynomial through an array of points and
      * return the term of the polynomial as string.
      *
-     * @param {Array} points Array of JXG.Points
+     * @param {Array} points Array of {@link Point}s
      * @param {Number} digits Number of decimal digits of the coefficients
      * @param {String} param Name of the parameter. Default: 'x'.
      * @param {String} dot Multiplication symbol. Default: ' * '.
@@ -2367,7 +2367,7 @@ Mat.Numerics = {
      * return the coefficients of the polynomial as array.
      * The leading coefficient is at position 0.
      *
-     * @param {Array} points Array of JXG.Points
+     * @param {Array} points Array of {@link Point}s
      * @returns {Function} returning the coefficients of the Lagrange polynomial through
      *    the supplied points.
      * @memberof JXG.Math.Numerics
@@ -2458,8 +2458,9 @@ Mat.Numerics = {
      * Two artificial control points at the beginning and the end are added.
      *
      * The implementation (especially the centripetal parametrization) is from
-     * https://stackoverflow.com/questions/9489736/catmull-rom-curve-with-no-cusps-and-no-self-intersections .
-     * @param {Array} points Array consisting of JXG.Points.
+     * {@link https://stackoverflow.com/questions/9489736/catmull-rom-curve-with-no-cusps-and-no-self-intersections}.
+     *
+     * @param {Array} points Array consisting of {@link Point}s
      * @param {Number|Function} tau The tension parameter, either a constant number or a function returning a number. This number is between 0 and 1.
      * tau=1/2 give Catmull-Rom splines.
      * @param {String} type (Optional) parameter which allows to choose between "uniform" (default) and
@@ -2645,7 +2646,7 @@ Mat.Numerics = {
      * Computes the cubic Catmull-Rom spline curve through a given set of points. The curve
      * is uniformly parametrized. The curve is the cardinal spline curve for tau=0.5.
      * Two artificial control points at the beginning and the end are added.
-     * @param {Array} points Array consisting of JXG.Points.
+     * @param {Array} points Array consisting of {@link Point}s
      * @param {String} type (Optional) parameter which allows to choose between "uniform" (default) and
      * "centripetal" parameterization. Thus the two possible values are "uniform" or "centripetal".
      * @returns {Array} An Array consisting of four components: Two functions each of one parameter t
@@ -2664,7 +2665,7 @@ Mat.Numerics = {
      * Either
      * @param {Array} dataX Array containing either the x-coordinates of the data set or both coordinates in
      * an array of {@link JXG.Point}s or {@link JXG.Coords}.
-     * In the latter case, the <tt>dataY</tt> parameter will be ignored.
+     * In the latter case, the `dataY` parameter will be ignored.
      * @param {Array} dataY Array containing the y-coordinates of the data set,
      * @returns {function} A function of one parameter which returns the value of the regression polynomial of the given degree.
      * It possesses the method getTerm() which returns the string containing the function term of the polynomial.
@@ -2809,7 +2810,7 @@ Mat.Numerics = {
 
     /**
      * Computes the cubic Bezier curve through a given set of points.
-     * @param {Array} points Array consisting of 3*k+1 {@link JXG.Points}.
+     * @param {Array} points Array consisting of 3*k+1 {@link Point}s.
      * The points at position k with k mod 3 = 0 are the data points,
      * points at position k with k mod 3 = 1 or 2 are the control points.
      * @returns {Array} An array consisting of two functions of one parameter t which return the
@@ -2865,7 +2866,7 @@ Mat.Numerics = {
 
     /**
      * Computes the B-spline curve of order k (order = degree+1) through a given set of points.
-     * @param {Array} points Array consisting of JXG.Points.
+     * @param {Array} points Array consisting of {@link Point}s.
      * @param {Number} order Order of the B-spline curve.
      * @returns {Array} An Array consisting of four components: Two functions each of one parameter t
      * which return the x resp. y coordinates of the B-spline curve in t, a zero value, and a function simply
@@ -3108,7 +3109,7 @@ Mat.Numerics = {
     /**
      * Helper function to create curve which displays Riemann sums.
      * Compute coordinates for the rectangles showing the Riemann sum.
-     * <p>
+     *
      * In case of type "simpson" and "trapezoidal", the horizontal line approximating the function value
      * is replaced by a parabola or a secant. IN case of "simpson",
      * the parabola is approximated visually by a polygonal chain of fixed step width.
@@ -3273,7 +3274,7 @@ Mat.Numerics = {
     },
 
     /**
-     * Solve initial value problems numerically using <i>explicit</i> Runge-Kutta methods.
+     * Solve initial value problems numerically using *explicit* Runge-Kutta methods.
      * See {@link https://en.wikipedia.org/wiki/Runge-Kutta_methods} for more information on the algorithm.
      * @param {object|String} butcher Butcher tableau describing the Runge-Kutta method to use. This can be either a string describing
      * a Runge-Kutta method with a Butcher tableau predefined in JSXGraph like 'euler', 'heun', 'rk4' or an object providing the structure
@@ -3287,13 +3288,13 @@ Mat.Numerics = {
      * </pre>
      * which corresponds to the Butcher tableau structure
      * shown here: https://en.wikipedia.org/w/index.php?title=List_of_Runge%E2%80%93Kutta_methods&oldid=357796696 .
-     * <i>Default</i> is 'euler'.
+     * Default is 'euler'.
      * @param {Array} x0 Initial value vector. Even if the problem is one-dimensional, the initial value has to be given in an array.
      * @param {Array} I Interval on which to integrate.
-     * @param {Number} N Number of integration intervals, i.e. there are <i>N+1</i> evaluation points.
+     * @param {Number} N Number of integration intervals, i.e. there are \\(N+1\\) evaluation points.
      * @param {function} f Function describing the right hand side of the first order ordinary differential equation, i.e. if the ode
-     * is given by the equation <pre>dx/dt = f(t, x(t))</pre>. So, f has to take two parameters, a number <tt>t</tt> and a
-     * vector <tt>x</tt>, and has to return a vector of the same length as <tt>x</tt> has.
+     * is given by the equation <pre>dx/dt = f(t, x(t))</pre>. So, f has to take two parameters, a number `t` and a
+     * vector `x`, and has to return a vector of the same length as `x` has.
      * @returns {Array} An array of vectors describing the solution of the ode on the given interval I.
      * @example
      * // A very simple autonomous system dx(t)/dt = x(t);
@@ -3808,7 +3809,7 @@ Mat.Numerics = {
     /**
      * Find a small enclosing interval of the domain of a function by
      * tightening the input interval x0.
-     * <p>
+     *
      * This is a helper function which is used in {@link JXG.Math.Numerics.fminbr},
      * {@link JXG.Math.Numerics.fzero}, and  {@link JXG.Curve.getLabelPosition}
      * to avoid search in an interval where the function is mostly undefined.
@@ -3907,7 +3908,7 @@ Mat.Numerics = {
     /**
      *
      * Find minimum of an univariate function f.
-     * <p>
+     *
      * Algorithm:
      *  G.Forsythe, M.Malcolm, C.Moler, Computer methods for mathematical
      *  computations. M., Mir, 1980, p.180 of the Russian edition
@@ -4058,8 +4059,8 @@ Mat.Numerics = {
      * and is the adaption of the algorithm GLOMIN by Richard Brent.
      *
      * Here is the original documentation:
-     * <pre>
      *
+     * ```
      * Discussion:
      *
      * This function assumes that F(X) is twice continuously differentiable over [A,B]
@@ -4104,23 +4105,23 @@ Mat.Numerics = {
      *
      *   Input, double T, a positive error tolerance.
      *
-     *    Input, double F (double x ), a user-supplied
+     *   Input, double F (double x ), a user-supplied
      *  function whose global minimum is being sought.
      *
      *   Output, double *X, the estimated value of the abscissa
      *  for which F attains its global minimum value in [A,B].
      *
      *   Output, double GLOMIN, the value F(X).
-     * </pre>
+     * ```
      *
      * In JSXGraph, some parameters of the original algorithm are set to fixed values:
-     * <ul>
-     *  <li> M = 10000000.0
-     *  <li> C = A or B, depending if f(A) <= f(B)
-     *  <li> T = JXG.Math.eps
-     *  <li> E = JXG.Math.eps * JXG.Math.eps
-     *  <li> MACHEP = JXG.Math.eps * JXG.Math.eps * JXG.Math.eps
-     * </ul>
+     *
+     * - M = 10000000.0
+     * - C = A or B, depending if f(A) <= f(B)
+     * - T = JXG.Math.eps
+     * - E = JXG.Math.eps * JXG.Math.eps
+     * - MACHEP = JXG.Math.eps * JXG.Math.eps * JXG.Math.eps
+     *
      * @param {function} f Function, whose global minimum is to be found
      * @param {Array} x0 Array of length 2 determining the interval [A, B] for which the global minimum is to be found
      * @returns {Array} [x, y] x is the position of the global minimum and y = f(x).
@@ -4305,9 +4306,9 @@ Mat.Numerics = {
      * Determine all roots of a polynomial with real or complex coefficients by using the
      * iterative method attributed to Weierstrass, Durand, Kerner, Aberth, and Ehrlich. In particular,
      * the iteration method with cubic convergence is used that is usually attributed to Ehrlich-Aberth.
-     * <p>
+     *
      * The returned roots are sorted with respect to their real values.
-     * <p> This method makes use of the JSXGraph classes {@link JXG.Complex} and {@link JXG.C} to handle
+     *  This method makes use of the JSXGraph classes {@link JXG.Complex} and {@link JXG.C} to handle
      * complex numbers.
      *
      * @param {Array} a Array of coefficients of the polynomial a[0] + a[1]*x+ a[2]*x**2...
@@ -4756,7 +4757,7 @@ Mat.Numerics = {
      * @param {Array} pts Array of {@link JXG.Coords}
      * @param {Number} i Index of an element of pts
      * @param {Number} j Index of an element of pts
-     * @param {Number} eps If the absolute value of a given number <tt>x</tt> is smaller than <tt>eps</tt> it is considered to be equal <tt>0</tt>.
+     * @param {Number} eps If the absolute value of a given number `x` is smaller than `eps` it is considered to be equal `0`.
      * @param {Array} newPts Array of {@link JXG.Coords}
      * @param {Boolean} [usr=false] Search minimal distance in user coords
      *
@@ -4795,12 +4796,13 @@ Mat.Numerics = {
     },
 
     /**
-     * Polyline simplifcation withthe Ramer-Douglas-Peucker algorithm.
+     * Polyline simplification with the Ramer-Douglas-Peucker algorithm.
      * It discards points which are not necessary from the polygonal line defined by the point array
-     * pts. The computation is done in screen coordinates.
+     * `pts`. The computation is done in screen coordinates.
+     *
      * Average runtime is O(nlog(n)), worst case runtime is O(n^2), where n is the number of points.
      * @param {Array} pts Array of {@link JXG.Coords}
-     * @param {Number} eps If the absolute value of a given number <tt>x</tt> is smaller than <tt>eps</tt> it is considered to be equal <tt>0</tt>.
+     * @param {Number} eps If the absolute value of a given number `x` is smaller than `eps` it is considered to be equal `0`.
      * @param {Boolean} [usr=false] Minimize number of points using user coords
      * @returns {Array} An array containing points which represent an apparently identical curve as the points of pts do, but contains fewer points.
      * @memberof JXG.Math.Numerics
