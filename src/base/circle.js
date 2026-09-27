@@ -1051,10 +1051,12 @@ JXG.createCircle = function (board, parents, attributes) {
     for (i = 0; i < parents.length; i++) {
         if (Type.isPointType(board, parents[i])) {
             if (parents.length < 3) {
+                // attribute circle.center, circle.point2
                 p.push(
                     Type.providePoints(board, [parents[i]], attributes, "circle", [point_style[i]])[0]
                 );
             } else {
+                // attribute point
                 p.push(
                     Type.providePoints(board, [parents[i]], attributes, 'point')[0]
                 );

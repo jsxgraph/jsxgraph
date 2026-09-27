@@ -637,9 +637,7 @@ JXG.extend(
 
             le = arguments.length - 1;
             for (i = 1; i < le + 1; i++) {
-                q = Type.providePoints(this.board, [arguments[i]], {}, "polygon", [
-                    "vertices"
-                ])[0];
+                q = Type.providePoints(this.board, [arguments[i]], {}, "polygon", ["vertices"])[0];
                 if (q._is_new) {
                     // Add the point as child of the polygon, but not of the borders.
                     this.addChild(q);
@@ -1375,9 +1373,7 @@ JXG.createRegularPolygon = function (board, parents, attributes) {
         pointsExist = true;
     }
 
-    p = Type.providePoints(board, parents.slice(0, len), attributes, "regularpolygon", [
-        "vertices"
-    ]);
+    p = Type.providePoints(board, parents.slice(0, len), attributes, "regularpolygon", ["vertices"]);
     if (p === false) {
         throw new Error(
             "JSXGraph: Can't create regular polygon with parent types other than 'point' and 'coordinate arrays' or a function returning an array of coordinates"

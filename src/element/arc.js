@@ -108,8 +108,9 @@ import Const from "../base/constants.js";
 JXG.createArc = function (board, parents, attributes) {
     var el, attr, points;
 
+    attr = Type.copyAttributes(attributes, board.options, 'arc');
     // attributes.radiusPoint = {visible: false};
-    points = Type.providePoints(board, parents, attributes, "arc", [
+    points = Type.providePoints(board, parents, attr, "arc", [
         "center",
         "radiuspoint",
         "anglepoint"
@@ -127,7 +128,6 @@ JXG.createArc = function (board, parents, attributes) {
         );
     }
 
-    attr = Type.copyAttributes(attributes, board.options, 'arc');
     el = board.create("curve", [[0], [0], 0, 4], attr);
 
     el.elType = 'arc';
@@ -516,9 +516,8 @@ JXG.createSemicircle = function (board, parents, attributes) {
         points = [];
 
     attr = Type.copyAttributes(attributes, board.options, 'semicircle');
-
     // we need 2 points
-    points = Type.providePoints(board, parents, attr, 'point', ['radiusPoint', 'anglePoint']);
+    points = Type.providePoints(board, parents, attr, 'semicircle', ['radiusPoint', 'anglePoint']);
     if (points === false || points.length !== 2) {
         throw new Error(
             "JSXGraph: Can't create Semicircle with parent types '" +

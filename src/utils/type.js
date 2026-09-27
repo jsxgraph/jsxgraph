@@ -498,10 +498,21 @@ JXG.extend(
         /**
          * Test if array `parents` contains existing points. If instead `parents` contains coordinate arrays or
          * function returning coordinate arrays free points with these coordinates are created.
-         * For points that are created, attributes from param `attributes` are merged with
+         *
+         * __Handling of attributes:__
+         *
+         * For points that will be created here, attributes can be supplied. For this,
+         * there are two cases:
+         *
+         * 1. If array `attrArray` is not empty: param `attributes` is merged with
          * `board.options.attrClass.attrArray[j]` with priority for values in `attributes`.
          * Here, `j` is the corresponding position in array `attrArray` of the coordinate array in `parents` (or
          * the last one).
+         * @example
+         *  attr = Type.copyAttributes(attributes, board.options, 'semicircle');
+         *  points = Type.providePoints(board, parents, attr, 'point', ['radiusPoint', 'anglePoint']);
+         *
+         * 2. If array `attrArray` is empty: `attributes.attrClass` is merged with `board.options.attrClass`.
          *
          * @param {JXG.Board} board Board object
          * @param {Array} parents Array containing parent elements for a new object. This array may contain
