@@ -1512,7 +1512,8 @@ JXG.extend(
 
 /**
  * @class  Curves can be defined by mappings or by discrete data sets.
- * In general, a curve is a mapping from \\( {\mathbb R} \to {\mathbb R}^2, \; t \mapsto (x(t), y(t))\\).
+ * In general, a curve is a mapping from
+ * \\( {\mathbb R} \to {\mathbb R}^2, t \mapsto (x(t), y(t))\\).
  * The graph is drawn for `t` in the interval `[a,b]`.
  *
  * The following types of curves can be plotted:
@@ -1528,15 +1529,18 @@ JXG.extend(
  * @constructor
  * @type JXG.Curve
  * @see JXG.Curve
+ * @see Functiongraph
  */
 /**
  * @jsxgraphsignature Curve
  * Default values are a=-10 and b=10 ???
- * @param {Function|Number} x describes the x-coordinate of the curve. It may be a function term in one variable, e.g. x(t).
+ * @param {Function|Number|String} x describes the x-coordinate of the curve. It may be a function term in one variable, e.g. x(t).
  *                     In case of x being of type number, x(t) is set to  a constant function.
  *                     this function at the values of the array.
- * @param {Function|Number} y describes the y-coordinate of the curve. In case of a number, y(t) is set to the constant function
+ * In case of x being a String, it is given in JessieCode syntax.
+ * @param {Function|Number|String} y describes the y-coordinate of the curve. In case of a number, y(t) is set to the constant function
  *                     returning this number.
+ * In case of y being a String, it is given in JessieCode syntax.
  * @param {Function|Number} [a=-Infinity] left interval border
  * @param {Function|Number} [b=Infinity] right interval border
  * @example  <caption>Parametric curve</caption>
@@ -1559,13 +1563,13 @@ JXG.extend(
 /**
  * @jsxgraphsignature Curve
  * Data plots.
- * x and y are arrays contining the x and y coordinates of the data points which are connected by
+ * `x` and `y` are arrays contining the x and y coordinates of the data points which are connected by
  * line segments. The individual entries of x and y may also be functions.
- * In case of x being an array, the curve type is data plot, regardless of the second parameter and
- * if additionally the second parameter y is a function term the data plot evaluates.
+ * In case of `x` being an array, the curve type is data plot, regardless of the second parameter and
+ * if additionally the second parameter `y` is a function term the data plot evaluates.
  * @param {Array} x
  * @param {Array|Number|Function} y
- * @example <caption>Data plots</caption>
+ * @example <caption>Data plot x-coordinates, y-coordinates</caption>
  * // Connect a set of points given by coordinates with dashed line segments.
  * // The x- and y-coordinates of the points are given in two separate
  * // arrays.
@@ -1611,6 +1615,26 @@ JXG.extend(
  *       {strokeColor:'red', name:"curve", strokeWidth:5, fixed: false});
  *  c.addParents(p);
  * })();
+ * </script><pre>
+ *
+ */
+/**
+ * @jsxgraphsignature Curve
+ * Data plot with array of coordinates. Each coordinate is given as pair `[x, y]`.
+ * @param {Array} points Array of coordinate pairs `[[x1,y1], [x2,y2], ...]`
+ * @example <caption>Data plot [x,y]-pairs</caption>
+ * var cu = board.create('curve', [
+ *     [[-1, 1], [0, 2], [1, 0], [2, 1]]
+ * ]);
+ * </pre><div id="JXG4a34829d-ec9c-480b-9173-b532b35279a9" class="jxgbox" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *     (function() {
+ *         var board = JXG.JSXGraph.initBoard('JXG4a34829d-ec9c-480b-9173-b532b35279a9',
+ *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+ *     var cu = board.create('curve', [
+ *         [[-1, 1], [0, 2], [1, 0], [2, 1]]
+ *     ]);
+ *     })();
  * </script><pre>
  *
  */
@@ -1679,10 +1703,10 @@ JXG.createCurve = function (board, parents, attributes) {
         Type.isTransformationOrArray(parents[1]) &&
         Type.isObject(obj) &&
         (obj.type === Const.OBJECT_TYPE_CURVE ||
-            obj.type === Const.OBJECT_TYPE_ANGLE ||
-            obj.type === Const.OBJECT_TYPE_ARC ||
-            obj.type === Const.OBJECT_TYPE_CONIC ||
-            obj.type === Const.OBJECT_TYPE_SECTOR)
+         obj.type === Const.OBJECT_TYPE_ANGLE ||
+         obj.type === Const.OBJECT_TYPE_ARC ||
+         obj.type === Const.OBJECT_TYPE_CONIC ||
+         obj.type === Const.OBJECT_TYPE_SECTOR)
     ) {
         if (obj.type === Const.OBJECT_TYPE_SECTOR) {
             attr = Type.copyAttributes(attributes, board.options, 'sector');
@@ -1729,23 +1753,29 @@ JXG.createCurve = function (board, parents, attributes) {
 JXG.registerElement("curve", JXG.createCurve);
 
 /**
- * @class A functiongraph visualizes a map x &rarr; f(x).
+ * @class A functiongraph visualizes a map \\(f: [a, b] \to {\mathbb R}, x \mapsto f(x)\\).
  * The graph is displayed for x in the interval [a,b] and is a {@link Curve} element.
+ *
+ * Since function terms can be given as JessieCode strings, users can avoid the
+ * somewhat bulky JavaScript syntax like `Math.sin(x)` and supply `sin(x)` instead.
  * @pseudo
  * @name Functiongraph
  * @elementclass curve
  * @augments JXG.Curve
  * @constructor
  * @type JXG.Curve
- * @see JXG.Curve
+ * @see Curve
+ * @see JXG.JessieCode
+ * @see {@link https://jsxgraph.org/share/example/function-plotter}
+ * @see {@link https://github.com/jsxgraph/JessieCode}
  */
 /**
  * @jsxgraphsignature Functiongraph
- * @param {Function|Number} f Function term f(x) describing the function graph
+ * @param {Function|String|Number} f Function term f(x) describing the function graph. Can also be a JessieCode string.
  * @param {Number|Function} [a] Left interval border a of the domain of f
  * @param {Number|Function} [b] Right interval border a of the domain of f
  *
- * @example
+ * @example <caption>Function given as JavaScript function</caption>
  * // Create a function graph for f(x) = 0.5*x*x-2*x
  *   var graph = board.create('functiongraph',
  *                        [function(x){ return 0.5*x*x-2*x;}, -2, 4]
@@ -1756,6 +1786,18 @@ JXG.registerElement("curve", JXG.createCurve);
  *   var board = JXG.JSXGraph.initBoard('JXGefd432b5-23a3-4846-ac5b-b471e668b437', {boundingbox: [-3, 7, 5, -3], axis: true, showcopyright: false, shownavigation: false});
  *   var graph = board.create('functiongraph', [function(x){ return 0.5*x*x-2*x;}, -2, 4]);
  * })();
+ * </script><pre>
+ *
+ * @example <caption>Function given as JessieCode string</caption>
+ * const f1 = board.create("functiongraph", ["sin(x)"], { fixed: false });
+ *
+ * </pre><div id="JXG0acaeae1-f7a5-4718-aa4e-36bc93856704" class="jxgbox" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *     (function() {
+ *         var board = JXG.JSXGraph.initBoard('JXG0acaeae1-f7a5-4718-aa4e-36bc93856704',
+ *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+ *     const f1 = board.create("functiongraph", ["sin(x)"], { fixed: false });
+ *     })();
  * </script><pre>
  *
  * @example
