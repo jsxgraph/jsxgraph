@@ -106,9 +106,9 @@ var priv = {
  *          }
  *        ]);
  *
- *  board.create('text', [1, 3, '&lt;button onclick="updateGraph()"&gt;Update graph&lt;/button&gt;']);
+ *  board.create('text', [1, 3, '&lt;button onclick="window.updateGraph()"&gt;Update graph&lt;/button&gt;']);
  *
- *  var updateGraph = function() {
+ *  window.updateGraph = function() {
  *      graph.Y = board.jc.snippet(input.Value(), true, 'x', false);
  *      graph.updateCurve();
  *      board.update();
@@ -130,9 +130,9 @@ var priv = {
  *          }
  *        ]);
  *
- *  board.create('text', [1, 3, '<button onclick="updateGraph()">Update graph</button>']);
+ *  board.create('text', [1, 3, '<button onclick="window.updateGraph()">Update graph</button>']);
  *
- *  var updateGraph = function() {
+ *  window.updateGraph = function() {
  *      graph.Y = board.jc.snippet(input.Value(), true, 'x', false);
  *      graph.updateCurve();
  *      board.update();
