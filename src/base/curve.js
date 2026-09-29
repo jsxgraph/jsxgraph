@@ -1672,22 +1672,25 @@ JXG.extend(
  * The result is a curve which is the transformation of the supplied curve.
  * @param {Curve} c
  * @param {Transformation} t
- * @example
- * // The curve cu2 is the reflection of cu1 against line li
+ * @example <caption>Curve cu2 is the reflection of cu1 against line li</caption>
  * var li = board.create('line', [1,1,1], {strokeColor: '#aaaaaa'});
  * var reflect = board.create('transform', [li], {type: 'reflect'});
- * var cu1 = board.create('curve', [[-1, -1, -0.5, -1, -1, -0.5], [-3, -2, -2, -2, -2.5, -2.5]]);
- * var cu2 = board.create('curve', [cu1, reflect], {strokeColor: 'red'});
+ * var cu1 = board.create('curve', [[-1, -1, -0.5, -1, -1, -0.5], [-3, -2, -2, -2, -2.5, -2.5]], {
+ *      strokeWidth:3,
+ *      fixed: false
+ *  });
+ * var cu2 = board.create('curve', [cu1, reflect], {strokeColor: 'red', strokeWidth: 3});
  *
  * </pre><div id="JXG866dc7a2-d448-11e7-93b3-901b0e1b8723" class="jxgbox" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
  *     (function() {
  *         var board = JXG.JSXGraph.initBoard('JXG866dc7a2-d448-11e7-93b3-901b0e1b8723',
- *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+ *             {boundingbox: [-8, 8, 8,-8], axis: false, showcopyright: false, shownavigation: false});
  *             var li = board.create('line', [1,1,1], {strokeColor: '#aaaaaa'});
  *             var reflect = board.create('transform', [li], {type: 'reflect'});
- *             var cu1 = board.create('curve', [[-1, -1, -0.5, -1, -1, -0.5], [-3, -2, -2, -2, -2.5, -2.5]]);
- *             var cu2 = board.create('curve', [cu1, reflect], {strokeColor: 'red'});
+ *             var cu1 = board.create('curve', [[-1, -1, -0.5, -1, -1, -0.5], [-3, -2, -2, -2, -2.5, -2.5]], {
+ *                   strokeWidth:3, fixed: false});
+ *             var cu2 = board.create('curve', [cu1, reflect], {strokeColor: 'red', strokeWidth:3});
  *
  *     })();
  *
