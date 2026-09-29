@@ -1782,9 +1782,8 @@ JXG.extend(
          * @name Glider#startAnimation
          * @see Glider#stopAnimation
          * @function
-         * @example
-         * // Divide the circle line into 6 steps and
-         * // visit every step 330 msec counterclockwise.
+         *
+         * @example <caption>Divide circle line into 6 steps and visit every step for 330 msec counterclockwise</caption>
          * var ci = board.create('circle', [[-1,2], [2,1]]);
          * var gl = board.create('glider', [0,2, ci]);
          * gl.startAnimation(-1, 6, 330);
@@ -1803,8 +1802,8 @@ JXG.extend(
          *     })();
          *
          * </script><pre>
-         * @example
-         * //animate example closed curve
+         *
+         * @example <caption>Animate glider on closed curve</caption>
          * var c1 = board.create('curve',[(u)=>4*Math.cos(u),(u)=>2*Math.sin(u)+2,0,2*Math.PI]);
          * var p2 = board.create('glider', [c1]);
          * var button1 = board.create('button', [1, 7, 'start animation',function(){p2.startAnimation(1,8)}]);
@@ -1820,11 +1819,9 @@ JXG.extend(
          * })();
          * </script><pre>
          *
-         * @example
-         * // Divide the slider area into 20 steps and
-         * // visit every step 30 msec. Stop after 2 rounds.
+         * @example <caption>Divide the slider line into 20 steps and visit every step 30 msec. Stop after 200 rounds.</caption>
          * var n = board.create('slider',[[-2,4],[2,4],[1,5,100]],{name:'n'});
-         * n.startAnimation(1, 20, 30, 2);
+         * n.startAnimation(1, 20, 30, 200);
          *
          * </pre><div id="JXG40ce04b8-e99c-11e8-a1ca-04d3b0c2aad3" class="jxgbox" style="width: 300px; height: 300px;"></div>
          * <script type="text/javascript">
@@ -1834,7 +1831,7 @@ JXG.extend(
          *     // Divide the slider area into 20 steps and
          *     // visit every step 30 msec.
          *     var n = board.create('slider',[[-2,4],[2,4],[1,5,100]],{name:'n'});
-         *     n.startAnimation(1, 20, 30, 2);
+         *     n.startAnimation(1, 20, 30, 200);
          *
          *     })();
          * </script><pre>
