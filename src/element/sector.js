@@ -1197,7 +1197,7 @@ JXG.registerElement("majorsector", JXG.createMajorSector);
  *
  * - An angle is displayed as sector if attribute `type:"sector"`.
  * - If `type:"square"`, instead of a sector a parallelogram is displayed.
- * - In case of 'type:"auto"`, a square is displayed if the angle is near orthogonal. The precision
+ * - In case of `type:"auto"`, a square is displayed for near-orthogonal angles. The precision
  * to decide if an angle is orthogonal is determined by the attribute {@link Angle#orthoSensitivity}.
  *
  * If no name is provided the angle label is automatically set to a lower greek letter. If no label should be displayed use
