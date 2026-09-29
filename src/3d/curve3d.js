@@ -399,8 +399,8 @@ JXG.extend(
  */
 /**
  * @jsxgraphsignature Curve3D
- * F<sub>[X,Y,Z]</sub>(u) a function returning an array [x,y,z] of numbers, range as above.
- * @param {Function} F<sub>Z</sub>
+ * F(u) a function returning an array [x,y,z] of numbers, range as above.
+ * @param {Function} F
  * @param {Array|Function} range
  *
  */
