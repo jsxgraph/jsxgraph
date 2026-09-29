@@ -290,6 +290,13 @@ JXG.JSXGraph = {
     },
 
     /**
+     * @class
+     *
+     * @pseudo
+     * @name JXG.JSXGraph.initBoard
+     * @elementclass board
+     */
+    /**
      * Initialize a new board.
      *
      * @param {String|Object} box id of or reference to the HTML element in which the board is painted.
@@ -300,6 +307,7 @@ JXG.JSXGraph = {
      * @returns {JXG.Board} Reference to the created board.
      *
      * @see JXG.AbstractRenderer#drawNavigationBar
+     *
      * @example
      * var board = JXG.JSXGraph.initBoard('jxgbox', {
      *     boundingbox: [-10, 5, 10, -5],
@@ -319,7 +327,6 @@ JXG.JSXGraph = {
      *     })();
      *
      * </script><pre>
-     *
      *
      * @example
      * const board = JXG.JSXGraph.initBoard('jxgbox', {
@@ -400,6 +407,7 @@ JXG.JSXGraph = {
      *     })();
      *
      * </script><pre>
+     *
      * @example
      * const board = JXG.JSXGraph.initBoard('jxgbox', {
      *     boundingbox: [-5, 5, 5, -5],

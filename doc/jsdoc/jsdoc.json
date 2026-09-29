@@ -35,6 +35,7 @@
     "jsxgraphStyle": true,
     "commonNav": false,
     "search": true,
+    "sort": true,
     "collapse": false,
     "private": true,
     "menu": {
