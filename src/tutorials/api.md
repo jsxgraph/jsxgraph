@@ -3,7 +3,7 @@
 - Elements: `@type` is not shown
 - check:
   - `@constructor`
-  - `@augments ...`
+  - ~~`@augments ...`~~ mostly
   - `@type ...`
   - `@throws`
 - check domains (i.e. params a, b) of curves
