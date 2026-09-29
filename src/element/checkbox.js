@@ -91,8 +91,7 @@ var priv = {
  * @param {NumberLike} y
  * @param {String|Function} label
  *
- * @example
- *   // Create a checkbox element at position [0,3].
+ * @example <caption>Create a checkbox element at position [0,3]</caption>
  *   var checkbox = board.create('checkbox', [0, 3, 'Change Y'], {});
  *   var p = board.create('point', [
  *       function(){ return 0.5;}, // X-coordinate
@@ -120,7 +119,7 @@ var priv = {
  * })();
  * </script><pre>
  *
- * @example
+ * @example  <caption>Change position of point when clicking on checkbox</caption>
  * var checkbox = board.create('checkbox', [0, 4, 'Click me']),
  *     p = board.create('point', [1, 1]);
  *
@@ -148,7 +147,7 @@ var priv = {
  * })();
  * </script><pre>
  *
- * @example
+ * @example  <caption>Change texts when clicking on checkbox</caption>
  *     var i1 = board.create('input', [1, 5, 'sin(x)', 'f(x)='], {cssStyle: 'width:4em', maxlength: 2});
  *         var c1 = board.create('checkbox', [1, 3, 'label 1'], {});
  *         var b1 = board.create('button', [1, 1, 'Change texts', function () {

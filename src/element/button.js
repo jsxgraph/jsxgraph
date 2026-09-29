@@ -85,7 +85,7 @@ var priv = {
  * @param {String|Function} label
  * @param {Function} [handler]
  *
- * @example
+ * @example <caption>Create buttons</caption>
  *  var p = board.create('point', [0.5, 0.5], {id: 'p1'});
  *
  *  // Create a button element at position [1,2].
@@ -117,8 +117,7 @@ var priv = {
  *
  * </script><pre>
  *
- * @example
- * // A toggle button
+ * @example  <caption>A toggle button</caption>
  * var butt = board.create('button', [-2, -2, 'Off', function() {
  *   var txt;
  *   butt.value = !butt.value;
@@ -168,7 +167,7 @@ var priv = {
  *
  * </script><pre>
  *
- * @example
+ * @example  <caption>Change texts on button click</caption>
  * var i1 = board.create('input', [-3, 4, 'sin(x)', 'f(x)='], {cssStyle: 'width:4em', maxlength: 2});
  * var c1 = board.create('checkbox', [-3, 2, 'label 1'], {});
  * var b1 = board.create('button', [-3, -1, 'Change texts', function () {
@@ -198,8 +197,7 @@ var priv = {
  *
  * </script><pre>
  *
- * @example
- * // Set the CSS class of the button
+ * @example  <caption>Set the CSS class of a button</caption>
  *
  * // CSS:
  * &lt;style&gt;

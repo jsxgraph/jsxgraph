@@ -91,8 +91,7 @@ var priv = {
  * @param {String} value
  * @param {String|Function} label
  *
- * @example
- *  // Create an input element at position [1,4].
+ * @example <caption>Create an input element at position [1,4]</caption>
  *  var input = board.create('input', [0, 1, 'sin(x)*x', 'f(x)='], {cssStyle: 'width: 100px'});
  *  var f = board.jc.snippet(input.Value(), true, 'x', false);
  *  var graph = board.create('functiongraph',[f,
@@ -140,8 +139,8 @@ var priv = {
  * })();
  * </script><pre>
  *
- * @example
- * // Add the `keyup` event to an input field
+ * @example <caption>Add the 'keyup' event to an input field</caption>
+ * // An alternative would be the event 'input'
  * var A = board.create('point', [3, -2]);
  * var i = board.create('input', [-4, -4, "1", "x "]);
  *
@@ -171,8 +170,8 @@ var priv = {
  *
  * </script><pre>
  *
- * @example
- * // Add the `change` event to an input field
+ * @example <caption>Add the 'change' event to an input field</caption>
+ * // `change` is fired when the input element loses focus
  * var A = board.create('point', [3, -2]);
  * var i = board.create('input', [-4, -4, "1", "x "]);
  *
@@ -191,6 +190,7 @@ var priv = {
  *
  *     i.rendNodeInput.addEventListener("change", ( function () {
  *        var x = parseFloat(i.Value());
+ * console.log('change')
  *        A.moveTo([x, 2], 100);
  *     }));
  *
@@ -198,8 +198,7 @@ var priv = {
  *
  * </script><pre>
  *
- * @example
- * // change the width of an input field
+ * @example <caption>Change the width of an input field</caption>
  *  let s = board.create('slider', [[-3, 3], [2, 3], [50, 100, 300]]);
  *  let inp = board.create('input', [-6, 1, 'Math.sin(x)*x', 'f(x)='],{cssStyle:()=>'width:'+s.Value()+'px'});
  *
@@ -214,8 +213,7 @@ var priv = {
  *
  * </script><pre>
  *
- * @example
- *   Apply CSS classes to label and input tag
+ * @example <caption>Apply CSS classes to label and input tag</caption>
  *     &lt;style&gt;
  *         div.JXGtext_inp {
  *             font-weight: bold;
