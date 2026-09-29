@@ -87,7 +87,7 @@ import Composition from "../base/composition.js";
  * Order can be changed.
  * @param {PointLike} p
  * @param {Line} l
- * @example
+ * @example <caption>Project point p3 onto line l1</caption>
  * var p1 = board.create('point', [0.0, 4.0]);
  * var p2 = board.create('point', [6.0, 1.0]);
  * var l1 = board.create('line', [p1, p2]);
@@ -243,8 +243,7 @@ JXG.createOrthogonalProjection = function (board, parents, attributes) {
  * The perpendicular line will be orthogonal to l and will contain p.
  * @param {Line} l
  * @param {PointLike} p
- * @example
- * // Create a perpendicular
+ * @example <caption>Create perpendicular to line l1 through point p3</caption>
  * var p1 = board.create('point', [0.0, 2.0]);
  * var p2 = board.create('point', [2.0, 1.0]);
  * var l1 = board.create('line', [p1, p2]);
@@ -342,7 +341,7 @@ JXG.createPerpendicular = function (board, parents, attributes) {
  * Order of parameters is irrelevant.
  * @param {PointLike} p
  * @param {Line} l
- * @example
+ * @example <caption>Orthogonal projection of point p3 onto line l1</caption>
  * var p1 = board.create('point', [0.0, 4.0]);
  * var p2 = board.create('point', [6.0, 1.0]);
  * var l1 = board.create('line', [p1, p2]);
@@ -500,8 +499,7 @@ JXG.createPerpendicularPoint = function (board, parents, attributes) {
  * Order of parameters is irrelevant.
  * @param {Line} l
  * @param {PointLike} p
- * @example
- * // Create a perpendicular
+ * @example <caption>Create perpendicular the perpendicular segment from point p3 to line l1</caption>
  * var p1 = board.create('point', [0.0, 2.0]);
  * var p2 = board.create('point', [2.0, 1.0]);
  * var l1 = board.create('line', [p1, p2]);
@@ -610,7 +608,7 @@ JXG.createPerpendicularSegment = function (board, parents, attributes) {
  * @param {PointLike} p1
  * @param {PointLike} p2
  *
- * @example
+ * @example <caption>Midpoint between two points p1, p2 and of segment l1</caption>
  * // Create base elements: 2 points and 1 line
  * var p1 = board.create('point', [0.0, 2.0]);
  * var p2 = board.create('point', [2.0, 1.0]);
@@ -786,7 +784,7 @@ JXG.createMidpoint = function (board, parents, attributes) {
  * @param {PointLike} p2
  * @param {PointLike} p3
  *
- * @example
+ * @example <caption>Parallelpoint: pp1 such that p1, p2, p3, pp1 is a parallelogram</caption>
  * var p1 = board.create('point', [0.0, 2.0]);
  * var p2 = board.create('point', [2.0, 1.0]);
  * var p3 = board.create('point', [3.0, 3.0]);
@@ -975,8 +973,7 @@ JXG.createParallelPoint = function (board, parents, attributes) {
  * The order of the parameters is irrelevant.
  * @param {Line} l
  * @param {PointLike} p
- * @example
- * // Create a parallel
+ * @example <caption>Create parallel to l1 through point p3</caption>
  * var p1 = board.create('point', [0.0, 2.0]);
  * var p2 = board.create('point', [2.0, 1.0]);
  * var l1 = board.create('line', [p1, p2]);
@@ -1003,7 +1000,7 @@ JXG.createParallelPoint = function (board, parents, attributes) {
  * @param {PointLike} p2
  * @param {PointLike} p
  *
- * @example
+ * @example <caption>Create segment, parallel to line [p1, p2] through point p3</caption>
  * var p1, p2, p3, l1, pl1;
  *
  * p1 = board.create('point', [0.0, 2.0]);
@@ -1137,8 +1134,7 @@ JXG.createParallel = function (board, parents, attributes) {
  * @param {PointLike} p2
  * @param {PointLike} p
  *
- * @example
- * // Create an arrow  parallel
+ * @example <caption>Create an parallel arrow</caption>
  * var p1 = board.create('point', [0.0, 2.0]);
  * var p2 = board.create('point', [2.0, 1.0]);
  * var l1 = board.create('segment', [p1, p2]);
@@ -1208,7 +1204,7 @@ JXG.createArrowParallel = function (board, parents, attributes) {
  * @param {PointLike} p2
  * @param {PointLike} p3
  *
- * @example
+ * @example <caption>Bisector line of angle p1, p2, p3</caption>
  * var p1 = board.create('point', [6.0, 4.0]);
  * var p2 = board.create('point', [3.0, 2.0]);
  * var p3 = board.create('point', [1.0, 7.0]);
@@ -1306,7 +1302,7 @@ JXG.createBisector = function (board, parents, attributes) {
  * @param {Line} l1
  * @param {Line} l2
  *
- * @example
+ * @example <caption>Bisector lines of the two line l1 and l2</caption>
  * var p1 = board.create('point', [6.0, 4.0]);
  * var p2 = board.create('point', [3.0, 2.0]);
  * var p3 = board.create('point', [1.0, 7.0]);
@@ -1545,7 +1541,7 @@ JXG.createAngularBisectorsOfTwoLines = function (board, parents, attributes) {
  * @param {PointLike} p2
  * @param {PointLike} p3
  *
- * @example
+ * @example <caption>Center point of the circum circle of points p1, p2, p3</caption>
  * var p1 = board.create('point', [0.0, 2.0]);
  * var p2 = board.create('point', [2.0, 1.0]);
  * var p3 = board.create('point', [3.0, 3.0]);
@@ -1652,7 +1648,7 @@ JXG.createCircumcenter = function (board, parents, attributes) {
  * @param {PointLike} p2
  * @param {PointLike} p3
  *
- * @example
+ * @example <caption>Incenter of triangle p1, p2, p3</caption>
  * var p1 = board.create('point', [0.0, 2.0]);
  * var p2 = board.create('point', [2.0, 1.0]);
  * var p3 = board.create('point', [3.0, 3.0]);
@@ -1750,7 +1746,7 @@ JXG.createIncenter = function (board, parents, attributes) {
  * @param {PointLike} p2
  * @param {PointLike} p3
  *
- * @example
+ * @example <caption>Circum circle of points p1, p2, p3</caption>
  * var p1 = board.create('point', [0.0, 2.0]);
  * var p2 = board.create('point', [2.0, 1.0]);
  * var p3 = board.create('point', [3.0, 3.0]);
@@ -1845,7 +1841,7 @@ JXG.createCircumcircle = function (board, parents, attributes) {
  * @param {PointLike} p2
  * @param {PointLike} p3
  *
- * @example
+ * @example <caption>Incircle of triangle p1, p2, p3</caption>
  * var p1 = board.create('point', [0.0, 2.0]);
  * var p2 = board.create('point', [2.0, 1.0]);
  * var p3 = board.create('point', [3.0, 3.0]);
@@ -1966,7 +1962,7 @@ JXG.createIncircle = function (board, parents, attributes) {
  * @param {Point|Line|Circle|Curve|Polygon} p
  * @param {Line} l
  *
- * @example
+ * @example <caption>Reflect point p3  on line l1</caption>
  * var p1 = board.create('point', [0.0, 4.0]);
  * var p2 = board.create('point', [6.0, 1.0]);
  * var l1 = board.create('line', [p1, p2]);
@@ -1985,8 +1981,7 @@ JXG.createIncircle = function (board, parents, attributes) {
  * })();
  * </script><pre>
  *
- * @example
- *   // Reflection of more elements
+ * @example <caption>Reflection of various elements on line li</caption>
  *   // reflection line
  *   var li = board.create('line', [1,1,1], {strokeColor: '#aaaaaa'});
  *
@@ -2206,7 +2201,7 @@ JXG.createReflection = function (board, parents, attributes) {
  * @param {Point|Line|Circle|Curve|Polygon} p
  * @param {PointLike} mirr
  *
- * @example
+ * @example <caption>Mirror images of various elements against mirror point mirr</caption>
  *   // Mirror point
  *   var mirr = board.create('point', [-1,-1], {color: '#aaaaaa'});
  *
@@ -2400,7 +2395,7 @@ JXG.createMirrorElement = function (board, parents, attributes) {
  * @param {PointLike} p
  * @param {PointLike} mirr
  *
- * @example
+ * @example <caption>Mirror image of point p1 against mirror point mirr</caption>
  * var p1 = board.create('point', [1.0, 3.0]);
  * var mirr = board.create('point', [3.0, 2.0]);
  *
@@ -2441,7 +2436,8 @@ JXG.createMirrorPoint = function (board, parents, attributes) {
  * within the interval `i`.
  * @param {Array} domain Array of length 2 containing interval bounds for the integral
  * @param {Functiongraph} f Function graph to be integrated.
- * @example
+ *
+ * @example <caption>Integral area</caption>
  * var domain = board.create('functiongraph', [(t) => Math.cos(t) * t]);
  * var integral = board.create('integral', [[-2.0, 2.0], domain]);
  * </pre><div class="jxgbox" id="JXGd45d7188-6624-4d6e-bebb-1efa2a305c8a" style="width: 400px; height: 400px;"></div>
@@ -2841,7 +2837,7 @@ JXG.createIntegral = function (board, parents, attributes) {
  * `inverse:true`, the inequality 'greater than or equal to' is shown.
  * @param {Line|Functiongraph} l
  *
- * @example
+ * @example <caption>Inequality: semi-plane</caption>
  * var p = board.create('point', [1, 3]),
  *     q = board.create('point', [-2, -4]),
  *     l = board.create('line', [p, q]),
@@ -2858,7 +2854,7 @@ JXG.createIntegral = function (board, parents, attributes) {
  * })();
  * </script><pre>
  *
- * @example
+ * @example <caption>Inequality:  y >= 2/3 x + 1</caption>
  * // Plot the inequality
  * //     y >= 2/3 x + 1
  * // or
@@ -2874,7 +2870,7 @@ JXG.createIntegral = function (board, parents, attributes) {
  * })();
  * </script><pre>
  *
- * @example
+ * @example <caption>Inequality (x,y) such that with y >= sin(x)</caption>
  * var f = board.create('functiongraph', ['sin(x)', -2*Math.PI, 2*Math.PI]);
  *
  * var ineq_lower = board.create('inequality', [f]);

@@ -2583,7 +2583,7 @@ JXG.registerElement("riemannsum", JXG.createRiemannsum);
 /**
  * @jsxgraphsignature TraceCurve
  * @param {Glider} glider Glider point and a
- * @param {point} point Point - usually depending on `glider`, whose locus is traced
+ * @param {point} point Point - usually depending on `glider` whose locus is traced
  *
  * @example
  * // Create trace curve.

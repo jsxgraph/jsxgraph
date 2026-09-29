@@ -2077,7 +2077,7 @@ Mat.Numerics = {
      * It possesses the method getTerm() which returns the string containing the function term of the polynomial and
      * the method getCoefficients() which returns an array containing the coefficients of the polynomial.
      * @param {Array} p Array of {@link Point}s
-     * @returns {function} A function of one parameter which returns the value of the polynomial, whose graph runs through the given points.
+     * @returns {function} A function of one parameter which returns the value of the polynomial whose graph runs through the given points.
      * @memberof JXG.Math.Numerics
      *
      * @example
@@ -3426,7 +3426,7 @@ Mat.Numerics = {
      * the function f has opposite signs at x_0 and x_1.
      * The return values have to be tested if the method succeeded.
      *
-     * @param {Function} f Function, whose root is to be found
+     * @param {Function} f Function whose root is to be found
      * @param {Number} x0 Start value
      * @param {Object} [context] Parent object in case f is method of it
      * @returns {Array} [x_0, f(x_0), x_1, f(x_1)] in case that x_0 <= x_1
@@ -3498,7 +3498,7 @@ Mat.Numerics = {
     /**
      *
      * Find zero of an univariate function f.
-     * @param {function} f Function, whose root is to be found
+     * @param {function} f Function whose root is to be found
      * @param {Array|Number} x0  Start value or start interval enclosing the root.
      * If x0 is an interval [a,b], it is required that f(a)f(b) <= 0, otherwise the minimum of f in [a, b] will be returned.
      * If x0 is a number, the algorithms tries to enclose the root by an interval [a, b] containing x0 and the root and
@@ -3672,7 +3672,7 @@ Mat.Numerics = {
 
     /**
      * Find zero of an univariate function f.
-     * @param {function} f Function, whose root is to be found
+     * @param {function} f Function whose root is to be found
      * @param {Array|Number} x0  Start value or start interval enclosing the root.
      * If x0 is an interval [a,b], it is required that f(a)f(b) <= 0, otherwise the minimum of f in [a, b] will be returned.
      * If x0 is a number, the algorithms tries to enclose the root by an interval [a, b] containing x0 and the root and
@@ -3913,7 +3913,7 @@ Mat.Numerics = {
      *  G.Forsythe, M.Malcolm, C.Moler, Computer methods for mathematical
      *  computations. M., Mir, 1980, p.180 of the Russian edition
      *
-     * @param {function} f Function, whose minimum is to be found
+     * @param {function} f Function whose minimum is to be found
      * @param {Array} x0  Start interval enclosing the minimum
      * @param {Object} [context] Parent object in case f is method of it
      * @returns {Number} the approximation of the minimum value position
@@ -4122,7 +4122,7 @@ Mat.Numerics = {
      * - E = JXG.Math.eps * JXG.Math.eps
      * - MACHEP = JXG.Math.eps * JXG.Math.eps * JXG.Math.eps
      *
-     * @param {function} f Function, whose global minimum is to be found
+     * @param {function} f Function whose global minimum is to be found
      * @param {Array} x0 Array of length 2 determining the interval [A, B] for which the global minimum is to be found
      * @returns {Array} [x, y] x is the position of the global minimum and y = f(x).
      */

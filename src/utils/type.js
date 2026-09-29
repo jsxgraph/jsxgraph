@@ -1819,7 +1819,7 @@ JXG.extend(
         },
 
         /**
-         * Checks if an object contains a key, whose value equals to val.
+         * Checks if an object contains a key whose value equals to val.
          * @param {Object} obj
          * @param val
          * @returns {Boolean}
