@@ -770,21 +770,21 @@ JXG.createMidpoint = function (board, parents, attributes) {
  * The line determined by the first two points is parallel to the line determined by the third point and the constructed point.
  * @pseudo
  * @constructor
- * @name Parallelpoint
+ * @name ParallelPoint
  * @elementclass point
  * @type JXG.Point
  * @augments JXG.Point
  * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
  */
 /**
- * @jsxgraphsignature Parallelpoint
+ * @jsxgraphsignature ParallelPoint
  * Taking the Euclidean vector \\(v=p2-p1\\) the parallel point is determined by
  * \\(p4 = p3+v\\).
  * @param {PointLike} p1
  * @param {PointLike} p2
  * @param {PointLike} p3
  *
- * @example <caption>Parallelpoint: pp1 such that p1, p2, p3, pp1 is a parallelogram</caption>
+ * @example <caption>ParallelPoint: pp1 such that p1, p2, p3, pp1 is a parallelogram</caption>
  * var p1 = board.create('point', [0.0, 2.0]);
  * var p2 = board.create('point', [2.0, 1.0]);
  * var p3 = board.create('point', [3.0, 3.0]);
@@ -802,7 +802,7 @@ JXG.createMidpoint = function (board, parents, attributes) {
  * </script><pre>
  */
 /**
- * @jsxgraphsignature Parallelpoint
+ * @jsxgraphsignature ParallelPoint
  * The resulting point will together with `p` specify a line which is parallel to `l`.
  * @param {Line} l
  * @param {PointLike} p
@@ -901,7 +901,7 @@ JXG.createParallelPoint = function (board, parents, attributes) {
      */
     p.generatePolynomial = function () {
         /*
-         *  Parallelpoint takes three points A, B and C or line L (with points B and C) and creates point T:
+         *  ParallelPoint takes three points A, B and C or line L (with points B and C) and creates point T:
          *
          *
          *                     C (c1,c2)                             T (t1,t2)
