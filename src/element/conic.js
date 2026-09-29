@@ -69,8 +69,8 @@ import Type from "../utils/type.js";
  * @param {PointLike} point3
  * @param {Number} [start=0] parameter of the curve start, default: 0.
  * @param {Number} [end=2π] parameter for the curve end, default: 2&pi;.
- * @example
- * // Create an Ellipse by three points
+ *
+ * @example <caption>Create an ellipse by three points</caption>
  * var A = board.create('point', [-1,4]);
  * var B = board.create('point', [-1,-4]);
  * var C = board.create('point', [1,1]);
@@ -86,8 +86,7 @@ import Type from "../utils/type.js";
  * })();
  * </script><pre>
  *
- * @example
- * // Create an elliptical arc
+ * @example <caption>Create an elliptical arc</caption>
  * var p1 = board.create('point', [-1, 2]);
  * var p2 = board.create('point', [ 1, 2]);
  * var p3 = board.create('point', [0, 3]);
@@ -371,8 +370,8 @@ JXG.createEllipse = function (board, parents, attributes) {
  * @param {PointLike} point3
  * @param {Number} [start=-π] parameter of the curve start, default: -&pi;.
  * @param {Number} [end=π] parameter for the curve end, default: &pi;.
- * @example
- * // Create an Hyperbola by three points
+ *
+ * @example <caption>Create an hyperbola by three points</caption>
  * var A = board.create('point', [-1,4]);
  * var B = board.create('point', [-1,-4]);
  * var C = board.create('point', [1,1]);
@@ -614,8 +613,7 @@ JXG.createHyperbola = function (board, parents, attributes) {
  * @param {Number} [start=-π] parameter of the curve start, default: -&pi;.
  * @param {Number} [end=π] parameter for the curve end, default: &pi;.
  *
- * @example
- * // Create a parabola by a point C and a line l.
+ * @example <caption>Create a parabola by a point C and a line l</caption>
  * var A = board.create('point', [-1,4]);
  * var B = board.create('point', [-1,-4]);
  * var l = board.create('line', [A,B]);
@@ -633,7 +631,7 @@ JXG.createHyperbola = function (board, parents, attributes) {
  * })();
  * </script><pre>
  *
- * @example
+ * @example <caption>Create a parabola by a point and a line, both given by coordinate pairs</caption>
  * var par = board.create('parabola',[[3.25, 0], [[0.25, 1],[0.25, 0]]]);
  *
  * </pre><div id="JXG09252542-b77a-4990-a109-66ffb649a472" class="jxgbox" style="width: 300px; height: 300px;"></div>
@@ -850,8 +848,7 @@ JXG.createParabola = function (board, parents, attributes) {
  * @param {PointLike} C
  * @param {PointLike} D
  * @param {PointLike} E
- * @example
- * // Create a conic section through the points A, B, C, D, and E.
+ * @example <caption>Create a conic section through the points A, B, C, D, and E</caption>
  *  var A = board.create('point', [1,5]);
  *  var B = board.create('point', [1,2]);
  *  var C = board.create('point', [2,0]);
@@ -881,8 +878,7 @@ JXG.createParabola = function (board, parents, attributes) {
  * @param {NumberLike} a_02
  * @param {NumberLike} a_12
  *
- * @example
- * // Parameters: A, C, F, B/2, D/2, E/2
+ * @example <caption>Conic given by numbers A, C, F, B/2, D/2, E/2</caption>
  * var conic = board.create('conic', [1, 2, -4, 0, 0, 0]);
  *
  * </pre><div id="JXG8576a04a-52d8-4a7e-8d54-e32443910b97" class="jxgbox" style="width: 300px; height: 300px;"></div>
