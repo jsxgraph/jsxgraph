@@ -1196,8 +1196,7 @@ JXG.extend(
  * @param {Polygon} pol
  * @param {Transformation} t
  *
- *
- * @example
+ * @example <caption>Scale polygon</caption>
  * var t = board.create('transform', [2, 1.5], {type: 'scale'});
  * var a = board.create('point', [-3,-2], {name: 'a'});
  * var b = board.create('point', [-1,-4], {name: 'b'});
@@ -1221,6 +1220,26 @@ JXG.extend(
  *
  * </script><pre>
  *
+ * @example <caption>Reflect polygon</caption>
+ * // Line of reflection
+ * var li = board.create('line', [1,1,1], {strokeColor: '#aaaaaa'});
+ * var reflect = board.create('transform', [li], {type: 'reflect'});
+ * var pol1 = board.create('polygon', [[-3,-2], [-1,-4], [-2,-0.5]]);
+ * var pol2 = board.create('polygon', [pol1, reflect]);
+ *
+ * </pre><div id="JXG58fc3078-d8d1-11e7-93b3-901b0e1b8723" class="jxgbox" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *     (function() {
+ * var board = JXG.JSXGraph.initBoard('JXG58fc3078-d8d1-11e7-93b3-901b0e1b8723',
+ *     {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+ *     var li = board.create('line', [1,1,1], {strokeColor: '#aaaaaa'});
+ *     var reflect = board.create('transform', [li], {type: 'reflect'});
+ *     var pol1 = board.create('polygon', [[-3,-2], [-1,-4], [-2,-0.5]]);
+ *     var pol2 = board.create('polygon', [pol1, reflect]);
+ *
+ *     })();
+ *
+ * </script><pre>
  */
 JXG.createPolygon = function (board, parents, attributes) {
     var el, i, le, obj,
@@ -1285,7 +1304,7 @@ JXG.createPolygon = function (board, parents, attributes) {
  * @name RegularPolygon
  * @elementclass polygon
  * @type Polygon
- * @augments Polygon
+ * @augments JXG.Polygon
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
  */
 /**
@@ -1294,7 +1313,8 @@ JXG.createPolygon = function (board, parents, attributes) {
  * @param {PointLike} p1
  * @param {PointLike} p2
  * @param {NumberLike} n
- * @example
+ *
+ * @example <caption>Regular pentagon</caption>
  * var p1 = board.create('point', [0.0, 2.0]);
  * var p2 = board.create('point', [2.0, 1.0]);
  *
@@ -1308,7 +1328,8 @@ JXG.createPolygon = function (board, parents, attributes) {
  *       cc1 = board.create('regularpolygon', [p1, p2, 5]);
  *  })();
  * </script><pre>
- * @example
+ *
+ * @example <caption>Equilateral triangle (regular triangle)</caption>
  * var p1 = board.create('point', [0.0, 2.0]);
  * var p2 = board.create('point', [4.0,4.0]);
  * var p3 = board.create('point', [2.0,0.0]);
@@ -1323,27 +1344,6 @@ JXG.createPolygon = function (board, parents, attributes) {
  *       p3 = board.create('point', [2.0,0.0]),
  *       cc1 = board.create('regularpolygon', [p1, p2, p3]);
  * })();
- * </script><pre>
- *
- * @example
- *         // Line of reflection
- *         var li = board.create('line', [1,1,1], {strokeColor: '#aaaaaa'});
- *         var reflect = board.create('transform', [li], {type: 'reflect'});
- *         var pol1 = board.create('polygon', [[-3,-2], [-1,-4], [-2,-0.5]]);
- *         var pol2 = board.create('polygon', [pol1, reflect]);
- *
- * </pre><div id="JXG58fc3078-d8d1-11e7-93b3-901b0e1b8723" class="jxgbox" style="width: 300px; height: 300px;"></div>
- * <script type="text/javascript">
- *     (function() {
- *         var board = JXG.JSXGraph.initBoard('JXG58fc3078-d8d1-11e7-93b3-901b0e1b8723',
- *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
- *             var li = board.create('line', [1,1,1], {strokeColor: '#aaaaaa'});
- *             var reflect = board.create('transform', [li], {type: 'reflect'});
- *             var pol1 = board.create('polygon', [[-3,-2], [-1,-4], [-2,-0.5]]);
- *             var pol2 = board.create('polygon', [pol1, reflect]);
- *
- *     })();
- *
  * </script><pre>
  *
  */
