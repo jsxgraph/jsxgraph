@@ -5194,9 +5194,16 @@ JXG.Options = {
         /**
          * Attributes for first defining point of the comb.
          *
-         * @type Point
+         * @type Object
          * @name Comb#point1
          * @attribute
+         * @see Point
+         * @default ```{
+         *     visible: false,
+         *     withLabel: false,
+         *     fixed: false,
+         *     name: ''
+         * }```
          */
         point1: {
             visible: false,
@@ -5208,9 +5215,15 @@ JXG.Options = {
         /**
          * Attributes for second defining point of the comb.
          *
-         * @type Point
+         * @type Object
          * @name Comb#point2
          * @attribute
+         * @default ```{
+         *     visible: false,
+         *     withLabel: false,
+         *     fixed: false,
+         *     name: ''
+         * }```
          */
         point2: {
             visible: false,
