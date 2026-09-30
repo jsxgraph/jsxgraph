@@ -6611,12 +6611,19 @@ JXG.Options = {
         /**
          * Attributes of the (left) starting point of the integral.
          *
-         * @type Point
+         * @type Object
          * @name Integral#curveLeft
          * @attribute
          * @see Integral#baseLeft
+         * @default {
+         *     visible: true,
+         *     withLabel: false,
+         *     color: Color.palette.red,
+         *     fillOpacity: 0.8,
+         *     layer: 9
+         * }
          */
-        curveLeft: {    // Start point
+        curveLeft: {
             visible: true,
             withLabel: false,
             color: Color.palette.red,
@@ -6627,12 +6634,18 @@ JXG.Options = {
         /**
          * Attributes of the (left) base point of the integral.
          *
-         * @type Point
+         * @type Object
          * @name Integral#baseLeft
          * @attribute
          * @see Integral#curveLeft
+         * @default {
+         *     visible: false,
+         *     fixed: false,
+         *     withLabel: false,
+         *     name: ''
+         * }
          */
-        baseLeft: {    // Start point
+        baseLeft: {
             visible: false,
             fixed: false,
             withLabel: false,
@@ -6642,12 +6655,19 @@ JXG.Options = {
         /**
          * Attributes of the (right) end point of the integral.
          *
-         * @type Point
+         * @type Object
          * @name Integral#curveRight
          * @attribute
          * @see Integral#baseRight
+         * @default {
+         *     visible: true,
+         *     withLabel: false,
+         *     color: Color.palette.red,
+         *     fillOpacity: 0.8,
+         *     layer: 9
+         * }
          */
-        curveRight: {      // End point
+        curveRight: {
             visible: true,
             withLabel: false,
             color: Color.palette.red,
@@ -6658,12 +6678,18 @@ JXG.Options = {
         /**
          * Attributes of the (right) base point of the integral.
          *
-         * @type Point
+         * @type Object
          * @name Integral#baseRight
          * @attribute
          * @see Integral#curveRight
+         * @default {
+         *     visible: false,
+         *     fixed: false,
+         *     withLabel: false,
+         *     name: ''
+         * }
          */
-        baseRight: {      // End point
+        baseRight: {
             visible: false,
             fixed: false,
             withLabel: false,
