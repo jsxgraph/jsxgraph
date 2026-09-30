@@ -4852,18 +4852,96 @@ JXG.Options = {
          * @visprop
          */
 
+        /**
+         * Chart style.  Available styles are:
+         *
+         * - 'bar'
+         * - 'fit'
+         * - 'line'
+         * - 'point'
+         * - 'spline'
+         * - 'radar'
+         *
+         * @name Chart#chartStyle
+         * @attribute
+         * @type String
+         * @default 'line'
+         */
         chartStyle: 'line',
+
+        /**
+         * Cyclically select colors for chart elements from this array.
+         *
+         * @name Chart#colors
+         * @attribute
+         * @type Array
+         * @default `['#B02B2C', '#3F4C6B', '#C79810', '#D15600', '#FFFF88', '#c3d9ff', '#4096EE', '#008C00']`
+         */
         colors: ['#B02B2C', '#3F4C6B', '#C79810', '#D15600', '#FFFF88', '#c3d9ff', '#4096EE', '#008C00'],
+
+        /**
+         * Cyclically select highlight colors for chart elements from this array.
+         *
+         * @name Chart#colors
+         * @attribute
+         * @type Array
+         * @default null
+         *
+         */
         highlightcolors: null,
+
+        /**
+         * Cyclically select fill colors for chart elements from this array.
+         *
+         * @name Chart#colors
+         * @attribute
+         * @type Array
+         * @default null
+         *
+         */
         fillcolor: null,
+
+        /**
+         * Highlight chart element, pie chart only.
+         * @name Chart#highlightonsector
+         * @attribute
+         * @type Boolean
+         * @default false
+         */
         highlightonsector: false,
+
+        /**
+         * Highlight chart element by increasing size, pie chart only.
+         * @name Chart#highlightbysize
+         * @attribute
+         * @type Boolean
+         * @default false
+         */
         highlightbysize: false,
 
         fillOpacity: 0.6,
+
+        /**
+         * Display lines (edges) of chart elements displayed by polygons.
+         * Unused?
+         * @name Chart#withLines
+         * @attribute
+         * @type Boolean
+         * @default false
+         *
+         */
         withLines: false,
 
+        /**
+         * Style of chart labels
+         * @name Chart#label
+         * @attribute
+         * @type Object
+         * @default `{}`
+         */
         label: {
         }
+
         /**#@-*/
     },
 

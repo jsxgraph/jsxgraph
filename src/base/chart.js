@@ -991,18 +991,25 @@ JXG.extend(
  * @param {Array} [x] Array of `x`-coordinates (default case, see below for alternatives)
  * @param {Array} y Array of `y`-coordinates (default case, see below for alternatives)
  *
- * @example
- *   board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-0.5,8,9,-2],axis:true});
- *
- *   var f = [4, 2, -1, 3, 6, 7, 2];
- *   var chart = board.create('chart', f,
- *                 {chartStyle:'bar',
- *                  width:0.8,
- *                  labels:f,
- *                  colorArray:['#8E1B77','#BE1679','#DC1765','#DA2130','#DB311B','#DF4917','#E36317','#E87F1A',
- *                              '#F1B112','#FCF302','#C1E212'],
- *                  label: {fontSize:30, display:'internal', anchorX:'left', rotate:90}
- *             });
+ * @example <caption>Bar chart</caption>
+ * board = JXG.JSXGraph.initBoard('jxgbox', {
+ *   boundingbox:[-0.5,8,9,-2], axis:true
+ * });
+ * var f = [4, 2, -1, 3, 6, 7, 2],
+ *     chart = board.create('chart', f, {
+ *       chartStyle:'bar',
+ *       width:0.8,
+ *       labels:f,
+ *       colorArray:['#8E1B77', '#BE1679', '#DC1765', '#DA2130',
+ *                   '#DB311B', '#DF4917', '#E36317', '#E87F1A',
+ *                   '#F1B112', '#FCF302', '#C1E212'],
+ *       label: {
+ *           fontSize:30,
+ *           display:'internal',
+ *           anchorX:'left',
+ *           rotate:90
+ *       }
+ *    });
  *
  * </pre><div id="JXG1528c395-9fa4-4210-ada6-7fc5652ed920" class="jxgbox" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
@@ -1023,34 +1030,49 @@ JXG.extend(
  *
  * </script><pre>
  *
- * @example
+ * @example <caption>Dynamic bar chart and static line and point charts</caption>
  *   board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-1, 9, 13, -3], axis:true});
  *
- *   var s = board.create('slider', [[4,7],[8,7],[1,1,1.5]], {name:'S', strokeColor:'black', fillColor:'white'});
- *   var f = [function(){return (s.Value()*4.5).toFixed(2);},
- *                      function(){return (s.Value()*(-1)).toFixed(2);},
- *                      function(){return (s.Value()*3).toFixed(2);},
- *                      function(){return (s.Value()*2).toFixed(2);},
- *                      function(){return (s.Value()*(-0.5)).toFixed(2);},
- *                      function(){return (s.Value()*5.5).toFixed(2);},
- *                      function(){return (s.Value()*2.5).toFixed(2);},
- *                      function(){return (s.Value()*(-0.75)).toFixed(2);},
- *                      function(){return (s.Value()*3.5).toFixed(2);},
- *                      function(){return (s.Value()*2).toFixed(2);},
- *                      function(){return (s.Value()*(-1.25)).toFixed(2);}
- *                      ];
- *   var chart = board.create('chart', [f],
- *                                             {chartStyle:'bar',width:0.8,labels:f,
- *                                              colorArray:['#8E1B77','#BE1679','#DC1765','#DA2130','#DB311B','#DF4917','#E36317','#E87F1A',
- *                                                          '#F1B112','#FCF302','#C1E212']});
+ *   var s = board.create('slider', [[4,7], [8,7], [1, 1, 1.5]], {
+ *           name:'S', strokeColor:'black', fillColor:'white'
+ *       }),
+ *       f = [
+ *            () => (s.Value()*4.5).toFixed(2),
+ *            () => (s.Value()*(-1)).toFixed(2),
+ *            () => (s.Value()*3).toFixed(2),
+ *            () => (s.Value()*2).toFixed(2),
+ *            () => (s.Value()*(-0.5)).toFixed(2),
+ *            () => (s.Value()*5.5).toFixed(2),
+ *            () => (s.Value()*2.5).toFixed(2),
+ *            () => (s.Value()*(-0.75)).toFixed(2),
+ *            () => (s.Value()*3.5).toFixed(2),
+ *            () => (s.Value()*2).toFixed(2),
+ *            () => (s.Value()*(-1.25)).toFixed(2)
+ *      ],
+ *      chart = board.create('chart', [f], {
+ *        chartStyle:'bar', width:0.8,
+ *        labels:f,
+ *        colorArray:['#8E1B77', '#BE1679', '#DC1765', '#DA2130',
+ *                    '#DB311B', '#DF4917', '#E36317', '#E87F1A',
+ *                    '#F1B112', '#FCF302', '#C1E212']});
  *
- *   var dataArr = [4,1,3,2,5,6.5,1.5,2,0.5,1.5,-1];
- *   var chart2 = board.create('chart', dataArr, {chartStyle:'line,point'});
+ *   // Line chart and point chart
+ *   var dataArr = [4, 1, 3, 2, 5, 6.5, 1.5, 2, 0.5, 1.5, -1],
+ *       chart2 = board.create('chart', dataArr, {
+ *          chartStyle:'line, point'
+ *       });
+ *
+ *   // Change attributes after creation
  *   chart2[0].setAttribute('strokeColor:black','strokeWidth:2pt');
- *   for(var i=0; i<11;i++) {
- *            chart2[1][i].setAttribute({strokeColor:'black',fillColor:'white',face:'[]', size:4, strokeWidth:'2pt'});
+ *   for (let i = 0; i < 11; i++) {
+ *       chart2[1][i].setAttribute({
+ *           strokeColor:'black',
+ *           fillColor:'white',
+ *           face:'[]',
+ *           size:4,
+ *           strokeWidth:'2pt'
+ *       });
  *   }
- *   board.unsuspendUpdate();
  *
  * </pre><div id="JXG22deb158-48c6-41c3-8157-b88b4b968a55" class="jxgbox" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
@@ -1058,46 +1080,46 @@ JXG.extend(
  *         var board = JXG.JSXGraph.initBoard('JXG22deb158-48c6-41c3-8157-b88b4b968a55',
  *             {boundingbox: [-1, 9, 13, -3], axis: true, showcopyright: false, shownavigation: false});
  *                 var s = board.create('slider', [[4,7],[8,7],[1,1,1.5]], {name:'S', strokeColor:'black', fillColor:'white'});
- *                 var f = [function(){return (s.Value()*4.5).toFixed(2);},
- *                          function(){return (s.Value()*(-1)).toFixed(2);},
- *                          function(){return (s.Value()*3).toFixed(2);},
- *                          function(){return (s.Value()*2).toFixed(2);},
- *                          function(){return (s.Value()*(-0.5)).toFixed(2);},
- *                          function(){return (s.Value()*5.5).toFixed(2);},
- *                          function(){return (s.Value()*2.5).toFixed(2);},
- *                          function(){return (s.Value()*(-0.75)).toFixed(2);},
- *                          function(){return (s.Value()*3.5).toFixed(2);},
- *                          function(){return (s.Value()*2).toFixed(2);},
- *                          function(){return (s.Value()*(-1.25)).toFixed(2);}
- *                          ];
+ *       f = [
+ *            () => (s.Value()*4.5).toFixed(2),
+ *            () => (s.Value()*(-1)).toFixed(2),
+ *            () => (s.Value()*3).toFixed(2),
+ *            () => (s.Value()*2).toFixed(2),
+ *            () => (s.Value()*(-0.5)).toFixed(2),
+ *            () => (s.Value()*5.5).toFixed(2),
+ *            () => (s.Value()*2.5).toFixed(2),
+ *            () => (s.Value()*(-0.75)).toFixed(2),
+ *            () => (s.Value()*3.5).toFixed(2),
+ *            () => (s.Value()*2).toFixed(2),
+ *            () => (s.Value()*(-1.25)).toFixed(2)
+ *      ];
  *                 var chart = board.create('chart', [f],
- *                                                 {chartStyle:'bar',width:0.8,labels:f,
- *                                                  colorArray:['#8E1B77','#BE1679','#DC1765','#DA2130','#DB311B','#DF4917','#E36317','#E87F1A',
- *                                                              '#F1B112','#FCF302','#C1E212']});
+ *                         {chartStyle:'bar',width:0.8,labels:f,
+ *                          colorArray:['#8E1B77','#BE1679','#DC1765','#DA2130','#DB311B','#DF4917','#E36317','#E87F1A',
+ *                                '#F1B112','#FCF302','#C1E212']});
  *
  *                 var dataArr = [4,1,3,2,5,6.5,1.5,2,0.5,1.5,-1];
  *                 var chart2 = board.create('chart', dataArr, {chartStyle:'line,point'});
  *                 chart2[0].setAttribute('strokeColor:black','strokeWidth:2pt');
- *                 for(var i=0; i<11;i++) {
+ *                 for(let i=0; i<11;i++) {
  *                     chart2[1][i].setAttribute({strokeColor:'black',fillColor:'white',face:'[]', size:4, strokeWidth:'2pt'});
  *                 }
- *                 board.unsuspendUpdate();
- *
  *     })();
  *
  * </script><pre>
  *
- * @example
- *         var dataArr = [4, 1.2, 3, 7, 5, 4, 1.54, function () { return 2; }];
- *         var a = board.create('chart', dataArr, {
- *                 chartStyle:'pie', colors:['#B02B2C','#3F4C6B','#C79810','#D15600'],
- *                 fillOpacity:0.9,
- *                 center:[5,2],
- *                 strokeColor:'#ffffff',
- *                 strokeWidth:6,
- *                 highlightBySize:true,
- *                 highlightOnSector:true
- *             });
+ * @example <caption>Pie chart</caption>
+ * var dataArr = [4, 1.2, 3, 7, 5, 4, 1.54, function () { return 2; }],
+ *     a = board.create('chart', dataArr, {
+ *         chartStyle:'pie',
+ *         colors:['#B02B2C','#3F4C6B','#C79810','#D15600'],
+ *         fillOpacity:0.9,
+ *         center:[5,2],
+ *         strokeColor:'#ffffff',
+ *         strokeWidth:6,
+ *         highlightBySize:true,
+ *         highlightOnSector:true
+ *     });
  *
  * </pre><div id="JXG1180b7dd-b048-436a-a5ad-87ffa82d5aff" class="jxgbox" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
@@ -1119,35 +1141,36 @@ JXG.extend(
  *
  * </script><pre>
  *
- * @example
- *  board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-12, 12, 20, -12], axis: false});
- *  // See labelArray and paramArray
- *  var dataArr = [[23, 14, 15.0], [60, 8, 25.0], [0, 11.0, 25.0], [10, 15, 20.0]];
+ * @example <caption>Radar chart</caption>
+ * board = JXG.JSXGraph.initBoard('jxgbox', {
+ *    boundingbox: [-12, 12, 20, -12], axis: false
+ * });
+ * var dataArr = [[23, 14, 15.0], [60, 8, 25.0], [0, 11.0, 25.0], [10, 15, 20.0]];
  *
- *  var a = board.create('chart', dataArr, {
- *      chartStyle:'radar',
- *      colorArray:['#0F408D','#6F1B75','#CA147A','#DA2228','#E8801B','#FCF302','#8DC922','#15993C','#87CCEE','#0092CE'],
- *      //fillOpacity:0.5,
- *      //strokeColor:'black',
- *      //strokeWidth:1,
- *      //polyStrokeWidth:1,
- *      paramArray:['Speed','Flexibility', 'Costs'],
- *      labelArray:['Ruby','JavaScript', 'PHP', 'Python'],
- *      //startAngle:Math.PI/4,
- *      legendPosition:'right',
- *      //"startShiftRatio": 0.1,
- *      //endShiftRatio:0.1,
- *      //startShiftArray:[0,0,0],
- *      //endShiftArray:[0.5,0.5,0.5],
- *      start:0
- *      //end:70,
- *      //startArray:[0,0,0],
- *      //endArray:[7,7,7],
- *      //radius:3,
- *      //showCircles:true,
- *      //circleLabelArray:[1,2,3,4,5],
- *      //highlightColorArray:['#E46F6A','#F9DF82','#F7FA7B','#B0D990','#69BF8E','#BDDDE4','#92C2DF','#637CB0','#AB91BC','#EB8EBF'],
- *  });
+ * var a = board.create('chart', dataArr, {
+ *     chartStyle:'radar',
+ *     colorArray:['#0F408D','#6F1B75','#CA147A','#DA2228','#E8801B','#FCF302','#8DC922','#15993C','#87CCEE','#0092CE'],
+ *     //fillOpacity:0.5,
+ *     //strokeColor:'black',
+ *     //strokeWidth:1,
+ *     //polyStrokeWidth:1,
+ *     paramArray:['Speed','Flexibility', 'Costs'],
+ *     labelArray:['Ruby','JavaScript', 'PHP', 'Python'],
+ *     //startAngle:Math.PI/4,
+ *     legendPosition:'right',
+ *     //"startShiftRatio": 0.1,
+ *     //endShiftRatio:0.1,
+ *     //startShiftArray:[0,0,0],
+ *     //endShiftArray:[0.5,0.5,0.5],
+ *     start:0
+ *     //end:70,
+ *     //startArray:[0,0,0],
+ *     //endArray:[7,7,7],
+ *     //radius:3,
+ *     //showCircles:true,
+ *     //circleLabelArray:[1,2,3,4,5],
+ *     //highlightColorArray:['#E46F6A','#F9DF82','#F7FA7B','#B0D990','#69BF8E','#BDDDE4','#92C2DF','#637CB0','#AB91BC','#EB8EBF'],
+ * });
  *
  * </pre><div id="JXG985fbbe6-0488-4073-b73b-cb3ebaea488a" class="jxgbox" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
@@ -1446,7 +1469,7 @@ JXG.Legend.prototype.drawVerticalLegend = function (board, attributes) {
  * @param {Number} x Horizontal coordinate of the left top point of the legend
  * @param {Number} y Vertical coordinate of the left top point of the legend
  *
- * @example
+ * @example <caption></caption>
  * var board = JXG.JSXGraph.initBoard('jxgbox', {axis:true,boundingbox:[-4,48.3,12.0,-2.3]});
  * var x       = [-3,-2,-1,0,1,2,3,4,5,6,7,8];
  * var dataArr = [4,7,7,27,33,37,46,22,11,4,1,0];
@@ -1471,7 +1494,7 @@ JXG.Legend.prototype.drawVerticalLegend = function (board, attributes) {
  *
  * </script><pre>
  *
- * @example
+ * @example <caption></caption>
  *   var inputFun, cf = [], cf2 = [], niveaunum,
  *     niveauline = [], niveauopac = [],legend;
  *
