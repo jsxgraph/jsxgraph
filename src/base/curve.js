@@ -3118,7 +3118,7 @@ JXG.registerElement("curveunion", JXG.createCurveUnion);
  *
  * Given a data set, the input array Q for the boxplot can be computed e.g. with the method {@link JXG.Math.Statistics.boxplot}.
  *
- * @example
+ * @example  <caption>Boxplot, quantiles computed with `JXG.Math.Statistics.boxplot()`</caption>
  * var data = [57, 57, 57, 58, 63, 66, 66, 67, 67, 68, 69, 70, 70, 70, 70, 72, 73, 75, 75, 76, 76, 78, 79, 81];
  * var Q = JXG.Math.Statistics.boxplot(data);
  * var b = board.create('boxplot', [Q, 2, 4]);
@@ -3138,7 +3138,7 @@ JXG.registerElement("curveunion", JXG.createCurveUnion);
  * @param {Number|Function} width Width of the rectangle part of the boxplot. The width of the first and 3th quartile
  * is relative to this width and can be controlled by the attribute "smallWidth".
  *
- * @example
+ * @example <caption>Vertical boxplot with user-supplied quantiles</caption>
  * var Q = [ -1, 2, 3, 3.5, 5 ];
  *
  * var b = board.create('boxplot', [Q, 2, 4], {strokeWidth: 3});
@@ -3155,10 +3155,14 @@ JXG.registerElement("curveunion", JXG.createCurveUnion);
  *
  * </script><pre>
  *
- * @example
- * // With outliers
+ * @example <caption>Horizontal boxplot with user-supplied quantiles and outliers</caption>
  * var Q = [ -1, 2, 3, 3.5, 5, [-4, -6] ];
- * var b = board.create('boxplot', [Q, 3, 4], {dir: 'horizontal', width: 2, smallWidth: 0.25, color:'red'});
+ * var b = board.create('boxplot', [Q, 3, 4], {
+ *   dir: 'horizontal',
+ *   width: 2,
+ *   smallWidth: 0.25,
+ *   color:'red'
+ * });
  *
  * </pre><div id="JXG0deb9cb2-84bc-470d-a6db-8be9a5694813" class="jxgbox" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
@@ -3172,8 +3176,9 @@ JXG.registerElement("curveunion", JXG.createCurveUnion);
  *
  * </script><pre>
  *
- * @example
- * var data = [57, 57, 57, 58, 63, 66, 66, 67, 67, 68, 69, 70, 70, 70, 70, 72, 73, 75, 75, 76, 76, 78, 79, 81];
+ * @example <caption>Boxplot, quantiles computed with `JXG.Math.Statistics.boxplot()`</caption>
+ * var data = [57, 57, 57, 58, 63, 66, 66, 67, 67, 68, 69,
+ *     70, 70, 70, 70, 72, 73, 75, 75, 76, 76, 78, 79, 81];
  * var Q = JXG.Math.Statistics.boxplot(data);
  * var b = board.create('boxplot', [Q, 0, 3]);
  *
@@ -3190,10 +3195,10 @@ JXG.registerElement("curveunion", JXG.createCurveUnion);
  *
  * </script><pre>
  *
- * @example
+ * @example <caption>Boxplot with dynamic quantiles</caption>
  * var mi = board.create('glider', [0, -1, board.defaultAxes.y]);
  * var ma = board.create('glider', [0, 5, board.defaultAxes.y]);
- * var Q = [function() { return mi.Y(); }, 2, 3, 3.5, function() { return ma.Y(); }];
+ * var Q = [() => mi.Y(), 2, 3, 3.5, () => ma.Y()];
  *
  * var b = board.create('boxplot', [Q, 0, 2]);
  *
