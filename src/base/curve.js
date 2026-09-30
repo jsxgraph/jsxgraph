@@ -2205,7 +2205,7 @@ JXG.registerElement("cardinalspline", JXG.createCardinalSpline);
  * @class Interpolate data points by the spline curve from Metapost (by Donald Knuth and John Hobby).
  * Create a dynamic metapost spline interpolated curve given by sample points p_1 to p_n.
  * @pseudo
- * @name Metapostspline
+ * @name MetapostSpline
  * @elementclass curve
  * @augments JXG.Curve
  * @constructor
@@ -2213,39 +2213,52 @@ JXG.registerElement("cardinalspline", JXG.createCardinalSpline);
  * @see JXG.Curve
  */
 /**
- * @jsxgraphsignature Metapostspline
+ * @jsxgraphsignature MetapostSpline
  * Parameters are the points and controls for the spline interpolation.
  * @param {...PointLike} point Unspecified number of points
  * @param {Object} controls Object containing MetaPost control values like tension, direction, curl.
  *
- * @example
- *     var po = [],
- *         attr = {
- *             size: 5,
- *             color: 'red'
- *         },
- *         controls;
+ * @example <caption>Metapost spline</caption>
+ * var po = [],
+ *     attr = {
+ *         size: 5,
+ *         color: 'red'
+ *     },
+ *     controls;
  *
- *     var tension = board.create('slider', [[-3, 6], [3, 6], [0, 1, 20]], {name: 'tension'});
- *     var curl = board.create('slider', [[-3, 5], [3, 5], [0, 1, 30]], {name: 'curl A, D'});
- *     var dir = board.create('slider', [[-3, 4], [3, 4], [-180, 0, 180]], {name: 'direction B'});
+ * var tension = board.create('slider', [[-5, 6], [1, 6], [0, 1, 20]], {
+ *      name: 'tension'
+ * });
+ * var curl = board.create('slider', [[-5, 5], [1, 5], [0, 1, 30]], {
+ *      name: 'curl A, D'
+ * });
+ * var dir = board.create('slider', [[-5, 3.5], [2, 3.5], [-180, 0, 180]], {
+ *      name: 'direction B'
+ * });
  *
- *     po.push(board.create('point', [-3, -3]));
- *     po.push(board.create('point', [0, -3]));
- *     po.push(board.create('point', [4, -5]));
- *     po.push(board.create('point', [6, -2]));
+ * po.push(board.create('point', [-3, -3]));
+ * po.push(board.create('point', [0, -3]));
+ * po.push(board.create('point', [4, -5]));
+ * po.push(board.create('point', [6, -2]));
  *
- *     var controls = {
- *         tension: function() {return tension.Value(); },
- *         direction: { 1: function() {return dir.Value(); } },
- *         curl: { 0: function() {return curl.Value(); },
- *                 3: function() {return curl.Value(); }
- *             },
- *         isClosed: false
- *     };
+ * var controls = {
+ *     tension: () => tension.Value(),
+ *     0: {
+ *         curl: () => curl.Value()
+ *       },
+ *     1: {
+ *         direction: () => dir.Value()
+ *       },
+ *     3: {
+ *         curl: () => curl.Value()
+ *       },
+ *     isClosed: false
+ * };
  *
- *     // Plot a metapost curve
- *     var cu = board.create('metapostspline', [po, controls], {strokeColor: 'blue', strokeWidth: 2});
+ * // Plot a metapost curve
+ * var cu = board.create('metapostspline', [po, controls], {
+ *   strokeColor: 'blue', strokeWidth: 2
+ * });
  *
  *
  * </pre><div id="JXGb8c6ffed-7419-41a3-9e55-3754b2327ae9" class="jxgbox" style="width: 300px; height: 300px;"></div>
@@ -2260,23 +2273,27 @@ JXG.registerElement("cardinalspline", JXG.createCardinalSpline);
  *             },
  *             controls;
  *
- *         var tension = board.create('slider', [[-3, 6], [3, 6], [0, 1, 20]], {name: 'tension'});
- *         var curl = board.create('slider', [[-3, 5], [3, 5], [0, 1, 30]], {name: 'curl A, D'});
- *         var dir = board.create('slider', [[-3, 4], [3, 4], [-180, 0, 180]], {name: 'direction B'});
+ * var tension = board.create('slider', [[-5, 6], [1, 6], [0, 1, 20]], {name: 'tension'});
+ * var curl = board.create('slider', [[-5, 5], [1, 5], [0, 1, 30]], {name: 'curl A, D'});
+ * var dir = board.create('slider', [[-5, 3.5], [2, 3.5], [-180, 0, 180]], {name: 'direction B'});
  *
  *         po.push(board.create('point', [-3, -3]));
  *         po.push(board.create('point', [0, -3]));
  *         po.push(board.create('point', [4, -5]));
  *         po.push(board.create('point', [6, -2]));
- *
- *         var controls = {
- *             tension: function() {return tension.Value(); },
- *             direction: { 1: function() {return dir.Value(); } },
- *             curl: { 0: function() {return curl.Value(); },
- *                     3: function() {return curl.Value(); }
- *                 },
- *             isClosed: false
- *         };
+ * var controls = {
+ *     tension: () => tension.Value(),
+ *     0: {
+ *         curl: () => curl.Value()
+ *       },
+ *     1: {
+ *         direction: () => dir.Value()
+ *       },
+ *     3: {
+ *         curl: () => curl.Value()
+ *       },
+ *     isClosed: false
+ * };
  *
  *         // Plot a metapost curve
  *         var cu = board.create('metapostspline', [po, controls], {strokeColor: 'blue', strokeWidth: 2});

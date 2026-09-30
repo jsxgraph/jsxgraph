@@ -7878,9 +7878,9 @@ JXG.Options = {
          *
          * @name createPoints
          * @attribute
-         * @memberOf Metapostspline.prototype
+         * @memberOf MetapostSpline.prototype
          *
-         * @see Metapostspline#points
+         * @see MetapostSpline#points
          *
          * @type Boolean
          * @default true
@@ -7896,7 +7896,7 @@ JXG.Options = {
          *
          * @name isArrayOfCoordinates
          * @attribute
-         * @memberOf Metapostspline.prototype
+         * @memberOf MetapostSpline.prototype
          * @type Boolean
          * @default true
          */
@@ -7908,9 +7908,9 @@ JXG.Options = {
          *
          * @name points
          * @attribute
-         * @memberOf Metapostspline.prototype
+         * @memberOf MetapostSpline.prototype
          *
-         * @see Metapostspline#createPoints
+         * @see MetapostSpline#createPoints
          * @type Object
          */
         points: {
