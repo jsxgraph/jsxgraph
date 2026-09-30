@@ -2203,7 +2203,7 @@ JXG.registerElement("cardinalspline", JXG.createCardinalSpline);
 
 /**
  * @class Interpolate data points by the spline curve from Metapost (by Donald Knuth and John Hobby).
- * Create a dynamic metapost spline interpolated curve given by sample points p_1 to p_n.
+ * Create a dynamic metapost spline interpolated curve given by sample points \\(p_1\\) to \\(p_n\\).
  * @pseudo
  * @name MetapostSpline
  * @elementclass curve
