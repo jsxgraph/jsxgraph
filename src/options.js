@@ -5198,12 +5198,12 @@ JXG.Options = {
          * @name Comb#point1
          * @attribute
          * @see Point
-         * @default ```{
+         * @default {
          *     visible: false,
          *     withLabel: false,
          *     fixed: false,
          *     name: ''
-         * }```
+         * }
          */
         point1: {
             visible: false,
@@ -5218,12 +5218,12 @@ JXG.Options = {
          * @type Object
          * @name Comb#point2
          * @attribute
-         * @default ```{
+         * @default {
          *     visible: false,
          *     withLabel: false,
          *     fixed: false,
          *     name: ''
-         * }```
+         * }
          */
         point2: {
             visible: false,
