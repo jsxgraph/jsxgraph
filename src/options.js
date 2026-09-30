@@ -6632,7 +6632,7 @@ JXG.Options = {
         },
 
         /**
-         * Attributes of the (left) base point of the integral.
+         * Attributes of the left base point of the integral.
          *
          * @type Object
          * @name Integral#baseLeft
@@ -6676,7 +6676,7 @@ JXG.Options = {
         },
 
         /**
-         * Attributes of the (right) base point of the integral.
+         * Attributes of the right base point of the integral.
          *
          * @type Object
          * @name Integral#baseRight
