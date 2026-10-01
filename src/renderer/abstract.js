@@ -145,6 +145,7 @@ JXG.AbstractRenderer = function () {
      *     // do something
      * }
      * @type String
+     * @default ""
      */
     this.type = "";
 
@@ -153,8 +154,9 @@ JXG.AbstractRenderer = function () {
      * Not supported browsers are IE 9 - 11.
      * It is tested in svg renderer.
      *
-     * @type Boolean
      * @private
+     * @type Boolean
+     * @default
      */
     this.supportsForeignObject = false;
 
