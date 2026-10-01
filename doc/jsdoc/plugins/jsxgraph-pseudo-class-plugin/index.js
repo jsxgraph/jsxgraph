@@ -38,12 +38,14 @@ exports.handlers = {
     newDoclet: function (e) {
         var d = e.doclet;
         // console.log(d.default)
+
+        // Enable automatic multiline default values
         d.defaultvaluemultiline = false;
-        if (d.defaultvalue && d.defaultvalue.indexOf('\n') > 0) {
+        if (d.defaultvalue && d.defaultvalue.indexOf && d.defaultvalue.indexOf('\n') > 0) {
             d.defaultvaluemultiline = true;
         }
         // if (d.kind === 'class') {
-        //     // console.log(d)
+        //     console.log('-----------\n', d)
         // }
     }
 };
