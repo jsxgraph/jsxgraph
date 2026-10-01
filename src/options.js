@@ -4882,7 +4882,7 @@ JXG.Options = {
         /**
          * Cyclically select highlight colors for chart elements from this array.
          *
-         * @name Chart#colors
+         * @name Chart#highlightcolors
          * @attribute
          * @type Array
          * @default null
@@ -4893,7 +4893,7 @@ JXG.Options = {
         /**
          * Cyclically select fill colors for chart elements from this array.
          *
-         * @name Chart#colors
+         * @name Chart#fillcolor
          * @attribute
          * @type Array
          * @default null
