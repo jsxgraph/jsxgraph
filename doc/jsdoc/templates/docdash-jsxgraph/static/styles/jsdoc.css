@@ -658,7 +658,10 @@ nav details[open] {
 nav summary {
     position: relative;
     top: auto;
-    z-index: auto;
+    /* Its own stacking context, so the two marker pseudo elements with their
+       z-index 0 and 1 stay inside the group instead of competing with the
+       "to top" button above them. */
+    z-index: 0;
     margin: 0 -.5rem;
     padding: .6rem 2.1rem .6rem .75rem;
     background-color: #f3f6f8;
@@ -785,6 +788,65 @@ nav summary::before {
     right: .83rem;
     width: .55rem;
     height: 1px;
+}
+
+/* "To top" button below the search field. No frame of its own - only a rule
+   along the bottom edge, under which the scrolled entries disappear.
+
+   It overlaps the search field by the radius of its corners and sits one
+   layer lower, so its opaque background fills the notches the rounded
+   corners leave open while the field itself still paints on top. The top
+   padding gives that overlap back, so the label stays where it belongs. */
+.nav-totop {
+    position: -webkit-sticky;
+    position: sticky;
+    /* bottom edge of the search field minus the overlap */
+    top: 5.45rem;
+    z-index: 1;
+    display: none;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    gap: .35rem;
+    width: 100%;
+    margin: -1.6rem 0 1rem;
+    padding: .95rem .75rem .35rem;
+    border: 0;
+    border-bottom: 1px solid #d7e0e8;
+    border-bottom: 1px solid var(--jxg-border);
+    border-radius: 0;
+    background-color: #f3f6f8;
+    background-color: var(--jxg-bg-subtle);
+    color: #5d6b7a;
+    color: var(--jxg-text-muted);
+    font-family: 'Fira Sans', 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-family: var(--jxg-font-sans);
+    font-size: 0.8rem;
+    font-size: var(--jxg-fs-tiny);
+    font-weight: 600;
+    line-height: 1.4;
+    cursor: pointer;
+    transition: color .15s ease;
+}
+
+.nav-totop.is-visible {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+}
+
+.nav-totop svg {
+    width: .8rem;
+    height: .8rem;
+    display: block;
+}
+
+.nav-totop:hover {
+    color: #08648f;
+    color: var(--jxg-secondary);
 }
 
 /* --------------------------------------------------------------------------

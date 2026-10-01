@@ -60,6 +60,14 @@
 <nav <?js if (env.conf.docdash.wrap) { ?>class="wrap"<?js } ?>>
     <?js if (env.conf.docdash.search) { ?>
     <input type="text" id="nav-search" placeholder="Search" />
+    <button type="button" class="nav-totop" title="Back to top">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M12 19V5"></path>
+            <path d="m5 12 7-7 7 7"></path>
+        </svg>
+        <span>Top</span>
+    </button>
     <?js } ?>
     <?js if (!env.conf.docdash.commonNav) { ?>
     <?js= this.nav ?>
@@ -117,5 +125,18 @@
         }
     }
 } ?>
+    <script>
+        (function () {
+        var nav = document.querySelector('nav'),
+        btn = document.querySelector('.nav-totop');
+        if (!nav || !btn) {return;}
+        btn.addEventListener('click', function () {
+        nav.scrollTo({top: 0, behavior: 'smooth'});
+    });
+        nav.addEventListener('scroll', function () {
+        btn.classList.toggle('is-visible', nav.scrollTop > 4);
+    }, {passive: true});
+    })();
+    </script>
 </body>
 </html>
