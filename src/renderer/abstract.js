@@ -128,13 +128,14 @@ JXG.AbstractRenderer = function () {
      * on every update. Visual properties means: All the stuff stored in the
      * {@link JXG.GeometryElement#visProp} property won't be set if enhancedRendering is `false`
      * @type Boolean
-     * @default true
+     * @default
      */
     this.enhancedRendering = true;
 
     /**
      * The HTML element that stores the JSXGraph board in it.
      * @type Node
+     * @default null
      */
     this.container = null;
 

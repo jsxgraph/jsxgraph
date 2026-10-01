@@ -180,6 +180,9 @@ d:
 	rm ./doc/jsdoc/README.md.bak
 	node_modules/.bin/jsdoc -a all --verbose --pedantic --readme ./doc/jsdoc/README.md -c ./doc/jsdoc/jsdoc.json $(FILELIST)
 
+t:
+	node_modules/.bin/jsdoc -a all --verbose --pedantic -c ./doc/jsdoc/jsdoc.json ./doc/jsdoc/tests/test2.js
+
 # prettier:
 # 	$(PRETTIER) $(PRETTIERFLAGS) src
 
