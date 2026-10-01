@@ -41,6 +41,7 @@ JSDOC2TPLSTAT=$(JSDOC2TPL)/static
 JSDOC2FLAGS=-v -p -t=$(JSDOC2TPL) -d=$(TMP)/docs
 
 # jsdoc4
+JSDOC=npx jsdoc
 JSDOCTPL=doc/jsdoc/templates/docdash-jsxgraph/tmpl
 JSDOCTPLSTAT=doc/jsdoc/templates/docdash-jsxgraph/static
 
@@ -164,7 +165,7 @@ docs4only:
 	# Run node-jsdoc4
 	sed -i.bak '3 s/JSXGraph version .*/JSXGraph version $(VERSION), API reference generated '`date +"%Y-%m-%d"`'*/' ./doc/jsdoc/README.md
 	rm ./doc/jsdoc/README.md.bak
-	node_modules/.bin/jsdoc -a all --verbose --pedantic --readme ./doc/jsdoc/README.md -c ./doc/jsdoc/jsdoc.json $(FILELIST)
+	$(JSDOC) -a all --verbose --pedantic --readme ./doc/jsdoc/README.md -c ./doc/jsdoc/jsdoc.json $(FILELIST)
 
 	# Compress the result: zip -r tmp/docs.zip docs/
 	$(CD) $(TMP) && $(ZIP) $(ZIPFLAGS) docs.zip docs/
@@ -178,10 +179,10 @@ docs4only:
 d:
 	sed -i.bak '3 s/JSXGraph version .*/JSXGraph version $(VERSION), API reference generated '`date +"%Y-%m-%d"`'*/' ./doc/jsdoc/README.md
 	rm ./doc/jsdoc/README.md.bak
-	node_modules/.bin/jsdoc -a all --verbose --pedantic --readme ./doc/jsdoc/README.md -c ./doc/jsdoc/jsdoc.json $(FILELIST)
+	@$(JSDOC) -a all --verbose --pedantic --readme ./doc/jsdoc/README.md -c ./doc/jsdoc/jsdoc.json $(FILELIST)
 
 t:
-	node_modules/.bin/jsdoc -a all --verbose --pedantic -c ./doc/jsdoc/jsdoc.json ./doc/jsdoc/tests/test2.js
+	$(JSDOC) -a all --verbose --pedantic -c ./doc/jsdoc/jsdoc.json ./doc/jsdoc/tests/test2.js
 
 # prettier:
 # 	$(PRETTIER) $(PRETTIERFLAGS) src
