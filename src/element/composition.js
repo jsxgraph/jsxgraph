@@ -1668,9 +1668,10 @@ JXG.createCircumcenter = function (board, parents, attributes) {
  * </script><pre>
  */
 JXG.createIncenter = function (board, parents, attributes) {
-    var p, A, B, C, i;
+    var p, A, B, C, i,
+        attr_point = { name: '' };
 
-    parents = Type.providePoints(board, parents, attributes, 'point');
+    parents = Type.providePoints(board, parents, attr_point, 'point');
     if (
         parents.length >= 3 &&
         Type.isPoint(parents[0]) &&
@@ -1766,9 +1767,10 @@ JXG.createIncenter = function (board, parents, attributes) {
  * </script><pre>
  */
 JXG.createCircumcircle = function (board, parents, attributes) {
-    var p, c, attr, i;
+    var p, c, attr, i,
+        attr_point = { name: '' };
 
-    parents = Type.providePoints(board, parents, attributes, 'point');
+    parents = Type.providePoints(board, parents, attr_point, 'point');
     if (parents === false) {
         throw new Error(
             "JSXGraph: Can't create circumcircle with parent types '" +
@@ -1861,9 +1863,10 @@ JXG.createCircumcircle = function (board, parents, attributes) {
  * </script><pre>
  */
 JXG.createIncircle = function (board, parents, attributes) {
-    var i, p, c, attr;
+    var i, p, c, attr,
+        attr_point = { name: '' };
 
-    parents = Type.providePoints(board, parents, attributes, 'point');
+    parents = Type.providePoints(board, parents, attr_point, 'point');
     if (parents === false) {
         throw new Error(
             "JSXGraph: Can't create circumcircle with parent types '" +

@@ -1010,9 +1010,10 @@ JXG.registerElement("sector", JXG.createSector);
  * </script><pre>
  */
 JXG.createCircumcircleSector = function (board, parents, attributes) {
-    var el, mp, attr, points;
+    var el, mp, attr, points,
+        attr_point = { name: '' };
 
-    points = Type.providePoints(board, parents, attributes, 'point');
+    points = Type.providePoints(board, parents, attr_point, 'point');
     if (points === false) {
         throw new Error(
             "JSXGraph: Can't create circumcircle sector with parent types '" +
@@ -1025,6 +1026,7 @@ JXG.createCircumcircleSector = function (board, parents, attributes) {
         );
     }
 
+    attr = Type.copyAttributes(attributes, board.options, "circumcirclesector", 'point');
     mp = board.create("circumcenter", points.slice(0, 3), attr);
     mp.dump = false;
 

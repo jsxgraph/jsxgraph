@@ -591,10 +591,11 @@ JXG.registerElement("semicircle", JXG.createSemicircle);
  * </script><pre>
  */
 JXG.createCircumcircleArc = function (board, parents, attributes) {
-    var el, mp, attr, points;
+    var el, mp, attr, points,
+        attr_point = { name: '' };
 
     // We need three points
-    points = Type.providePoints(board, parents, attributes, 'point');
+    points = Type.providePoints(board, parents, attr_point, 'point');
     if (points === false || points.length !== 3) {
         throw new Error(
             "JSXGraph: create Circumcircle Arc with parent types '" +
