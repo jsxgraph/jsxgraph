@@ -1030,12 +1030,10 @@ JXG.createParallelPoint = function (board, parents, attributes) {
  *
  */
 JXG.createParallel = function (board, parents, attributes) {
-    var p,
-        pp,
-        pl,
-        li,
+    var p, pp, pl, li,
         i,
         attr,
+        attr_point = {name: ''},
         ty = 1;
 
     for (i = 0; i < parents.length; ++i) {
@@ -1044,19 +1042,20 @@ JXG.createParallel = function (board, parents, attributes) {
     p = null;
     if (parents.length === 3) {
         // Line / segment through point parents[2] which is parallel to line through parents[0] and parents[1]
-        parents = Type.providePoints(board, parents, attributes, 'point');
+        // parents = Type.providePoints(board, parents, attributes, 'point');
+        parents = Type.providePoints(board, parents, attr_point, 'point');
         p = parents[2];
         ty = 0;
     } else if (Type.isPointType(board, parents[0])) {
         // Parallel to line parents[1] through point parents[0]
-        p = Type.providePoints(board, [parents[0]], attributes, 'point')[0];
+        p = Type.providePoints(board, [parents[0]], attr_point, 'point')[0];
         /** @ignore */
         li = function () {
             return parents[1].stdform;
         };
     } else if (Type.isPointType(board, parents[1])) {
         // Parallel to line parents[0] through point parents[1]
-        p = Type.providePoints(board, [parents[1]], attributes, 'point')[0];
+        p = Type.providePoints(board, [parents[1]], attr_point, 'point')[0];
         /** @ignore */
         li = function () {
             return parents[0].stdform;

@@ -8063,7 +8063,7 @@ JXG.Options = {
         strokeColor: '#000000', // Parallel line
 
         /**
-         * Attributes of helper point of normal.
+         * Attributes of helper point of parallel.
          *
          * @type Point
          * @name Parallel#point
