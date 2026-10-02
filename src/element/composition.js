@@ -1221,9 +1221,11 @@ JXG.createArrowParallel = function (board, parents, attributes) {
  * </script><pre>
  */
 JXG.createBisector = function (board, parents, attributes) {
-    var p, l, i, attr;
+    var p, l, i,
+        attr_point = { name: '' },
+        attr;
 
-    parents = Type.providePoints(board, parents, attributes, 'point');
+    parents = Type.providePoints(board, parents, attr_point, 'point');
 
     if (Type.isPoint(parents[0]) && Type.isPoint(parents[1]) && Type.isPoint(parents[2])) {
         // hidden and fixed helper
@@ -1558,9 +1560,10 @@ JXG.createAngularBisectorsOfTwoLines = function (board, parents, attributes) {
  * </script><pre>
  */
 JXG.createCircumcenter = function (board, parents, attributes) {
-    var p, i, a, b, c;
+    var p, i, a, b, c,
+        attr_point = { name: '' };
 
-    parents = Type.providePoints(board, parents, attributes, 'point');
+    parents = Type.providePoints(board, parents, attr_point, 'point');
     if (Type.isPoint(parents[0]) && Type.isPoint(parents[1]) && Type.isPoint(parents[2])) {
         a = parents[0];
         b = parents[1];
