@@ -107,22 +107,21 @@ import Composition from "../base/composition.js";
  * </script><pre>
  */
 JXG.createOrthogonalProjection = function (board, parents, attributes) {
-    var l, p, t, attr;
+    var l, p, t, attr,
+        attr_point = { name: '' };
 
     parents[0] = board.select(parents[0]);
     parents[1] = board.select(parents[1]);
 
-    if (
-        Type.isPointType(board, parents[0]) &&
+    if (Type.isPointType(board, parents[0]) &&
         parents[1].elementClass === Const.OBJECT_CLASS_LINE
     ) {
-        p = Type.providePoints(board, [parents[0]], attributes, 'point')[0];
+        p = Type.providePoints(board, [parents[0]], attr_point, 'point')[0];
         l = parents[1];
-    } else if (
-        Type.isPointType(board, parents[1]) &&
+    } else if (Type.isPointType(board, parents[1]) &&
         parents[0].elementClass === Const.OBJECT_CLASS_LINE
     ) {
-        p = Type.providePoints(board, [parents[1]], attributes, 'point')[0];
+        p = Type.providePoints(board, [parents[1]], attr_point, 'point')[0];
         l = parents[0];
     } else {
         throw new Error(
@@ -263,23 +262,22 @@ JXG.createOrthogonalProjection = function (board, parents, attributes) {
  * </script><pre>
  */
 JXG.createPerpendicular = function (board, parents, attributes) {
-    var p, l, pd, attr;
+    var p, l, pd, attr,
+        attr_point = { name: '' };
 
     parents[0] = board.select(parents[0]);
     parents[1] = board.select(parents[1]);
 
-    if (
-        Type.isPointType(board, parents[0]) &&
+    if (Type.isPointType(board, parents[0]) &&
         parents[1].elementClass === Const.OBJECT_CLASS_LINE
     ) {
         l = parents[1];
-        p = Type.providePoints(board, [parents[0]], attributes, 'point')[0];
-    } else if (
-        Type.isPointType(board, parents[1]) &&
+        p = Type.providePoints(board, [parents[0]], attr_point, 'point')[0];
+    } else if (Type.isPointType(board, parents[1]) &&
         parents[0].elementClass === Const.OBJECT_CLASS_LINE
     ) {
         l = parents[0];
-        p = Type.providePoints(board, [parents[1]], attributes, 'point')[0];
+        p = Type.providePoints(board, [parents[1]], attr_point, 'point')[0];
     } else {
         throw new Error(
             "JSXGraph: Can't create perpendicular with parent types '" +
@@ -361,21 +359,20 @@ JXG.createPerpendicular = function (board, parents, attributes) {
  * </script><pre>
  */
 JXG.createPerpendicularPoint = function (board, parents, attributes) {
-    var l, p, t;
+    var l, p, t,
+        attr_point = { name: '' };
 
     parents[0] = board.select(parents[0]);
     parents[1] = board.select(parents[1]);
-    if (
-        Type.isPointType(board, parents[0]) &&
+    if (Type.isPointType(board, parents[0]) &&
         parents[1].elementClass === Const.OBJECT_CLASS_LINE
     ) {
-        p = Type.providePoints(board, [parents[0]], attributes, 'point')[0];
+        p = Type.providePoints(board, [parents[0]], attr_point, 'point')[0];
         l = parents[1];
-    } else if (
-        Type.isPointType(board, parents[1]) &&
+    } else if (Type.isPointType(board, parents[1]) &&
         parents[0].elementClass === Const.OBJECT_CLASS_LINE
     ) {
-        p = Type.providePoints(board, [parents[1]], attributes, 'point')[0];
+        p = Type.providePoints(board, [parents[1]], attr_point, 'point')[0];
         l = parents[0];
     } else {
         throw new Error(
@@ -519,22 +516,21 @@ JXG.createPerpendicularPoint = function (board, parents, attributes) {
  * </script><pre>
  */
 JXG.createPerpendicularSegment = function (board, parents, attributes) {
-    var p, l, pd, t, attr;
+    var p, l, pd, t, attr,
+        attr_point = { name: '' };
 
     parents[0] = board.select(parents[0]);
     parents[1] = board.select(parents[1]);
-    if (
-        Type.isPointType(board, parents[0]) &&
+    if (Type.isPointType(board, parents[0]) &&
         parents[1].elementClass === Const.OBJECT_CLASS_LINE
     ) {
         l = parents[1];
-        p = Type.providePoints(board, [parents[0]], attributes, 'point')[0];
-    } else if (
-        Type.isPointType(board, parents[1]) &&
+        p = Type.providePoints(board, [parents[0]], attr_point, 'point')[0];
+    } else if (Type.isPointType(board, parents[1]) &&
         parents[0].elementClass === Const.OBJECT_CLASS_LINE
     ) {
         l = parents[0];
-        p = Type.providePoints(board, [parents[1]], attributes, 'point')[0];
+        p = Type.providePoints(board, [parents[1]], attr_point, 'point')[0];
     } else {
         throw new Error(
             "JSXGraph: Can't create perpendicular with parent types '" +
@@ -808,33 +804,31 @@ JXG.createMidpoint = function (board, parents, attributes) {
  * @param {PointLike} p
  */
 JXG.createParallelPoint = function (board, parents, attributes) {
-    var a, b, c, p, i, attr;
+    var a, b, c, p, i, attr,
+        attr_point = { name: '' };
 
     for (i = 0; i < parents.length; ++i) {
         parents[i] = board.select(parents[i]);
     }
-    if (
-        parents.length === 3 &&
+    if (parents.length === 3 &&
         Type.isPointType(board, parents[0]) &&
         Type.isPointType(board, parents[1]) &&
         Type.isPointType(board, parents[2])
     ) {
-        parents = Type.providePoints(board, parents, attributes, 'point');
+        parents = Type.providePoints(board, parents, attr_point, 'point');
         a = parents[0];
         b = parents[1];
         c = parents[2];
-    } else if (
-        Type.isPointType(board, parents[0]) &&
+    } else if (Type.isPointType(board, parents[0]) &&
         parents[1].elementClass === Const.OBJECT_CLASS_LINE
     ) {
-        c = Type.providePoints(board, [parents[0]], attributes, 'point')[0];
+        c = Type.providePoints(board, [parents[0]], attr_point, 'point')[0];
         a = parents[1].point1;
         b = parents[1].point2;
-    } else if (
-        Type.isPointType(board, parents[1]) &&
+    } else if (Type.isPointType(board, parents[1]) &&
         parents[0].elementClass === Const.OBJECT_CLASS_LINE
     ) {
-        c = Type.providePoints(board, [parents[1]], attributes, 'point')[0];
+        c = Type.providePoints(board, [parents[1]], attr_point, 'point')[0];
         a = parents[0].point1;
         b = parents[0].point2;
     } else {
