@@ -8850,6 +8850,7 @@ JXG.Options = {
          * @attribute
          */
         radiusPoint: {
+            name: '',
             visible: false,
             withLabel: false
         },
@@ -8862,6 +8863,7 @@ JXG.Options = {
          * @attribute
          */
         center: {
+            name: '',
             visible: false,
             withLabel: false
         },
@@ -8874,6 +8876,7 @@ JXG.Options = {
          * @attribute
          */
         anglePoint: {
+            name: '',
             visible: false,
             withLabel: false
         },
