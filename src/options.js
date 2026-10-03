@@ -4214,6 +4214,9 @@ JXG.Options = {
          * @default {}
          */
         center: {
+            name: '',
+            visible: false,
+            withLabel: false
         },
 
         /**
@@ -4225,6 +4228,9 @@ JXG.Options = {
          * @default {}
          */
         radiusPoint: {
+            name: '',
+            visible: false,
+            withLabel: false
         },
 
         /**
@@ -4236,6 +4242,9 @@ JXG.Options = {
          * @default {}
          */
         anglePoint: {
+            name: '',
+            visible: false,
+            withLabel: false
         }
 
         /**#@-*/

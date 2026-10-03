@@ -110,11 +110,7 @@ JXG.createArc = function (board, parents, attributes) {
 
     attr = Type.copyAttributes(attributes, board.options, 'arc');
     // attributes.radiusPoint = {visible: false};
-    points = Type.providePoints(board, parents, attr, "arc", [
-        "center",
-        "radiuspoint",
-        "anglepoint"
-    ]);
+    points = Type.providePoints(board, parents, attr, "arc", ["center", "radiuspoint", "anglepoint"]);
     if (points === false || points.length < 3) {
         throw new Error(
             "JSXGraph: Can't create Arc with parent types '" +
