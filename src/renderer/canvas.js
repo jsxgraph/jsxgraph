@@ -286,8 +286,8 @@ JXG.extend(
             cys = c2.scrCoords[2] + dy * cy;
             fxs = c1.scrCoords[1] + dx * fx;
             fys = c2.scrCoords[2] + dy * fy;
-            rs = r * (dx + dy) * 0.5;
-            frs = fr * (dx + dy) * 0.5;
+            rs = Math.max(r * (dx + dy) * 0.5, 0);
+            frs = Math.max(fr * (dx + dy) * 0.5, 0);
 
             return this.context.createRadialGradient(fxs, fys, frs, cxs, cys, rs);
         },
