@@ -1,3 +1,44 @@
+1.14.0
+===
+
+API changes:
+-----------
+
+*Affected elements:*
+
+Sector, Arc, MajorArc, MajorSector, MinorArc, MinorSector,
+Parallel, ArrowParallel, Bisector, Circumcenter, Circumcircle,
+CircumcircleArc, CircumcircleSector, Incenter, Incircle,
+OrthogonalProjection, ParallelPoint, Perpendicular, PerpendicularPoint,
+PerpendicularSegment, Semicircle
+
+*Problem:*
+
+If a defining point for one of these elements is supplied as coordinate array and not as existing point then JSXGraph creates a parent point. For such a parent point it happened that
+
+- it received the name of the child element
+- it received an automatically set name like `'A'`, ''B'`
+- the point is visible by default
+
+*Changes:*
+
+- These parent points are now invisible by default and have the empty string `''` as name. 
+- Their attributes can be changed later by changeing the corresponding sub-object, e.g.
+  `sector.radiusPoint.setAttribute({visible: false});`
+
+Improvements
+------------
+
+- Upgrade API reference from jsdoc2 to jsdoc3 4.0.5
+- Make intersectionline3d dynamic
+- Unify Makefile for MacOSX and linux, use npx to call jsdoc
+
+Bug fixes
+---------
+
+- font color of smartlabel
+- Attributes for points supplied as parent coordinate arrays (using `providePoints()`), see API changes
+
 1.13.3
 ===
 

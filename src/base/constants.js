@@ -36,9 +36,9 @@
 import JXG from "../jxg.js";
 
 var major = 1,
-    minor = 13,
-    patch = 4,
-    add = 'dev', // 'dev' 'beta1'
+    minor = 14,
+    patch = 0,
+    add = '', // 'dev' 'beta1'
     version = major + '.' + minor + '.' + patch + (add ? '-' + add : ''),
     constants;
 
@@ -59,7 +59,8 @@ constants =
      * @name JXG.licenseText
      * @type String
      */
-    licenseText: "JSXGraph v" + version + " \u00A9 jsxgraph.org",
+    licenseText: "jsxgraph.org " + version,
+    // licenseText: "JSXGraph v" + version + " \u00A9 jsxgraph.org",
 
     /**
      * JSXGraph logo: base64 data-URL of img/png/screen/jsxgraph-logo_black-square-solid.svg

@@ -2,7 +2,7 @@
   "name": "jsxgraph",
   "description": "Interactive geometry, plotting, visualization",
   "homepage": "https://jsxgraph.org",
-  "version": "1.13.3",
+  "version": "1.14.0",
   "exports": {
     "types": "./src/index.d.ts",
     "default": "./src/index.js"
@@ -60,7 +60,6 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3.1.0",
     "@eslint/js": "^9.4.0",
-    "clean-jsdoc-theme": "^5.2.0",
     "eslint": ">=10.0.3",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5",
@@ -68,7 +67,6 @@
     "http-server": "^14.1.1",
     "jasmine-core": "^3.10.1",
     "jsdoc": "^4.0.5",
-    "jsdoc2": "^2.4.0",
     "jshint": "^0.5.9",
     "jslint": "^0.12.1",
     "karma": "^6.4.3",
@@ -95,7 +93,6 @@
     "test": "make test"
   },
   "dependencies": {
-    "jsxgraph": "^1.12.0"
   },
   "allowScripts": {
     "esbuild@0.28.2": true
