@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="utf-8" />
+   <title>JSXGraph example: board announcer, line with sliders</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+</head>
+<body>
+<h2>Line y = mx + b with sliders (board announcer)</h2>
+<p>
+  Tab to a slider and use the arrow keys. With a screen reader, the new slider value, then the new
+  equation, then the readout text are announced together once the change has settled.
+  Serve the repository over http (e.g. <code>npx http-server</code>), as ES modules do not load from file://.
+</p>
+<div id="jxgbox" class="jxgbox" style="width:600px; height:450px;"></div>
+
+<script type="module">
+import { JSXGraph } from '../src/index.js';
+
+const board = JSXGraph.initBoard('jxgbox', {
+    boundingbox: [-6, 6, 6, -6],
+    axis: true,
+    title: 'Graph of a line with sliders for slope and intercept',
+    keyboard: { enabled: true, dx: 10, dy: 10 },
+    role: 'application',
+    // One hidden live region for the whole board instead of aria-live on every element
+    announcer: { enabled: true, delay: 400 }
+});
+
+const fmt = (x) => (Math.round(x * 10) / 10).toFixed(1);
+
+// Label functions receive the element itself as parameter. Using it (instead of the
+// variable the element is assigned to) also works while the element is being created.
+
+const m = board.create('slider', [[-5, 5], [0, 5], [-3, 1, 3]], {
+    name: 'm', snapWidth: 0.1,
+    tabIndex: 0,
+    aria: {
+        enabled: true,
+        label: (el) => 'Slope m, ' + fmt(el.Value()),
+        live: 'polite'
+    }
+});
+const b = board.create('slider', [[-5, 4], [0, 4], [-4, 0, 4]], {
+    name: 'b', snapWidth: 0.1,
+    tabIndex: 0,
+    aria: {
+        enabled: true,
+        label: (el) => 'Intercept b, ' + fmt(el.Value()),
+        live: 'polite'
+    }
+});
+
+board.create('functiongraph', [(x) => m.Value() * x + b.Value()], {
+    strokeWidth: 3,
+    aria: {
+        enabled: true,
+        label: () => 'Line y equals ' + fmt(m.Value()) + ' x plus ' + fmt(b.Value()),
+        live: 'polite'
+    }
+});
+
+board.create('text', [-5, -4, () => 'For each step right, y changes by ' + fmt(m.Value())], {
+    fontSize: 16,
+    aria: { enabled: true, live: 'polite', label: () => 'For each step right, y changes by ' + fmt(m.Value()) }
+});
+</script>
+</body>
+</html>

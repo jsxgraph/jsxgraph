@@ -254,7 +254,7 @@ JXG.JSXGraph = {
             }
 
         node_jsx = (Type.isString(container)) ? doc.getElementById(container) : container;
-        node_jsx.setAttribute("role", 'region');
+        node_jsx.setAttribute("role", attr.role || 'region');
         node_jsx.setAttribute("aria-label", attr.title);              // set by initBoard( {title:})
 
         // doc_glob = node_jsx.ownerDocument; // This is the window.document element, needed below.

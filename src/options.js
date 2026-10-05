@@ -764,6 +764,32 @@ JXG.Options = {
         },
 
         /**
+         * Board-wide announcer for assistive technologies.
+         * If enabled, a single visually hidden live region is added to the board container.
+         * Elements with `aria.enabled: true` no longer act as live regions themselves. Instead, when
+         * their announcement text changes (by default the value of `aria.label`, or `aria.announce` if given),
+         * the text is queued and spoken together with the other changes of the same update,
+         * in the order in which the elements were updated (i.e. sources before dependent elements).
+         * Identical messages of one element are merged, and messages are held back until
+         * no new change has arrived for `delay` milliseconds, e.g. while dragging or holding an arrow key.
+         *
+         * The element attribute `aria.live` is then used as politeness level of the message
+         * ('polite', 'assertive'), 'none' silences the element's announcements.
+         * The element which currently has keyboard focus is never announced, because assistive technologies
+         * read the changed label of the focused element themselves.
+         *
+         * @name JXG.Board#announcer
+         * @type Object
+         * @default {enabled: false, delay: 300}
+         *
+         * @see JXG.Board#announce
+         */
+        announcer: {
+            enabled: false,
+            delay: 300
+        },
+
+        /**
          * If enabled, user activities are logged in array "board.userLog".
          *
          * @name JXG.Board#logging
@@ -1477,6 +1503,19 @@ JXG.Options = {
         theme: 'default',
 
         /**
+         * ARIA role of the board's container element.
+         * Use 'application' to make screen readers pass the arrow keys on to the board
+         * (e.g. for moving points with the keyboard) instead of using them for their own browsing commands.
+         * Note that this changes how screen reader users navigate the page inside the board,
+         * which is why the default is 'region'.
+         *
+         * @name JXG.Board#role
+         * @type String
+         * @default 'region'
+         */
+        role: 'region',
+
+        /**
          * Title string for the board.
          * Primarily used in an invisible text element for assistive technologies.
          * The title is implemented with the attribute 'aria-label' in the JSXGraph container.
@@ -1633,6 +1672,11 @@ JXG.Options = {
          * In JSXGraph, the available attributes are used without the leading 'aria-'.
          * For example, the value of the JSXGraph attribute `aria.label` will be set to the
          * HTML attribute 'aria-label' (ignoring 'aria.enabled').
+         *
+         * If the board's {@link JXG.Board#announcer} is enabled, 'live' is not written to the element, but
+         * is the politeness of the announcement ('polite', 'assertive', 'none') which is made
+         * whenever the label changes. The optional attribute `announce` (string or function) can be used
+         * to announce a text different from the label.
          *
          * @name aria
          * @attribute

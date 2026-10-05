@@ -1435,19 +1435,29 @@ JXG.extend(
         // documented in JXG.AbstractRenderer
         setARIA: function(el) {
             // This method is only called in abstractRenderer._updateVisual() if aria.enabled == true.
-            var key, k, v;
+            var key, k, v,
+                announcer = el.board.attr.announcer && el.board.attr.announcer.enabled;
 
-            // this.setPropertyPrim(el.rendNode, 'aria-label', el.evalVisProp('aria.label'));
-            // this.setPropertyPrim(el.rendNode, 'aria-live', el.evalVisProp('aria.live'));
             for (key in el.visProp.aria) {
-                if (el.visProp.aria.hasOwnProperty(key) && key !== 'enabled') {
+                if (
+                    el.visProp.aria.hasOwnProperty(key) &&
+                    key !== 'enabled' &&
+                    key !== 'announce' &&
+                    // With the board announcer, 'live' is the politeness of the message
+                    // and not an attribute of the element.
+                    !(announcer && key === 'live')
+                ) {
                     k = 'aria.' + key;
-                    v = el.evalVisProp('aria.' + key);
-                    if (el.visPropOld[k] !== v) {
+                    v = this.evalARIA(el, key);
+                    if (v !== undefined && el.visPropOld[k] !== v) {
                         this.setPropertyPrim(el.rendNode, 'aria-' + key, v);
                         el.visPropOld[k] = v;
                     }
                 }
+            }
+
+            if (announcer) {
+                this.announceARIA(el);
             }
         },
 

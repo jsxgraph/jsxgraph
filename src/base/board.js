@@ -6190,6 +6190,110 @@ JXG.extend(
         },
 
         /**
+         * Queue a message for the board's announcer (a visually hidden live region).
+         * Messages are collected until no new message has arrived for `announcer.delay` ms and are
+         * then spoken together, in the order in which the keys were first queued.
+         * A new message with the same key replaces the pending one.
+         *
+         * Only works if the board attribute `announcer.enabled` is true.
+         *
+         * @param {String} key Identifier of the sender, usually the element's id.
+         * @param {String} text Message
+         * @param {String} [politeness='polite'] 'polite' or 'assertive'
+         * @returns {JXG.Board} Reference to the board
+         */
+        announce: function (key, text, politeness) {
+            var ann = this.attr.announcer, q;
+
+            if (!ann || !ann.enabled || !Env.isBrowser || !Type.exists(text) || text === '') {
+                return this;
+            }
+            this._announceQueue = this._announceQueue || {};
+            q = this._announceQueue;
+            if (q[key]) {
+                q[key].text = String(text);
+                q[key].politeness = politeness || 'polite';
+            } else {
+                q[key] = { text: String(text), politeness: politeness || 'polite' };
+            }
+
+            if (this._announceTimer) {
+                clearTimeout(this._announceTimer);
+            }
+            this._announceTimer = setTimeout(
+                this._flushAnnouncements.bind(this),
+                Type.evaluate(ann.delay)
+            );
+            return this;
+        },
+
+        /**
+         * Write all queued messages into the live regions.
+         * @private
+         */
+        _flushAnnouncements: function () {
+            var q = this._announceQueue || {},
+                msgs = { polite: [], assertive: [] },
+                key, level, region;
+
+            this._announceQueue = {};
+            this._announceTimer = null;
+
+            for (key in q) {
+                if (q.hasOwnProperty(key)) {
+                    msgs[q[key].politeness === 'assertive' ? 'assertive' : 'polite'].push(q[key].text);
+                }
+            }
+
+            for (level in msgs) {
+                if (msgs.hasOwnProperty(level) && msgs[level].length > 0) {
+                    region = this._getAnnouncerRegion(level);
+                    if (region) {
+                        // Replace the content with a new node, so that repeated identical
+                        // messages are announced again.
+                        region.innerHTML = '';
+                        region.appendChild(this.document.createElement('div'))
+                            .appendChild(this.document.createTextNode(msgs[level].join('. ')));
+                    }
+                }
+            }
+        },
+
+        /**
+         * Get (and create if necessary) the hidden live region of the given politeness level.
+         * @param {String} level 'polite' or 'assertive'
+         * @returns {Node|null}
+         * @private
+         */
+        _getAnnouncerRegion: function (level) {
+            var node, st;
+
+            this._announceRegions = this._announceRegions || {};
+            node = this._announceRegions[level];
+            if (node && node.parentNode === this.containerObj) {
+                return node;
+            }
+            if (!this.containerObj || !this.document) {
+                return null;
+            }
+
+            node = this.document.createElement('div');
+            node.setAttribute('role', level === 'assertive' ? 'alert' : 'status');
+            node.setAttribute('aria-live', level);
+            node.setAttribute('aria-atomic', 'true');
+            st = node.style;
+            st.position = 'absolute';
+            st.width = '1px';
+            st.height = '1px';
+            st.overflow = 'hidden';
+            st.clip = 'rect(0 0 0 0)';
+            st.whiteSpace = 'nowrap';
+            this.containerObj.appendChild(node);
+            this._announceRegions[level] = node;
+            return node;
+        },
+
+        /**
          * Runs through most elements and calls their update() method and update the conditions.
          * @param {JXG.GeometryElement} [drag] Element that caused the update.
          * @returns {JXG.Board} Reference to the board
