@@ -1,5 +1,5 @@
 /*
-    JSXGraph 1.13.3
+    JSXGraph 1.14.0
 
     Copyright 2008-2026
         Matthias Ehmann,
@@ -186,7 +186,7 @@
 .smart-label-solid {
     padding: 1px 7px 1px 7px;
     margin: 0;
-    color: white;
+    color: white !important;
     border-radius: 150px;
     text-align: center;
     vertical-align: middle;
@@ -196,8 +196,8 @@
     padding: 1px 7px 1px 7px;
     margin: 0;
     border: solid 2px black;
-    background-color: white;
-    color: black;
+    background-color: white !important;
+    color: black !important;
     border-radius: 15px;
     text-align: center;
     vertical-align: middle;
@@ -207,8 +207,8 @@
     padding: 20px 7px 1px 7px;
     margin: 0;
     border: none;
-    background-color: transparent;
-    color: black;
+    background-color: transparent !important;
+    color: black !important;
     border-radius: 15px;
     text-align: center;
     vertical-align: middle;
