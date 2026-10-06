@@ -2468,7 +2468,8 @@ JXG.extend(
             } else if (this.elementClass === Const.OBJECT_CLASS_CIRCLE) {
                 x = this.center.X();
                 y = this.center.Y();
-                bb = [x - this.radius, y + this.radius, x + this.radius, y - this.radius];
+                r = this.Radius(); // this.radius
+                bb = [x - r, y + r, x + r, y - r];
             } else if (this.elementClass === Const.OBJECT_CLASS_CURVE) {
                 le = this.points.length;
                 if (le === 0) {

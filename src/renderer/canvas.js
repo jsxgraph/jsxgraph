@@ -206,7 +206,7 @@ JXG.extend(
          * Set the gradient angle for linear color gradients.
          *
          * @private
-         * @param {JXG.GeometryElement} node An arbitrary JSXGraph element, preferably one with an area.
+         * @param {JXG.GeometryElement} el An arbitrary JSXGraph element, preferably one with an area.
          * @param {Number} radians angle value in radians. 0 is horizontal from left to right, Pi/4 is vertical from top to bottom.
          */
         updateGradientAngle: function (el, radians) {
@@ -262,7 +262,7 @@ JXG.extend(
          * Set circles for radial color gradients.
          *
          * @private
-         * @param {SVGnode} node SVG gradient node
+         * @param {JXG.GeometryElement} el An arbitrary JSXGraph element, preferably one with an area.
          * @param {Number} cx Canvas value x1 (but value between 0 and 1)
          * @param {Number} cy  Canvas value y1 (but value between 0 and 1)
          * @param {Number} r  Canvas value r1 (but value between 0 and 1)
@@ -275,19 +275,20 @@ JXG.extend(
                 c1, c2,
                 cxs, cys, rs,
                 fxs, fys, frs,
-                dx, dy;
+                dx, dy, d;
 
             c1 = new Coords(Const.COORDS_BY_USER, [bb[0], bb[1]], el.board);
             c2 = new Coords(Const.COORDS_BY_USER, [bb[2], bb[3]], el.board);
             dx = c2.scrCoords[1] - c1.scrCoords[1];
             dy = c1.scrCoords[2] - c2.scrCoords[2];
-
             cxs = c1.scrCoords[1] + dx * cx;
             cys = c2.scrCoords[2] + dy * cy;
             fxs = c1.scrCoords[1] + dx * fx;
             fys = c2.scrCoords[2] + dy * fy;
-            rs = Math.max(r * (dx + dy) * 0.5, 0);
-            frs = Math.max(fr * (dx + dy) * 0.5, 0);
+
+            d = Math.abs(dx) + Math.abs(dy);
+            rs = Math.max(r * d * 0.5, 0);
+            frs = Math.max(fr * d * 0.5, 0);
 
             return this.context.createRadialGradient(fxs, fys, frs, cxs, cys, rs);
         },

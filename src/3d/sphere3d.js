@@ -221,19 +221,21 @@ JXG.extend(
             return NaN;
         },
 
-        // The central projection of a sphere is an ellipse. The front and back
-        // points of the sphere---that is, the points closest to and furthest
-        // from the screen---project to the foci of the ellipse.
-        //
-        // To see this, look at the cone tangent to the sphere whose tip is at
-        // the camera. The image of the sphere is the ellipse where this cone
-        // intersects the screen. By acting on the sphere with scalings centered
-        // on the camera, you can send it to either of the Dandelin spheres that
-        // touch the screen at the foci of the image ellipse.
-        //
-        // This factory method produces two functions, `focusFn(-1)` and
-        // `focusFn(1)`, that evaluate to the projections of the front and back
-        // points of the sphere, respectively.
+        /**
+         * The central projection of a sphere is an ellipse. The front and back
+         * points of the sphere --that is, the points closest to and furthest
+         * from the screen -- project to the foci of the ellipse.
+         *
+         * To see this, look at the cone tangent to the sphere whose tip is at
+         * the camera. The image of the sphere is the ellipse where this cone
+         * intersects the screen. By acting on the sphere with scalings centered
+         * on the camera, you can send it to either of the Dandelin spheres that
+         * touch the screen at the foci of the image ellipse.
+         *
+         * This factory method produces two functions, `focusFn(-1)` and
+         * `focusFn(1)`, that evaluate to the projections of the front and back
+         * points of the sphere, respectively.
+         */
         focusFn: function (sgn) {
             var that = this;
 
@@ -313,12 +315,8 @@ JXG.extend(
                 };
 
             this.aux2D = [];
-            this.element2D = this.view.create(
-                'circle',
-                // [center2d, radius2d],
-                [that.center.element2D, radius2d],
-                attr === undefined ? this.visProp : attr
-            );
+            this.element2D = this.view.create('circle', [that.center.element2D, radius2d], attr === undefined ? this.visProp : attr);
+            // [center2d, radius2d],
         },
 
         // replace our 2D representation with a new one that's consistent with
