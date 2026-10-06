@@ -2017,18 +2017,24 @@ JXG.createIntersectionLine3D = function (board, parents, attributes) {
     var view = parents[0],
         el1 = parents[1],
         el2 = parents[2],
-        ixnLine, i,// func,
+        ixnLine, i,// f,
         attr = Type.copyAttributes(attributes, board.options, 'intersectionline3d'),
         pts = [];
 
-    // func = Geometry.intersectionFunction3D(view, el1, el2);
+    // var func = Geometry.intersectionFunction3D(view, el1, el2);
     for (i = 0; i < 2; i++) {
-        pts[i] = view.create('point3d', [
-            // Use closures
-            (function(ii) {
-                return function() { return Geometry.intersectionFunction3D(view, el1, el2)[ii]; };
-            })(i)
-        ], attr['point' + (i + 1)]);
+        try {
+            pts[i] = view.create('point3d', [
+                // Use closures
+                (function (ii) {
+                    return function () { return Geometry.intersectionFunction3D(view, el1, el2)[ii]; };
+                })(i)
+            ], attr['point' + (i + 1)]);
+        } catch (err) {
+            throw new Error(
+                "JSXGraph: Can't create IntersectionLine3D from the intersection of these types. Please check the intersecting elements."
+            );
+        }
     }
     ixnLine = view.create('line3d', pts, attr);
 
