@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="utf-8" />
+   <title>JSXGraph example: board announcer, keyboard control of gliders</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+</head>
+<body>
+<h2>Gliders on a function graph, a parametric curve and a circle (keyboard control)</h2>
+<p>
+  Focus a glider (Tab) and move it with the arrow keys. For gliders, all four arrow keys move the
+  point along its curve: right/up forward, left/down backward. The step is the attribute
+  <code>keyboardStep</code>, given in units of the curve's parameter:
+</p>
+<ul>
+  <li>function graph: x units (<code>keyboardStep: 0.25</code>),</li>
+  <li>parametric curve: units of t (<code>keyboardStep: 0.2</code>),</li>
+  <li>circle: fraction of a full turn (<code>keyboardStep: 0.05</code>, i.e. 18&deg;).</li>
+</ul>
+<p>
+  The new position is announced once the movement has settled.
+  Serve the repository over http (e.g. <code>npx http-server</code>), as ES modules do not load from file://.
+</p>
+<div id="jxgbox" class="jxgbox" style="width:600px; height:600px;"></div>
+
+<script type="module">
+import { JSXGraph } from '../src/index.js';
+
+const board = JSXGraph.initBoard('jxgbox', {
+    boundingbox: [-6, 6, 6, -6],
+    axis: true,
+    title: 'Three gliders: on a cubic function graph, on a parametric Lissajous curve, and on a circle',
+    role: 'application',
+    announcer: { enabled: true, delay: 400 }
+});
+
+const fmt = (x) => (Math.round(x * 100) / 100).toFixed(2);
+
+// Function graph. The parameter of the glider is x.
+const f = board.create('functiongraph', [(x) => 0.1 * x * x * x - x], {
+    strokeColor: '#0072B2', strokeWidth: 3
+});
+
+const p1 = board.create('glider', [-3, f.Y(-3), f], {
+    name: 'A', size: 5, tabIndex: 0,
+    keyboardStep: 0.25,
+    aria: {
+        enabled: true,
+        label: (el) => 'Point A on the function graph at x equals ' + fmt(el.X()) + ', y equals ' + fmt(el.Y()),
+        live: 'polite'
+    }
+});
+
+// Parametric curve (Lissajous figure). The parameter of the glider is t.
+const c = board.create('curve', [
+    (t) => 4 * Math.sin(2 * t),
+    (t) => 3 * Math.cos(3 * t),
+    0, 2 * Math.PI
+], {
+    strokeColor: '#D55E00', strokeWidth: 3
+});
+
+const p2 = board.create('glider', [0, 3, c], {
+    name: 'B', size: 5, tabIndex: 0,
+    keyboardStep: 0.2,
+    aria: {
+        enabled: true,
+        label: (el) => 'Point B on the parametric curve at x equals ' + fmt(el.X()) + ', y equals ' + fmt(el.Y()),
+        live: 'polite'
+    }
+});
+
+// Circle. The parameter of the glider is the angle divided by 2 pi.
+const circ = board.create('circle', [[0, 0], 5], {
+    strokeColor: '#009E73', strokeWidth: 3
+});
+
+const p3 = board.create('glider', [5, 0, circ], {
+    name: 'C', size: 5, tabIndex: 0,
+    keyboardStep: 0.05,
+    aria: {
+        enabled: true,
+        label: (el) => 'Point C on the circle at x equals ' + fmt(el.X()) + ', y equals ' + fmt(el.Y()),
+        live: 'polite'
+    }
+});
+</script>
+</body>
+</html>

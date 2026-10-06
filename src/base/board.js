@@ -4182,7 +4182,8 @@ JXG.extend(
                 // u = 100,
                 doZoom = false,
                 done = true,
-                dir, sign = 1, sliderStep = 0,
+                dir, sign = 1, sliderStep = 0, glideStep = 0,
+                slide, lo, hi, pos,
                 actPos;
 
             if (!this.attr.keyboard.enabled || id_node === '') {
@@ -4270,12 +4271,31 @@ JXG.extend(
                         } else if (Type.evaluate(el.visProp.snapwidth) > 0) {
                             sliderStep = Type.evaluate(el.visProp.snapwidth);
                         }
+                    } else if (el.type === Const.OBJECT_TYPE_GLIDER && Type.exists(el.position)) {
+                        // Glider: all arrow keys move along the slide object in units of
+                        // its parameter. keyboardStep defaults to 1/100 of the parameter range.
+                        slide = el.slideObject;
+                        if (Type.exists(el.visProp.keyboardstep)) {
+                            glideStep = Type.evaluate(el.visProp.keyboardstep);
+                        } else if (
+                            slide.elementClass === Const.OBJECT_CLASS_CURVE &&
+                            slide.type !== Const.OBJECT_TYPE_ARC &&
+                            slide.type !== Const.OBJECT_TYPE_SECTOR &&
+                            slide.type !== Const.OBJECT_TYPE_TURTLE
+                        ) {
+                            glideStep = (slide.maxX() - slide.minX()) * 0.01;
+                        } else {
+                            glideStep = 0.01;
+                        }
+                        if (!(glideStep > 0)) {
+                            glideStep = 0.01;
+                        }
                     }
                 }
 
                 // Adapt dx, dy to snapToGrid and attractToGrid.
-                // snapToGrid has priority.
-                if (Type.exists(el.visProp)) {
+                // snapToGrid has priority. Not used for gliders, which move in parameter units.
+                if (Type.exists(el.visProp) && !glideStep) {
                     if (
                         Type.exists(el.visProp.snaptogrid) &&
                         el.visProp.snaptogrid &&
@@ -4338,7 +4358,7 @@ JXG.extend(
                     !el.evalVisProp('fixed')
                 ) {
                     this.mode = this.BOARD_MODE_DRAG;
-                    if (Type.exists(el.coords) && !sliderStep) {
+                    if (Type.exists(el.coords) && !sliderStep && !glideStep) {
                         dir[0] += actPos[0];
                         dir[1] += actPos[1];
                     }
@@ -4347,6 +4367,31 @@ JXG.extend(
                     if (sliderStep) {
                         // Slider: step in slider value units
                         el.setValue(el.Value() + sign * sliderStep);
+                        this.updateInfobox(el);
+                    } else if (glideStep) {
+                        // Glider: step in units of the slide object's parameter,
+                        // staying inside the parameter range if there is one.
+                        pos = el.position + sign * glideStep;
+                        slide = el.slideObject;
+                        if (slide.elementClass === Const.OBJECT_CLASS_LINE) {
+                            lo = slide.evalVisProp('straightfirst') ? -Infinity : 0;
+                            hi = slide.evalVisProp('straightlast') ? Infinity : 1;
+                        } else if (
+                            slide.elementClass === Const.OBJECT_CLASS_CURVE &&
+                            slide.type !== Const.OBJECT_TYPE_ARC &&
+                            slide.type !== Const.OBJECT_TYPE_SECTOR &&
+                            slide.type !== Const.OBJECT_TYPE_TURTLE
+                        ) {
+                            lo = slide.minX();
+                            hi = slide.maxX();
+                        } else if (slide.elementClass === Const.OBJECT_CLASS_CURVE) {
+                            lo = 0;
+                            hi = 1;
+                        } else {
+                            lo = -Infinity;
+                            hi = Infinity;
+                        }
+                        el.position = Math.max(lo, Math.min(hi, pos));
                         this.updateInfobox(el);
                     } else if (Type.exists(el.coords)) {
                         el.setPosition(JXG.COORDS_BY_USER, dir);

@@ -8463,7 +8463,7 @@ JXG.Options = {
          * left/right arrow keys. If not set, {@link Point#snapSizeX} is used if {@link Point#snapToGrid} is true,
          * otherwise the board-wide {@link JXG.Board#keyboard}.dx (in pixels) is used.
          * If the point snaps to the grid, the snap size has priority.
-         * For gliders, the new position is projected onto the glider's curve.
+         * Not used for gliders, see {@link Point#keyboardStep}.
          *
          * @name Point#keyboardStepX
          * @attribute
@@ -8486,6 +8486,21 @@ JXG.Options = {
          * @see Point#keyboardStepX
          */
         keyboardStepY: null,
+
+        /**
+         * Only for gliders: amount by which the glider moves along its curve per arrow key press
+         * (right/up move forward, left/down move backward). Given in units of the curve's parameter:
+         * the line parameter (0 at the first defining point, 1 at the second), the angle divided by
+         * 2&pi; for circles, or the parameter of a curve or function graph (its x value for function graphs).
+         * If not set, 1/100 of the parameter range is used. For sliders, see {@link Slider#keyboardStep}.
+         *
+         * @name Point#keyboardStep
+         * @attribute
+         * @type Number
+         * @default null
+         * @see Point#keyboardStepX
+         */
+        keyboardStep: null,
 
         /**
          * If set to true, the point will snap to the nearest point in distance of
