@@ -4256,14 +4256,20 @@ JXG.extend(
                 // override the board-wide keyboard.dx, keyboard.dy (screen units).
                 // For sliders, keyboardStep is given in slider value units.
                 if (Type.exists(el.visProp)) {
+                    // If snapToGrid is on, the snap sizes are used below as the step.
                     if (Type.exists(el.visProp.keyboardstepx)) {
                         dx = Type.evaluate(el.visProp.keyboardstepx);
                     }
                     if (Type.exists(el.visProp.keyboardstepy)) {
                         dy = Type.evaluate(el.visProp.keyboardstepy);
                     }
-                    if (Type.exists(el._smin) && Type.exists(el.visProp.keyboardstep)) {
-                        sliderStep = Type.evaluate(el.visProp.keyboardstep);
+                    if (Type.exists(el._smin)) {
+                        // Slider: keyboardStep defaults to the slider's snapWidth
+                        if (Type.exists(el.visProp.keyboardstep)) {
+                            sliderStep = Type.evaluate(el.visProp.keyboardstep);
+                        } else if (Type.evaluate(el.visProp.snapwidth) > 0) {
+                            sliderStep = Type.evaluate(el.visProp.snapwidth);
+                        }
                     }
                 }
 

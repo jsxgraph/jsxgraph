@@ -8460,7 +8460,8 @@ JXG.Options = {
 
         /**
          * Step size in x direction (in user coordinates, not pixels) when the point is moved with the
-         * left/right arrow keys. If not set, the board-wide {@link JXG.Board#keyboard}.dx (in pixels) is used.
+         * left/right arrow keys. If not set, {@link Point#snapSizeX} is used if {@link Point#snapToGrid} is true,
+         * otherwise the board-wide {@link JXG.Board#keyboard}.dx (in pixels) is used.
          * If the point snaps to the grid, the snap size has priority.
          * For gliders, the new position is projected onto the glider's curve.
          *
@@ -8475,7 +8476,8 @@ JXG.Options = {
 
         /**
          * Step size in y direction (in user coordinates, not pixels) when the point is moved with the
-         * up/down arrow keys. If not set, the board-wide {@link JXG.Board#keyboard}.dy (in pixels) is used.
+         * up/down arrow keys. If not set, {@link Point#snapSizeY} is used if {@link Point#snapToGrid} is true,
+         * otherwise the board-wide {@link JXG.Board#keyboard}.dy (in pixels) is used.
          *
          * @name Point#keyboardStepY
          * @attribute
@@ -9068,7 +9070,8 @@ JXG.Options = {
         /**
          * Amount by which the slider value changes per arrow key press (right/up increase,
          * left/down decrease). Given in slider value units, not pixels.
-         * If not set, the board-wide {@link JXG.Board#keyboard} step (in pixels) is used.
+         * If not set, the slider's {@link Slider#snapWidth} is used (if positive), otherwise
+         * the board-wide {@link JXG.Board#keyboard} step (in pixels).
          *
          * @memberOf Slider.prototype
          * @name keyboardStep
