@@ -4182,7 +4182,7 @@ JXG.extend(
                 // u = 100,
                 doZoom = false,
                 done = true,
-                dir,
+                dir, sign = 1, sliderStep = 0,
                 actPos;
 
             if (!this.attr.keyboard.enabled || id_node === '') {
@@ -4252,6 +4252,21 @@ JXG.extend(
                     done = false;
                 }
             } else if (!evt.shiftKey && !evt.ctrlKey) {         // Move an element if neither shift or ctrl are pressed
+                // Per-element step sizes in user coordinates (keyboardStepX, keyboardStepY)
+                // override the board-wide keyboard.dx, keyboard.dy (screen units).
+                // For sliders, keyboardStep is given in slider value units.
+                if (Type.exists(el.visProp)) {
+                    if (Type.exists(el.visProp.keyboardstepx)) {
+                        dx = Type.evaluate(el.visProp.keyboardstepx);
+                    }
+                    if (Type.exists(el.visProp.keyboardstepy)) {
+                        dy = Type.evaluate(el.visProp.keyboardstepy);
+                    }
+                    if (Type.exists(el._smin) && Type.exists(el.visProp.keyboardstep)) {
+                        sliderStep = Type.evaluate(el.visProp.keyboardstep);
+                    }
+                }
+
                 // Adapt dx, dy to snapToGrid and attractToGrid.
                 // snapToGrid has priority.
                 if (Type.exists(el.visProp)) {
@@ -4291,15 +4306,19 @@ JXG.extend(
                 if (evt.keyCode === 38) {
                     // up
                     dir = [0, dy];
+                    sign = 1;
                 } else if (evt.keyCode === 40) {
                     // down
                     dir = [0, -dy];
+                    sign = -1;
                 } else if (evt.keyCode === 37) {
                     // left
                     dir = [-dx, 0];
+                    sign = -1;
                 } else if (evt.keyCode === 39) {
                     // right
                     dir = [dx, 0];
+                    sign = 1;
                 } else {
                     done = false;
                 }
@@ -4313,13 +4332,17 @@ JXG.extend(
                     !el.evalVisProp('fixed')
                 ) {
                     this.mode = this.BOARD_MODE_DRAG;
-                    if (Type.exists(el.coords)) {
+                    if (Type.exists(el.coords) && !sliderStep) {
                         dir[0] += actPos[0];
                         dir[1] += actPos[1];
                     }
                     // For coordsElement setPosition has to call setPositionDirectly.
                     // Otherwise the position is set by a translation.
-                    if (Type.exists(el.coords)) {
+                    if (sliderStep) {
+                        // Slider: step in slider value units
+                        el.setValue(el.Value() + sign * sliderStep);
+                        this.updateInfobox(el);
+                    } else if (Type.exists(el.coords)) {
                         el.setPosition(JXG.COORDS_BY_USER, dir);
                         this.updateInfobox(el);
                     } else {

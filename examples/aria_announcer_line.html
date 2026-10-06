@@ -62,7 +62,7 @@ board.create('functiongraph', [(x) => m.Value() * x + b.Value()], {
 
 board.create('text', [-5, -4, () => 'For each step right, y changes by ' + fmt(m.Value())], {
     fontSize: 16,
-    aria: { enabled: true, live: 'polite', label: () => 'For each step right, y changes by ' + fmt(m.Value()) }
+    aria: { enabled: true, live: 'polite' }
 });
 </script>
 </body>

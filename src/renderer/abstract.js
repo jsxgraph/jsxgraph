@@ -1971,6 +1971,14 @@ JXG.extend(
                 msg = this.evalARIA(el, 'announce');
             } else {
                 msg = this.evalARIA(el, 'label');
+                // Text elements without a label announce their own content.
+                if (
+                    (!Type.exists(msg) || msg === '') &&
+                    el.elementClass === Const.OBJECT_CLASS_TEXT &&
+                    Type.isString(el.plaintext)
+                ) {
+                    msg = el.plaintext.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
+                }
             }
             if (!Type.exists(msg)) {
                 return;

@@ -1677,6 +1677,7 @@ JXG.Options = {
          * is the politeness of the announcement ('polite', 'assertive', 'none') which is made
          * whenever the label changes. The optional attribute `announce` (string or function) can be used
          * to announce a text different from the label.
+         * Text elements (without `label` or `announce`) announce their own content when it changes.
          *
          * @name aria
          * @attribute
@@ -8458,6 +8459,33 @@ JXG.Options = {
         snapSizeY: 1,
 
         /**
+         * Step size in x direction (in user coordinates, not pixels) when the point is moved with the
+         * left/right arrow keys. If not set, the board-wide {@link JXG.Board#keyboard}.dx (in pixels) is used.
+         * If the point snaps to the grid, the snap size has priority.
+         * For gliders, the new position is projected onto the glider's curve.
+         *
+         * @name Point#keyboardStepX
+         * @attribute
+         * @type Number
+         * @default null
+         * @see Point#keyboardStepY
+         * @see Slider#keyboardStep
+         */
+        keyboardStepX: null,
+
+        /**
+         * Step size in y direction (in user coordinates, not pixels) when the point is moved with the
+         * up/down arrow keys. If not set, the board-wide {@link JXG.Board#keyboard}.dy (in pixels) is used.
+         *
+         * @name Point#keyboardStepY
+         * @attribute
+         * @type Number
+         * @default null
+         * @see Point#keyboardStepX
+         */
+        keyboardStepY: null,
+
+        /**
          * If set to true, the point will snap to the nearest point in distance of
          * {@link Point#attractorDistance}.
          *
@@ -9036,6 +9064,20 @@ JXG.Options = {
          * @type Number
          */
         snapWidth: -1,      // -1 = deactivated
+
+        /**
+         * Amount by which the slider value changes per arrow key press (right/up increase,
+         * left/down decrease). Given in slider value units, not pixels.
+         * If not set, the board-wide {@link JXG.Board#keyboard} step (in pixels) is used.
+         *
+         * @memberOf Slider.prototype
+         * @name keyboardStep
+         * @attribute
+         * @type Number
+         * @default null
+         * @see Point#keyboardStepX
+         */
+        keyboardStep: null,
 
         /**
          * List of values to snap to. If the glider is within snapValueDistance
