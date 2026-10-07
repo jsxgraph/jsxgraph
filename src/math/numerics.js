@@ -809,7 +809,7 @@ Mat.Numerics = {
         xm = 0.5 * (b - a);
         xp = 0.5 * (b + a);
 
-        if (n & (1 === 1)) {
+        if ((n & 1) === 1) {
             // n odd
             result = w[0] * f(xp);
             for (i = 1; i < m; ++i) {
