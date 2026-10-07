@@ -196,6 +196,11 @@ describe("Test JXG util functions", function () {
         expect(s.label.visProp.strokecolor).toEqual('red');
     });
 
+    it("trimNumber", function () {
+        expect(JXG.trimNumber('100')).toEqual('100');
+        expect(JXG.trimNumber('0')).toEqual('0');
+    });
+
 });
 
 /*

@@ -1880,8 +1880,13 @@ JXG.extend(
          * @returns {String}
          */
         trimNumber: function (str) {
-            str = str.replace(/^0+/, "");
-            str = str.replace(/0+$/, "");
+            if (str !== '0') {
+                str = str.replace(/^0+/, "");
+            }
+
+            if (str.indexOf('.') >= 0 || str.indexOf(',') >= 0) {
+                str = str.replace(/0+$/, "");
+            }
 
             if (str[str.length - 1] === "." || str[str.length - 1] === ",") {
                 str = str.slice(0, -1);
