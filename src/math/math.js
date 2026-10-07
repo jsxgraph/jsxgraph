@@ -950,16 +950,17 @@ JXG.Math = {
     },
 
     /**
-     * Greatest common divisor (gcd) of two numbers.
-     * See {@link <a href="https://rosettacode.org/wiki/Greatest_common_divisor#JavaScript">rosettacode.org</a>}.
+     * Greatest common divisor (gcd) of two finite, non-zero integer numbers.
+     * See {@link https://rosettacode.org/wiki/Greatest_common_divisor#JavaScript rosettacode.org}.
      *
-     * @param  {Number} a First number
-     * @param  {Number} b Second number
-     * @returns {Number}   gcd(a, b) if a and b are numbers, NaN else.
+     * @param  {Number} a First number, not zero, Infinity, or NaN
+     * @param  {Number} b Second number, not zero, Infinity, or NaN
+     * @returns {Number} gcd(a, b) if a and b are finite, non-zero numbers, NaN else.
+     * @see JXG.Math#lcm
      */
     gcd: function (a, b) {
         var tmp,
-            endless = true;
+            endless = 100000;
 
         a = Math.abs(a);
         b = Math.abs(b);
@@ -967,13 +968,24 @@ JXG.Math = {
         if (!(Type.isNumber(a) && Type.isNumber(b))) {
             return NaN;
         }
+        if (isNaN(a) || isNaN(b) || a === Infinity || b === Infinity) {
+            return NaN;
+        }
+        if (a === 0 || b === 0) {
+            return NaN;
+        }
+        if (!Number.isInteger(a) || !Number.isInteger(b)) {
+            JXG.warn('JSXGraph: JXG.Math.gcd requires integer parameters');
+            return NaN;
+        }
+
         if (b > a) {
             tmp = a;
             a = b;
             b = tmp;
         }
 
-        while (endless) {
+        while (endless > 0) {
             a %= b;
             if (a === 0) {
                 return b;
@@ -982,20 +994,33 @@ JXG.Math = {
             if (b === 0) {
                 return a;
             }
+            endless--;
         }
     },
 
     /**
-     * Least common multiple (lcm) of two numbers.
+     * Least common multiple (lcm) of two finite integer numbers.
+     * lcm(0, a) is defined as 0.
      *
      * @param  {Number} a First number
      * @param  {Number} b Second number
-     * @returns {Number}   lcm(a, b) if a and b are numbers, NaN else.
+     * @returns {Number} lcm(a, b) if a and b are finite integer numbers, NaN else.
+     * @see JXG.Math#gcd
      */
     lcm: function (a, b) {
         var ret;
 
         if (!(Type.isNumber(a) && Type.isNumber(b))) {
+            return NaN;
+        }
+        if (isNaN(a) || isNaN(b) || Math.abs(a) === Infinity || Math.abs(b) === Infinity) {
+            return NaN;
+        }
+        if (a === 0 || b === 0) {
+            return 0;
+        }
+        if (!Number.isInteger(a) || !Number.isInteger(b)) {
+            JXG.warn('JSXGraph: JXG.Math.gcd requires integer parameters');
             return NaN;
         }
 

@@ -204,6 +204,25 @@ describe("Test JXG.Math", function () {
     it("log2", function () {
         expect(JXG.Math.log2(8)).toBeCloseTo(3, 15);
     });
+
+    it("gcd", function () {
+        var a = NaN, b = 7;
+
+        expect(JXG.Math.gcd(a, b)).toEqual(NaN);
+        expect(JXG.Math.gcd(0, b)).toEqual(NaN);
+        expect(JXG.Math.gcd(0, 0)).toEqual(NaN);
+        expect(JXG.Math.gcd(12, 8)).toEqual(4);
+        expect(JXG.Math.gcd(5, 0)).toEqual(NaN);
+        expect(JXG.Math.gcd(0, 0)).toEqual(NaN);
+        expect(JXG.Math.gcd(NaN, 3)).toEqual(NaN);
+        expect(JXG.Math.gcd(Infinity, 3)).toEqual(NaN);
+        expect(JXG.Math.gcd(0.3, 0.1)).toEqual(NaN);
+    });
+
+    it("lcm", function () {
+        expect(JXG.Math.lcm(NaN, 3)).toEqual(NaN);
+    });
+
 });
 
 // TestCase("Math", {
