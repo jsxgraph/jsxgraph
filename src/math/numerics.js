@@ -509,22 +509,20 @@ Mat.Numerics = {
      * Calculates the integral of function f over interval using Romberg iteration.
      * @param {Array} interval The integration interval, e.g. [0, 3].
      * @param {function} f A function which takes one argument of type number and returns a number.
-     * @param {Object} [config] The algorithm setup. Accepted properties are max_iterations of type number and precision eps.
+     * @param {Object} [config] The algorithm setup. Accepted properties are `max_iterations` of type number and precision `eps`.
      * @param {Number} [config.max_iterations=20]
      * @param {Number} [config.eps=0.0000001]
      * @returns {Number} Integral value of f over interval
      * @example
-     * function f(x) {
-     *   return x*x;
-     * }
+     * var f = (x) => x * x;
      *
-     * // calculates integral of `f` from 0 to 2.
-     * var area1 = JXG.Math.Numerics.Romberg([0, 2], f);
+     * // Calculates integral of `f` from 0 to 3.
+     * var area1 = JXG.Math.Numerics.Romberg([0, 3], f);
      *
-     * // the same with an anonymous function
-     * var area2 = JXG.Math.Numerics.Romberg([0, 2], function (x) { return x*x; });
+     * // The same with an anonymous function
+     * var area2 = JXG.Math.Numerics.Romberg([0, 3], function (x) { return x * x; });
      *
-     * // use trapez rule with maximum of 16 iterations or stop if the precision 0.0001 has been reached.
+     * // Use trapez rule with maximum of 16 iterations or stop if the precision 0.0001 has been reached.
      * var area3 = JXG.Math.Numerics.Romberg([0, 2], f,
      *                                   {max_iterations: 16, eps: 0.0001});
      * @memberof JXG.Math.Numerics
@@ -541,8 +539,11 @@ Mat.Numerics = {
             p = [],
             integral = 0.0,
             last = Infinity,
-            m = config && Type.isNumber(config.max_iterations) ? config.max_iterations : 20,
-            eps = config && Type.isNumber(config.eps) ? config.eps : config.eps || 0.0000001;
+            m, eps;
+
+        config = Type.def(config, {});
+        m = config && Type.isNumber(config.max_iterations) ? config.max_iterations : 20;
+        eps = config && Type.isNumber(config.eps) ? config.eps : (config.eps || 0.0000001);
 
         a = interval[0];
         b = interval[1];

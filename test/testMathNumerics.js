@@ -293,6 +293,11 @@ describe("Test JXG.Math.Numerics", function () {
         expect(f2(JXG.Math.Numerics.root(f2, 0))).toBeCloseTo(0.0, 25);
         expect(f3(JXG.Math.Numerics.root(f3, 0))).toBeCloseTo(0.0, 25);
     });
+
+    it("Romberg", function () {
+        expect(JXG.Math.Numerics.Romberg([0, 3], x => x * x)).toEqual(9);
+    });
+    
 });
 /*
 TestCase("MathNumerics", {
