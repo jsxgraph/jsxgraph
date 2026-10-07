@@ -298,11 +298,11 @@ JXG.createSector = function (board, parents, attributes) {
                 s = el.line1.point1.coords;
             } else if (
                 el.line1.point2.Dist(el.line2.point1) < eps ||
-                el.line1.point2.Dist(el.line2.point1) < eps
+                el.line1.point2.Dist(el.line2.point2) < eps
             ) {
                 s = el.line1.point2.coords;
             } else {
-                console.log(
+                JXG.warn(
                     "JSXGraph warning: Can't create Sector from parallel lines with no common defining point."
                 );
             }
@@ -383,10 +383,13 @@ JXG.createSector = function (board, parents, attributes) {
                     B = l1.point1.coords.usrCoords;
                 } else if (
                     l1.point2.Dist(l2.point1) < eps ||
-                    l1.point2.Dist(l2.point1) < eps
+                    l1.point2.Dist(l2.point2) < eps
                 ) {
                     B = l1.point2.coords.usrCoords;
                 } else {
+                    JXG.warn(
+                        "JSXGraph warning: sector from parallel lines with no common defining point."
+                    );
                 }
             }
 
