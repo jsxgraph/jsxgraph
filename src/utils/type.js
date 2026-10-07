@@ -1404,8 +1404,10 @@ JXG.extend(
         mergeAttr: function (attr, special, toLower, ignoreUndefinedSpecials) {
             var e, e2, o;
 
-            toLower = toLower || true;
-            ignoreUndefinedSpecials = ignoreUndefinedSpecials || false;
+            // toLower = toLower || true;
+            // ignoreUndefinedSpecials || false;
+            toLower = this.def(toLower, true);
+            ignoreUndefinedSpecials = this.def(ignoreUndefinedSpecials, false);
 
             for (e in special) {
                 if (special.hasOwnProperty(e)) {
