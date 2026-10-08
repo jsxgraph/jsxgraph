@@ -180,9 +180,9 @@ JXG.extend(
     /** @lends JXG.Composition.prototype */ {
         /**
          * Adds an element to the composition container.
-         * @param {String} what Descriptive name for the element, e.g. <em>startpoint</em> or <em>area</em>. This is used to
-         * access the element later on. There are some reserved names: <em>elements, add, remove, update, prepareUpdate,
-         * updateRenderer, highlight, noHighlight</em>, and all names that would form invalid object property names in
+         * @param {String} what Descriptive name for the element, e.g. `startpoint` or `area`. This is used to
+         * access the element later on. There are some reserved names: `elements`, `add`, `remove`, `update`, `prepareUpdate`,
+         * `updateRenderer`, `highlight`, `noHighlight`, and all names that would form invalid object property names in
          * JavaScript.
          * @param {JXG.GeometryElement|JXG.Composition} element A reference to the element that is to be added. This can be
          * another composition, too.
