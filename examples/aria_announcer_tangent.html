@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="utf-8" />
+   <title>JSXGraph example: board announcer, tangent to a parabola</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+</head>
+<body>
+<h2>Tangent line to y = x&sup2; (board announcer)</h2>
+<p>
+  Move the glider with the mouse or, after focusing it, with the arrow keys. Once the movement has
+  settled, the point and then the slope of the tangent are announced in one message.
+  Serve the repository over http (e.g. <code>npx http-server</code>), as ES modules do not load from file://.
+</p>
+<div id="jxgbox" class="jxgbox" style="width:600px; height:450px;"></div>
+
+<script type="module">
+import { JSXGraph } from '../src/index.js';
+
+const board = JSXGraph.initBoard('jxgbox', {
+    boundingbox: [-4, 10, 4, -2],
+    axis: true,
+    title: 'Parabola y equals x squared with a tangent line at a movable point',
+    role: 'application',
+    announcer: { enabled: true, delay: 400 }
+});
+
+const fmt = (x) => (Math.round(x * 100) / 100).toFixed(2);
+
+const f = board.create('functiongraph', [(x) => x * x], {
+    strokeWidth: 3,
+    aria: { enabled: true, label: 'Graph of y equals x squared', live: 'none' }
+});
+
+// Label functions receive the element itself as parameter. Using it (instead of the
+// variable the element is assigned to) also works while the element is being created.
+
+// Created first, so it is announced first
+const p = board.create('glider', [1, 1, f], {
+    name: 'P', size: 5,
+    tabIndex: 0,
+    snapWidth: 0.5,
+    aria: {
+        enabled: true,
+        label: (el) => 'Point P at x equals ' + fmt(el.X()) + ', y equals ' + fmt(el.Y()),
+        live: 'polite'
+    }
+});
+
+const t = board.create('tangent', [p], {
+    strokeColor: 'red', strokeWidth: 2,
+    aria: {
+        enabled: true,
+        label: (el) => 'Tangent line at P, slope ' + fmt(el.getSlope()),
+        live: 'polite'
+    }
+});
+</script>
+</body>
+</html>

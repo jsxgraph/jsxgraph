@@ -1928,6 +1928,84 @@ JXG.extend(
         setARIA: function(el) { /* stub */ },
 
         /**
+         * Evaluate the attribute 'aria.' + key of an element.
+         * Functions are called with the element as parameter. While an element is still being constructed
+         * (e.g. a slider's glider exists before the slider's `Value()` has been attached), such a function may
+         * fail. Until the attribute has been evaluated successfully once, the error is ignored and
+         * `undefined` is returned, i.e. the attribute is skipped for this update. Afterwards errors are thrown.
+         *
+         * @param {JXG.GeometryElement} el
+         * @param {String} key
+         * @returns {*}
+         * @private
+         */
+        evalARIA: function(el, key) {
+            var k = 'aria.' + key,
+                v;
+
+            try {
+                v = el.evalVisProp(k);
+            } catch (e) {
+                if (el.visPropOld[k] !== undefined || el.visPropOld['aria.announced'] !== undefined) {
+                    throw e;
+                }
+                return undefined;
+            }
+            return v;
+        },
+
+        /**
+         * If the text to be announced (attribute `aria.announce`, falling back to `aria.label`) of an
+         * element has changed, hand it over to the announcer of the board.
+         * The very first value is only stored, not announced. The same holds for an element which
+         * currently has keyboard focus.
+         *
+         * @param {JXG.GeometryElement} el
+         * @see JXG.Board#announce
+         * @private
+         */
+        announceARIA: function(el) {
+            var msg, live;
+
+            if (Type.exists(el.visProp.aria.announce)) {
+                msg = this.evalARIA(el, 'announce');
+            } else {
+                msg = this.evalARIA(el, 'label');
+                // Text elements without a label announce their own content.
+                if (
+                    (!Type.exists(msg) || msg === '') &&
+                    el.elementClass === Const.OBJECT_CLASS_TEXT &&
+                    Type.isString(el.plaintext)
+                ) {
+                    msg = el.plaintext.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
+                }
+            }
+            if (!Type.exists(msg)) {
+                return;
+            }
+
+            msg = String(msg);
+            if (msg === '') {
+                // Not yet available, e.g. while the element is being constructed.
+                return;
+            }
+            if (el.visPropOld['aria.announced'] === msg) {
+                return;
+            }
+            live = el.evalVisProp('aria.live');
+            // The focused element is not announced: assistive technologies read the
+            // changed aria-label of the focused element themselves.
+            if (
+                el.visPropOld['aria.announced'] !== undefined &&
+                live !== 'none' &&
+                !(Type.exists(el.rendNode) && el.board.document.activeElement === el.rendNode)
+            ) {
+                el.board.announce(el.id, msg, live);
+            }
+            el.visPropOld['aria.announced'] = msg;
+        },
+
+        /**
          * Sets the buffering as recommended by SVGWG. Until now only Opera supports this and will be ignored by other
          * browsers. Although this feature is only supported by SVG we have this method in {@link JXG.AbstractRenderer}
          * because it is called from outside the renderer.

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="utf-8" />
+   <title>JSXGraph example: board announcer, line through two points</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+</head>
+<body>
+<h2>Line through two points (board announcer)</h2>
+<p>
+  Move the two points with the mouse or, after focusing one, with the arrow keys. Once the movement has
+  settled, the other point (if it moved) and then the slope and intercept of the line are announced in one message.
+  Serve the repository over http (e.g. <code>npx http-server</code>), as ES modules do not load from file://.
+</p>
+<div id="jxgbox" class="jxgbox" style="width:600px; height:450px;"></div>
+
+<script type="module">
+import { JSXGraph } from '../src/index.js';
+
+const board = JSXGraph.initBoard('jxgbox', {
+    boundingbox: [-6, 6, 6, -6],
+    axis: true,
+    title: 'Line through two movable points A and B',
+    role: 'application',
+    announcer: { enabled: true, delay: 400 }
+});
+
+const fmt = (x) => (Math.round(x * 100) / 100).toFixed(2);
+
+// Created first, so they are announced before the line that depends on them
+const A = board.create('point', [-2, -1], {
+    name: 'A', size: 5,
+    tabIndex: 0,
+    snapToGrid: true, snapSizeX: 0.5, snapSizeY: 0.5,
+    aria: {
+        enabled: true,
+        label: (el) => 'Point A at ' + fmt(el.X()) + ', ' + fmt(el.Y()),
+        live: 'polite'
+    }
+});
+const B = board.create('point', [2, 3], {
+    name: 'B', size: 5,
+    tabIndex: 0,
+    snapToGrid: true, snapSizeX: 0.5, snapSizeY: 0.5,
+    aria: {
+        enabled: true,
+        label: (el) => 'Point B at ' + fmt(el.X()) + ', ' + fmt(el.Y()),
+        live: 'polite'
+    }
+});
+
+// Description of the line through A and B: slope and y-intercept, or x-intercept if vertical
+const describeLine = () => {
+    const dx = B.X() - A.X(),
+        dy = B.Y() - A.Y();
+
+    if (Math.abs(dx) < 1e-10) {
+        return 'Vertical line x equals ' + fmt(A.X()) + ', slope undefined';
+    }
+    const m = dy / dx;
+    return 'Line through A and B, slope ' + fmt(m) + ', y-intercept ' + fmt(A.Y() - m * A.X());
+};
+
+board.create('line', [A, B], {
+    strokeWidth: 3,
+    aria: {
+        enabled: true,
+        label: describeLine,
+        live: 'polite'
+    }
+});
+</script>
+</body>
+</html>

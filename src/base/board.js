@@ -4182,7 +4182,8 @@ JXG.extend(
                 // u = 100,
                 doZoom = false,
                 done = true,
-                dir,
+                dir, sign = 1, sliderStep = 0, glideStep = 0,
+                slide, lo, hi, pos,
                 actPos;
 
             if (!this.attr.keyboard.enabled || id_node === '') {
@@ -4252,9 +4253,49 @@ JXG.extend(
                     done = false;
                 }
             } else if (!evt.shiftKey && !evt.ctrlKey) {         // Move an element if neither shift or ctrl are pressed
-                // Adapt dx, dy to snapToGrid and attractToGrid.
-                // snapToGrid has priority.
+                // Per-element step sizes in user coordinates (keyboardStepX, keyboardStepY)
+                // override the board-wide keyboard.dx, keyboard.dy (screen units).
+                // For sliders, keyboardStep is given in slider value units.
                 if (Type.exists(el.visProp)) {
+                    // If snapToGrid is on, the snap sizes are used below as the step.
+                    if (Type.exists(el.visProp.keyboardstepx)) {
+                        dx = Type.evaluate(el.visProp.keyboardstepx);
+                    }
+                    if (Type.exists(el.visProp.keyboardstepy)) {
+                        dy = Type.evaluate(el.visProp.keyboardstepy);
+                    }
+                    if (Type.exists(el._smin)) {
+                        // Slider: keyboardStep defaults to the slider's snapWidth
+                        if (Type.exists(el.visProp.keyboardstep)) {
+                            sliderStep = Type.evaluate(el.visProp.keyboardstep);
+                        } else if (Type.evaluate(el.visProp.snapwidth) > 0) {
+                            sliderStep = Type.evaluate(el.visProp.snapwidth);
+                        }
+                    } else if (el.type === Const.OBJECT_TYPE_GLIDER && Type.exists(el.position)) {
+                        // Glider: all arrow keys move along the slide object in units of
+                        // its parameter. keyboardStep defaults to 1/100 of the parameter range.
+                        slide = el.slideObject;
+                        if (Type.exists(el.visProp.keyboardstep)) {
+                            glideStep = Type.evaluate(el.visProp.keyboardstep);
+                        } else if (
+                            slide.elementClass === Const.OBJECT_CLASS_CURVE &&
+                            slide.type !== Const.OBJECT_TYPE_ARC &&
+                            slide.type !== Const.OBJECT_TYPE_SECTOR &&
+                            slide.type !== Const.OBJECT_TYPE_TURTLE
+                        ) {
+                            glideStep = (slide.maxX() - slide.minX()) * 0.01;
+                        } else {
+                            glideStep = 0.01;
+                        }
+                        if (!(glideStep > 0)) {
+                            glideStep = 0.01;
+                        }
+                    }
+                }
+
+                // Adapt dx, dy to snapToGrid and attractToGrid.
+                // snapToGrid has priority. Not used for gliders, which move in parameter units.
+                if (Type.exists(el.visProp) && !glideStep) {
                     if (
                         Type.exists(el.visProp.snaptogrid) &&
                         el.visProp.snaptogrid &&
@@ -4291,15 +4332,19 @@ JXG.extend(
                 if (evt.keyCode === 38) {
                     // up
                     dir = [0, dy];
+                    sign = 1;
                 } else if (evt.keyCode === 40) {
                     // down
                     dir = [0, -dy];
+                    sign = -1;
                 } else if (evt.keyCode === 37) {
                     // left
                     dir = [-dx, 0];
+                    sign = -1;
                 } else if (evt.keyCode === 39) {
                     // right
                     dir = [dx, 0];
+                    sign = 1;
                 } else {
                     done = false;
                 }
@@ -4313,13 +4358,42 @@ JXG.extend(
                     !el.evalVisProp('fixed')
                 ) {
                     this.mode = this.BOARD_MODE_DRAG;
-                    if (Type.exists(el.coords)) {
+                    if (Type.exists(el.coords) && !sliderStep && !glideStep) {
                         dir[0] += actPos[0];
                         dir[1] += actPos[1];
                     }
                     // For coordsElement setPosition has to call setPositionDirectly.
                     // Otherwise the position is set by a translation.
-                    if (Type.exists(el.coords)) {
+                    if (sliderStep) {
+                        // Slider: step in slider value units
+                        el.setValue(el.Value() + sign * sliderStep);
+                        this.updateInfobox(el);
+                    } else if (glideStep) {
+                        // Glider: step in units of the slide object's parameter,
+                        // staying inside the parameter range if there is one.
+                        pos = el.position + sign * glideStep;
+                        slide = el.slideObject;
+                        if (slide.elementClass === Const.OBJECT_CLASS_LINE) {
+                            lo = slide.evalVisProp('straightfirst') ? -Infinity : 0;
+                            hi = slide.evalVisProp('straightlast') ? Infinity : 1;
+                        } else if (
+                            slide.elementClass === Const.OBJECT_CLASS_CURVE &&
+                            slide.type !== Const.OBJECT_TYPE_ARC &&
+                            slide.type !== Const.OBJECT_TYPE_SECTOR &&
+                            slide.type !== Const.OBJECT_TYPE_TURTLE
+                        ) {
+                            lo = slide.minX();
+                            hi = slide.maxX();
+                        } else if (slide.elementClass === Const.OBJECT_CLASS_CURVE) {
+                            lo = 0;
+                            hi = 1;
+                        } else {
+                            lo = -Infinity;
+                            hi = Infinity;
+                        }
+                        el.position = Math.max(lo, Math.min(hi, pos));
+                        this.updateInfobox(el);
+                    } else if (Type.exists(el.coords)) {
                         el.setPosition(JXG.COORDS_BY_USER, dir);
                         this.updateInfobox(el);
                     } else {
@@ -6187,6 +6261,110 @@ JXG.extend(
                 }
             }
             return this;
+        },
+
+        /**
+         * Queue a message for the board's announcer (a visually hidden live region).
+         * Messages are collected until no new message has arrived for `announcer.delay` ms and are
+         * then spoken together, in the order in which the keys were first queued.
+         * A new message with the same key replaces the pending one.
+         *
+         * Only works if the board attribute `announcer.enabled` is true.
+         *
+         * @param {String} key Identifier of the sender, usually the element's id.
+         * @param {String} text Message
+         * @param {String} [politeness='polite'] 'polite' or 'assertive'
+         * @returns {JXG.Board} Reference to the board
+         */
+        announce: function (key, text, politeness) {
+            var ann = this.attr.announcer, q;
+
+            if (!ann || !ann.enabled || !Env.isBrowser || !Type.exists(text) || text === '') {
+                return this;
+            }
+            this._announceQueue = this._announceQueue || {};
+            q = this._announceQueue;
+            if (q[key]) {
+                q[key].text = String(text);
+                q[key].politeness = politeness || 'polite';
+            } else {
+                q[key] = { text: String(text), politeness: politeness || 'polite' };
+            }
+
+            if (this._announceTimer) {
+                clearTimeout(this._announceTimer);
+            }
+            this._announceTimer = setTimeout(
+                this._flushAnnouncements.bind(this),
+                Type.evaluate(ann.delay)
+            );
+            return this;
+        },
+
+        /**
+         * Write all queued messages into the live regions.
+         * @private
+         */
+        _flushAnnouncements: function () {
+            var q = this._announceQueue || {},
+                msgs = { polite: [], assertive: [] },
+                key, level, region;
+
+            this._announceQueue = {};
+            this._announceTimer = null;
+
+            for (key in q) {
+                if (q.hasOwnProperty(key)) {
+                    msgs[q[key].politeness === 'assertive' ? 'assertive' : 'polite'].push(q[key].text);
+                }
+            }
+
+            for (level in msgs) {
+                if (msgs.hasOwnProperty(level) && msgs[level].length > 0) {
+                    region = this._getAnnouncerRegion(level);
+                    if (region) {
+                        // Replace the content with a new node, so that repeated identical
+                        // messages are announced again.
+                        region.innerHTML = '';
+                        region.appendChild(this.document.createElement('div'))
+                            .appendChild(this.document.createTextNode(msgs[level].join('. ')));
+                    }
+                }
+            }
+        },
+
+        /**
+         * Get (and create if necessary) the hidden live region of the given politeness level.
+         * @param {String} level 'polite' or 'assertive'
+         * @returns {Node|null}
+         * @private
+         */
+        _getAnnouncerRegion: function (level) {
+            var node, st;
+
+            this._announceRegions = this._announceRegions || {};
+            node = this._announceRegions[level];
+            if (node && node.parentNode === this.containerObj) {
+                return node;
+            }
+            if (!this.containerObj || !this.document) {
+                return null;
+            }
+
+            node = this.document.createElement('div');
+            node.setAttribute('role', level === 'assertive' ? 'alert' : 'status');
+            node.setAttribute('aria-live', level);
+            node.setAttribute('aria-atomic', 'true');
+            st = node.style;
+            st.position = 'absolute';
+            st.width = '1px';
+            st.height = '1px';
+            st.overflow = 'hidden';
+            st.clip = 'rect(0 0 0 0)';
+            st.whiteSpace = 'nowrap';
+            this.containerObj.appendChild(node);
+            this._announceRegions[level] = node;
+            return node;
         },
 
         /**
