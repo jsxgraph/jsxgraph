@@ -5537,7 +5537,7 @@ JXG.extend(
          * @private
          */
         _removeObj: function (object, saveMethod) {
-            var el, o, i;
+            var el, i, pos;
 
             if (Type.isArray(object)) {
                 for (i = 0; i < object.length; i++) {
@@ -5552,6 +5552,12 @@ JXG.extend(
             // If the object which is about to be removed is unknown or a string, do nothing.
             // it is a string if a string was given and could not be resolved to an element.
             if (!Type.exists(object) || Type.isString(object)) {
+                return this;
+            }
+
+            // Already removed (e.g. reached again through a parent's childElements
+            // or View3D.removeObject). Removing it twice used to splice a live element.
+            if (object._pos === -1 && this.objects[object.id] !== object) {
                 return this;
             }
 
@@ -5604,15 +5610,16 @@ JXG.extend(
                 }
 
                 // remove the object itself from our control structures
-                if (object._pos > -1) {
-                    this.objectsList.splice(object._pos, 1);
+                // Trust _pos only if it still points at the object, and reset it
+                // afterwards, so a stale index can never splice another element.
+                pos = this.objectsList[object._pos] === object ? object._pos : this.objectsList.indexOf(object);
+                if (pos > -1) {
+                    this.objectsList.splice(pos, 1);
                     // Quadratic complexity for reindexing the positions:
-                    for (i = object._pos; i < this.objectsList.length; i++) {
-                        o = this.objectsList[i];
-                        if (o._pos > -1) {
-                            o._pos--;
-                        }
+                    for (i = pos; i < this.objectsList.length; i++) {
+                        this.objectsList[i]._pos = i;
                     }
+                    object._pos = -1;
                 } else if (object.type !== Const.OBJECT_TYPE_TURTLE) {
                     JXG.debug(
                         'Board.removeObject: object ' + object.id + ' not found in list.'
