@@ -1431,13 +1431,16 @@ JXG.Math = {
     },
 
     /**
-     * Theorem of Vieta: Given a set of simple zeroes x_0, ..., x_n
-     * of a polynomial f, compute the coefficients s_k, (k=0,...,n-1)
-     * of the polynomial of the form. See {@link https://de.wikipedia.org/wiki/Elementarsymmetrisches_Polynom}.
-     *
+     * Theorem of Vieta: Given a set of simple zeroes \\(x_0, \ldots, x_n\))
+     * of a polynomial \\(f\\), compute the coefficients \\(s_k\\), \\(k=0, \ldots, n-1\\)
+     * of the polynomial of the form
+     * \\[
      *  f(x) = (x-x_0)*...*(x-x_n) =
      *  x^n + sum_{k=1}^{n} (-1)^(k) s_{k-1} x^(n-k)
-     * </p>
+     * \\]
+     *
+     * See {@link https://en.wikipedia.org/wiki/Vieta%27s_formulas}
+     *
      * @param {Array} x Simple zeroes of the polynomial.
      * @returns {Array} Coefficients of the polynomial.
      *
