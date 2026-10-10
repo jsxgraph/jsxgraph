@@ -795,7 +795,7 @@ JXG.Math = {
     },
 
     /**
-     * Computes cube root of real number
+     * Computes cube root of real number.
      * Polyfill for Math.cbrt().
      *
      * @function
@@ -1187,7 +1187,7 @@ JXG.Math = {
     /* ********************  Comparisons and logical operators ************** */
 
     /**
-     * Logical test: a < b?
+     * Logical test: `a < b`?
      *
      * @param {Number} a
      * @param {Number} b
@@ -1198,7 +1198,7 @@ JXG.Math = {
     },
 
     /**
-     * Logical test: a <= b?
+     * Logical test: `a <= b`?
      *
      * @param {Number} a
      * @param {Number} b
@@ -1209,7 +1209,7 @@ JXG.Math = {
     },
 
     /**
-     * Logical test: a > b?
+     * Logical test: `a > b`?
      *
      * @param {Number} a
      * @param {Number} b
@@ -1220,7 +1220,7 @@ JXG.Math = {
     },
 
     /**
-     * Logical test: a >= b?
+     * Logical test: `a >= b`?
      *
      * @param {Number} a
      * @param {Number} b
@@ -1231,7 +1231,7 @@ JXG.Math = {
     },
 
     /**
-     * Logical test: a === b?
+     * Logical test: `a === b`?
      *
      * @param {Number} a
      * @param {Number} b
@@ -1242,7 +1242,7 @@ JXG.Math = {
     },
 
     /**
-     * Logical test: a !== b?
+     * Logical test: `a !== b`?
      *
      * @param {Number} a
      * @param {Number} b
@@ -1253,7 +1253,7 @@ JXG.Math = {
     },
 
     /**
-     * Logical operator: a && b?
+     * Logical operator: `a && b`?
      *
      * @param {Boolean} a
      * @param {Boolean} b
@@ -1264,7 +1264,7 @@ JXG.Math = {
     },
 
     /**
-     * Logical operator: !a?
+     * Logical operator: `!a`?
      *
      * @param {Boolean} a
      * @returns {Boolean}
@@ -1274,7 +1274,7 @@ JXG.Math = {
     },
 
     /**
-     * Logical operator: a || b?
+     * Logical operator: `a || b`?
      *
      * @param {Boolean} a
      * @param {Boolean} b
@@ -1285,7 +1285,7 @@ JXG.Math = {
     },
 
     /**
-     * Logical operator: either a or b?
+     * Logical operator: either `a` or `b`?
      *
      * @param {Boolean} a
      * @param {Boolean} b
@@ -1364,7 +1364,7 @@ JXG.Math = {
     /* *************************** Normalize *************************** */
 
     /**
-     * Normalize the standard form [c, b0, b1, a, k, r, q0, q1].
+     * Normalize the standard form `[c, b0, b1, a, k, r, q0, q1]`.
      * @private
      * @param {Array} stdform The standard form to be normalized.
      * @returns {Array} The normalized standard form.
