@@ -915,7 +915,11 @@ JXG.Math = {
         },
 
     /**
-     * A square & multiply algorithm to compute base to the power of exponent.
+     * A square & multiply algorithm to compute `base` to the power of `exponent`.
+     * That is, for base \\(b\\) and integer exponent \\(e\\) it is a fast method to compute
+     * \\[ b^e .\\]
+     * For non-integer values of `exponent`, JavaScript's `Math.pow` is used.
+     *
      * Implementated by Wolfgang Riedl.
      *
      * @param {Number} base
