@@ -3473,7 +3473,7 @@ upcomingInput:function () {
 showPosition:function () {
         var pre = this.pastInput();
         var c = new Array(pre.length + 1).join("-");
-        return pre + this.upcomingInput() + "\n" + c+"^";
+        return JXG.escapeHTML(pre + this.upcomingInput() + "\n" + c+"^");
     },
 next:function () {
         if (this.done) {
