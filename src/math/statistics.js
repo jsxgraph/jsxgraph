@@ -619,12 +619,12 @@ Mat.Statistics = {
      * The Theil-Sen estimator can be used to determine a more robust linear regression of a set of sample
      * points than least squares regression in {@link JXG.Math.Numerics.regressionPolynomial}.
      *
-     * If the function should be applied to an array a of points, a the coords array can be generated with
-     * JavaScript array.map:
+     * If the function should be applied to an array `a` of *points*, a coords array can be generated with
+     * JavaScript `array.map`:
      *
-     * <pre>
+     * ```
      * JXG.Math.Statistics.TheilSenRegression(a.map(el => el.coords));
-     * </pre>
+     * ```
      *
      * @param {Array} coords Array of {@link JXG.Coords}.
      * @returns {Array} A stdform array of the regression line.
@@ -632,10 +632,10 @@ Mat.Statistics = {
      *
      * @example
      * var board = JXG.JSXGraph.initBoard('jxgbox', { boundingbox: [-6,6,6,-6], axis : true });
-     * var a=[];
-     * a[0]=board.create('point', [0,0]);
-     * a[1]=board.create('point', [3,0]);
-     * a[2]=board.create('point', [0,3]);
+     * var a = [];
+     * a[0] = board.create('point', [0, 0]);
+     * a[1] = board.create('point', [3, 0]);
+     * a[2] = board.create('point', [0, 3]);
      *
      * board.create('line', [
      *     () => JXG.Math.Statistics.TheilSenRegression(a.map(el => el.coords))
@@ -689,7 +689,7 @@ Mat.Statistics = {
 
     /**
      * Generate values of a standard normal random variable with the Marsaglia polar method, see
-     * <a href="https://en.wikipedia.org/wiki/Marsaglia_polar_method">https://en.wikipedia.org/wiki/Marsaglia_polar_method</a>.
+     * {@link https://en.wikipedia.org/wiki/Marsaglia_polar_method}..
      * See also D. E. Knuth, The art of computer programming, vol 2, p. 117.
      *
      * @param {Number} mean mean value of the normal distribution
@@ -779,7 +779,7 @@ Mat.Statistics = {
     },
 
     /**
-     * Generate value of a uniform distributed random variable in the interval [a, b].
+     * Generate value of a uniform distributed random variable in the interval `[a, b]`.
      * @param {Number} a
      * @param {Number} b
      * @returns Number
@@ -791,7 +791,7 @@ Mat.Statistics = {
 
     /**
      * Generate value of a random variable with exponential distribution, i.e.
-     * \\(f(x; \lambda) = \lambda * e^(-\lambda x)\\) if \\(x \geq 0\\) and \\(f(x; \lambda) = 0\\) if \\(x < 0\\).
+     * \\(f(x; \lambda) = \lambda \cdot e^{-\lambda x}\\) if \\(x \geq 0\\) and \\(f(x; \lambda) = 0\\) if \\(x < 0\\).
      * See <a href="https://en.wikipedia.org/wiki/Exponential_distribution">https://en.wikipedia.org/wiki/Exponential_distribution</a>.
      * Algorithm: D.E. Knuth, TAOCP 2, p. 128.
      *
@@ -860,7 +860,7 @@ Mat.Statistics = {
 
     /**
      * Generate value of a random variable with gamma distribution of order alpha.
-     * See <a href="https://en.wikipedia.org/wiki/Gamma_distribution">https://en.wikipedia.org/wiki/Gamma_distribution</a>.
+     * See {@link https://en.wikipedia.org/wiki/Gamma_distribution}.
      * Algorithm: D.E. Knuth, TAOCP 2, p. 129.
 
      * @param {Number} a shape, \\( > 0\\)
@@ -976,7 +976,7 @@ Mat.Statistics = {
 
     /**
      * Generate value of a random variable with beta distribution with shape parameters alpha and beta.
-     * See <a href="https://en.wikipedia.org/wiki/Beta_distribution">https://en.wikipedia.org/wiki/Beta_distribution</a>.
+     * See {@link https://en.wikipedia.org/wiki/Beta_distribution}.
      *
      * @param {Number} alpha \\(< 0\\)
      * @param {Number} beta \\(< 0\\)
@@ -999,7 +999,7 @@ Mat.Statistics = {
 
     /**
      * Generate value of a random variable with chi-square distribution with k degrees of freedom.
-     * See <a href="https://en.wikipedia.org/wiki/Chi-squared_distribution">https://en.wikipedia.org/wiki/Chi-squared_distribution</a>.
+     * See {@link https://en.wikipedia.org/wiki/Chi-squared_distribution}.
      *
      * @param {Number} k \\(>0\\)
      * @returns Number
@@ -1017,7 +1017,7 @@ Mat.Statistics = {
 
     /**
      * Generate value of a random variable with F-distribution with d<sub>1</sub> and d<sub>2</sub> degrees of freedom.
-     * See <a href="https://en.wikipedia.org/wiki/F-distribution">https://en.wikipedia.org/wiki/F-distribution</a>.
+     * See {@link https://en.wikipedia.org/wiki/F-distribution}.
      * @param {Number} d1 \\(>0\\)
      * @param {Number} d2 \\(>0\\)
      * @returns Number
@@ -1039,7 +1039,7 @@ Mat.Statistics = {
 
     /**
      * Generate value of a random variable with Students-t-distribution with &nu; degrees of freedom.
-     * See <a href="https://en.wikipedia.org/wiki/Student%27s_t-distribution">https://en.wikipedia.org/wiki/Student%27s_t-distribution</a>.
+     * See {@link https://en.wikipedia.org/wiki/Student%27s_t-distribution}.
      * @param {Number} nu \\(>0\\)
      * @returns Number
      * @memberof JXG.Math.Statistics
@@ -1060,8 +1060,8 @@ Mat.Statistics = {
 
     /**
      * Generate values for a random variable in binomial distribution with parameters \\(n\\) and \\(p\\).
-     * See <a href="https://en.wikipedia.org/wiki/Binomial_distribution">https://en.wikipedia.org/wiki/Binomial_distribution</a>.
-     * It uses algorithm BG from <a href="https://dl.acm.org/doi/pdf/10.1145/42372.42381">https://dl.acm.org/doi/pdf/10.1145/42372.42381</a>.
+     * See {@link https://en.wikipedia.org/wiki/Binomial_distribution}.
+     * It uses algorithm BG from {@link https://dl.acm.org/doi/pdf/10.1145/42372.42381}.
      *
      * @param {Number} n Number of trials (n >= 0)
      * @param {Number} p Probability (0 <= p <= 1)
@@ -1185,7 +1185,7 @@ Mat.Statistics = {
 
     /**
      * Generate values for a random variable in geometric distribution with probability \\(p\\).
-     * See <a href="https://en.wikipedia.org/wiki/Geometric_distribution">https://en.wikipedia.org/wiki/Geometric_distribution</a>.
+     * See {@link https://en.wikipedia.org/wiki/Geometric_distribution}.
      *
      * @param {Number} p (0 <= p <= 1)
      * @returns Number
