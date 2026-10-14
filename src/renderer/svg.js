@@ -954,7 +954,7 @@ JXG.extend(
 
         // Already documented in JXG.AbstractRenderer
         setLayer: function (el, level) {
-            var node;
+            var node, elNode;
             if (!Type.exists(level)) {
                 level = 0;
             } else if (level >= Options.layer.numlayers) {
@@ -962,8 +962,16 @@ JXG.extend(
             }
 
             node = this.layer[level];
+            // if ('moveBefore' in Element.prototype) {
             if (Type.exists(node.moveBefore)) {
-                node.moveBefore(el.rendNode, null);
+                // node.moveBefore(el.rendNode, null);
+                elNode = el.rendNode;
+                if (elNode.isConnected && node.isConnected &&
+                    (elNode.ownerDocument === node.ownerDocument)) {
+                    node.moveBefore(elNode, null);
+                } else {
+                    node.insertBefore(elNode, null);
+                }
             } else {
                 node.appendChild(el.rendNode);
             }
