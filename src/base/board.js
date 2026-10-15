@@ -5561,6 +5561,10 @@ JXG.extend(
                 return this;
             }
 
+            if (object.is3D && Type.exists(object.view.objects[object.id])) {
+                JXG.warn("board.removeObject() of 3D object " + object.id + ". Use view3d.removeObject() instead.");
+            }
+
             try {
                 // remove all children.
                 for (el in object.childElements) {
