@@ -1051,8 +1051,8 @@ JXG.extend(
 
         object = this.select(object);
 
-        // // If the object which is about to be removed unknown or a string, do nothing.
-        // // it is a string if a string was given and could not be resolved to an element.
+        // If the object which is about to be removed unknown or a string, do nothing.
+        // it is a string if a string was given and could not be resolved to an element.
         if (!Type.exists(object) || Type.isString(object)) {
             return this;
         }
@@ -1061,7 +1061,10 @@ JXG.extend(
             // Remove all children.
             for (el in object.childElements) {
                 if (object.childElements.hasOwnProperty(el)) {
-                    this.removeObject(object.childElements[el]);
+                    o = object.childElements[el];
+                    if (!(object.is3D && object.element2D === o)) {
+                        this.removeObject(o);
+                    }
                 }
             }
             if (object.type === Const.OBJECT_TYPE_POLYHEDRON3D) {
