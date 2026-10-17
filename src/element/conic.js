@@ -129,7 +129,7 @@ import Type from "../utils/type.js";
  * @example
  * var A = board.create('point', [1,0]);
  * var B = board.create('point', [-1,0]);
- * var el = board.create('ellipse',[A,B, 4]);
+ * var el = board.create('ellipse',[A, B, 4]);
  *
  * </pre><div id="JXG7898d447-94dc-4dce-9ad3-60e3387be9f3" class="jxgbox" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
