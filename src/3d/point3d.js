@@ -478,8 +478,6 @@ JXG.extend(
             }
         },
 
-
-
         /**
         * Starts an animated point movement towards the given coordinates `where`.
         * The animation is done after `time` milliseconds.
@@ -700,9 +698,6 @@ JXG.extend(
                 }, stepTime);
             });
         },
-
-
-
 
         // Not yet working
         __evt__update3D: function (oc) { }
