@@ -1404,8 +1404,10 @@ JXG.extend(
         mergeAttr: function (attr, special, toLower, ignoreUndefinedSpecials) {
             var e, e2, o;
 
-            toLower = toLower || true;
-            ignoreUndefinedSpecials = ignoreUndefinedSpecials || false;
+            // toLower = toLower || true;
+            // ignoreUndefinedSpecials || false;
+            toLower = this.def(toLower, true);
+            ignoreUndefinedSpecials = this.def(ignoreUndefinedSpecials, false);
 
             for (e in special) {
                 if (special.hasOwnProperty(e)) {
@@ -1878,8 +1880,13 @@ JXG.extend(
          * @returns {String}
          */
         trimNumber: function (str) {
-            str = str.replace(/^0+/, "");
-            str = str.replace(/0+$/, "");
+            if (str !== '0') {
+                str = str.replace(/^0+/, "");
+            }
+
+            if (str.indexOf('.') >= 0 || str.indexOf(',') >= 0) {
+                str = str.replace(/0+$/, "");
+            }
 
             if (str[str.length - 1] === "." || str[str.length - 1] === ",") {
                 str = str.slice(0, -1);

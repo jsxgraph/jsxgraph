@@ -1761,8 +1761,8 @@ JXG.createHTMLSlider = function (board, parents, attributes) {
     }
 
     // Backwards compatibility
-    attr.anchor = attr.parent || attr.anchor;
-    attr.fixed = attr.fixed || true;
+    attr.anchor = Type.def(attr.parent, attr.anchor);
+    attr.fixed = Type.def(attr.fixed, true);
 
     par = [
         parents[0][0],
