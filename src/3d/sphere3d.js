@@ -171,9 +171,6 @@ JXG.extend(
         range_v: [0, Math.PI],
 
         update: function () {
-            // if (this.projectionType !== this.view.projectionType) {
-            //     this.rebuildProjection();
-            // }
             return this;
         },
 
@@ -240,6 +237,9 @@ JXG.extend(
          * for this projection, too. The two focii now coincide with the center of
          * the sphere. The 2D radius point is defined by the projection of the center
          * and the projected radius.
+         * @param {Number} sgn Expecst -1 or 1 for the two focus points
+         * @returns {Array} 2D coordinates of the projected focus point
+         *
          */
         focusFn: function (sgn) {
             var that = this;
@@ -263,6 +263,10 @@ JXG.extend(
 
         // Replace our 2D representation with a new one that's consistent with
         // the view's current projection type
+        /**
+         *
+         * @returns {Array} 2D coordinates of the projected 3rd point that is on the ellipse.
+         */
         innerVertexFn: function () {
             var that = this;
 
@@ -320,7 +324,15 @@ JXG.extend(
             };
         },
 
-        buildCentralProjection: function (attr) {
+        /**
+         * Create 2D helper points and an ellipse to visualize the `sphere3d`.
+         * Handles central and parallel projection simultaneously.
+         *
+         * This is done only once at creation time.
+         *
+         * @param {object} attr Attributes for the sphere objects
+         */
+        buildProjection: function (attr) {
             var view = this.view,
                 auxStyle = { visible: false, withLabel: false },
                 frontFocus = view.create('point', this.focusFn(-1), auxStyle),
@@ -329,43 +341,6 @@ JXG.extend(
 
             this.aux2D = [frontFocus, backFocus, innerVertex];
             this.element2D = view.create('ellipse', this.aux2D, attr === undefined ? this.visProp : attr);
-        },
-
-        // buildParallelProjection: function (attr) {
-        //     // The parallel projection of a sphere is a circle
-        //     var that = this,
-        //         radius2d = function () {
-        //             var boxSize = that.view.bbox3D[0][1] - that.view.bbox3D[0][0];
-        //             return 2 * that.Radius() * that.view.size[0] / boxSize;
-        //         };
-
-        //     this.aux2D = [that.center.element2D, that.center.element2D, radius2d];
-        //     this.element2D = this.view.create('ellipse', this.aux2D, attr === undefined ? this.visProp : attr);
-        //     // [center2d, radius2d],
-        // },
-
-        // This only used at the initialisation.
-        rebuildProjection: function (attr) {
-            // var i;
-            // // remove the old 2D representation from the scene tree
-            // if (this.element2D) {
-            //     this.view.board.removeObject(this.element2D);
-            //     for (i in this.aux2D) {
-            //         if (this.aux2D.hasOwnProperty(i)) {
-            //             this.view.board.removeObject(this.aux2D[i]);
-            //         }
-            //     }
-            // }
-
-            // build a new 2D representation. the representation is stored in
-            // `this.element2D`, and any auxiliary elements are stored in
-            // `this.aux2D`
-            // this.projectionType = this.view.projectionType;
-            // if (true || this.projectionType === 'central') {
-            this.buildCentralProjection(attr);
-            // } else {
-            //     this.buildParallelProjection(attr);
-            // }
 
             // attach the new 2D representation to the scene tree
             this.addChild(this.element2D);
@@ -659,7 +634,7 @@ JXG.createSphere3D = function (board, parents, attributes) {
     // to the correct initial state
     // Here, element2D is created.
     attr = el.setAttr2D(attr);
-    el.rebuildProjection(attr);
+    el.buildProjection(attr);
 
     el.element2D.prepareUpdate().update();
     if (!board.isSuspendedUpdate) {
