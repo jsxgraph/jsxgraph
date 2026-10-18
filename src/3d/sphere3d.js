@@ -152,22 +152,49 @@ JXG.extend(
     JXG.Sphere3D.prototype,
     /** @lends JXG.Sphere3D.prototype */ {
 
+        /**
+         * Returns the x-coordinate of the sphere given as parametric surface for parameters `u` and `v`.
+         * @param {Number} u
+         * @param {Number} v
+         * @returns {Number} x-coordinate
+         */
         X: function(u, v) {
             var r = this.Radius();
             return r * Math.sin(u) * Math.cos(v);
         },
 
+        /**
+         * Returns the y-coordinate of the sphere given as parametric surface for parameters `u` and `v`.
+         * @param {Number} u
+         * @param {Number} v
+         * @returns {Number} y-coordinate
+         */
         Y: function(u, v) {
             var r = this.Radius();
             return r * Math.sin(u) * Math.sin(v);
         },
 
+        /**
+         * Returns the z-coordinate of the sphere given as parametric surface for parameters `u` and `v`.
+         * @param {Number} u
+         * @param {Number} v
+         * @returns {Number} z-coordinate
+         */
         Z: function(u, v) {
             var r = this.Radius();
             return r * Math.cos(u);
         },
 
+        /**
+         * The parameter range of `u`
+         * @type {Array}
+         */
         range_u: [0, 2 * Math.PI],
+
+        /**
+         * The parameter range of `v`
+         * @type {Array}
+         */
         range_v: [0, Math.PI],
 
         update: function () {
