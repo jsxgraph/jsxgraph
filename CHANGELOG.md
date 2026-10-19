@@ -1,3 +1,32 @@
+1.14.1
+===
+
+Improvements
+------------
+
+- API docs: various additions and improvements
+- TypeScript: add missing entry to index.d.ts
+- Print warning to console if a 3D element is removed with board.removeObject() instead of view3d.removeObject()
+- Repository: move folder `./src/unused` to `./src_unused`
+- sphere3d: treat parallel and central projection simultaneously
+
+Bug fixes
+---------
+
+- removeObject of 3D elements
+- Regression in svg.js: setLayer()
+- line3d child elements were added twice
+- canvas renderer: updateGradientCircle()
+- circle.getBoundingBox()
+- Throw error if if intersectionline3d is used wrong
+- Catch non-integer parameters in JXG.Math.gcd()
+- Wrong logical test in `JXG.Math.Numerics.GaussLegendre`
+- Type.mergeAttr setting of default parameters
+- Set default attributes in createHTMLSlider
+- Handle missing parameter config in `JXG.Math.Numerics.Romberg()`
+- Typo in sector of parallel lines
+- `Type.trimNumber()` of `100` and `0`
+
 1.14.0
 ===
 
