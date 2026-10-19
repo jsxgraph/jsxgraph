@@ -5079,6 +5079,17 @@ declare namespace JXG {
             onlyByIdOrName: boolean
         ): GeometryElement | Composition;
         /**
+         * Sets an arbitrary number of attributes. Accepts an object (`{key1: value1, key2: value2, ...}`),
+         * a string (`'key:value'`), or an array (`['key', value]`). Some board attributes are immutable,
+         * like e.g. the renderer type.
+         * @param attr An object with attributes.
+         * @param force If true the attributes are set regardless of the previous setting was identical.
+         */
+        setAttribute(
+            attr: Partial<BoardAttributes> | string | [string, unknown],
+            force?: boolean
+        ): Board;
+        /**
          *
          */
         setBoundingBox(

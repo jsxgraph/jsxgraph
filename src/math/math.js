@@ -682,10 +682,10 @@ JXG.Math = {
     }),
 
     /**
-     * Calculates the cosine hyperbolicus of x.
+     * Calculates the hyperbolic cosine of \\(x\\).
      * @function
      * @param {Number} x The number the cosine hyperbolicus will be calculated of.
-     * @returns {Number} Cosine hyperbolicus of the given value.
+     * @returns {Number} Hyperbolic cosine of the given value.
      */
     cosh:
         Math.cosh ||
@@ -694,10 +694,10 @@ JXG.Math = {
         },
 
     /**
-     * Sine hyperbolicus of x.
+     * Hyperbolic sine of \\(x\\).
      * @function
-     * @param {Number} x The number the sine hyperbolicus will be calculated of.
-     * @returns {Number} Sine hyperbolicus of the given value.
+     * @param {Number} x The number the hyperbolic sine will be calculated of.
+     * @returns {Number} Hyperbolic sine of the given value.
      */
     sinh:
         Math.sinh ||
@@ -706,7 +706,7 @@ JXG.Math = {
         },
 
     /**
-     * Hyperbolic arc-cosine of a number.
+     * Inverse hyperbolic cosine of a number.
      * @function
      * @param {Number} x
      * @returns {Number}
@@ -718,7 +718,7 @@ JXG.Math = {
         },
 
     /**
-     * Hyperbolic arcsine of a number
+     * Inverse hyperbolic sine of a number
      * @function
      * @param {Number} x
      * @returns {Number}
@@ -795,7 +795,7 @@ JXG.Math = {
     },
 
     /**
-     * Computes cube root of real number
+     * Computes cube root of real number.
      * Polyfill for Math.cbrt().
      *
      * @function
@@ -915,7 +915,11 @@ JXG.Math = {
         },
 
     /**
-     * A square & multiply algorithm to compute base to the power of exponent.
+     * A square & multiply algorithm to compute `base` to the power of `exponent`.
+     * That is, for base \\(b\\) and integer exponent \\(e\\) it is a fast method to compute
+     * \\[ b^e .\\]
+     * For non-integer values of `exponent`, JavaScript's `Math.pow` is used.
+     *
      * Implementated by Wolfgang Riedl.
      *
      * @param {Number} base
@@ -1208,7 +1212,7 @@ JXG.Math = {
     /* ********************  Comparisons and logical operators ************** */
 
     /**
-     * Logical test: a < b?
+     * Logical test: `a < b`?
      *
      * @param {Number} a
      * @param {Number} b
@@ -1219,7 +1223,7 @@ JXG.Math = {
     },
 
     /**
-     * Logical test: a <= b?
+     * Logical test: `a <= b`?
      *
      * @param {Number} a
      * @param {Number} b
@@ -1230,7 +1234,7 @@ JXG.Math = {
     },
 
     /**
-     * Logical test: a > b?
+     * Logical test: `a > b`?
      *
      * @param {Number} a
      * @param {Number} b
@@ -1241,7 +1245,7 @@ JXG.Math = {
     },
 
     /**
-     * Logical test: a >= b?
+     * Logical test: `a >= b`?
      *
      * @param {Number} a
      * @param {Number} b
@@ -1252,7 +1256,7 @@ JXG.Math = {
     },
 
     /**
-     * Logical test: a === b?
+     * Logical test: `a === b`?
      *
      * @param {Number} a
      * @param {Number} b
@@ -1263,7 +1267,7 @@ JXG.Math = {
     },
 
     /**
-     * Logical test: a !== b?
+     * Logical test: `a !== b`?
      *
      * @param {Number} a
      * @param {Number} b
@@ -1274,7 +1278,7 @@ JXG.Math = {
     },
 
     /**
-     * Logical operator: a && b?
+     * Logical operator: `a && b`?
      *
      * @param {Boolean} a
      * @param {Boolean} b
@@ -1285,7 +1289,7 @@ JXG.Math = {
     },
 
     /**
-     * Logical operator: !a?
+     * Logical operator: `!a`?
      *
      * @param {Boolean} a
      * @returns {Boolean}
@@ -1295,7 +1299,7 @@ JXG.Math = {
     },
 
     /**
-     * Logical operator: a || b?
+     * Logical operator: `a || b`?
      *
      * @param {Boolean} a
      * @param {Boolean} b
@@ -1306,7 +1310,7 @@ JXG.Math = {
     },
 
     /**
-     * Logical operator: either a or b?
+     * Logical operator: either `a` or `b`?
      *
      * @param {Boolean} a
      * @param {Boolean} b
@@ -1385,7 +1389,7 @@ JXG.Math = {
     /* *************************** Normalize *************************** */
 
     /**
-     * Normalize the standard form [c, b0, b1, a, k, r, q0, q1].
+     * Normalize the standard form `[c, b0, b1, a, k, r, q0, q1]`.
      * @private
      * @param {Array} stdform The standard form to be normalized.
      * @returns {Array} The normalized standard form.
@@ -1456,13 +1460,13 @@ JXG.Math = {
     },
 
     /**
-     * Theorem of Vieta: Given a set of simple zeroes x_0, ..., x_n
-     * of a polynomial f, compute the coefficients s_k, (k=0,...,n-1)
-     * of the polynomial of the form. See {@link https://de.wikipedia.org/wiki/Elementarsymmetrisches_Polynom}.
+     * Theorem of Vieta: Given a set of simple zeroes \\(x_0, \ldots, x_n\\)
+     * of a polynomial \\(f\\), compute the coefficients \\(s_k\\), \\(k=0, \ldots, n-1\\),
+     * of the polynomial of the form
+     * \\[ f(x) = (x-x_0)\cdots(x-x_n) = x^n + \sum_{k=1}^{n} (-1)^k s_{k-1} x^{n-k} \\]
      *
-     *  f(x) = (x-x_0)*...*(x-x_n) =
-     *  x^n + sum_{k=1}^{n} (-1)^(k) s_{k-1} x^(n-k)
-     * </p>
+     * See {@link https://en.wikipedia.org/wiki/Vieta%27s_formulas}
+     *
      * @param {Array} x Simple zeroes of the polynomial.
      * @returns {Array} Coefficients of the polynomial.
      *
