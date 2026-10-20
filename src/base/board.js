@@ -4418,6 +4418,9 @@ JXG.extend(
             var w = width,
                 h = height,
                 // bb,
+                bbox,
+                offX = 0,
+                offY = 0,
                 css,
                 width_adjustment, height_adjustment;
 
@@ -4454,7 +4457,38 @@ JXG.extend(
 
             // If bounding box is not yet initialized, do it now.
             if (isNaN(this.getBoundingBox()[0])) {
-                this.setBoundingBox(this.attr.boundingbox, this.keepaspectratio, 'keep');
+                // This is not enough
+                // this.setBoundingBox(this.attr.boundingbox, this.keepaspectratio, 'keep');
+                // Instead, we do the same as in JXG.JSXGraphinitBoard():
+                bbox = this.attr.boundingbox;
+                if (Type.exists(bbox) && this.keepaspectratio) {
+                    /*
+                     * If the boundingbox attribute is given and the ratio of height and width of the
+                     * sides defined by the bounding box and the ratio of the dimensions of the div tag
+                     * which contains the board do not coincide, then the smaller side is chosen.
+                     */
+                    this.unitX = w / (bbox[2] - bbox[0]);
+                    this.unitY = h / (bbox[1] - bbox[3]);
+
+                    if (Math.abs(this.unitX) < Math.abs(this.unitY)) {
+                        this.unitY = (Math.abs(this.unitX) * this.unitY) / Math.abs(this.unitY);
+                        // Add the additional units in equal portions above and below
+                        offY = (h / this.unitY - (bbox[1] - bbox[3])) * 0.5;
+                    } else {
+                        this.unitX = (Math.abs(this.unitY) * this.unitX) / Math.abs(this.unitX);
+                        // Add the additional units in equal portions left and right
+                        offX = (w / this.unitX - (bbox[2] - bbox[0])) * 0.5;
+                    }
+                } else {
+                    this.unitX = w / (bbox[2] - bbox[0]);
+                    this.unitY = h / (bbox[1] - bbox[3]);
+                }
+                this.origin.scrCoords = [1,
+                    -this.unitX * (bbox[0] - offX),
+                    this.unitY * (bbox[1] + offY)
+                ];
+                this.canvasWidth = w;
+                this.canvasHeight = h;
             }
 
             // Do nothing if the dimension did not change since being visible
