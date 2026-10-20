@@ -4495,11 +4495,15 @@ JXG.extend(
             }
 
             this.resizeObserver = new ResizeObserver(function (entries) {
-                var bb;
+                // var bb;
+
+                // Take the last observed size
+                that._lastContentRect = entries[entries.length - 1].contentRect;
                 if (!that._isResizing) {
                     that._isResizing = true;
-                    bb = entries[0].contentRect;
+                    // bb = entries[0].contentRect;
                     window.setTimeout(function () {
+                        var bb = that._lastContentRect;
                         try {
                             that.updateContainerDims(bb.width, bb.height);
                         } catch (e) {
