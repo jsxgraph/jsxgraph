@@ -1258,6 +1258,7 @@ JXG.extend(
                 i = 0;
                 while (i < len) {
                     if (el.points[i] === undefined) {
+                        i++;
                         continue;
                     }
                     scr = el.points[i].scrCoords;
