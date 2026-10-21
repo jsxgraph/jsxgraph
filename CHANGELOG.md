@@ -5,10 +5,10 @@ Improvements
 ------------
 
 - API docs: various additions and improvements
-- Repository: move folder `./src/unused` to `./src_unused`
 - TypeScript: add missing entry to index.d.ts
 - Print warning to console if a 3D element is removed with board.removeObject() instead of view3d.removeObject()
 - sphere3d: treat parallel and central projection simultaneously
+- Repository: move folder `./src/unused` to `./src_unused`
 
 Bug fixes
 ---------
@@ -52,7 +52,7 @@ If a defining point for one of these elements is supplied as coordinate array an
 
 *Changes:*
 
-- These parent points are now invisible by default and have the empty string `''` as name. 
+- These parent points are now invisible by default and have the empty string `''` as name.
 - Their attributes can be changed later by changeing the corresponding sub-object, e.g.
   `sector.radiusPoint.setAttribute({visible: false});`
 
@@ -84,7 +84,7 @@ Bug fixes
 - Fix regression: missing strokeColor of polygon
 - Fix resource ID collisions for anonymous containers
 - Fix two security issues
-  
+
 1.13.2
 ===
 
@@ -119,7 +119,7 @@ Bug fixes
 - Curves with transposed input
 - JXG.GeometryElement3D.setAttribute()
 - Fix media query listener cleanup
-  
+
 1.13.1
 ===
 
