@@ -1,0 +1,49 @@
+# JSXGraph
+
+> JSXGraph is a cross-browser JavaScript library for interactive geometry,
+> function plotting, charting, and data visualization in the web browser.
+> It is implemented completely in JavaScript, relies on no other library,
+> renders with SVG or canvas, supports multi-touch, and needs no server-side
+> processing or plug-ins. Current release: version 1.14.x.
+
+JSXGraph covers Euclidean and projective geometry in 2D and 3D, curve and
+surface plotting, vector fields, implicit curves, differential equations,
+charts and statistics, animations, symbolic math, MathJax integration, and
+accessibility via ARIA attributes and keyboard navigation. Constructions are
+created mainly through a single factory call, `board.create(type, parents, options)`.
+
+## Documentation (API reference)
+
+- [JSXGraph API Reference](https://jsxgraph.org/docs/index.html): Complete generated API reference for the current version, with usage signatures for every `board.create()` parameter combination, element attributes (name, type, default value, inherited values), members, methods, events, classes, namespaces, live runnable examples, and links to source lines.
+- [JXG.Board class](https://jsxgraph.org/docs/symbols/JXG.Board.html): The central board object created by `JXG.JSXGraph.initBoard()`; controls bounding box, renderer, zoom, pan, drag, keyboard, events, and updates.
+- Key namespaces: `JXG`, `JXG.Math`, `JXG.Options`, `JXG.JSXGraph`, `JXG.Utils`.
+- Element groups in the docs: Point, Line, Circle, Curve, Polygon, Text, Control (slider, button, checkbox, inputbox), Transformation, and the full 3D set (Point3D, Line3D, Plane3D, Sphere3D, ParametricSurface3D, Vectorfield3D, View3D, ...).
+
+## Share (example gallery)
+
+- [JSXGraph Share](https://jsxgraph.org/share/): Community gallery of hundreds of shared interactive constructions. Each entry shows a live applet plus its full source code, making it the primary place to find copy-paste-ready working examples. Use this for task-oriented learning; use /docs for exact API signatures.
+
+## Wiki (more examples)
+
+- [JSXGraph Wiki](https://jsxgraph.org/wiki/): Tutorials, how-tos, and a topic-based handbook of example constructions organized by feature (geometry basics, functions and curves, sliders and controls, animation, 3D, statistics/charts, GEONExT file import, etc.). 
+
+## Optional
+
+- [GitHub repository](https://github.com/jsxgraph/jsxgraph): Source code, issue tracker, changelog, and build instructions (AGPL v3 / commercial license).
+- [Community forum](https://forum.jsxgraph.org): Q&A and discussion.
+- [Stack Overflow tag](https://stackoverflow.com/search?tab=newest&q=jsxgraph): Existing answered questions.
+- [jsFiddle starter template](https://jsfiddle.net/8kep9syd/): Minimal sandbox for testing JSXGraph snippets.
+
+## Quick start
+
+```html
+<div id="board" style="width:500px;height:500px"></div>
+<script src="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraphcore.js"></script>
+<script>
+  const board = JXG.board('board', {
+    boundingbox: [-5, 5, 5, -5], axis: true
+  });
+  const p = board.create('point', [1, 1], { name: 'A' });
+  board.create('circle', [p, [3, 1]]);
+</script>
+
