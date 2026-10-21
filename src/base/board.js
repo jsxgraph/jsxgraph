@@ -4543,7 +4543,7 @@ JXG.extend(
                         } catch (e) {
                             // JXG.debug(e);   // Used to log errors during board.update()
                             console.error(e);
-                            that.stopResizeObserver();
+                            // that.stopResizeObserver();
                         } finally {
                             that._isResizing = false;
                         }
