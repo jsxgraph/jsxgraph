@@ -253,7 +253,7 @@ JXG.SVGRenderer = function (container, dim) {
         var id = this.uniqName('ClipFull'),
             node1 = this.container.ownerDocument.createElementNS(this.svgNamespace, 'clipPath'),
             node2 = this.container.ownerDocument.createElementNS(this.svgNamespace, 'rect'),
-            style, rx, ry;
+            style, r;
         node1.setAttributeNS(null, 'id', id);
 
         node2.setAttributeNS(null, 'x', 0);
@@ -263,10 +263,9 @@ JXG.SVGRenderer = function (container, dim) {
 
         // Inherit border-radius
         style = getComputedStyle(this.container);
-        rx = Type.exists(style['border-radius']) ? parseFloat(style['border-radius']) : 0;
-        ry = rx;
-        node2.setAttributeNS(null, 'rx', rx);
-        node2.setAttributeNS(null, 'ry', ry);
+        r = (Type.exists(style['border-radius']) && style['border-radius'] !== '') ? parseFloat(style['border-radius']) : 0;
+        node2.setAttributeNS(null, 'rx', r);
+        node2.setAttributeNS(null, 'ry', r);
 
         node1.appendChild(node2);
         return node1;
@@ -954,7 +953,7 @@ JXG.extend(
 
         // Already documented in JXG.AbstractRenderer
         setLayer: function (el, level) {
-            var node;
+            var node, elNode;
             if (!Type.exists(level)) {
                 level = 0;
             } else if (level >= Options.layer.numlayers) {
@@ -962,8 +961,16 @@ JXG.extend(
             }
 
             node = this.layer[level];
+            // if ('moveBefore' in Element.prototype) {
             if (Type.exists(node.moveBefore)) {
-                node.moveBefore(el.rendNode, null);
+                // node.moveBefore(el.rendNode, null);
+                elNode = el.rendNode;
+                if (elNode.isConnected && node.isConnected &&
+                    (elNode.ownerDocument === node.ownerDocument)) {
+                    node.moveBefore(elNode, null);
+                } else {
+                    node.insertBefore(elNode, null);
+                }
             } else {
                 node.appendChild(el.rendNode);
             }
@@ -1250,6 +1257,7 @@ JXG.extend(
                 i = 0;
                 while (i < len) {
                     if (el.points[i] === undefined) {
+                        i++;
                         continue;
                     }
                     scr = el.points[i].scrCoords;

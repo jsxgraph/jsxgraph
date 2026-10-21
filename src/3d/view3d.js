@@ -1039,7 +1039,7 @@ JXG.extend(
     },
 
     removeObject: function (object, saveMethod) {
-        var i, el, le, o, fst, face;
+        var i, el, le, o, fst, face, gone, list;
 
         // this.board.removeObject(object, saveMethod);
         if (Type.isArray(object)) {
@@ -1051,8 +1051,8 @@ JXG.extend(
 
         object = this.select(object);
 
-        // // If the object which is about to be removed unknown or a string, do nothing.
-        // // it is a string if a string was given and could not be resolved to an element.
+        // If the object which is about to be removed unknown or a string, do nothing.
+        // it is a string if a string was given and could not be resolved to an element.
         if (!Type.exists(object) || Type.isString(object)) {
             return this;
         }
@@ -1061,38 +1061,46 @@ JXG.extend(
             // Remove all children.
             for (el in object.childElements) {
                 if (object.childElements.hasOwnProperty(el)) {
-                    this.removeObject(object.childElements[el]);
+                    o = object.childElements[el];
+                    if (!(object.is3D && object.element2D === o)) {
+                        this.removeObject(o);
+                    }
                 }
             }
             if (object.type === Const.OBJECT_TYPE_POLYHEDRON3D) {
                 // Special treatment for polyhedron3d.
                 // With this we can avoid the time consuming addChild() calls.
+                // Mark faces and their 2D elements, then compact objectsList once.
+                // Splicing face by face with stale _pos removed unrelated elements.
+                gone = {};
                 le = object.faces.length;
-                if (le > 0) {
-                    fst = object.faces[0]._pos;
-                    fst = (object.faces[0].element2D._pos < fst) ? object.faces[0].element2D._pos : fst;
-                }
                 for (i = 0; i < le; i++) {
                     face = object.faces[i];
                     delete this.objects[face.id];
 
-                    // this.board.removeObject(face.element2D, saveMethod);
                     delete this.board.objects[face.element2D.id];
                     delete this.board.elementsByName[face.element2D.name];
                     face.element2D.remove();
-                    this.board.objectsList.splice(face.element2D._pos, 1);
+                    gone[face.element2D.id] = true;
+                    face.element2D._pos = -1;
 
                     delete this.board.objects[face.id];
                     delete this.board.elementsByName[face.name];
                     face.remove();
-                    this.board.objectsList.splice(face._pos, 1);
+                    gone[face.id] = true;
+                    face._pos = -1;
                 }
-                le = this.board.objectsList.length;
-                // Reindex the positions
-                for (i = fst; i < this.board.objectsList.length; i++) {
-                    o = this.board.objectsList[i];
-                    if (o._pos > -1) { o._pos = i; }
+                list = this.board.objectsList;
+                fst = 0;
+                for (i = 0; i < list.length; i++) {
+                    o = list[i];
+                    if (!gone.hasOwnProperty(o.id)) {
+                        o._pos = fst;
+                        list[fst] = o;
+                        fst++;
+                    }
                 }
+                list.length = fst;
                 object.faces = [];
             }
 

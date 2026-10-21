@@ -119,12 +119,29 @@ import Type from "../utils/type.js";
  * @jsxgraphsignature Ellipse
  * Parent elements can be two elements either of type {@link JXG.Point} or array of
  * numbers describing the coordinates of a point.
- * The third parameter is a number/function which defines the length of the major axis
+ * The third parameter is a number/function which defines the length of the major axis.
  * @param {PointLike} point1
  * @param {PointLike} point2
  * @param {NumberLike} number
  * @param {Number} [start=0] parameter of the curve start, default: 0.
  * @param {Number} [end=2π] parameter for the curve end, default: 2&pi;.
+ *
+ * @example
+ * var A = board.create('point', [1,0]);
+ * var B = board.create('point', [-1,0]);
+ * var el = board.create('ellipse',[A, B, 4]);
+ *
+ * </pre><div id="JXG7898d447-94dc-4dce-9ad3-60e3387be9f3" class="jxgbox" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *     (function() {
+ *         var board = JXG.JSXGraph.initBoard('JXG7898d447-94dc-4dce-9ad3-60e3387be9f3',
+ *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+ *     var A = board.create('point', [1,0]);
+ *     var B = board.create('point', [-1,0]);
+ *     var el = board.create('ellipse',[A,B, 4]);
+ *     })();
+ *
+ * </script><pre>
  *
  */
 JXG.createEllipse = function (board, parents, attributes) {
@@ -397,6 +414,23 @@ JXG.createEllipse = function (board, parents, attributes) {
  * @param {NumberLike} number
  * @param {Number} [start=-π] parameter of the curve start, default: -&pi;.
  * @param {Number} [end=π] parameter for the curve end, default: &pi;.
+ * @example
+ * var A = board.create('point', [1,0]);
+ * var B = board.create('point', [-1,0]);
+ * var el = board.create('hyperbola',[A, B, 1]);
+ *
+ * </pre><div id="JXGa4c0068b-41bc-4be4-b485-d0d0c7f2e10b" class="jxgbox" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *     (function() {
+ *         var board = JXG.JSXGraph.initBoard('JXGa4c0068b-41bc-4be4-b485-d0d0c7f2e10b',
+ *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+ *     var A = board.create('point', [1,0]);
+ *     var B = board.create('point', [-1,0]);
+ *     var el = board.create('hyperbola',[A,B, 1]);
+ *
+ *     })();
+ *
+ * </script><pre>
  */
 JXG.createHyperbola = function (board, parents, attributes) {
     var polarForm,

@@ -2,7 +2,7 @@
   "name": "jsxgraph",
   "description": "Interactive geometry, plotting, visualization",
   "homepage": "https://jsxgraph.org",
-  "version": "1.14.0",
+  "version": "1.14.1",
   "exports": {
     "types": "./src/index.d.ts",
     "default": "./src/index.js"
@@ -65,18 +65,18 @@
     "eslint-plugin-prettier": "^5.5",
     "globals": "^15.4.0",
     "http-server": "^14.1.1",
-    "jasmine-core": "^3.10.1",
+    "jasmine-core": ">=7.0.2",
     "jsdoc": "^4.0.5",
-    "karma": "^6.4.3",
-    "karma-chrome-launcher": "^3.2.0",
-    "karma-detect-browsers": "^2.3.3",
-    "karma-jasmine": "^5.1.0",
+    "karma": ">=6.4.4",
+    "karma-chrome-launcher": ">=3.2.0",
+    "karma-detect-browsers": ">=2.3.3",
+    "karma-jasmine": ">=5.1.0",
     "npmignore": "^0.3.1",
-    "path-browserify": "^1.0.1",
-    "prettier": "^3.8.1",
+    "path-browserify": ">=1.0.1",
+    "prettier": ">=3.8.1",
     "terser-webpack-plugin": ">=5.6.1",
-    "webpack": ">=5.105.4",
-    "webpack-cli": ">=7.2.1"
+    "webpack": ">=5.111.1",
+    "webpack-cli": ">=7.2.3"
   },
   "engines": {
     "node": ">=20.19.0"
@@ -89,8 +89,6 @@
     "//No! format": "//prettier --write src test extensions",
     "serve": "http-server -c-1",
     "test": "make test"
-  },
-  "dependencies": {
   },
   "allowScripts": {
     "esbuild@0.28.2": true

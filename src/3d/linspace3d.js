@@ -669,8 +669,8 @@ JXG.createLine3D = function (board, parents, attributes) {
          * @private
          */
         el.endpoints = endpoints;
-        el.addChild(endpoints[0]);
-        el.addChild(endpoints[1]);
+        // el.addChild(endpoints[0]); // Is done below
+        // el.addChild(endpoints[1]);
         // el.setParents(endpoints);
         el.addParents([point1, point2]);
 

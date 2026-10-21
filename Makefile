@@ -111,42 +111,44 @@ beta: docs
 	$(CAT) COPYRIGHT $(BETA)/jsxgraphcore.js >$(BETA)/tmp.file; mv $(BETA)/tmp.file $(BETA)/jsxgraphcore.js
 	$(CAT) COPYRIGHT $(BETA)/jsxgraphcore.mjs >$(BETA)/tmp.file; mv $(BETA)/tmp.file $(BETA)/jsxgraphcore.mjs
 
-docs: core docs4only
+docs: core docsonly
 
 # jsdoc 2 documentation
-docsonly:
-	# Set up tmp dir
-	$(MKDIR) $(MKDIRFLAGS) $(TMP)
-	$(MKDIR) $(MKDIRFLAGS) $(OUTPUT)
+# docsonly:
+# 	# Set up tmp dir
+# 	$(MKDIR) $(MKDIRFLAGS) $(TMP)
+# 	$(MKDIR) $(MKDIRFLAGS) $(OUTPUT)
 
-	# Update template related files
-	$(CP) $(THIRDPARTY)/jquery.min.js $(JSDOC2TPLSTAT)/jquery.min.js
-	$(CP) $(OUTPUT)/jsxgraphcore.js   $(JSDOC2TPLSTAT)/jsxgraphcore.js
-	$(CP) $(OUTPUT)/jsxgraph.css      $(JSDOC2TPLSTAT)/jsxgraph.css
+# 	# Update template related files
+# 	$(CP) $(THIRDPARTY)/jquery.min.js $(JSDOC2TPLSTAT)/jquery.min.js
+# 	$(CP) $(OUTPUT)/jsxgraphcore.js   $(JSDOC2TPLSTAT)/jsxgraphcore.js
+# 	$(CP) $(OUTPUT)/jsxgraph.css      $(JSDOC2TPLSTAT)/jsxgraph.css
 
-	# Update version number in line 2 of file doc/jsdoc-tk/template/static/header.html
-	$(SED) '2s/.*/<h1>JSXGraph $(VERSION) Reference<\/h1>/' doc/jsdoc-tk/template/static/header.html > doc/jsdoc-tk/template/static/header.html.tmp
-	$(MV) doc/jsdoc-tk/template/static/header.html.tmp doc/jsdoc-tk/template/static/header.html
+# 	# Update version number in line 2 of file doc/jsdoc-tk/template/static/header.html
+# 	$(SED) '2s/.*/<h1>JSXGraph $(VERSION) Reference<\/h1>/' doc/jsdoc-tk/template/static/header.html > doc/jsdoc-tk/template/static/header.html.tmp
+# 	$(MV) doc/jsdoc-tk/template/static/header.html.tmp doc/jsdoc-tk/template/static/header.html
 
-	# Patch run.js
-	$(CP) $(JSDOC2PTCH)/*.js ./node_modules/jsdoc2/app
+# 	# Patch run.js
+# 	$(CP) $(JSDOC2PTCH)/*.js ./node_modules/jsdoc2/app
 
-	# Update the plugin
-	$(CP) $(JSDOC2PLG)/*.js ./node_modules/jsdoc2/app/plugins/
+# 	# Update the plugin
+# 	$(CP) $(JSDOC2PLG)/*.js ./node_modules/jsdoc2/app/plugins/
 
-	# Run node-jsdoc2
-	$(JSDOC2) $(JSDOC2FLAGS) $(FILELIST)
+# 	# Run node-jsdoc2
+# 	$(JSDOC2) $(JSDOC2FLAGS) $(FILELIST)
 
-	# Compress the result: zip -r tmp/docs.zip tmp/docs/
-	$(CD) $(TMP) && $(ZIP) $(ZIPFLAGS) docs.zip docs/
-	$(CP) $(TMP)/docs.zip $(OUTPUT)/docs.zip
-	$(RM) $(RMFLAGS) tmp
+# 	# Compress the result: zip -r tmp/docs.zip tmp/docs/
+# 	$(CD) $(TMP) && $(ZIP) $(ZIPFLAGS) docs.zip docs/
+# 	$(CP) $(TMP)/docs.zip $(OUTPUT)/docs.zip
+# 	$(RM) $(RMFLAGS) tmp
 
-	# Test
-	$(CD) $(OUTPUT) && $(UNZIP) -o docs.zip
+# 	# Test
+# 	$(CD) $(OUTPUT) && $(UNZIP) -o docs.zip
+
+docs4only: docsonly
 
 # jsdoc 4 documentation
-docs4only:
+docsonly:
 	# Set up tmp dir
 	$(MKDIR) $(MKDIRFLAGS) $(TMP)
 	$(MKDIR) $(MKDIRFLAGS) $(OUTPUT)
