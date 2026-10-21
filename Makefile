@@ -23,14 +23,15 @@ TMP=tmp
 # BUILDBIN=$(BUILD)/bin
 BUILDREADERS=tmpreaders
 
-# API docs
-#JSDOC2=node ./node_modules/.bin/jsdoc2
-JSDOC2=npx jsdoc2
-JSDOC2PLG=doc/jsdoc-tk/plugins
-JSDOC2PTCH=doc/jsdoc-tk/patches
-JSDOC2TPL=doc/jsdoc-tk/template
-JSDOC2TPLSTAT=$(JSDOC2TPL)/static
-JSDOC2FLAGS=-v -p -t=$(JSDOC2TPL) -d=$(TMP)/docs
+# API docs with jsdoc
+# jsdoc2
+# # JSDOC2=node ./node_modules/.bin/jsdoc2
+# JSDOC2=npx jsdoc2
+# JSDOC2PLG=doc/jsdoc-tk/plugins
+# JSDOC2PTCH=doc/jsdoc-tk/patches
+# JSDOC2TPL=doc/jsdoc-tk/template
+# JSDOC2TPLSTAT=$(JSDOC2TPL)/static
+# JSDOC2FLAGS=-v -p -t=$(JSDOC2TPL) -d=$(TMP)/docs
 
 # jsdoc4
 JSDOC=npx jsdoc

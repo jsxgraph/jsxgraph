@@ -148,7 +148,7 @@ declare namespace JXG {
          * Set coordinates by either user coordinates or screen coordinates and recalculate the other one.
          * @param method The type of coordinates used here. Possible values are COORDS_BY_USER and COORDS_BY_SCREEN.
          * @param coordinates An array of affine coordinates the Coords object is set to.
-         * @param doRound flag If true or null round the coordinates in usr2screen. This is used in smooth curve plotting. Internet Explorer needs rounded coordinates. If doRound==false we have to round in updatePathString.
+         * @param doRound flag If true or null round the coordinates in usr2screen. This is used in smooth curve plotting. Internet Explorer needed rounded coordinates. If doRound==false we have to round in updatePathString.
          * @param noevent
          * @returns A reference to this coords object.
          */
