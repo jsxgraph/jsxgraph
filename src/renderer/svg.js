@@ -253,7 +253,7 @@ JXG.SVGRenderer = function (container, dim) {
         var id = this.uniqName('ClipFull'),
             node1 = this.container.ownerDocument.createElementNS(this.svgNamespace, 'clipPath'),
             node2 = this.container.ownerDocument.createElementNS(this.svgNamespace, 'rect'),
-            style, rx, ry;
+            style, r;
         node1.setAttributeNS(null, 'id', id);
 
         node2.setAttributeNS(null, 'x', 0);
@@ -263,10 +263,9 @@ JXG.SVGRenderer = function (container, dim) {
 
         // Inherit border-radius
         style = getComputedStyle(this.container);
-        rx = Type.exists(style['border-radius']) ? parseFloat(style['border-radius']) : 0;
-        ry = rx;
-        node2.setAttributeNS(null, 'rx', rx);
-        node2.setAttributeNS(null, 'ry', ry);
+        r = (Type.exists(style['border-radius']) && style['border-radius'] !== '') ? parseFloat(style['border-radius']) : 0;
+        node2.setAttributeNS(null, 'rx', r);
+        node2.setAttributeNS(null, 'ry', r);
 
         node1.appendChild(node2);
         return node1;
