@@ -1,15 +1,7 @@
 .PHONY: test docs core core-min prettier release lint eslint readers
 
-# Build tools
-WEBPACK=./node_modules/.bin/webpack
-MINIFYER=./node_modules/terser/bin/terser
-
 # Code quality
-LINT=./node_modules/.bin/jslint
-ESLINT=./node_modules/eslint/bin/eslint.js
-HINT=./node_modules/.bin/jshint
-KARMA=node_modules/karma/bin/karma
-PRETTIER=./node_modules/.bin/prettier
+# PRETTIER=./node_modules/.bin/prettier
 
 # System tools
 CP=cp
@@ -74,7 +66,7 @@ core:
 	# Build uncompressed AND minified files
 	#   jsxgraphsrc.js, jsxgraphsrc.mjs, jsxgraphcore.js, jsxgraphcore.mjs and
 	# copy them to the distrib directory.
-	$(WEBPACK) --config config/webpack.config.js
+	npx webpack --config config/webpack.config.js
 	# Update version number in line 2 of file COPYRIGHT
 	$(SED) '2s/.*/    JSXGraph $(VERSION)/' COPYRIGHT > COPYRIGHT.tmp
 	$(MV) COPYRIGHT.tmp COPYRIGHT
@@ -82,8 +74,8 @@ core:
 	$(SED) '2s/.*/    JSXGraph $(VERSION)/' $(OUTPUT)/jsxgraph.css > $(OUTPUT)/jsxgraph.css.tmp
 	$(MV) $(OUTPUT)/jsxgraph.css.tmp $(OUTPUT)/jsxgraph.css
 	# Prepend file to the jsxgraphcore.* files
-	cat COPYRIGHT $(OUTPUT)/jsxgraphcore.js >$(OUTPUT)/tmp.file; mv $(OUTPUT)/tmp.file $(OUTPUT)/jsxgraphcore.js
-	cat COPYRIGHT $(OUTPUT)/jsxgraphcore.mjs >$(OUTPUT)/tmp.file; mv $(OUTPUT)/tmp.file $(OUTPUT)/jsxgraphcore.mjs
+	$(CAT) COPYRIGHT $(OUTPUT)/jsxgraphcore.js >$(OUTPUT)/tmp.file; mv $(OUTPUT)/tmp.file $(OUTPUT)/jsxgraphcore.js
+	$(CAT) COPYRIGHT $(OUTPUT)/jsxgraphcore.mjs >$(OUTPUT)/tmp.file; mv $(OUTPUT)/tmp.file $(OUTPUT)/jsxgraphcore.mjs
 
 core-min:
 	echo "INFO: core-min deactivated. It is covered by core"
@@ -106,18 +98,18 @@ release: core docs
 beta: docs
 	# $(WEBPACK) --config config/webpack.config.js
 	mkdir -p $(BETA)
-	cp $(OUTPUT)/*.js $(BETA)
-	cp $(OUTPUT)/*.mjs $(BETA)
-	cp $(OUTPUT)/*.map $(BETA)
-	cp $(OUTPUT)/*.css $(BETA)
-	rm -fr $(BETA)/docs
-	cp -r $(OUTPUT)/docs/ $(BETA)/docs
+	$(CP) $(OUTPUT)/*.js $(BETA)
+	$(CP) $(OUTPUT)/*.mjs $(BETA)
+	$(CP) $(OUTPUT)/*.map $(BETA)
+	$(CP) $(OUTPUT)/*.css $(BETA)
+	$(RM) -fr $(BETA)/docs
+	$(CP) -r $(OUTPUT)/docs/ $(BETA)/docs
 	# Update version number in line 2 of file COPYRIGHT
 	$(SED) '2s/.*/    JSXGraph $(VERSION)/' COPYRIGHT > COPYRIGHT.tmp
 	$(MV) COPYRIGHT.tmp COPYRIGHT
 	# Prepend file to the jsxgraphcore.* files
-	cat COPYRIGHT $(BETA)/jsxgraphcore.js >$(BETA)/tmp.file; mv $(BETA)/tmp.file $(BETA)/jsxgraphcore.js
-	cat COPYRIGHT $(BETA)/jsxgraphcore.mjs >$(BETA)/tmp.file; mv $(BETA)/tmp.file $(BETA)/jsxgraphcore.mjs
+	$(CAT) COPYRIGHT $(BETA)/jsxgraphcore.js >$(BETA)/tmp.file; mv $(BETA)/tmp.file $(BETA)/jsxgraphcore.js
+	$(CAT) COPYRIGHT $(BETA)/jsxgraphcore.mjs >$(BETA)/tmp.file; mv $(BETA)/tmp.file $(BETA)/jsxgraphcore.mjs
 
 docs: core docs4only
 
@@ -164,7 +156,7 @@ docs4only:
 
 	# Run node-jsdoc4
 	sed -i.bak '3 s/JSXGraph version .*/JSXGraph version $(VERSION), API reference generated '`date +"%Y-%m-%d"`'*/' ./doc/jsdoc/README.md
-	rm ./doc/jsdoc/README.md.bak
+	$(RM) ./doc/jsdoc/README.md.bak
 	$(JSDOC) -a all --verbose --pedantic --readme ./doc/jsdoc/README.md -c ./doc/jsdoc/jsdoc.json $(FILELIST)
 
 	# Compress the result: zip -r tmp/docs.zip docs/
@@ -178,14 +170,15 @@ docs4only:
 
 d:
 	sed -i.bak '3 s/JSXGraph version .*/JSXGraph version $(VERSION), API reference generated '`date +"%Y-%m-%d"`'*/' ./doc/jsdoc/README.md
-	rm ./doc/jsdoc/README.md.bak
+	$(RM) ./doc/jsdoc/README.md.bak
 	@$(JSDOC) -a all --verbose --pedantic --readme ./doc/jsdoc/README.md -c ./doc/jsdoc/jsdoc.json $(FILELIST)
 
 t:
 	$(JSDOC) -a all --verbose --pedantic -c ./doc/jsdoc/jsdoc.json ./doc/jsdoc/tests/test2.js
 
 # prettier:
-# 	$(PRETTIER) $(PRETTIERFLAGS) src
+# 	# $(PRETTIER) $(PRETTIERFLAGS) src
+#	npx prettier $(PRETTIERFLAGS) src
 
 readers: $(READERSOUT)
 	$(MKDIR) $(MKDIRFLAGS) $(OUTPUT)
@@ -194,27 +187,21 @@ readers: $(READERSOUT)
 
 tmpreaders/%.min.js: src/reader/%.js
 	$(MKDIR) $(MKDIRFLAGS) $(BUILDREADERS)
-	{ $(CAT) COPYRIGHT; $(MINIFYER) $^ -c -m ; } > $@
+	{ $(CAT) COPYRIGHT; npx terser $^ -c -m ; } > $@
 
 compressor: core
-	$(WEBPACK) --config config/webpack.config.compressor.js
+	npx webpack --config config/webpack.config.compressor.js
 	$(CP) $(OUTPUT)/jsxgraph.css    JSXCompressor/jsxgraph.css
 
 plot:
 	$(MKDIR) $(MKDIRFLAGS) $(BUILDBIN)
-	$(WEBPACK) --verbose --config config/webpack.config.plot.js
-
-hint:
-	$(HINT) $(LINTLIST)
-
-lint:
-	$(LINT) $(LINTFLAGS) $(LINTLIST)
+	npx webpack --verbose --config config/webpack.config.plot.js
 
 eslint:
-	$(ESLINT) $(ESLINTFLAGS) $(LINTLIST)
+	npx eslint $(ESLINTFLAGS) $(LINTLIST)
 
 test: core
-	$(KARMA) start karma/karma.conf.js
+	npx karma start karma/karma.conf.js
 
 testchromium: core
 	export CHROME_BIN=/usr/bin/chromium; $(KARMA) start karma/karma.conf.js
