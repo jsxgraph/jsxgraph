@@ -14,7 +14,6 @@
 - `image.js`: If necessary enable coords, size with functions. Example
 - `base64.js`: to be retired 
 - `uuid.js`: to be retired?
-- `vml.js`: to be retired?
 - `parser/datasource.js`: no jsdoc, yet
 - `parser/prefix.js`: examples
 - `parser/ca.js`: jsdoc missing massively
@@ -32,6 +31,7 @@
 - ~~Smartlabel: CSS of font color~~ (in main branch)
 - ~~IntersectionLine3D not dynamic, see example~~ (in main branch)
 - jsdoc: Often, @see doubles @extends: Much improved
+- `vml.js`: retired
 
 __AI issues__
 

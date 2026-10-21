@@ -449,9 +449,9 @@ JXG.extend(
 
 
             /**
-             * offsetWidth and offsetHeight seem to be supported for internal vml elements by IE10+ in IE8 mode.
+             *
              */
-            if (ev_d === "html" || this.board.renderer.type === 'vml') {
+            if (ev_d === "html") {
                 if (Type.exists(node.offsetWidth)) {
                     that = this;
                     window.setTimeout(function () {
@@ -1807,18 +1807,18 @@ JXG.createHTMLSlider = function (board, parents, attributes) {
 
     t._val = parents[1][1];
 
-    if (JXG.supportsVML()) {
-        /*
-         * OnChange event is used for IE browsers
-         * The range element is supported since IE10
-         */
-        Env.addEvent(t.rendNodeForm, "change", priv.HTMLSliderInputEventHandler, t);
-    } else {
-        /*
-         * OnInput event is used for non-IE browsers
-         */
-        Env.addEvent(t.rendNodeForm, "input", priv.HTMLSliderInputEventHandler, t);
-    }
+    // if (JXG.supportsVML()) {
+    //     /*
+    //      * OnChange event is used for IE browsers
+    //      * The range element is supported since IE10
+    //      */
+    //     Env.addEvent(t.rendNodeForm, "change", priv.HTMLSliderInputEventHandler, t);
+    // } else {
+    //     /*
+    //      * OnInput event is used for non-IE browsers
+    //      */
+    Env.addEvent(t.rendNodeForm, "input", priv.HTMLSliderInputEventHandler, t);
+    // }
 
     t.Value = function () {
         return this._val;

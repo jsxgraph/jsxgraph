@@ -40,9 +40,9 @@
 
 /**
  * @fileoverview JSXGraph can use various technologies to render the contents of a construction, e.g.
- * SVG, VML, and HTML5 Canvas. To accomplish this, The rendering and the logic and control mechanisms
+ * SVG, and HTML Canvas. To accomplish this, The rendering and the logic and control mechanisms
  * are completely separated from each other. Every rendering technology has it's own class, called
- * Renderer, e.g. SVGRenderer for SVG, the same for VML and Canvas. The common base for all available
+ * Renderer, e.g. SVGRenderer for SVG, the same for Canvas. The common base for all available
  * renderers is the class AbstractRenderer defined in this file.
  */
 
@@ -57,8 +57,8 @@ import Env from "../utils/env.js";
 
 /**
  * @class This class defines the interface to the graphics part of JSXGraph. This class is an abstract class, it
- * actually does not render anything. This is up to the {@link JXG.SVGRenderer}, {@link JXG.VMLRenderer},
- * and {@link JXG.CanvasRenderer} classes. We strongly discourage you from using the methods in these classes
+ * actually does not render anything. This is up to the {@link JXG.SVGRenderer}, {@link JXG.CanvasRenderer},
+ * and {@link JXG.NoRenderer} classes. We strongly discourage you from using the methods in these classes
  * directly. Only the methods which are defined in this class and are not marked as private are guaranteed
  * to exist in any renderer instance you can access via {@link JXG.Board#renderer}. But not all methods may
  * work as expected.
@@ -70,7 +70,7 @@ import Env from "../utils/env.js";
  *     and {@link Curve} as well as assisting methods tightly bound to these basic painters. You do not
  *     need to implement these methods in a descendant renderer but instead implement the primitive drawing
  *     methods described below. This approach is encouraged when you're using a XML based rendering engine
- *     like VML and SVG. If you want to use a bitmap based rendering technique you are supposed to override
+ *     like SVG. If you want to use a bitmap based rendering technique you are supposed to override
  *     these methods instead of the primitive drawing methods.
  * - __Draw primitives__
  *     This category summarizes methods to handle primitive nodes. As creation and management of these nodes
@@ -86,18 +86,18 @@ import Env from "../utils/env.js";
  *
  * @constructor
  * @see JXG.SVGRenderer
- * @see JXG.VMLRenderer
  * @see JXG.CanvasRenderer
+ * @see JXG.NoRenderer
  */
 JXG.AbstractRenderer = function () {
     // WHY THIS IS A CLASS INSTEAD OF A SINGLETON OBJECT:
     //
     // The renderers need to keep track of some stuff which is not always the same on different boards,
-    // like enhancedRendering, reference to the container object, and resolution in VML. Sure, those
+    // like enhancedRendering and reference to the container object. Sure, those
     // things could be stored in board. But they are rendering related and JXG.Board is already very
     // very big.
     //
-    // And we can't save the rendering related data in {SVG,VML,Canvas}Renderer and make only the
+    // And we can't save the rendering related data in {SVG,Canvas,No}Renderer and make only the
     // JXG.AbstractRenderer a singleton because of that:
     //
     // Given an object o with property a set to true
@@ -141,7 +141,7 @@ JXG.AbstractRenderer = function () {
 
     /**
      * This is used to easily determine which renderer we are using
-     * @example if (board.renderer.type === 'vml') {
+     * @example if (board.renderer.type === 'svg') {
      *     // do something
      * }
      * @type String
@@ -771,7 +771,7 @@ JXG.extend(
                 d1x = d1y = d2x = d2y = 0.0;
                 d = c1.distance(Const.COORDS_BY_SCREEN, c2);
 
-                if (a.evFirst && el.board.renderer.type !== 'vml') {
+                if (a.evFirst) {
                     if (d >= a.minLen) {
                         d1x = ((c2.scrCoords[1] - c1.scrCoords[1]) * a.offFirst) / d;
                         d1y = ((c2.scrCoords[2] - c1.scrCoords[2]) * a.offFirst) / d;
@@ -780,7 +780,7 @@ JXG.extend(
                     }
                 }
 
-                if (a.evLast && el.board.renderer.type !== 'vml') {
+                if (a.evLast) {
                     if (d >= a.minLen) {
                         d2x = ((c2.scrCoords[1] - c1.scrCoords[1]) * a.offLast) / d;
                         d2y = ((c2.scrCoords[2] - c1.scrCoords[2]) * a.offLast) / d;
@@ -899,7 +899,7 @@ JXG.extend(
          * Update the line endings (linecap) of a straight line from its attribute
          * 'linecap'.
          * Possible values for the attribute 'linecap' are: 'butt', 'round', 'square'.
-         * The default value is 'butt'. Not available for VML renderer.
+         * The default value is 'butt'.
          *
          * @param {Line} element A arbitrary line.
          * @see Line
@@ -1429,10 +1429,9 @@ JXG.extend(
             }
 
             // This part is executed for all text elements except internal texts in canvas.
-            // HTML-texts or internal texts in SVG or VML.
+            // HTML-texts or internal texts in SVG.
             //            HTML    internal
             //  SVG        +         +
-            //  VML        +         +
             //  canvas     +         -
             //  no         -         -
             if (this.type !== "no" && (display === "html" || this.type !== 'canvas')) {
@@ -1503,7 +1502,7 @@ JXG.extend(
 
         /**
          * Set color and opacity of internal texts.
-         * This method is used for Canvas and VML.
+         * This method is used for Canvas.
          * SVG needs its own version.
          * @private
          * @see JXG.AbstractRenderer#updateTextStyle
@@ -1611,8 +1610,7 @@ JXG.extend(
          * Updates CSS style properties of a {@link Image} node.
          * In SVGRenderer opacity is the only available style element.
          * This function is called by highlight() and nohighlight().
-         * This function works for VML.
-         * It does not work for Canvas.
+         * It was used for VML, it does not work for Canvas.
          * SVGRenderer overwrites this method.
          * @param {Text} el Reference to the {@link JXG.Image} object, that has to be updated.
          * @param {Boolean} doHighlight
@@ -1640,7 +1638,7 @@ JXG.extend(
          * in all renderers that want to use the `createPrim` model to draw.
          * @param {Node} node A DOM tree node.
          * @param {Number} level The layer the node is attached to. This is the index of the layer in
-         * {@link JXG.SVGRenderer#layer} or the `z-index` style property of the node in VMLRenderer.
+         * {@link JXG.SVGRenderer#layer}.
          */
         appendChildPrim: function (node, level) { /* stub */ },
 
@@ -2253,7 +2251,7 @@ JXG.extend(
          * Wrapper for getElementById for maybe other renderers which elements are not directly accessible by DOM
          * methods like document.getElementById().
          * @param {String} id Unique identifier for element.
-         * @returns {Object} Reference to a JavaScript object. In case of SVG/VMLRenderer it's a reference to a SVG/VML node.
+         * @returns {Object} Reference to a JavaScript object. In case of SVG/VMLRenderer it's a reference to a SVG node.
          */
         getElementById: function (id) {
             var str;

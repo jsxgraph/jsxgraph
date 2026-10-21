@@ -1015,7 +1015,7 @@ JXG.extend(
 
         // documented in AbstractRenderer
         drawTicks: function () {
-            // this function is supposed to initialize the svg/vml nodes in the SVG/VMLRenderer.
+            // this function is supposed to initialize the SVG nodes in the SVGRenderer.
             // but in canvas there are no such nodes, hence we just do nothing and wait until
             // updateTicks is called.
         },

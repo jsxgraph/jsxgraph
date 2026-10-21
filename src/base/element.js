@@ -162,13 +162,13 @@ JXG.GeometryElement = function (board, attributes, type, oclass) {
     this.symbolic = {};
 
     /**
-     * Stores the SVG (or VML) rendering node for the element. This enables low-level
+     * Stores the SVG rendering node for the element. This enables low-level
      * access to SVG nodes. The properties of such an SVG node can then be changed
      * by calling setAttribute(). Note that there are a few elements which consist
      * of more than one SVG nodes:
      *
      * - Elements with arrow tail or head: rendNodeTriangleStart, rendNodeTriangleEnd
-     * - SVG (or VML) texts: rendNodeText
+     * - SVG texts: rendNodeText
      * - Button: rendNodeForm, rendNodeButton, rendNodeTag
      * - Checkbox: rendNodeForm, rendNodeCheckbox, rendNodeLabel, rendNodeTag
      * - Input: rendNodeForm, rendNodeInput, rendNodeLabel, rendNodeTag
@@ -1762,7 +1762,7 @@ JXG.extend(
         },
 
         /**
-         * Removes the element from the construction.  This only removes the SVG or VML node of the element and its label (if available) from
+         * Removes the element from the construction.  This only removes the SVG node of the element and its label (if available) from
          * the renderer, to remove the element completely you should use {@link JXG.Board#removeObject}.
          */
         remove: function () {

@@ -63,7 +63,6 @@ import './parser/prefix.js';
 import './parser/ca.js';
 import './utils/dump.js';
 import './renderer/svg.js';
-import './renderer/vml.js';
 import './renderer/canvas.js';
 import './renderer/no.js';
 import './element/comb.js';
@@ -220,7 +219,7 @@ export const strBool = JXG.str2Bool;
 export const supportsCanvas = JXG.supportsCanvas
 export const supportsPointerEvents = JXG.supportsPointerEvents;
 export const supportsSVG = JXG.supportsSVG;
-export const supportsVML = JXG.supportsVML;
+// export const supportsVML = JXG.supportsVML;
 export const swap = JXG.swap;
 export const timeChunk = JXG.timedChunk;
 export const toFixed = JXG.toFixed;

@@ -485,7 +485,7 @@ declare namespace JXG {
     /**
      * Detect browser support for VML.
      */
-    export function supportsVML(): boolean;
+    // export function supportsVML(): boolean;
     export function swap<T>(arr: T[], i: number, j: number): T[];
     export function timedChunk(
         items: unknown[],
@@ -572,7 +572,7 @@ declare namespace JXG {
         quadraticform: unknown[];
 
         /**
-         * Stores the SVG (or VML) rendering node for the element.
+         * Stores the SVG rendering node for the element.
          */
         rendNode: HTMLElement;
 
@@ -2790,8 +2790,6 @@ declare namespace JXG {
         /**
          * Line endings (linecap) of a stroke element, i.e. line, circle, curve.
          *
-         * Not available for VML renderer.
-         *
          * Default Value: 'butt'
          */
         lineCap?: "butt" | "round" | "square";
@@ -2890,8 +2888,6 @@ declare namespace JXG {
               };
         /**
          * Line endings (linecap) of a stroke element, i.e. line, circle, curve.
-         *
-         * Not available for VML renderer.
          *
          * Default Value: 'butt'
          */
@@ -5394,7 +5390,7 @@ declare namespace JXG {
         maxNameLength: number;
 
         /**
-         * Default rendering engine. Possible values are 'svg', 'canvas', 'vml', 'no', or 'auto'.
+         * Default rendering engine. Possible values are 'svg', 'canvas', 'no', or 'auto'.
          * If the rendering engine is not available JSXGraph tries to detect a different engine.
          *
          * In case of 'canvas' it is advisable to call 'board.update()' after all elements have been
@@ -5402,7 +5398,7 @@ declare namespace JXG {
          *
          * default 'auto'
          */
-        renderer: "svg" | "canvas" | "vml" | "no" | "auto";
+        renderer: "svg" | "canvas" | "no" | "auto";
 
         /**
          * Control if JSXGraph reacts to resizing of the JSXGraph container element

@@ -1069,12 +1069,9 @@ JXG.extend(
                 cPos[0] += Env.getProp(container, 'border-left-width');
                 cPos[1] += Env.getProp(container, 'border-top-width');
 
-                // vml seems to ignore paddings
-                if (this.renderer.type !== 'vml') {
-                    // add padding
-                    cPos[0] += Env.getProp(container, 'padding-left');
-                    cPos[1] += Env.getProp(container, 'padding-top');
-                }
+                // Add padding
+                cPos[0] += Env.getProp(container, 'padding-left');
+                cPos[1] += Env.getProp(container, 'padding-top');
 
                 this.cPos = cPos.slice();
                 return this.cPos;
@@ -1121,12 +1118,9 @@ JXG.extend(
             cPos[0] += Env.getProp(container, 'border-left-width');
             cPos[1] += Env.getProp(container, 'border-top-width');
 
-            // vml seems to ignore paddings
-            if (this.renderer.type !== 'vml') {
-                // add padding
-                cPos[0] += Env.getProp(container, 'padding-left');
-                cPos[1] += Env.getProp(container, 'padding-top');
-            }
+            // Add padding
+            cPos[0] += Env.getProp(container, 'padding-left');
+            cPos[1] += Env.getProp(container, 'padding-top');
 
             cPos[0] += this.attr.offsetx;
             cPos[1] += this.attr.offsety;
@@ -6254,8 +6248,7 @@ JXG.extend(
 
             if (
                 this.attr.minimizereflow === 'all' &&
-                this.containerObj &&
-                this.renderer.type !== 'vml'
+                this.containerObj
             ) {
                 storeActiveEl = this.document.activeElement; // Store focus element
                 insert = this.renderer.removeToInsertLater(this.containerObj);

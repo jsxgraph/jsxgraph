@@ -35,9 +35,9 @@
 
 /**
  * @fileoverview JSXGraph can use various technologies to render the contents of a construction, e.g.
- * SVG, VML, and HTML5 Canvas. To accomplish this, The rendering and the logic and control mechanisms
+ * SVG and HTML Canvas. To accomplish this, The rendering and the logic and control mechanisms
  * are completely separated from each other. Every rendering technology has it's own class, called
- * Renderer, e.g. SVGRenderer for SVG, the same for VML and Canvas. The common base for all available
+ * Renderer, e.g. SVGRenderer for SVG, the same Canvas. The common base for all available
  * renderers is the class AbstractRenderer.
  */
 
@@ -64,7 +64,7 @@ JXG.NoRenderer = function () {
 
     /**
      * This is used to easily determine which renderer we are using
-     * @example if (board.renderer.type === 'vml') {
+     * @example if (board.renderer.type === 'svg') {
      *     // do something
      * }
      * @type String

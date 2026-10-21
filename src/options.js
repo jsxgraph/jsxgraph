@@ -1092,13 +1092,11 @@ JXG.Options = {
         // registerResizeEvent: true,
 
         /**
-         * Default rendering engine. Possible values are 'svg', 'canvas', 'vml', 'no', or 'auto'.
+         * Default rendering engine. Possible values are 'svg', 'canvas', 'no', or 'auto'.
          * If the rendering engine is not available JSXGraph tries to detect a different engine.
-         *
          *
          * In case of 'canvas' it is advisable to call 'board.update()' after all elements have been
          * constructed. This ensures that all elements are drawn with their intended visual appearance.
-         *
          *
          * This attribute is immutable.
          *
@@ -2245,8 +2243,6 @@ JXG.Options = {
          * - 'butt',
          * - 'round',
          * - 'square'.
-         *
-         * Not available for VML renderer.
          *
          * @name JXG.GeometryElement#lineCap
          * @attribute
@@ -11138,7 +11134,7 @@ JXG.Options = {
             //     return v.length >= 2 && validateInteger(v[0]) && validateInteger(v[1]);
             // },
             validateRenderer = function (v) {
-                return (v === 'vml' || v === 'svg' || v === 'canvas' || v === 'no');
+                return (v === 'svg' || v === 'canvas' || v === 'no');
             },
             validatePositive = function (v) {
                 return v > 0;

@@ -47,7 +47,6 @@ import Board from "./base/board.js";
 import FileReader from "./reader/file.js";
 import Options from "./options.js";
 import SVGRenderer from "./renderer/svg.js";
-import VMLRenderer from "./renderer/vml.js";
 import CanvasRenderer from "./renderer/canvas.js";
 import NoRenderer from "./renderer/no.js";
 
@@ -64,32 +63,32 @@ JXG.JSXGraph = {
     rendererType: (function () {
         Options.board.renderer = 'no';
 
-        if (Env.supportsVML()) {
-            Options.board.renderer = 'vml';
-            // Ok, this is some real magic going on here. IE/VML always was so
-            // terribly slow, except in one place: Examples placed in a moodle course
-            // was almost as fast as in other browsers. So i grabbed all the css and
-            // lib scripts from our moodle, added them to a jsxgraph example and it
-            // worked. next step was to strip all the css/lib code which didn't affect
-            // the VML update speed. The following five lines are what was left after
-            // the last step and yes - it basically does nothing but reads two
-            // properties of document.body on every mouse move. why? we don't know. if
-            // you know, please let us know.
-            //
-            // If we want to use the strict mode we have to refactor this a little bit. Let's
-            // hope the magic isn't gone now. Anywho... it's only useful in old versions of IE
-            // which should not be used anymore.
-            document.onmousemove = function () {
-                var t;
+        // if (Env.supportsVML()) {
+        //     Options.board.renderer = 'vml';
+        //     // Ok, this is some real magic going on here. IE/VML always was so
+        //     // terribly slow, except in one place: Examples placed in a moodle course
+        //     // was almost as fast as in other browsers. So i grabbed all the css and
+        //     // lib scripts from our moodle, added them to a jsxgraph example and it
+        //     // worked. next step was to strip all the css/lib code which didn't affect
+        //     // the VML update speed. The following five lines are what was left after
+        //     // the last step and yes - it basically does nothing but reads two
+        //     // properties of document.body on every mouse move. why? we don't know. if
+        //     // you know, please let us know.
+        //     //
+        //     // If we want to use the strict mode we have to refactor this a little bit. Let's
+        //     // hope the magic isn't gone now. Anywho... it's only useful in old versions of IE
+        //     // which should not be used anymore.
+        //     document.onmousemove = function () {
+        //         var t;
 
-                if (document.body) {
-                    t = document.body.scrollLeft;
-                    t += document.body.scrollTop;
-                }
+        //         if (document.body) {
+        //             t = document.body.scrollLeft;
+        //             t += document.body.scrollTop;
+        //         }
 
-                return t;
-            };
-        }
+        //         return t;
+        //     };
+        // }
 
         if (Env.supportsCanvas()) {
             Options.board.renderer = 'canvas';
@@ -120,7 +119,7 @@ JXG.JSXGraph = {
      * @param  {Object} doc        Usually, this is document object of the browser window.  If false or null, this defaults
      * to the document object of the browser.
      * @param  {Object} attrRenderer Attribute 'renderer', specifies the rendering engine. Possible values are 'auto', 'svg',
-     *  'canvas', 'no', and 'vml'.
+     *  'canvas', and 'no'.
      * @returns {Object}           Reference to the rendering engine object.
      * @private
      */
@@ -162,8 +161,6 @@ JXG.JSXGraph = {
         // create the renderer
         if (attrRenderer === 'svg') {
             renderer = new SVGRenderer(boxid, dim);
-        } else if (attrRenderer === 'vml') {
-            renderer = new VMLRenderer(boxid);
         } else if (attrRenderer === 'canvas') {
             renderer = new CanvasRenderer(boxid, dim);
         } else {

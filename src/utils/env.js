@@ -159,14 +159,14 @@ JXG.extend(
             /* jshint ignore:end */
         },
 
-        /**
-         * Detect browser support for VML.
-         * @returns {Boolean} True, if the browser supports VML.
-         */
-        supportsVML: function () {
-            // From stackoverflow.com
-            return this.isBrowser && !!document.namespaces;
-        },
+        // /**
+        //  * Detect browser support for VML.
+        //  * @returns {Boolean} True, if the browser supports VML.
+        //  */
+        // supportsVML: function () {
+        //     // From stackoverflow.com
+        //     return this.isBrowser && !!document.namespaces;
+        // },
 
         /**
          * Detect browser support for SVG.
