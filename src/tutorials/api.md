@@ -7,8 +7,8 @@
   - `@type ...`
   - `@throws`
 - check domains (i.e. params a, b) of curves
-- arcs, sectors: check signatures having lines
 - check what base/composition.js does
+- arcs, sectors: check signatures having lines
 - Name: `MirrorElement` vs `Reflection`
 - `text.js`: HTMLSlider
 - `image.js`: If necessary enable coords, size with functions. Example

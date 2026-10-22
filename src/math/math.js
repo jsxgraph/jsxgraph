@@ -288,13 +288,33 @@ JXG.Math = {
      */
     matVecMult: function (mat, vec) {
         var i, k, s,
+            v0, v1, v2, v3,
             m = mat.length,
             n = vec.length,
             res = [];
 
         if (n === 3) {
-            for (i = 0; i < m; i++) {
-                res[i] = mat[i][0] * vec[0] + mat[i][1] * vec[1] + mat[i][2] * vec[2];
+            if (m === 3) {
+                v0 = vec[0]; v1 = vec[1]; v2 = vec[2];
+                res[0] = mat[0][0] * v0 + mat[0][1] * v1 + mat[0][2] * v2;
+                res[1] = mat[1][0] * v0 + mat[1][1] * v1 + mat[1][2] * v2;
+                res[2] = mat[2][0] * v0 + mat[2][1] * v1 + mat[2][2] * v2;
+            } else {
+                for (i = 0; i < m; i++) {
+                    res[i] = mat[i][0] * vec[0] + mat[i][1] * vec[1] + mat[i][2] * vec[2];
+                }
+            }
+        } else if (n === 4) {
+            if (m === 4) {
+                v0 = vec[0]; v1 = vec[1]; v2 = vec[2]; v3 = vec[3];
+                res[0] = mat[0][0] * v0 + mat[0][1] * v1 + mat[0][2] * v2 + mat[0][3] * v3;
+                res[1] = mat[1][0] * v0 + mat[1][1] * v1 + mat[1][2] * v2 + mat[1][3] * v3;
+                res[2] = mat[2][0] * v0 + mat[2][1] * v1 + mat[2][2] * v2 + mat[2][3] * v3;
+                res[3] = mat[3][0] * v0 + mat[3][1] * v1 + mat[3][2] * v2 + mat[3][3] * v3;
+            } else {
+                for (i = 0; i < m; i++) {
+                    res[i] = mat[i][0] * vec[0] + mat[i][1] * vec[1] + mat[i][2] * vec[2];
+                }
             }
         } else {
             for (i = 0; i < m; i++) {
@@ -356,18 +376,62 @@ JXG.Math = {
      */
     matMatMult: function (mat1, mat2) {
         var i, j, s, k,
+            v0, v1, v2, v3,
             m = mat1.length,
             n = m > 0 ? mat2[0].length : 0,
             m2 = mat2.length,
             res = this.matrix(m, n);
 
-        for (i = 0; i < m; i++) {
-            for (j = 0; j < n; j++) {
-                s = 0;
-                for (k = 0; k < m2; k++) {
-                    s += mat1[i][k] * mat2[k][j];
+        if (n === 3 && m === 3) {
+            v0 = mat2[0][0]; v1 = mat2[1][0]; v2 = mat2[2][0];
+            res[0][0] = mat1[0][0] * v0 + mat1[0][1] * v1 + mat1[0][2] * v2;
+            res[1][0] = mat1[1][0] * v0 + mat1[1][1] * v1 + mat1[1][2] * v2;
+            res[2][0] = mat1[2][0] * v0 + mat1[2][1] * v1 + mat1[2][2] * v2;
+
+            v0 = mat2[0][1]; v1 = mat2[1][1]; v2 = mat2[2][1];
+            res[0][1] = mat1[0][0] * v0 + mat1[0][1] * v1 + mat1[0][2] * v2;
+            res[1][1] = mat1[1][0] * v0 + mat1[1][1] * v1 + mat1[1][2] * v2;
+            res[2][1] = mat1[2][0] * v0 + mat1[2][1] * v1 + mat1[2][2] * v2;
+
+            v0 = mat2[0][2]; v1 = mat2[1][2]; v2 = mat2[2][2];
+            res[0][2] = mat1[0][0] * v0 + mat1[0][1] * v1 + mat1[0][2] * v2;
+            res[1][2] = mat1[1][0] * v0 + mat1[1][1] * v1 + mat1[1][2] * v2;
+            res[2][2] = mat1[2][0] * v0 + mat1[2][1] * v1 + mat1[2][2] * v2;
+
+        } else if (n === 4 && m === 4) {
+            v0 = mat2[0][0]; v1 = mat2[1][0]; v2 = mat2[2][0]; v3 = mat2[3][0];
+            res[0][0] = mat1[0][0] * v0 + mat1[0][1] * v1 + mat1[0][2] * v2 + mat1[0][3] * v3;
+            res[1][0] = mat1[1][0] * v0 + mat1[1][1] * v1 + mat1[1][2] * v2 + mat1[1][3] * v3;
+            res[2][0] = mat1[2][0] * v0 + mat1[2][1] * v1 + mat1[2][2] * v2 + mat1[2][3] * v3;
+            res[3][0] = mat1[3][0] * v0 + mat1[3][1] * v1 + mat1[3][2] * v2 + mat1[3][3] * v3;
+
+            v0 = mat2[0][1]; v1 = mat2[1][1]; v2 = mat2[2][1]; v3 = mat2[3][1];
+            res[0][1] = mat1[0][0] * v0 + mat1[0][1] * v1 + mat1[0][2] * v2 + mat1[0][3] * v3;
+            res[1][1] = mat1[1][0] * v0 + mat1[1][1] * v1 + mat1[1][2] * v2 + mat1[1][3] * v3;
+            res[2][1] = mat1[2][0] * v0 + mat1[2][1] * v1 + mat1[2][2] * v2 + mat1[2][3] * v3;
+            res[3][1] = mat1[3][0] * v0 + mat1[3][1] * v1 + mat1[3][2] * v2 + mat1[3][3] * v3;
+
+            v0 = mat2[0][2]; v1 = mat2[1][2]; v2 = mat2[2][2]; v3 = mat2[3][2];
+            res[0][2] = mat1[0][0] * v0 + mat1[0][1] * v1 + mat1[0][2] * v2 + mat1[0][3] * v3;
+            res[1][2] = mat1[1][0] * v0 + mat1[1][1] * v1 + mat1[1][2] * v2 + mat1[1][3] * v3;
+            res[2][2] = mat1[2][0] * v0 + mat1[2][1] * v1 + mat1[2][2] * v2 + mat1[2][3] * v3;
+            res[3][2] = mat1[3][0] * v0 + mat1[3][1] * v1 + mat1[3][2] * v2 + mat1[3][3] * v3;
+
+            v0 = mat2[0][3]; v1 = mat2[1][3]; v2 = mat2[2][3]; v3 = mat2[3][3];
+            res[0][3] = mat1[0][0] * v0 + mat1[0][1] * v1 + mat1[0][2] * v2 + mat1[0][3] * v3;
+            res[1][3] = mat1[1][0] * v0 + mat1[1][1] * v1 + mat1[1][2] * v2 + mat1[1][3] * v3;
+            res[2][3] = mat1[2][0] * v0 + mat1[2][1] * v1 + mat1[2][2] * v2 + mat1[2][3] * v3;
+            res[3][3] = mat1[3][0] * v0 + mat1[3][1] * v1 + mat1[3][2] * v2 + mat1[3][3] * v3;
+
+        } else {
+            for (i = 0; i < m; i++) {
+                for (j = 0; j < n; j++) {
+                    s = 0;
+                    for (k = 0; k < m2; k++) {
+                        s += mat1[i][k] * mat2[k][j];
+                    }
+                    res[i][j] = s;
                 }
-                res[i][j] = s;
             }
         }
         return res;
