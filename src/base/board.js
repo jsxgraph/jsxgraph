@@ -236,9 +236,10 @@ JXG.Board = function (container, renderer, id,
      * @type Object
      * @private
      */
-    this.origin = {};
-    this.origin.usrCoords = [1, 0, 0];
-    this.origin.scrCoords = [1, origin[0], origin[1]];
+    this.origin = {
+        usrCoords: [1, 0, 0],
+        scrCoords: [1, 1 * origin[0], 1 * origin[1]]
+    };
 
     /**
      * Zoom factor in X direction. It only stores the zoom factor to be able
@@ -4411,7 +4412,7 @@ JXG.extend(
         updateContainerDims: function (width, height) {
             var w = width,
                 h = height,
-                // bb,
+                bb, x, y,
                 bbox,
                 offX = 0,
                 offY = 0,
@@ -4450,37 +4451,59 @@ JXG.extend(
             }
 
             // If bounding box is not yet initialized, do it now.
-            if (isNaN(this.getBoundingBox()[0])) {
-                // This is not enough
-                // this.setBoundingBox(this.attr.boundingbox, this.keepaspectratio, 'keep');
-                // Instead, we do the same as in JXG.JSXGraphinitBoard():
-                bbox = this.attr.boundingbox;
-                if (Type.exists(bbox) && this.keepaspectratio) {
-                    /*
-                     * If the boundingbox attribute is given and the ratio of height and width of the
-                     * sides defined by the bounding box and the ratio of the dimensions of the div tag
-                     * which contains the board do not coincide, then the smaller side is chosen.
-                     */
-                    this.unitX = w / (bbox[2] - bbox[0]);
-                    this.unitY = h / (bbox[1] - bbox[3]);
-
-                    if (Math.abs(this.unitX) < Math.abs(this.unitY)) {
-                        this.unitY = (Math.abs(this.unitX) * this.unitY) / Math.abs(this.unitY);
-                        // Add the additional units in equal portions above and below
-                        offY = (h / this.unitY - (bbox[1] - bbox[3])) * 0.5;
-                    } else {
-                        this.unitX = (Math.abs(this.unitY) * this.unitX) / Math.abs(this.unitX);
-                        // Add the additional units in equal portions left and right
-                        offX = (w / this.unitX - (bbox[2] - bbox[0])) * 0.5;
-                    }
+            // This has to be done if the board is invisible at initialization time
+            // and becomes visible now (i.e. resizeObserver acts).
+            bb = this.getBoundingBox();
+            if (isNaN(bb[0]) ||
+                (
+                    (this.attr.unitx !== undefined && this.attr.unity !== undefined) &&
+                    (Math.abs(bb[2] - bb[0]) < Mat.eps || Math.abs(bb[1] - bb[3]) < Mat.eps)
+                )
+            ) {
+                if (this.attr.unitx !== undefined && this.attr.unity !== undefined) {
+                    // Coordinate system specified by attributes
+                    // unitX, unitY, originX, originY
+                    this.unitX = this.attr.unitx * this.zoomX;
+                    this.unitY = this.attr.unity * this.zoomY;
+                    x = 1 * this.attr.originx;
+                    y = 1 * this.attr.originy;
+                    this.origin = {
+                        usrCoords: [1, 0, 0],
+                        scrCoords: [1, x, y]
+                    };
                 } else {
-                    this.unitX = w / (bbox[2] - bbox[0]);
-                    this.unitY = h / (bbox[1] - bbox[3]);
+                    // Coordinate system specified by attribute boundingBox
+                    // setBoundingBox() is not enough
+                    // this.setBoundingBox(this.attr.boundingbox, this.keepaspectratio, 'keep');
+                    // Instead, we do the same as in JXG.JSXGraphinitBoard():
+                    bbox = this.attr.boundingbox;
+                    if (Type.exists(bbox) && this.keepaspectratio) {
+                        /*
+                         * If the boundingbox attribute is given and the ratio of height and width of the
+                         * sides defined by the bounding box and the ratio of the dimensions of the div tag
+                         * which contains the board do not coincide, then the smaller side is chosen.
+                         */
+                        this.unitX = w / (bbox[2] - bbox[0]);
+                        this.unitY = h / (bbox[1] - bbox[3]);
+
+                        if (Math.abs(this.unitX) < Math.abs(this.unitY)) {
+                            this.unitY = (Math.abs(this.unitX) * this.unitY) / Math.abs(this.unitY);
+                            // Add the additional units in equal portions above and below
+                            offY = (h / this.unitY - (bbox[1] - bbox[3])) * 0.5;
+                        } else {
+                            this.unitX = (Math.abs(this.unitY) * this.unitX) / Math.abs(this.unitX);
+                            // Add the additional units in equal portions left and right
+                            offX = (w / this.unitX - (bbox[2] - bbox[0])) * 0.5;
+                        }
+                    } else {
+                        this.unitX = w / (bbox[2] - bbox[0]);
+                        this.unitY = h / (bbox[1] - bbox[3]);
+                    }
+                    this.origin.scrCoords = [1,
+                        -this.unitX * (bbox[0] - offX),
+                        this.unitY * (bbox[1] + offY)
+                    ];
                 }
-                this.origin.scrCoords = [1,
-                    -this.unitX * (bbox[0] - offX),
-                    this.unitY * (bbox[1] + offY)
-                ];
                 this.canvasWidth = w;
                 this.canvasHeight = h;
             }

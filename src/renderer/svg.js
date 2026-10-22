@@ -1055,8 +1055,10 @@ JXG.extend(
             rx = Math.abs(rx) < huge ? rx : (huge * rx) / Math.abs(rx);
             ry = Math.abs(ry) < huge ? ry : (huge * ry) / Math.abs(ry);
 
-            node.setAttributeNS(null, "cx", x);
-            node.setAttributeNS(null, "cy", y);
+            if (!isNaN(x + y)) {
+                node.setAttributeNS(null, "cx", x);
+                node.setAttributeNS(null, "cy", y);
+            }
             node.setAttributeNS(null, "rx", Math.abs(rx));
             node.setAttributeNS(null, "ry", Math.abs(ry));
         },
