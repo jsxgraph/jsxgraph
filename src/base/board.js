@@ -4387,6 +4387,10 @@ JXG.extend(
                             hi = Infinity;
                         }
                         el.position = Math.max(lo, Math.min(hi, pos));
+                        // Make sure that the following board.update() recomputes the coordinates
+                        // from the new position. Otherwise updateGliderFromParent() may skip
+                        // the update, see CoordsElement.needsUpdateFromParent.
+                        el.needsUpdateFromParent = true;
                         this.updateInfobox(el);
                     } else if (Type.exists(el.coords)) {
                         el.setPosition(JXG.COORDS_BY_USER, dir);
