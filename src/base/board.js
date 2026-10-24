@@ -4418,7 +4418,7 @@ JXG.extend(
         updateContainerDims: function (width, height) {
             var w = width,
                 h = height,
-                bb, x, y,
+                bb, x, y, p,
                 bbox,
                 offX = 0,
                 offY = 0,
@@ -4467,7 +4467,7 @@ JXG.extend(
                 )
             ) {
                 if (this._pendingBoundingBox) {
-                    var p = this._pendingBoundingBox;
+                    p = this._pendingBoundingBox;
                     this._pendingBoundingBox = null;
                     this.canvasWidth = w;
                     this.canvasHeight = h;
