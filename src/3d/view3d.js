@@ -957,12 +957,15 @@ JXG.extend(
 
     updateDepthOrdering: function () {
         var id, el,
+            // lastPlaced,  // <--
+            // idx = [],    // <--
             i, j, l, layers, lay;
 
         // Collect elements for depth ordering layer-wise
         layers = this.evalVisProp('depthorder.layers');
         for (i = 0; i < layers.length; i++) {
             this.depthOrdered[layers[i]] = [];
+            // idx[layers[i]] = 0; // <--
         }
 
         for (id in this.objects) {
@@ -980,6 +983,8 @@ JXG.extend(
                 ) {
                     lay = el.element2D.evalVisProp('layer');
                     if (layers.indexOf(lay) >= 0) {
+                        // el._idx = idx[lay];   // <--
+                        // idx[lay]++;           // <--
                         this.depthOrdered[lay].push(el);
                     }
                 }
@@ -998,9 +1003,33 @@ JXG.extend(
                 //     }
                 // }
                 l = this.depthOrdered[lay];
-                for (j = 0; j < l.length; j++) {
-                    this.board.renderer.setLayer(l[j].element2D, lay);
+                if (true) {
+                    // Orig
+                    for (j = 0; j < l.length; j++) {
+                        this.board.renderer.setLayer(l[j].element2D, lay);
+                    }
+                } else {                  // <--
+                    lastPlaced = -1;
+                    let parentNode = this.board.renderer.layer[lay];
+                    let elNode;
+                    let count = 0;
+                    for (j = 0; j < l.length; j++) {
+                        elNode = l[j].element2D.rendNode;
+                        if (j === 0) {
+                            parentNode.moveBefore(elNode, parentNode.childNodes[0]);
+                            lastPlaced = l[j]._idx;
+                        } else if (j > lastPlaced) {
+                            // j > lastPlaced
+                            lastPlaced = l[j]._idx;
+                        } else {
+                            // j <= lastPlaced
+                            parentNode.moveBefore(elNode, parentNode.childNodes[lastPlaced + 1]);
+                            count++;
+                        }
+                    }
+                    console.log(count, l.length)
                 }
+
                 // this.depthOrdered[lay].forEach((el) => this.board.renderer.setLayer(el.element2D, lay));
                 // Attention: forEach prevents deleting an element
             }
