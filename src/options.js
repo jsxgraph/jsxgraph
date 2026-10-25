@@ -5660,6 +5660,26 @@ JXG.Options = {
          * @visprop
          */
 
+        /**
+         * Only for gliders: amount by which the glider moves along its curve per arrow key press
+         * (right/up move forward, left/down move backward). Given in units of the curve's parameter:
+         *
+         * - the line parameter (0 at the first defining point, 1 at the second),
+         * - the angle divided by 2&pi; for circles, or
+         * - the parameter of a curve or function graph (its x value for function graphs).
+         *
+         * If not set, 1/100 of the parameter range is used. For sliders, see {@link Slider#keyboardStep}.
+         *
+         * @name Point#keyboardStep
+         * @attribute
+         * @type Number
+         * @default null
+         * @see Point#keyboardStepX
+         * @see Point#keyboardStepY
+         * @see Slider#keyboardStep
+         */
+        keyboardStep: null,
+
         label: {}
         /**#@-*/
     },
@@ -8477,8 +8497,9 @@ JXG.Options = {
          * @attribute
          * @type Number
          * @default null
-         * @see Point#keyboardStepY
+         * @see Glider#keyboardStep
          * @see Slider#keyboardStep
+         * @see Point#keyboardStepY
          */
         keyboardStepX: null,
 
@@ -8491,24 +8512,11 @@ JXG.Options = {
          * @attribute
          * @type Number
          * @default null
+         * @see Glider#keyboardStep
+         * @see Slider#keyboardStep
          * @see Point#keyboardStepX
          */
         keyboardStepY: null,
-
-        /**
-         * Only for gliders: amount by which the glider moves along its curve per arrow key press
-         * (right/up move forward, left/down move backward). Given in units of the curve's parameter:
-         * the line parameter (0 at the first defining point, 1 at the second), the angle divided by
-         * 2&pi; for circles, or the parameter of a curve or function graph (its x value for function graphs).
-         * If not set, 1/100 of the parameter range is used. For sliders, see {@link Slider#keyboardStep}.
-         *
-         * @name Point#keyboardStep
-         * @attribute
-         * @type Number
-         * @default null
-         * @see Point#keyboardStepX
-         */
-        keyboardStep: null,
 
         /**
          * If set to true, the point will snap to the nearest point in distance of
@@ -9105,6 +9113,8 @@ JXG.Options = {
          * @type Number
          * @default null
          * @see Point#keyboardStepX
+         * @see Point#keyboardStepY
+         * @see Glider#keyboardStep
          */
         keyboardStep: null,
 
