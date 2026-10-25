@@ -1003,32 +1003,32 @@ JXG.extend(
                 //     }
                 // }
                 l = this.depthOrdered[lay];
-                if (true) {
+                // if (true) {
                     // Orig
                     for (j = 0; j < l.length; j++) {
                         this.board.renderer.setLayer(l[j].element2D, lay);
                     }
-                } else {                  // <--
-                    lastPlaced = -1;
-                    let parentNode = this.board.renderer.layer[lay];
-                    let elNode;
-                    let count = 0;
-                    for (j = 0; j < l.length; j++) {
-                        elNode = l[j].element2D.rendNode;
-                        if (j === 0) {
-                            parentNode.moveBefore(elNode, parentNode.childNodes[0]);
-                            lastPlaced = l[j]._idx;
-                        } else if (j > lastPlaced) {
-                            // j > lastPlaced
-                            lastPlaced = l[j]._idx;
-                        } else {
-                            // j <= lastPlaced
-                            parentNode.moveBefore(elNode, parentNode.childNodes[lastPlaced + 1]);
-                            count++;
-                        }
-                    }
-                    console.log(count, l.length)
-                }
+                // } else {                  // <--
+                //     lastPlaced = -1;
+                //     let parentNode = this.board.renderer.layer[lay];
+                //     let elNode;
+                //     let count = 0;
+                //     for (j = 0; j < l.length; j++) {
+                //         elNode = l[j].element2D.rendNode;
+                //         if (j === 0) {
+                //             parentNode.moveBefore(elNode, parentNode.childNodes[0]);
+                //             lastPlaced = l[j]._idx;
+                //         } else if (j > lastPlaced) {
+                //             // j > lastPlaced
+                //             lastPlaced = l[j]._idx;
+                //         } else {
+                //             // j <= lastPlaced
+                //             parentNode.moveBefore(elNode, parentNode.childNodes[lastPlaced + 1]);
+                //             count++;
+                //         }
+                //     }
+                //     console.log(count, l.length)
+                // }
 
                 // this.depthOrdered[lay].forEach((el) => this.board.renderer.setLayer(el.element2D, lay));
                 // Attention: forEach prevents deleting an element
