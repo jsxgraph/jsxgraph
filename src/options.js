@@ -96,7 +96,7 @@ JXG.Options = {
          * @type Object
          * @default {enabled: false, delay: 300}
          *
-         * @see JXG.Board#announce
+         * @see JXG.Board#role
          */
         announcer: {
             enabled: false,
@@ -1190,6 +1190,7 @@ JXG.Options = {
          * @name JXG.Board#role
          * @type String
          * @default 'region'
+         * @see JXG.Board#announcer
          */
         role: 'region',
 
@@ -1681,6 +1682,8 @@ JXG.Options = {
          * @attribute
          * @memberOf JXG.GeometryElement.prototype
          * @type Object
+         * @see JXG.Board#announcer
+         * @see JXG.Board#role
          * @default {
          *   enabled: false,
          *   label: '',
