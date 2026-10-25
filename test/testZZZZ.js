@@ -41,9 +41,9 @@ describe("Further tests", function () {
         jasmine.clock().uninstall();
     });
 
-    document.getElementsByTagName("body")[0].innerHTML =
-        '<div id="jxgbox" style="width: 100px; height: 100px;"></div>';
-    board = JXG.JSXGraph.initBoard("jxgbox", {
+    document.getElementsByTagName("body")[0].innerHTML +=
+        '<div id="jxgboxZZZZ" style="width: 100px; height: 100px;"></div>';
+    board = JXG.JSXGraph.initBoard("jxgboxZZZZ", {
         renderer: "svg",
         axis: false,
         grid: false,
