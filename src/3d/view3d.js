@@ -959,7 +959,8 @@ JXG.extend(
         var id, el,
             // lastPlaced,  // <--
             // idx = [],    // <--
-            i, j, l, layers, lay;
+            render,
+            i, j, l, le, layers, lay;
 
         // Collect elements for depth ordering layer-wise
         layers = this.evalVisProp('depthorder.layers');
@@ -1003,11 +1004,31 @@ JXG.extend(
                 //     }
                 // }
                 l = this.depthOrdered[lay];
-                // if (true) {
-                    // Orig
-                    for (j = 0; j < l.length; j++) {
-                        this.board.renderer.setLayer(l[j].element2D, lay);
+
+                // Fast reordering in SVG
+                le = l.length;
+                if (le > 0) {
+                    render = this.board.renderer;
+                    if (Type.exists(render.layer[lay].moveBefore)) {
+                        for (j = 0; j < le; j++) {
+                            render.layer[lay].moveBefore(l[j].element2D.rendNode, null);
+                        }
+                    } else if (Type.exists(render.layer[lay].insertBefore)) {
+                        for (j = 0; j < le; j++) {
+                            render.layer[lay].insertBefore(l[j].element2D.rendNode, null);
+                        }
+                    } else {
+                        for (j = 0; j < le; j++) {
+                            render.layer[lay].appendChild(l[j].element2D.rendNode);
+                        }
                     }
+                }
+
+                // if (true) {
+                    // Original approach
+                    // for (j = 0; j < l.length; j++) {
+                    //     this.board.renderer.setLayer(l[j].element2D, lay);
+                    // }
                 // } else {                  // <--
                 //     lastPlaced = -1;
                 //     let parentNode = this.board.renderer.layer[lay];
