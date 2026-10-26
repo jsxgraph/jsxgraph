@@ -1,3 +1,12 @@
+1.14.2
+===
+
+Bug fixes
+---------
+
+- Correct handling of invisible JSXGraph boards that have received a `setBoundingBox()`
+- Correct resizing of invisible JSXGraph boards specified by `unitX`, `unitY`, ...
+
 1.14.1
 ===
 

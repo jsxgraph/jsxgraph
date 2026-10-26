@@ -1,6 +1,6 @@
 # JSXGraph API Reference
 
-*JSXGraph version 1.14.1, API reference generated 2026-10-21*
+*JSXGraph version 1.14.2, API reference generated 2026-10-26*
 
 [JSXGraph](https://jsxgraph.org) is a cross-platform library for interactive geometry, function
 plotting and data visualisation in the web browser. It turns abstract concepts
