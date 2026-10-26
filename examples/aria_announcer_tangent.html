@@ -39,7 +39,7 @@ const f = board.create('functiongraph', [(x) => x * x], {
 const p = board.create('glider', [1, 1, f], {
     name: 'P', size: 5,
     tabIndex: 0,
-    snapWidth: 0.5,
+    keyboardStep: 0.5,
     aria: {
         enabled: true,
         label: (el) => 'Point P at x equals ' + fmt(el.X()) + ', y equals ' + fmt(el.Y()),
