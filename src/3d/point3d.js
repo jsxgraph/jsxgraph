@@ -712,6 +712,7 @@ JXG.extend(
  * @name Point3D
  * @elementclass 3D
  * @augments JXG.Point3D
+ * @type JXG.Point3D
  * @constructor
  * @throws {Exception} If the element cannot be constructed with the given parent
  * objects an exception is thrown.

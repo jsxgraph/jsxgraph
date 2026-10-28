@@ -6156,13 +6156,36 @@ JXG.Options = {
          * @visprop
          */
 
-        // /**
-        //  *
-        //  * These affect the DOM element input type="range".
-        //  * The other attributes affect the DOM element div containing the range element.
-        //  */
+        /**
+         * Set the width of the DOM sub-element `<input type="range">`.
+         * Accessible with JavaScript as `element.rendNodeRange`.
+         * @name HTMLSlider#widthRange
+         * @attribute
+         * @type {Number}
+         * @default 100
+         *
+         */
         widthRange: 100,
+
+        /**
+         * Set the width of the DOM sub-element `out` showing the value of the slider
+         * Accessible with JavaScript as `element.rendNodeOut`.
+         * @name HTMLSlider#widthOut
+         * @attribute
+         * @type {Number}
+         * @default 34
+         *
+         */
         widthOut: 34,
+
+        /**
+         * Step size of the slider
+         * @name HTMLSlider#step
+         * @attribute
+         * @type Number
+         * @default 0.01
+         *
+         */
         step: 0.01,
 
         frozen: true,

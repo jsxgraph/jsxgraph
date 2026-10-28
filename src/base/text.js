@@ -1741,8 +1741,35 @@ JXG.registerElement("text", JXG.createText);
  */
 //  See element.js#createLabel
 
-/*
- * [[x,y], [w px, h px], [range]
+/**
+ * @class Creates an HTML slider.
+ * @pseudo
+ * @name HTMLSlider
+ * @elementclass text
+ * @augments JXG.Text
+ * @type JXG.Text
+ * @see JXG.Text
+ */
+/**
+ * @jsxgraphsignature HTMLSlider
+ * @param {Array} position Position of the slider, array of length two.
+ * @param {Array} range Range of the slider (begin, start value, end).
+ *
+ * @example
+ * var s = board.create('htmlslider', [[-3, 1], [-1, 1, 5]]);
+ * board.create('point', [() => s.Value(), - 2]);
+ * </pre><div id="JXG614cab82-b9d9-4a8b-aa6c-03e42a1537bf" class="jxgbox" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *     (function() {
+ *         var board = JXG.JSXGraph.initBoard('JXG614cab82-b9d9-4a8b-aa6c-03e42a1537bf',
+ *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+ * var s = board.create('htmlslider', [[-3, 1], [-1, 1, 5]]);
+ * board.create('point', [() => s.Value(), - 2]);
+ *
+ *     })();
+ *
+ * </script><pre>
+ *
  */
 JXG.createHTMLSlider = function (board, parents, attributes) {
     var t,
@@ -1820,6 +1847,13 @@ JXG.createHTMLSlider = function (board, parents, attributes) {
         Env.addEvent(t.rendNodeForm, "input", priv.HTMLSliderInputEventHandler, t);
     }
 
+    /**
+     * Get the actual value of the HTML slider.
+     *
+     * @name HTMLSlider#Value
+     * @function
+     * @returns Number
+     */
     t.Value = function () {
         return this._val;
     };

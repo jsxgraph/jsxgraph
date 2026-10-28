@@ -371,6 +371,7 @@ JXG.extend(
  * @name Text3D
  * @elementclass 3D
  * @augments JXG.Text3D
+ * @type JXG.Text3D
  * @constructor
  * @throws {Exception} If the element cannot be constructed with the given parent
  * objects an exception is thrown.

@@ -1756,6 +1756,13 @@ JXG.createCurve = function (board, parents, attributes) {
 JXG.registerElement("curve", JXG.createCurve);
 
 /**
+ * @class Alias of {@link Functiongraph}
+ * @pseudo
+ * @name Plot
+ * @elementclass curve
+ * @see Functiongraph
+ */
+/**
  * @class A functiongraph visualizes a map \\(f: [a, b] \to {\mathbb R}, x \mapsto f(x)\\).
  * The graph is displayed for x in the interval [a,b] and is a {@link Curve} element.
  *

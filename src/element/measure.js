@@ -53,7 +53,7 @@ import Prefix from "../parser/prefix.js";
  * @name Tapemeasure
  * @elementclass line
  * @constructor
- * @type JXG.Segment
+ * @type JXG.Line
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
  */
 /**

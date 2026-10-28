@@ -1516,6 +1516,14 @@ JXG.createAngularBisectorsOfTwoLines = function (board, parents, attributes) {
 // };
 
 /**
+ * @class Alias of {@link Circumcenter}
+ * @pseudo
+ * @constructor
+ * @name Circumcirclemidpoint
+ * @see Circumcenter
+ * @elementclass point
+ */
+/**
  * @class Constructs the center of a {@link Circumcircle} without creating the circle.
  * Like the circumcircle the circumcenter is constructed by providing three points.
  * A circumcenter is given by three points which are all lying on the circle with the

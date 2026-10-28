@@ -1102,7 +1102,7 @@ JXG.extend(
  * - __`type:"matrix"`:__ `M` \\(3\times 3\\) transformation matrix containing numbers or functions
  *
  * @pseudo
- * @name Transformation
+ * @name Transform
  * @elementclass various
  * @augments JXG.Transformation
  * @constructor
@@ -1112,7 +1112,7 @@ JXG.extend(
  *
  */
 /**
- * @jsxgraphsignature Transformation
+ * @jsxgraphsignature Transform
  * @param {number|function|JXG.GeometryElement} parameters
  *
  *
@@ -1556,7 +1556,7 @@ JXG.registerElement('transform', JXG.createTransform);
  * - __`"matrix"`:__ `[M]` generic 4x4 transformation matrix (containing numbers or functions).
  *
  * @pseudo
- * @name Transformation3D
+ * @name Transform3D
  * @elementclass 3D
  * @augments JXG.Transformation
  * @constructor
@@ -1564,7 +1564,7 @@ JXG.registerElement('transform', JXG.createTransform);
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
  */
 /**
- * @jsxgraphsignature Transformation3D
+ * @jsxgraphsignature Transform3D
  * The parameters depend on the transformation type, supplied as attribute `type`.
  *
  * @param {number|function|JXG.GeometryElement3D} parameters

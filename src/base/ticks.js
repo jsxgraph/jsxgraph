@@ -1773,6 +1773,13 @@ JXG.createTicks = function (board, parents, attributes) {
 };
 
 /**
+ * @class Alias of {@link Hatch}
+ * @pseudo
+ * @name Hash
+ * @elementclass various
+ * @see Hatch
+ */
+/**
  * @class Hatches are collections of short line segments used to mark congruent lines or curves.
  * @pseudo
  * @name Hatch
@@ -1783,10 +1790,10 @@ JXG.createTicks = function (board, parents, attributes) {
  */
 /**
  * @jsxgraphsignature Hatch
- * The distance of the hashes can be controlled with the attribute `ticksDistance`.
+ * The distance of the hatches can be controlled with the attribute `ticksDistance`.
  *
  * @param {Line|curve} line The line or curve the hatch marks are going to be attached to.
- * @param {Number} numberofhashes Number of dashes.
+ * @param {Number} numberofhatches Number of dashes.
  * @example
  * // Create an axis providing two coords pairs.
  *   var p1 = board.create('point', [0, 3]);
