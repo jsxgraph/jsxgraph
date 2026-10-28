@@ -1724,13 +1724,13 @@ JXG.registerElement("text", JXG.createText);
  * Labels for points are positioned with the attributes {@link Text#anchorX}, {@link Text#anchorX} and {@link Label#offset}.
  *
  * Labels for lines, segments, curves and circles can be controlled additionally by the attributes {@link Label#position} and
- * {@link Label#distance}, i.e. for a segment [A, B] one could use the follwoing attributes:
+ * {@link Label#distance}, i.e. for a segment [A, B] one could use the following attributes:
  *
- * - "position": determines, where in the direction of the segment from A to B the label is placed
- * - "distance": determines the (orthogonal) distance of the label from the line segment. It is a factor which is multiplied by the font-size.
- * - "offset: [h, v]": a final correction in pixel (horizontally: h, vertically: v)
- * - "anchorX" ('left', 'middle', 'right') and "anchorY" ('bottom', 'middle', 'top'): determines which part of the
- * label string is the anchor position that is positioned to the coordinates determined by "position", "distance" and "offset".
+ * - `position`: determines, where in the direction of the segment from A to B the label is placed
+ * - `distance`: determines the (orthogonal) distance of the label from the line segment. It is a factor which is multiplied by the font-size.
+ * - `offset: [h, v]`: a final correction in pixel (horizontally: h, vertically: v)
+ * - `anchorX` ('left', 'middle', 'right') and `anchorY` ('bottom', 'middle', 'top'): determines which part of the
+ * label string is the anchor position that is positioned to the coordinates determined by `position`, `distance` and `offset`.
  *
  *
  * @pseudo
