@@ -1448,9 +1448,9 @@ JXG.extend(Options, {
         // --- end wireframe
 
         /**
-         * HSV color range for colormap. Supply lower bound [z_min, hue_min] on z-value and corresponding hue value, as well
-         * as upper bound [z_max, hue_max] on z-value and corresponding hue value. Further, give constant values for
-         * "saturation" and "value" of HSV.
+         * HSV color range for colormap. Supply lower bound `[z_min, hue_min]` on z-value and corresponding hue value, as well
+         * as upper bound `[z_max, hue_max]` on z-value and corresponding hue value. Further, values for
+         * `saturation` and `value` of HSV.
          *
          * @type {object}
          * @name ParametricSurface3D#colormap
@@ -1499,6 +1499,7 @@ JXG.extend(Options, {
          *    stepsU: 10,
          *    stepsV: 10,
          *    tiling: 'triangle',
+         *    type: 'shader',
          *    polyhedron: {
          *        strokeWidth: 0, // has priority
          *        fillOpacity: 0.9,
@@ -1537,6 +1538,7 @@ JXG.extend(Options, {
          *       stepsU: 10,
          *       stepsV: 10,
          *       tiling: 'triangle',
+         *       type: 'shader',
          *       polyhedron: {
          *           strokeWidth: 0,
          *           fillOpacity: 0.9,
@@ -1572,6 +1574,7 @@ JXG.extend(Options, {
          * var c = view.create('functiongraph3d', [F, [-5, 5], [-5, 5]], {
          *     stepsU: 9,
          *     stepsV: 9,
+         *     type: 'colorarray',
          *     tiling: 'rectangle'
          * });
          *
@@ -1597,6 +1600,7 @@ JXG.extend(Options, {
          *     var c = view.create('functiongraph3d', [F, box, box], {
          *         stepsU: 9,
          *         stepsV: 9,
+         *         type: 'colorarray',
          *         tiling: 'rectangle'
          *     });
          *     })();
