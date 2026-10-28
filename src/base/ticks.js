@@ -1777,6 +1777,7 @@ JXG.createTicks = function (board, parents, attributes) {
  * @pseudo
  * @name Hash
  * @elementclass various
+ * @type JXG.Ticks
  * @see Hatch
  */
 /**

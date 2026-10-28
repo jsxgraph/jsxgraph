@@ -1760,6 +1760,7 @@ JXG.registerElement("curve", JXG.createCurve);
  * @pseudo
  * @name Plot
  * @elementclass curve
+ * @type JXG.Curve
  * @see Functiongraph
  */
 /**

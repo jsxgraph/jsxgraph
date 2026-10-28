@@ -350,6 +350,7 @@ JXG.extend(
  * @pseudo
  * @constructor
  * @name Fo
+ * @type JXG.ForeignObject
  * @see ForeignObject
  * @elementclass various
  */

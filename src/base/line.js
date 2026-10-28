@@ -3033,6 +3033,7 @@ JXG.createRadicalAxis = function (board, parents, attributes) {
  * @pseudo
  * @name Polar
  * @elementclass line
+ * @type JXG.Line
  * @see PolarLine
  */
 /**
