@@ -3114,8 +3114,8 @@ JXG.createInequality = function (board, parents, attributes) {
 
 JXG.registerElement("arrowparallel", JXG.createArrowParallel);
 JXG.registerElement("bisector", JXG.createBisector);
-// JXG.registerElement("bisectorlines", JXG.createAngularBisectorsOfTwoLines);
-JXG.registerElement("msector", JXG.createMsector);
+JXG.registerElement("bisectorlines", JXG.createAngularBisectorsOfTwoLines);
+// JXG.registerElement("msector", JXG.createMsector);
 JXG.registerElement("circumcircle", JXG.createCircumcircle);
 JXG.registerElement("circumcirclemidpoint", JXG.createCircumcenter);
 JXG.registerElement("circumcenter", JXG.createCircumcenter);
