@@ -1175,7 +1175,7 @@ JXG.extend(Options, {
          * At the time being (v1.13+), this attribute is immutable.
          *
          * @type String
-         * @name ParametricSurface3D#tiling
+         * @name ParametricSurface3D#type
          * @attribute
          * @default 'wireframe'
          * @see ParametricSurface3D#polyhedron
@@ -1204,7 +1204,7 @@ JXG.extend(Options, {
          *     strokeWidth: 0.5,
          *     stepsU: 70,
          *     stepsV: 70,
-         *     tiling:'wireframe'
+         *     type: 'wireframe'
          * });
          *
          * </pre><div id="JXG87646dd4-9fe5-4c21-8734-089abc612515" class="jxgbox" style="width: 500px; height: 500px;"></div>
@@ -1235,7 +1235,7 @@ JXG.extend(Options, {
          *         strokeWidth: 0.5,
          *         stepsU: 50,
          *         stepsV: 50,
-         *         tiling: 'wireframe'
+         *         type: 'wireframe'
          *     });
          *     })();
          *
@@ -1264,6 +1264,7 @@ JXG.extend(Options, {
          * ], {
          *     stepsU: 15,
          *     stepsV: 15,
+         *     type: 'colorarray',
          *     tiling:'triangle'
          * });
          *
@@ -1294,6 +1295,7 @@ JXG.extend(Options, {
          *     ], {
          *         stepsU: 15,
          *         stepsV: 15,
+         *         type: 'colorarray',
          *         tiling: 'triangle'
          *     });
          *     })();
@@ -1323,6 +1325,7 @@ JXG.extend(Options, {
          * ], {
          *     stepsU: 15,
          *     stepsV: 15,
+         *     type: 'shader',
          *     tiling: 'rectangle'
          * });
          *
@@ -1353,11 +1356,89 @@ JXG.extend(Options, {
          *     ], {
          *         stepsU: 15,
          *         stepsV: 15,
+         *         type: 'shader',
          *         tiling: 'rectangle'
          *     });
          *     })();
          *
          * </script><pre>
+         *
+         * @example
+         * var view = board.create('view3d',
+         *     [
+         *         [-6, -3], [8, 8],
+         *         [[-5, 5], [-5, 5], [-5, 5]]
+         *     ],
+         *     {
+         *         xPlaneRear: {visible: false},
+         *         yPlaneRear: {visible: false},
+         *     });
+         *
+         * // Function F to be plotted
+         * var F = (x, y) => 3 * Math.sin(Math.sqrt(x ** 2 + y ** 2));
+         *
+         * // 3D surface
+         * var box = [-5, 5];
+         * var c = view.create('functiongraph3d', [F, box, box], {
+         *     type: 'colormap',
+         *     stepsU: 30,
+         *     stepsV: 30,
+         *     tiling: 'rectangle',
+         *     colormap: {
+         *         min: [-3.5, 240],
+         *         max: [3.5, 0],
+         *         s: 0.5,
+         *         v: 0.9,
+         *         map: function(x, y, z) { return x + z; }
+         *     },
+         *     polyhedron: {
+         *         strokeWidth: 0.3,
+         *         fillOpacity: 1
+         *     }
+         * });
+         *
+         *
+         * </pre><div id="JXGcac984c3-9ed3-441d-8786-a9b0f4d23333" class="jxgbox" style="width: 500px; height: 500px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *  var board = JXG.JSXGraph.initBoard('JXGcac984c3-9ed3-441d-8786-a9b0f4d23333',
+         *      {boundingbox: [-8, 8, 8,-8], axis: false, showcopyright: false, shownavigation: false});
+         * var view = board.create('view3d',
+         *     [
+         *         [-6, -3], [8, 8],
+         *         [[-5, 5], [-5, 5], [-5, 5]]
+         *     ],
+         *     {
+         *         xPlaneRear: {visible: false},
+         *         yPlaneRear: {visible: false},
+         *     });
+         *
+         *   // Function F to be plotted
+         *   var F = (x, y) => 3 * Math.sin(Math.sqrt(x ** 2 + y ** 2));
+         *   // 3D surface
+         *   var box = [-5, 5];
+         *   var c = view.create('functiongraph3d', [F, box, box], {
+         *       visible: true,
+         *       type: 'colormap',
+         *       stepsU: 30,
+         *       stepsV: 30,
+         *       tiling: 'rectangle',
+         *       colormap: {
+         *           min: [-3.5, 240],
+         *           max: [3.5, 0],
+         *           s: 0.5,
+         *           v: 0.9,
+         *           map: function(x, y, z) { return x + z; }
+         *       },
+         *       polyhedron: {
+         *           strokeWidth: 0.3,
+         *           fillOpacity: 1
+         *       }
+         *   });
+         *     })();
+         *
+         * </script><pre>
+         *
          */
         type: 'wireframe', // 'colormap', 'shader', 'colorarray'
         tiling: 'rectangle', // 'triangle'
