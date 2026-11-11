@@ -819,7 +819,8 @@ JXG.Math = {
             if (exponent === 0) {
                 return 1;
             }
-            return 0;
+            // 0^x = 0 only for x > 0; Math.pow gives Infinity for x < 0
+            return exponent > 0 ? 0 : Math.pow(base, exponent);
         }
 
         // exponent is an integer
