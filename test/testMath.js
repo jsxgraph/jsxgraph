@@ -126,6 +126,10 @@ describe("Test JXG.Math", function () {
     it("Pow", function () {
         expect(JXG.Math.pow(4, 2.5)).toEqual(32);
         expect(JXG.Math.pow(4, 2)).toEqual(16);
+        expect(JXG.Math.pow(0, 2)).toEqual(0);
+        expect(JXG.Math.pow(0, 0)).toEqual(1);
+        expect(JXG.Math.pow(0, -1)).toBePositiveInfinity();
+        expect(JXG.Math.pow(0, -0.5)).toBePositiveInfinity();
     });
 
     beforeEach(function () {
