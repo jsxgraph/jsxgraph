@@ -314,7 +314,9 @@ JXG.extend(
                 // Do parallel projection
                 if (that.view.projectionType !== 'central') {
                     bs = view.bbox3D[0][1] - view.bbox3D[0][0];
-                    r *= view.size[0] / bs;
+                    // Point projection also multiplies by getCameraDistance().
+                    // Size over the box alone left this circle behind when setView grew the solid.
+                    r *= view.size[0] / bs * view.getCameraDistance();
 
                     c = view.project3DTo2D([
                             that.center.X(),
