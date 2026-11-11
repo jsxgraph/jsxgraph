@@ -322,20 +322,21 @@ JXG.Math = {
      *     b = [4, 5],
      *     c;
      * c = JXG.Math.vecMatMult(b, A);
-     * // c === [18, 16];
+     * // c === [18, 19];
      */
     vecMatMult: function (vec, mat) {
         var i, k, s,
             m = mat.length,
             n = vec.length,
+            c = m > 0 ? mat[0].length : 0,
             res = [];
 
         if (n === 3) {
-            for (i = 0; i < m; i++) {
+            for (i = 0; i < c; i++) {
                 res[i] = vec[0] * mat[0][i] + vec[1] * mat[1][i] + vec[2] * mat[2][i];
             }
         } else {
-            for (i = 0; i < n; i++) {
+            for (i = 0; i < c; i++) {
                 s = 0;
                 for (k = 0; k < m; k++) {
                     s += vec[k] * mat[k][i];
