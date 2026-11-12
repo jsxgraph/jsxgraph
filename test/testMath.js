@@ -38,6 +38,9 @@ describe("Test JXG.Math", function () {
             b = [4, 5];
 
         expect(JXG.Math.matVecMult(A, b)).toEqual([13, 19]);
+        // JXG.Math.vecMatMult, non-square matrices
+        expect(JXG.Math.vecMatMult([1, 1], [[1, 2, 3], [4, 5, 6]])).toEqual([5, 7, 9]);
+        expect(JXG.Math.vecMatMult([1, 1, 1], [[1, 2], [3, 4], [5, 6]])).toEqual([9, 12]);
         expect(JXG.Math.vector(3)).toEqual([0, 0, 0]);
         expect(JXG.Math.vector(2, 1)).toEqual([1, 1]);
         expect(JXG.Math.matrix(2)).toEqual([
