@@ -1749,7 +1749,7 @@ JXG.registerElement("text", JXG.createText);
 
 /**
  * @class Creates an HTML slider.
- *
+ * The input can be done bidirectionally with the range element and with the number field.
  * An HTMLSlider element has the following structure:
  *
  * ```.html
