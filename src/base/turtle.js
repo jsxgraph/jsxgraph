@@ -51,6 +51,7 @@ import Type from "../utils/type.js";
  * It stores all properties required
  * to move a turtle.
  * @constructor
+ * @augments JXG.GeometryElement
  * @param {JXG.Board} board The board the new turtle is drawn on.
  * @param {Array} parents Start position and start direction of the turtle. Possible values are
  * ```

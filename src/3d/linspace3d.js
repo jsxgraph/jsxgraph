@@ -870,8 +870,9 @@ JXG.Plane3D = function (view, point, dir1, range_u, dir2, range_v, attributes) {
     this.range_v = range_v || [-Infinity, Infinity];
 
     /**
-     * Spanning vector 1 of the 3D plane. Contains the evaluated coordinates from {@link direction1} and {@link range1}.
-     * and is of length 4, the first entry being 0, i.e. homogenous coordinates.
+     * Spanning vector 1 of the 3D plane. Contains the evaluated coordinates from the normalized (length 1) {@link Plane3D#direction1} and
+     * {@link Plane3D#range_u}.
+     * Is an array of length 4, the first entry being 0, i.e. homogenous coordinates.
      *
      * @name Plane3D#vec1
      * @type Array
@@ -882,8 +883,9 @@ JXG.Plane3D = function (view, point, dir1, range_u, dir2, range_v, attributes) {
     this.vec1 = [0, 0, 0, 0];
 
     /**
-     * Spanning vector 2 of the 3D plane. Contains the evaluated coordinates from {@link Plane3D#direction2} and {@link Plane3D#range2}
-     * and is of length 4, the first entry being 0, i.e. homogenous coordinates.
+     * Spanning vector 2 of the 3D plane. Contains the evaluated coordinates from the normalized (length 1) {@link Plane3D#direction2} and
+     * {@link Plane3D#range_v}.
+     * Is an array of length 4, the first entry being 0, i.e. homogenous coordinates.
      *
      * @name Plane3D#vec2
      * @type Array
@@ -1019,6 +1021,7 @@ JXG.extend(
             var i, s;
 
             if (Type.exists(this.direction1.view) && this.direction1.type === Const.OBJECT_TYPE_LINE3D) {
+                // direction1 is a line
                 this.vec1 = this.direction1.vec.slice();
             } else if (Type.isFunction(this.direction1)) {
                 this.vec1 = Type.evaluate(this.direction1);
@@ -1051,6 +1054,20 @@ JXG.extend(
                 }
                 for (i = 0; i < this.direction2.length; i++) {
                     this.vec2[s + i] = Type.evaluate(this.direction2[i]);
+                }
+            }
+
+            // Normalize vec1 and vec2
+            s = Mat.norm(this.vec1);
+            if (Math.abs(s) > Mat.eps * Mat.eps) {
+                for (i = 0; i < 4; i++) {
+                    this.vec1[i] /= s;
+                }
+            }
+            s = Mat.norm(this.vec2);
+            if (Math.abs(s) > Mat.eps * Mat.eps) {
+                for (i = 0; i < 4; i++) {
+                    this.vec2[i] /= s;
                 }
             }
 
@@ -1816,8 +1833,10 @@ JXG.createPlane3D = function (board, parents, attributes) {
             su = el.evalVisProp('stepsu');
             sv = el.evalVisProp('stepsv');
 
-            // Eliminate the call to the expensive el.updateDataArray();
-            el.element2D.updateDataArray = function() {};
+            // Eliminate most of the call to the expensive el.updateDataArray();
+            el.element2D.updateDataArray = function() {
+                el.updateNormal();
+            };
 
             // // Attempt to handle infinite planes
             // bb = el.view.bbox3D;

@@ -1794,7 +1794,6 @@ JXG.registerElement("arrow", JXG.createArrow);
  * });
  *
  * </pre><div id="JXG34174cc4-0050-4ab4-af69-e91365d0666f" class="jxgbox" style="width: 300px; height: 300px;"></div>
- * <!--<script src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" id="MathJax-script"></script>-->
  * <script type="text/javascript">
  *     (function() {
  *         var board = JXG.JSXGraph.initBoard('JXG34174cc4-0050-4ab4-af69-e91365d0666f',
@@ -3029,6 +3028,14 @@ JXG.createRadicalAxis = function (board, parents, attributes) {
 };
 
 /**
+ * @class Alias of {@link PolarLine}.
+ * @pseudo
+ * @name Polar
+ * @elementclass line
+ * @type JXG.Line
+ * @see PolarLine
+ */
+/**
  * @class The polar line of a point with respect to a conic or a circle.
  * The polar line is the unique reciprocal relationship of a point with respect to a conic.
  * The lines through the intersections of a conic and the polar line of a point
@@ -3271,12 +3278,12 @@ JXG.createTangentTo = function (board, parents, attributes) {
  * Register the element type tangent at JSXGraph
  * @private
  */
-JXG.registerElement("tangent", JXG.createTangent);
 JXG.registerElement("normal", JXG.createNormal);
-JXG.registerElement('tangentto', JXG.createTangentTo);
 JXG.registerElement("polar", JXG.createTangent);
-JXG.registerElement("radicalaxis", JXG.createRadicalAxis);
 JXG.registerElement("polarline", JXG.createPolarLine);
+JXG.registerElement("radicalaxis", JXG.createRadicalAxis);
+JXG.registerElement("tangent", JXG.createTangent);
+JXG.registerElement('tangentto', JXG.createTangentTo);
 
 export default JXG.Line;
 // export default {

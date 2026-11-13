@@ -344,6 +344,16 @@ JXG.extend(
     }
 );
 
+
+/**
+ * @class Alias of {@link ForeignObject}
+ * @pseudo
+ * @constructor
+ * @name Fo
+ * @type JXG.ForeignObject
+ * @see ForeignObject
+ * @elementclass various
+ */
 /**
  * @class Display any HTML content in an SVG foreignObject container - even below other elements.
  *

@@ -1516,6 +1516,15 @@ JXG.createAngularBisectorsOfTwoLines = function (board, parents, attributes) {
 // };
 
 /**
+ * @class Alias of {@link Circumcenter}
+ * @pseudo
+ * @constructor
+ * @name Circumcirclemidpoint
+ * @see Circumcenter
+ * @elementclass point
+ * @type JXG.Point
+ */
+/**
  * @class Constructs the center of a {@link Circumcircle} without creating the circle.
  * Like the circumcircle the circumcenter is constructed by providing three points.
  * A circumcenter is given by three points which are all lying on the circle with the
@@ -3107,7 +3116,7 @@ JXG.createInequality = function (board, parents, attributes) {
 JXG.registerElement("arrowparallel", JXG.createArrowParallel);
 JXG.registerElement("bisector", JXG.createBisector);
 JXG.registerElement("bisectorlines", JXG.createAngularBisectorsOfTwoLines);
-JXG.registerElement("msector", JXG.createMsector);
+// JXG.registerElement("msector", JXG.createMsector);
 JXG.registerElement("circumcircle", JXG.createCircumcircle);
 JXG.registerElement("circumcirclemidpoint", JXG.createCircumcenter);
 JXG.registerElement("circumcenter", JXG.createCircumcenter);

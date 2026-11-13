@@ -89,7 +89,7 @@ var bitReverse = [
 JXG.Util = JXG.Util || {};
 
 /**
- * @class Unzip class.
+ *
  * Class for gunzipping, unzipping and base64 decoding of files.
  * The code is based on the source code for `gunzip.c` by Pasi Ojala and is a pure JavaScript
  * implementation of `gunzip.c`.
@@ -101,10 +101,12 @@ JXG.Util = JXG.Util || {};
  * Unzip is available as separate sub-project {@link https://jsxgraph.org/home/documentation/jsxcompressor/}
  * and {@link https://github.com/jsxgraph/jsxgraph/tree/main/JSXCompressor}.
  *
+ * @namespace
  * @see http://www.cs.tut.fi/~albert/Dev/gunzip/gunzip.c
  * @see http://www.cs.tut.fi/~albert
  * @see JXG.Util.Base64
  * @memberof JXG.Util
+ *
  *
  * @example <caption>Unzip a base64 encoded zip file</caption>
  * function(str) {

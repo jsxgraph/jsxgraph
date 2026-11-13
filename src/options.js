@@ -344,7 +344,6 @@ JXG.Options = {
          *  });
          *
          * </pre><div id="JXG484d2f00-c853-4acb-a8bd-46a9e232d13b" class="jxgbox" style="width: 300px; height: 300px;"></div>
-         * <script src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-svg.js" id="MathJax-script"></script>
          * <script type="text/javascript">
          *     (function() {
          *         var board = JXG.JSXGraph.initBoard('JXG484d2f00-c853-4acb-a8bd-46a9e232d13b',
@@ -6220,13 +6219,36 @@ JXG.Options = {
          * @visprop
          */
 
-        // /**
-        //  *
-        //  * These affect the DOM element input type="range".
-        //  * The other attributes affect the DOM element div containing the range element.
-        //  */
+        /**
+         * Set the width of the DOM sub-element `<input type="range">`.
+         * Accessible with JavaScript as `element.rendNodeRange`.
+         * @name HTMLSlider#widthRange
+         * @attribute
+         * @type {Number}
+         * @default 100
+         *
+         */
         widthRange: 100,
+
+        /**
+         * Set the width of the DOM sub-element `out` showing the value of the slider
+         * Accessible with JavaScript as `element.rendNodeOut`.
+         * @name HTMLSlider#widthOut
+         * @attribute
+         * @type {Number}
+         * @default 34
+         *
+         */
         widthOut: 34,
+
+        /**
+         * Step size of the slider
+         * @name HTMLSlider#step
+         * @attribute
+         * @type Number
+         * @default 0.01
+         *
+         */
         step: 0.01,
 
         frozen: true,
@@ -7901,7 +7923,6 @@ JXG.Options = {
          * });
          *
          * </pre><div id="JXG57435de0-16f2-42be-94d8-3d2b31caefcd" class="jxgbox" style="width: 300px; height: 300px;"></div>
-         * <script src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-svg.js" id="MathJax-script"></script>
          * <script type="text/javascript">
          *     (function() {
          *         var board = JXG.JSXGraph.initBoard('JXG57435de0-16f2-42be-94d8-3d2b31caefcd',
@@ -10622,8 +10643,6 @@ JXG.Options = {
          *       }
          *     };
          * </script>
-         * <script src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-svg.js" id="MathJax-script"></script>
-         *
          * <script type="text/javascript">
          *     (function() {
          *         var board = JXG.JSXGraph.initBoard('JXGe2a04876-5813-4db0-b7e8-e48bf4e220b9',
@@ -10845,8 +10864,6 @@ JXG.Options = {
          *
          * </pre><div id="JXG497f065c-cfc1-44c3-ba21-5fa581668869" class="jxgbox" style="width: 300px; height: 300px;"></div>
          * <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.13.10/dist/katex.min.css" integrity="sha384-0cCFrwW/0bAk1Z/6IMgIyNU3kfTcNirlObr4WjrUU7+hZeD6ravdYJ3kPWSeC31M" crossorigin="anonymous">
-         * <!--<script src="https://cdn.jsdelivr.net/npm/katex@0.13.10/dist/katex.min.js" integrity="sha384-dtFDxK2tSkECx/6302Z4VN2ZRqt6Gis+b1IwCjJPrn0kMYFQT9rbtyQWg5NFWAF7" crossorigin="anonymous"></script>-->
-         *
          * <script type="text/javascript">
          *     (function() {
          *         var board = JXG.JSXGraph.initBoard('JXG497f065c-cfc1-44c3-ba21-5fa581668869',

@@ -1,3 +1,29 @@
+1.14.3
+===
+
+Improvements
+---------
+
+- Refactor resizeObserver
+- Clear unused code
+- API docs
+
+Bug fixes
+---------
+
+- Correct handling of invisible JSXGraph boards with `keepAspectRatio:true` that become visible or resized
+- Fix regression: `bisectorlines` was commented out
+- plane3d: internal vectors vec1, vec2 are normalized, normal was not updated
+
+1.14.2
+===
+
+Bug fixes
+---------
+
+- Correct handling of invisible JSXGraph boards that have received a `setBoundingBox()`
+- Correct resizing of invisible JSXGraph boards specified by `unitX`, `unitY`, ...
+
 1.14.1
 ===
 

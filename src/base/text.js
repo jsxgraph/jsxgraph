@@ -1724,13 +1724,13 @@ JXG.registerElement("text", JXG.createText);
  * Labels for points are positioned with the attributes {@link Text#anchorX}, {@link Text#anchorX} and {@link Label#offset}.
  *
  * Labels for lines, segments, curves and circles can be controlled additionally by the attributes {@link Label#position} and
- * {@link Label#distance}, i.e. for a segment [A, B] one could use the follwoing attributes:
+ * {@link Label#distance}, i.e. for a segment [A, B] one could use the following attributes:
  *
- * - "position": determines, where in the direction of the segment from A to B the label is placed
- * - "distance": determines the (orthogonal) distance of the label from the line segment. It is a factor which is multiplied by the font-size.
- * - "offset: [h, v]": a final correction in pixel (horizontally: h, vertically: v)
- * - "anchorX" ('left', 'middle', 'right') and "anchorY" ('bottom', 'middle', 'top'): determines which part of the
- * label string is the anchor position that is positioned to the coordinates determined by "position", "distance" and "offset".
+ * - `position`: determines, where in the direction of the segment from A to B the label is placed
+ * - `distance`: determines the (orthogonal) distance of the label from the line segment. It is a factor which is multiplied by the font-size.
+ * - `offset: [h, v]`: a final correction in pixel (horizontally: h, vertically: v)
+ * - `anchorX` ('left', 'middle', 'right') and `anchorY` ('bottom', 'middle', 'top'): determines which part of the
+ * label string is the anchor position that is positioned to the coordinates determined by `position`, `distance` and `offset`.
  *
  *
  * @pseudo
@@ -1741,8 +1741,35 @@ JXG.registerElement("text", JXG.createText);
  */
 //  See element.js#createLabel
 
-/*
- * [[x,y], [w px, h px], [range]
+/**
+ * @class Creates an HTML slider.
+ * @pseudo
+ * @name HTMLSlider
+ * @elementclass text
+ * @augments JXG.Text
+ * @type JXG.Text
+ * @see JXG.Text
+ */
+/**
+ * @jsxgraphsignature HTMLSlider
+ * @param {Array} position Position of the slider, array of length two.
+ * @param {Array} range Range of the slider (begin, start value, end).
+ *
+ * @example
+ * var s = board.create('htmlslider', [[-3, 1], [-1, 1, 5]]);
+ * board.create('point', [() => s.Value(), - 2]);
+ * </pre><div id="JXG614cab82-b9d9-4a8b-aa6c-03e42a1537bf" class="jxgbox" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *     (function() {
+ *         var board = JXG.JSXGraph.initBoard('JXG614cab82-b9d9-4a8b-aa6c-03e42a1537bf',
+ *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+ * var s = board.create('htmlslider', [[-3, 1], [-1, 1, 5]]);
+ * board.create('point', [() => s.Value(), - 2]);
+ *
+ *     })();
+ *
+ * </script><pre>
+ *
  */
 JXG.createHTMLSlider = function (board, parents, attributes) {
     var t,
@@ -1820,6 +1847,13 @@ JXG.createHTMLSlider = function (board, parents, attributes) {
     Env.addEvent(t.rendNodeForm, "input", priv.HTMLSliderInputEventHandler, t);
     // }
 
+    /**
+     * Get the actual value of the HTML slider.
+     *
+     * @name HTMLSlider#Value
+     * @function
+     * @returns Number
+     */
     t.Value = function () {
         return this._val;
     };
