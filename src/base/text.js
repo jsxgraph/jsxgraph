@@ -1749,12 +1749,82 @@ JXG.registerElement("text", JXG.createText);
 
 /**
  * @class Creates an HTML slider.
+ *
+ * An HTMLSlider element has the following structure:
+ *
+ * ```.html
+ * <div>
+ *   <span>
+ *      <input type="range">
+ *      <label></label>
+ *      <input type="number">
+ *   </span>
+ * </div>
+ * ```
+ *
  * @pseudo
  * @name HTMLSlider
  * @elementclass text
  * @augments JXG.Text
  * @type JXG.Text
  * @see JXG.Text
+ *
+ * @example <caption>Recommended way of styling HTML sliders</caption>
+ *  &lt;style>
+ *   .mySlider {
+ *       padding: 5px;
+ *       border: 1px solid black;
+ *   }
+ *   .mySlider > span > input[type=range] {
+ *       width: 200px !important;
+ *   }
+ *   .mySlider label {
+ *       padding-left: 10px;
+ *       padding-right: 10px;
+ *   }
+ *   .mySlider input[type=number] {
+ *       background-color:yellow
+ *   }
+ *  &lt;/style>
+ *  &lt;script>
+ *  var s1 = board.create('htmlslider', [[-4, -3], [0, 8, 32]], {
+ *      name: 'range',
+ *      withLabel: true,
+ *      cssClass: 'mySlider',
+ *      highlightCssClass: 'mySlider'
+ *  });
+ *  &lt;/script>
+ * </pre><div id="JXG22f1ae28-7e52-484e-b3c2-3a9bb0bcd066" class="jxgbox" style="width: 300px; height: 300px;"></div>
+ *    <style>
+ *   .mySlider {
+ *       padding: 5px;
+ *       border: 1px solid black;
+ *   }
+ *   .mySlider > span > input[type=range] {
+ *       width: 200px !important;
+ *   }
+ *   .mySlider label {
+ *       padding-left: 10px;
+ *       padding-right: 10px;
+ *   }
+ *   .mySlider input[type=number] {
+ *       background-color:yellow
+ *   }
+ *   </style>
+ * <script type="text/javascript">
+ *     (function() {
+ *         var board = JXG.JSXGraph.initBoard('JXG22f1ae28-7e52-484e-b3c2-3a9bb0bcd066',
+ *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+ *     var s1 = board.create('htmlslider', [[-4, -3], [0, 8, 32]], {
+ *         name: 'range',
+ *         withLabel: true,
+ *         cssClass: 'mySlider',
+ *         highlightCssClass: 'mySlider'
+ *     });
+ *
+ *     })();
+ *
+ * </script><pre>
  */
 /**
  * @jsxgraphsignature HTMLSlider
@@ -1801,7 +1871,7 @@ JXG.createHTMLSlider = function (board, parents, attributes) {
         parents[0][0],
         parents[0][1],
         '<span style="display:inline">' +
-            '<input type="range" /><label></label><input type="number" />' +
+            '<input type="range"><label></label><input type="number">' +
         "</span>"
     ];
 
@@ -1857,6 +1927,62 @@ JXG.createHTMLSlider = function (board, parents, attributes) {
     t.Value = function () {
         return this._val;
     };
+
+    // Already documented in GeometryElement
+    t.update = function() {
+        var v;
+        JXG.Text.prototype.update.call(this);
+
+        v = this.evalVisProp('step');
+        this.rendNodeRange.step = v;
+        this.rendNodeOut.step = v;
+
+        return this;
+    };
+
+    /**
+     * Sets the value of the HTML slider. This call must be followed
+     * by a board update call.
+     * @memberOf HTMLSlider.prototype
+     * @name setValue
+     * @function
+     * @param {Number} val New value
+     * @returns {Object} this object
+     */
+    t.setValue = function (val) {
+        this.rendNodeRange.value = val;
+        this.rendNodeOut.value = val;
+        return this;
+    };
+
+    /**
+     * Sets the maximum value of the slider.
+     * @memberOf HTMLSlider.prototype
+     * @name setMax
+     * @function
+     * @param {Number} val New maximum value
+     * @returns {Object} this object
+     */
+    t.setMax = function (val) {
+        this.rendNodeRange.max = val;
+        this.rendNodeOut.max = val;
+        return this;
+    };
+
+    /**
+     * Sets the minimum value of the slider.
+     * @memberOf HTMLSlider.prototype
+     * @name setMin
+     * @function
+     * @param {Number} val New minimum value
+     * @returns {Object} this object
+     */
+    t.setMin = function (val) {
+        this.rendNodeRange.min = val;
+        this.rendNodeOut.min = val;
+        return this;
+    };
+
 
     return t;
 };
