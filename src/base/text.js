@@ -1794,36 +1794,37 @@ JXG.createHTMLSlider = function (board, parents, attributes) {
     par = [
         parents[0][0],
         parents[0][1],
-        '<form style="display:inline">' +
-            '<input type="range" /><span></span><input type="text" />' +
-            "</form>"
+        '<span style="display:inline">' +
+            '<input type="range" /><label></label><input type="text" />' +
+            "</span>"
     ];
 
     t = JXG.createText(board, par, attr);
     t.type = Type.OBJECT_TYPE_HTMLSLIDER;
 
-    t.rendNodeForm = t.rendNode.childNodes[0];
+    t.rendNodeSpan = t.rendNode.childNodes[0];
 
-    t.rendNodeRange = t.rendNodeForm.childNodes[0];
+    t.rendNodeRange = t.rendNodeSpan.childNodes[0];
     t.rendNodeRange.min = parents[1][0];
     t.rendNodeRange.max = parents[1][2];
     t.rendNodeRange.step = attr.step;
     t.rendNodeRange.value = parents[1][1];
 
-    t.rendNodeLabel = t.rendNodeForm.childNodes[1];
+    t.rendNodeLabel = t.rendNodeSpan.childNodes[1];
     t.rendNodeLabel.id = t.rendNode.id + "_label";
 
     if (attr.withlabel) {
         t.rendNodeLabel.innerText = t.name + "=";
     }
 
-    t.rendNodeOut = t.rendNodeForm.childNodes[2];
+    t.rendNodeOut = t.rendNodeSpan.childNodes[2];
     t.rendNodeOut.value = parents[1][1];
 
     try {
-        t.rendNodeForm.id = t.rendNode.id + "_form";
+        t.rendNodeSpan.id = t.rendNode.id + "_span";
         t.rendNodeRange.id = t.rendNode.id + "_range";
         t.rendNodeOut.id = t.rendNode.id + "_out";
+        t.rendNodeLabel.setAttribute('for', t.rendNodeRange.id);
     } catch (e) {
         JXG.debug(e);
     }
@@ -1839,12 +1840,12 @@ JXG.createHTMLSlider = function (board, parents, attributes) {
     //      * OnChange event is used for IE browsers
     //      * The range element is supported since IE10
     //      */
-    //     Env.addEvent(t.rendNodeForm, "change", priv.HTMLSliderInputEventHandler, t);
+    //     Env.addEvent(t.rendNodeSpan, "change", priv.HTMLSliderInputEventHandler, t);
     // } else {
     //     /*
     //      * OnInput event is used for non-IE browsers
     //      */
-    Env.addEvent(t.rendNodeForm, "input", priv.HTMLSliderInputEventHandler, t);
+    Env.addEvent(t.rendNodeRange, "input", priv.HTMLSliderInputEventHandler, t);
     // }
 
     /**
