@@ -4541,9 +4541,9 @@ JXG.extend(
             var w = width,
                 h = height,
                 bb, x, y, p,
-                bbox,
-                offX = 0,
-                offY = 0,
+                // bbox,
+                // offX = 0,
+                // offY = 0,
                 css,
                 // dim,
                 width_adjustment, height_adjustment;
@@ -4623,36 +4623,32 @@ JXG.extend(
                         // setBoundingBox() is not enough
                         // this.setBoundingBox(this.attr.boundingbox, this.keepaspectratio, 'keep');
                         // Instead, we do the same as in JXG.JSXGraphinitBoard():
-                        bbox = this.attr.boundingbox;
-                        if (Type.exists(bbox) && this.keepaspectratio) {
-                            /*
-                             * If the boundingbox attribute is given and the ratio of height and width of the
-                             * sides defined by the bounding box and the ratio of the dimensions of the div tag
-                             * which contains the board do not coincide, then the smaller side is chosen.
-                             */
-                            this.unitX = w / (bbox[2] - bbox[0]);
-                            this.unitY = h / (bbox[1] - bbox[3]);
-
-                            if (Math.abs(this.unitX) < Math.abs(this.unitY)) {
-                                this.unitY = (Math.abs(this.unitX) * this.unitY) / Math.abs(this.unitY);
-                                // Add the additional units in equal portions above and below
-                                offY = (h / this.unitY - (bbox[1] - bbox[3])) * 0.5;
-                            } else {
-                                this.unitX = (Math.abs(this.unitY) * this.unitX) / Math.abs(this.unitX);
-                                // Add the additional units in equal portions left and right
-                                offX = (w / this.unitX - (bbox[2] - bbox[0])) * 0.5;
-                            }
-                        } else {
-                            this.unitX = w / (bbox[2] - bbox[0]);
-                            this.unitY = h / (bbox[1] - bbox[3]);
-                        }
-                        this.origin.scrCoords = [1,
-                            -this.unitX * (bbox[0] - offX),
-                            this.unitY * (bbox[1] + offY)
-                        ];
+                        this.recomputeUnits(w, h, this.attr.boundingbox);
                     }
                     this.canvasWidth = w;
                     this.canvasHeight = h;
+                }
+            } else {
+                if (Type.exists(this._prevDim) && (this._prevDim.w !== w || this._prevDim.w !== h)) {
+
+                    if (this.attr.unitx !== undefined && this.attr.unity !== undefined) {
+                        // Coordinate system specified by attributes
+                        // unitX, unitY, originX, originY
+                        this.unitX = this.attr.unitx * this.zoomX;
+                        this.unitY = this.attr.unity * this.zoomY;
+                        x = 1 * this.attr.originx;
+                        y = 1 * this.attr.originy;
+                        this.origin = {
+                            usrCoords: [1, 0, 0],
+                            scrCoords: [1, x, y]
+                        };
+                    } else {
+                        // this._prevDim does exist, therefore updateContainerDims was called before.
+                        // The dimensions have changed, therefore recompute unitX, ...
+                        // We take the coordinate system specified by attribute boundingBox.
+                        // It is not expected that it is specified by attr.unitX ...
+                        this.recomputeUnits(w, h, this.attr.boundingbox);
+                    }
                 }
             }
 
