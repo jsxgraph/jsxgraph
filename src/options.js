@@ -6239,7 +6239,7 @@ JXG.Options = {
          * @default 34
          *
          */
-        widthOut: 34,
+        widthOut: 50,
 
         /**
          * Step size of the slider

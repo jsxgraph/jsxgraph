@@ -1795,8 +1795,8 @@ JXG.createHTMLSlider = function (board, parents, attributes) {
         parents[0][0],
         parents[0][1],
         '<span style="display:inline">' +
-            '<input type="range" /><label></label><input type="text" />' +
-            "</span>"
+            '<input type="range" /><label></label><input type="number" />' +
+        "</span>"
     ];
 
     t = JXG.createText(board, par, attr);
