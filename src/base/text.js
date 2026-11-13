@@ -65,6 +65,12 @@ var priv = {
         this._val = parseFloat(this.rendNodeRange.value);
         this.rendNodeOut.value = this.rendNodeRange.value;
         this.board.update();
+    },
+
+    HTMLSliderOutEventHandler: function () {
+        this._val = parseFloat(this.rendNodeOut.value);
+        this.rendNodeRange.value = this.rendNodeOut.value;
+        this.board.update();
     }
 };
 
@@ -1819,6 +1825,9 @@ JXG.createHTMLSlider = function (board, parents, attributes) {
 
     t.rendNodeOut = t.rendNodeSpan.childNodes[2];
     t.rendNodeOut.value = parents[1][1];
+    t.rendNodeOut.min = parents[1][0];
+    t.rendNodeOut.max = parents[1][2];
+    t.rendNodeOut.step = attr.step;
 
     try {
         t.rendNodeSpan.id = t.rendNode.id + "_span";
@@ -1835,18 +1844,8 @@ JXG.createHTMLSlider = function (board, parents, attributes) {
 
     t._val = parents[1][1];
 
-    // if (JXG.supportsVML()) {
-    //     /*
-    //      * OnChange event is used for IE browsers
-    //      * The range element is supported since IE10
-    //      */
-    //     Env.addEvent(t.rendNodeSpan, "change", priv.HTMLSliderInputEventHandler, t);
-    // } else {
-    //     /*
-    //      * OnInput event is used for non-IE browsers
-    //      */
     Env.addEvent(t.rendNodeRange, "input", priv.HTMLSliderInputEventHandler, t);
-    // }
+    Env.addEvent(t.rendNodeOut, "change", priv.HTMLSliderOutEventHandler, t);
 
     /**
      * Get the actual value of the HTML slider.
