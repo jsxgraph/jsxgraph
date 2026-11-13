@@ -4563,11 +4563,13 @@ JXG.extend(
                 if (window && window.getComputedStyle) {
                     // Subtract the border size
                     css = window.getComputedStyle(this.containerObj, null);
-                    width_adjustment = parseFloat(css.getPropertyValue('border-left-width')) + parseFloat(css.getPropertyValue('border-right-width'));
+                    width_adjustment = parseFloat(css.getPropertyValue('border-left-width')) +
+                                       parseFloat(css.getPropertyValue('border-right-width'));
                     if (!isNaN(width_adjustment)) {
                         w -= width_adjustment;
                     }
-                    height_adjustment = parseFloat(css.getPropertyValue('border-top-width')) + parseFloat(css.getPropertyValue('border-bottom-width'));
+                    height_adjustment = parseFloat(css.getPropertyValue('border-top-width')) +
+                                        parseFloat(css.getPropertyValue('border-bottom-width'));
                     if (!isNaN(height_adjustment)) {
                         h -= height_adjustment;
                     }
@@ -4630,6 +4632,8 @@ JXG.extend(
                 }
             } else {
                 if (Type.exists(this._prevDim) && (this._prevDim.w !== w || this._prevDim.w !== h)) {
+                    // this._prevDim does exist, therefore updateContainerDims was called before.
+                    // The dimensions have changed, therefore recompute unitX, ...
 
                     if (this.attr.unitx !== undefined && this.attr.unity !== undefined) {
                         // Coordinate system specified by attributes
@@ -4643,8 +4647,6 @@ JXG.extend(
                             scrCoords: [1, x, y]
                         };
                     } else {
-                        // this._prevDim does exist, therefore updateContainerDims was called before.
-                        // The dimensions have changed, therefore recompute unitX, ...
                         // We take the coordinate system specified by attribute boundingBox.
                         // It is not expected that it is specified by attr.unitX ...
                         this.recomputeUnits(w, h, this.attr.boundingbox);
