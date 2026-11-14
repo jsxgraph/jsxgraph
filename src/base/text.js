@@ -1774,6 +1774,7 @@ JXG.registerElement("text", JXG.createText);
  *   .mySlider {
  *       padding: 5px;
  *       border: 1px solid black;
+ *       background-color: #bcbcbc;
  *   }
  *   .mySlider input[type=range] {
  *       width: 200px !important;
@@ -1784,20 +1785,23 @@ JXG.registerElement("text", JXG.createText);
  *   }
  *   .mySlider input[type=number] {
  *       background-color:yellow
+ *       width: 64px !important;
  *   }
  *  &lt;/style>
  *  &lt;script>
  *  var s1 = board.create('htmlslider', [[-4, -3], [0, 8, 32]], {
  *      name: 'range',
  *      withLabel: true,
+ *      step: 0.5,
  *      cssClass: 'mySlider',
  *      highlightCssClass: 'mySlider'
  *  });
  *  &lt;/script>
- * </pre><div id="JXG22f1ae28-7e52-484e-b3c2-3a9bb0bcd066" class="jxgbox" style="width: 300px; height: 300px;"></div>
+ * </pre><div id="JXG22f1ae28-7e52-484e-b3c2-3a9bb0bcd066" class="jxgbox" style="width: 500px; height: 300px;"></div>
  *    <style>
  *   .mySlider {
  *       padding: 5px;
+ *       background-color: #bcbcbc;
  *       border: 1px solid black;
  *   }
  *   .mySlider input[type=range] {
@@ -1808,7 +1812,8 @@ JXG.registerElement("text", JXG.createText);
  *       padding-right: 10px;
  *   }
  *   .mySlider input[type=number] {
- *       background-color:yellow
+ *       background-color:yellow;
+ *       width: 64px !important;
  *   }
  *   </style>
  * <script type="text/javascript">
@@ -1818,6 +1823,7 @@ JXG.registerElement("text", JXG.createText);
  *     var s1 = board.create('htmlslider', [[-4, -3], [0, 8, 32]], {
  *         name: 'range',
  *         withLabel: true,
+ *         step: 0.5,
  *         cssClass: 'mySlider',
  *         highlightCssClass: 'mySlider'
  *     });
