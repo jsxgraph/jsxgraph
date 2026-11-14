@@ -1775,7 +1775,7 @@ JXG.registerElement("text", JXG.createText);
  *       padding: 5px;
  *       border: 1px solid black;
  *   }
- *   .mySlider > span > input[type=range] {
+ *   .mySlider input[type=range] {
  *       width: 200px !important;
  *   }
  *   .mySlider label {
@@ -1800,7 +1800,7 @@ JXG.registerElement("text", JXG.createText);
  *       padding: 5px;
  *       border: 1px solid black;
  *   }
- *   .mySlider > span > input[type=range] {
+ *   .mySlider input[type=range] {
  *       width: 200px !important;
  *   }
  *   .mySlider label {
