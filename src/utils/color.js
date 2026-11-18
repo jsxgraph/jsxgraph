@@ -432,6 +432,15 @@ JXG.hsv2rgb = function (H, S, V) {
         R = V;
         G = V;
         B = V;
+
+        // // Old code:
+        // if (isNaN(H) || H < Mat.eps) {
+        //     R = V;
+        //     G = V;
+        //     B = V;
+        // } else {
+        //     return "#ffffff";
+        // }
     } else {
         if (H >= 360) {
             hTemp = 0.0;
