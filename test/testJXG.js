@@ -201,6 +201,15 @@ describe("Test JXG util functions", function () {
         expect(JXG.trimNumber('0')).toEqual('0');
     });
 
+    it("hsv2rgb with zero saturation", function () {
+        // Gray for any hue, as for a tiny saturation
+        expect(JXG.hsv2rgb(0, 0, 0.5)).toEqual('#808080');
+        expect(JXG.hsv2rgb(200, 0, 0.5)).toEqual('#808080');
+        expect(JXG.hsv2rgb(200, 0.0001, 0.5)).toEqual('#7f7f80');
+        expect(JXG.hsv2rgb(120, 0, 0)).toEqual('#000000');
+        expect(JXG.hsv2rgb(359, 0, 1)).toEqual('#ffffff');
+    });
+
 });
 
 /*
