@@ -41,7 +41,6 @@
 
 import JXG from "../jxg.js";
 import Type from "./type.js";
-import Mat from "../math/math.js";
 
 // private constants and helper functions
 
@@ -429,13 +428,19 @@ JXG.hsv2rgb = function (H, S, V) {
     H = ((H % 360.0) + 360.0) % 360;
 
     if (S === 0) {
-        if (isNaN(H) || H < Mat.eps) {
-            R = V;
-            G = V;
-            B = V;
-        } else {
-            return "#ffffff";
-        }
+        // Without saturation the hue does not matter: the result is a shade of gray.
+        R = V;
+        G = V;
+        B = V;
+
+        // // Old code:
+        // if (isNaN(H) || H < Mat.eps) {
+        //     R = V;
+        //     G = V;
+        //     B = V;
+        // } else {
+        //     return "#ffffff";
+        // }
     } else {
         if (H >= 360) {
             hTemp = 0.0;
