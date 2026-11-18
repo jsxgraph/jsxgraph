@@ -210,6 +210,15 @@ describe("Test JXG util functions", function () {
         expect(JXG.hsv2rgb(359, 0, 1)).toEqual('#ffffff');
     });
 
+    it("rgbParser with rgba alpha of any precision", function () {
+        expect(JXG.rgbParser('rgba(255, 0, 0, 0.5)')).toEqual([255, 0, 0]);
+        expect(JXG.rgbParser('rgba(255, 0, 0, 0.25)')).toEqual([255, 0, 0]);
+        expect(JXG.rgbParser('rgba(10, 20, 30, 0.125)')).toEqual([10, 20, 30]);
+        expect(JXG.rgbParser('rgba(10, 20, 30, 50%)')).toEqual([10, 20, 30]);
+        expect(JXG.rgb2hex('rgba(10, 20, 30, 0.75)')).toEqual('#0a141e');
+        expect(JXG.rgb2bw('rgba(255, 255, 255, 0.25)')).toEqual('#FFFFFF');
+    });
+
 });
 
 /*

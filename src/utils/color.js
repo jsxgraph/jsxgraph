@@ -195,8 +195,8 @@ var simpleColors = {
     // array of color definition objects
     colorDefs = [
         {
-            re: /^\s*rgba\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*([\d.]{1,3})\s*\)\s*$/,
-            example: ["rgba(123, 234, 45, 0.5)", "rgba(255,234,245,1.0)"],
+            re: /^\s*rgba\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*([\d.]+%?)\s*\)\s*$/,
+            example: ["rgba(123, 234, 45, 0.5)", "rgba(255,234,245,1.0)", "rgba(10, 20, 30, 0.25)"],
             process: function (bits) {
                 return [parseInt(bits[1], 10), parseInt(bits[2], 10), parseInt(bits[3], 10)];
             }
