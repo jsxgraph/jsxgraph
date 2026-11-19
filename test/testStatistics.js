@@ -36,4 +36,11 @@ describe("Test JXG.Mat.Statistics", function () {
         expect(JXG.Math.Statistics.max(data)).toEqual(81);
         expect(JXG.Math.Statistics.percentile(data, [25, 50, 75])).toEqual([66, 70, 75]);
     });
+
+    it("Percentiles at the ends of the range", function () {
+        expect(JXG.Math.Statistics.percentile([1, 2, 3, 4], 100)).toEqual(4);
+        expect(JXG.Math.Statistics.percentile([3, 1, 2], 100)).toEqual(3);
+        expect(JXG.Math.Statistics.percentile([5, 1, 3, 2], [50, 100])).toEqual([2.5, 5]);
+        expect(JXG.Math.Statistics.percentile([4, 2, 3], 0)).toEqual(2);
+    });
 });

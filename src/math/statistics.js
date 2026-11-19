@@ -133,10 +133,12 @@ Mat.Statistics = {
         for (i = 0; i < p.length; i++) {
             per = len * p[i] * 0.01;
             idx = parseInt(per, 10);
-            if (idx === per) {
+            if (idx === per && idx > 0 && idx < len) {
                 res.push((arr[idx - 1] + arr[idx]) * 0.5);
             } else {
-                res.push(arr[idx]);
+                // P = 100 gives idx = len and P = 0 gives idx = 0: there is no
+                // neighbor to average with, so take the largest or smallest value
+                res.push(arr[Math.min(idx, len - 1)]);
             }
         }
         return res;
