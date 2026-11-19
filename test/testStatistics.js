@@ -42,6 +42,8 @@ describe("Test JXG.Mat.Statistics", function () {
         expect(JXG.Math.Statistics.percentile([3, 1, 2], 100)).toEqual(3);
         expect(JXG.Math.Statistics.percentile([5, 1, 3, 2], [50, 100])).toEqual([2.5, 5]);
         expect(JXG.Math.Statistics.percentile([4, 2, 3], 0)).toEqual(2);
+    });
+
     it("Percentiles and boxplot ignore NaN entries", function () {
         var data = [10, NaN, 9, 8, 7, 6, 5, 4, 3, 2, 1];
 
