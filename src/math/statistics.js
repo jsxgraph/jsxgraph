@@ -124,6 +124,22 @@ Mat.Statistics = {
         return 0.0;
     },
 
+    /**
+     * Copy of arr without NaN entries, sorted in ascending order.
+     * The NaNs have to be removed before sorting: the comparison a - b is NaN for them,
+     * which does not give a consistent order and leaves the other values unsorted.
+     * @private
+     */
+    _sortWithoutNaN: function (arr) {
+        var tmp = (ArrayBuffer.isView(arr) ? new Float64Array(arr) : arr).filter(function (val) {
+            return !isNaN(val);
+        });
+
+        return tmp.sort(function (a, b) {
+            return a - b;
+        });
+    },
+
     _getPercentiles: function(arr, p) {
         var i, idx,
             per, len,
@@ -166,18 +182,7 @@ Mat.Statistics = {
             return 0.0;
         }
 
-        // Sort data array into tmp
-        if (ArrayBuffer.isView(arr)) {
-            tmp = new Float64Array(arr);
-            tmp.sort();
-        } else {
-            tmp = arr.slice(0);
-            tmp.sort(function (a, b) {
-                return a - b;
-            });
-        }
-        // Remove NaNs
-        tmp = tmp.filter(function(val) { return !isNaN(val); });
+        tmp = this._sortWithoutNaN(arr);
 
         // Normalize percentile to array
         if (Type.isArray(percentile)) {
@@ -222,18 +227,7 @@ Mat.Statistics = {
             coef = 1.5;
         }
 
-        // Sort data array into tmp
-        if (ArrayBuffer.isView(arr)) {
-            tmp = new Float64Array(arr);
-            tmp.sort();
-        } else {
-            tmp = arr.slice(0);
-            tmp.sort(function (a, b) {
-                return a - b;
-            });
-        }
-        // Remove NaNs
-        tmp = tmp.filter(function(val) { return !isNaN(val); });
+        tmp = this._sortWithoutNaN(arr);
         len = tmp.length;
 
         // Determine outliers
