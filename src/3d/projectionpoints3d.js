@@ -33,9 +33,9 @@ import Type from "../utils/type.js";
  * Constructor for projections of 3D points
  * @class Custom JSXGraph 3D Element that creates dynamic, interactive orthographic projection points and connecting lines on the bounding walls of a 3D view.
  * @param {JXG.Board} board The board the element is created on
- * @param {Array } parents An array containing the View3D object at index 0, followed by optional initial 3D points to register
+ * @param {Array} parents An array containing the View3D object at index 0, followed by optional initial 3D points to register
  * @param {Object} attributes Object containing information about the configurations of projection points and lines
- * @returns {{}} A public API object containing all generated sub-elements and interface methods
+ * @returns {Object} A public API object containing all generated sub-elements and interface methods
  */
 JXG.createProjectionPoints3D = function (board, parents, attributes) {
     var view = parents[0],
@@ -44,6 +44,7 @@ JXG.createProjectionPoints3D = function (board, parents, attributes) {
         isSyncing = false,              // Lock to protect the application from recursive infinite update loops
         focus = null,                   // Reference to the currently focused and active external 3D point
         handler = null,                 // Reference to the event listener handler attached to the focused point
+
         center = view.create("point3d", [0, 0, 0], { name: '', visible: false }), // Hidden center anchor for the projection system
         projections = {},               // Public joint object containing all created elements and methods
         optionKey, optKey1, optKey2,    // Property string indentifier used to access configuration objects like 'xRear'
@@ -84,15 +85,16 @@ JXG.createProjectionPoints3D = function (board, parents, attributes) {
 
         //Lookup table mapping string keys to structural JSXGraph 3D bounding planes
         planes = { XRear: view.defaultAxes.xPlaneRear,
-                        YRear: view.defaultAxes.yPlaneRear,
-                        ZRear: view.defaultAxes.zPlaneRear,
-                        XFront: view.defaultAxes.xPlaneFront,
-                        YFront: view.defaultAxes.yPlaneFront,
-                        ZFront: view.defaultAxes.zPlaneFront};
+                   YRear: view.defaultAxes.yPlaneRear,
+                   ZRear: view.defaultAxes.zPlaneRear,
+                   XFront: view.defaultAxes.xPlaneFront,
+                   YFront: view.defaultAxes.yPlaneFront,
+                   ZFront: view.defaultAxes.zPlaneFront
+                };
 
     attr = Type.copyAttributes(attributes, board.options, 'projectionpoints3d');
 
-    // Create of projection points, add to object projections.point
+    // Create projection points, add to object projections
     for (i = 0; i < axes.length; i++) {
         for (j = 0; j < walls.length; j++) {
             optionKey = (axes[i] + walls[j]).toLowerCase();
@@ -112,7 +114,8 @@ JXG.createProjectionPoints3D = function (board, parents, attributes) {
         }
     }
 
-    // Creation of projection lines that connect the projection point to the center
+    // Create projection lines that connect the projection points to the center
+    // as well as the helper lines (guideLines) at the planes of the bbox3d
     for (i = 0; i < axes.length; i++) {
         for (j = 0; j < walls.length; j++) {
             optionKey = ('line' + axes[i] + walls[j]).toLowerCase();
@@ -120,7 +123,6 @@ JXG.createProjectionPoints3D = function (board, parents, attributes) {
             pointName = 'point' + axes[i] + walls[j];
             guideLine1Name = 'guideLine1' + axes[i] + walls[j];
             guideLine2Name = 'guideLine2' + axes[i] + walls[j];
-
 
             lineConfig = (attr.lines && attr.lines[optionKey]) || {};
             isVisible = (Type.exists(lineConfig.visible)) ? lineConfig.visible : true;
@@ -171,6 +173,7 @@ JXG.createProjectionPoints3D = function (board, parents, attributes) {
      */
     projections._sync = function () {
         var i, j;
+
         for (i = 0; i < axes.length; i++){
             for (j = 0; j < walls.length; j++){
                 pointName = 'point' + axes[i] + walls[j];
@@ -219,13 +222,13 @@ JXG.createProjectionPoints3D = function (board, parents, attributes) {
                 newY = wallPoint.Y();
                 newZ = center.Z();
             }
+
             center.setPosition([newX, newY, newZ]);
-
             projections._sync();
-
             if (focus !== null) {
-                focus.setPosition([center.X(), center.Y(), center.Z()]);
+                focus.setPosition([newX, newY, newZ]);
             }
+
             isSyncing = false;
         };
     };
@@ -245,7 +248,7 @@ JXG.createProjectionPoints3D = function (board, parents, attributes) {
     }
 
     /**
-     * Iterates through all projections to hide all generated points and lines.
+     * Iterate through all projections to hide all generated points and lines.
      *
      * @name projections#hide
      * @function
@@ -269,7 +272,7 @@ JXG.createProjectionPoints3D = function (board, parents, attributes) {
     };
 
     /**
-     * Iterates through all projections to show all generated points and lines.
+     * Iterate through all projections to show all generated points and lines.
      *
      * @name projections#show
      * @function
@@ -316,14 +319,14 @@ JXG.createProjectionPoints3D = function (board, parents, attributes) {
         focus = point;
         projections.activePoint = point;
 
-        // Synchronizing the projections to the focus
+        // Synchronizing the projections to the focus.
+        // This handler is called when the 3D point is dragged.
         handler = function() {
             if (isSyncing) {
                 return;
             }
             isSyncing = true;
             center.setPosition([focus.X(), focus.Y(), focus.Z()]);
-
             projections._sync();
 
             isSyncing = false;
@@ -334,7 +337,6 @@ JXG.createProjectionPoints3D = function (board, parents, attributes) {
 
         // Reveal of all elements
         handler();
-
         projections._show();
     };
 

@@ -562,9 +562,9 @@ JXG.extend(
                 doneCallback = () => { },
                 stepFun;
 
-            if (options.callback)
+            if (options.callback) {
                 doneCallback = options.callback;  // unload
-
+            }
 
             /** @ignore */
             stepFun = function (i) {
