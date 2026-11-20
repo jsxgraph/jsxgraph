@@ -357,15 +357,19 @@ JXG.createProjectionPoints3D = function (board, parents, attributes) {
         if (!point || !point.element2D) {
             return;
         }
+
         if (point._projClickHandler){
             return;
         }
+
         point._projDownHandler = function() {
             this._click = true;
+            return false;
         };
 
         point._projDragHandler = function() {
             this._click = false;
+            return false;
         };
 
         point._projClickHandler = function() {
@@ -381,11 +385,14 @@ JXG.createProjectionPoints3D = function (board, parents, attributes) {
 
             // Otherwise sync and show projections
             projections.bindTo(point);
+            return false;
         };
 
         point.element2D.on('down', point._projDownHandler);
         point.element2D.on('drag', point._projDragHandler);
-        point.element2D.on('click', point._projClickHandler);
+        // point.element2D.on('click', point._projClickHandler);
+        // point.element2D.on('up', point._projClickHandler);
+        point.element2D.on('click', function (evt) { console.log(this.id + ' point click\n'); });
         point._isRegistered = true;
     };
 
