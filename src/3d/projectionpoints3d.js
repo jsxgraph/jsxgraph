@@ -163,7 +163,7 @@ JXG.createProjectionPoints3D = function (board, parents, attributes) {
     }
 
     /**
-     * Forcefully updates all visible projection points to match the current coordinates of the hidden center anchor.
+     * Update all visible projection points to match the current coordinates of the hidden center anchor.
      *
      * @name projections#_sync
      * @function
@@ -415,7 +415,7 @@ JXG.createProjectionPoints3D = function (board, parents, attributes) {
         }
     };
 
-    // Initialization check for direct constructor parameter assignments. Iif no parameter is passed the projections are hidden.
+    // Initialization check for direct constructor parameter assignments. If no parameter is passed the projections are hidden.
     if (parents.length > 1) {
         for (i = 1; i < parents.length; i++) {
             potentialPoint = parents[i];

@@ -3044,7 +3044,8 @@ JXG.createView3D = function (board, parents, attributes) {
 
     // 3d infobox: drag direction and coordinates
     view.board.highlightInfobox = function (x, y, el) {
-        var d, i, c3d, foot,
+        var d, i, foot,
+            // c3d,
             pre = '',
             brd = el.board,
             arr, infobox,
