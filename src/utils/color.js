@@ -364,9 +364,11 @@ JXG.rgb2hex = function (color, ag, ab) {
     var r, g, b;
 
     r = JXG.rgbParser(color, ag, ab);
-    g = r[1];
-    b = r[2];
-    r = r[0];
+    // Round and clamp each channel, so a computed value like 127.5
+    // still gives two hex digits
+    g = Math.round(Math.min(Math.max(r[1], 0), 255));
+    b = Math.round(Math.min(Math.max(r[2], 0), 255));
+    r = Math.round(Math.min(Math.max(r[0], 0), 255));
     r = r.toString(16);
     g = g.toString(16);
     b = b.toString(16);
