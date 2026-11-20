@@ -219,6 +219,17 @@ describe("Test JXG util functions", function () {
         expect(JXG.rgb2bw('rgba(255, 255, 255, 0.25)')).toEqual('#FFFFFF');
     });
 
+    it("rgb2hex with fractional or out of range channels", function () {
+        // Computed channels give two hex digits each, not '#7f.84000'
+        expect(JXG.rgb2hex(127.5, 64, 0)).toEqual('#804000');
+        expect(JXG.rgb2hex([200.4, 10, 2.5])).toEqual('#c80a03');
+        // Channels outside 0 to 255 are clamped like CSS rgb() does
+        expect(JXG.rgb2hex(256, -1, 0)).toEqual('#ff0000');
+        // Whole channels are unchanged
+        expect(JXG.rgb2hex(255, 0, 15)).toEqual('#ff000f');
+        expect(JXG.rgb2hex([0.5, 0.25, 1])).toEqual('#8040ff');
+    });
+
 });
 
 /*
