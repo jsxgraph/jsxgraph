@@ -376,7 +376,7 @@ JXG.createProjectionPoints3D = function (board, parents, attributes) {
             if (this._click) {
                 this._click = false;
 
-                // If the projections are already active for a point its projections are turned fo after click event
+                // If the projections are already active for a point its projections are turned off after click event
                 if (focus !== null && point.id === focus.id) {
                     projections.unbind();
                     return;
@@ -390,9 +390,8 @@ JXG.createProjectionPoints3D = function (board, parents, attributes) {
 
         point.element2D.on('down', point._projDownHandler);
         point.element2D.on('drag', point._projDragHandler);
-        // point.element2D.on('click', point._projClickHandler);
-        // point.element2D.on('up', point._projClickHandler);
-        point.element2D.on('click', function (evt) { console.log(this.id + ' point click\n'); });
+        point.element2D.on('up', point._projClickHandler);
+
         point._isRegistered = true;
     };
 

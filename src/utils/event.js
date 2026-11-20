@@ -74,7 +74,9 @@ JXG.EventEmitter = {
                     len2 = evt.length;
                     for (i = 0; i < len2; i++) {
                         h = evt[i];
-                        h.handler.apply(h.context, args);
+                        if (h) {
+                            h.handler.apply(h.context, args);
+                        }
                     }
                 }
 
