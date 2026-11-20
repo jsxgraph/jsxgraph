@@ -190,7 +190,7 @@ JXG.createProjectionPoints3D = function (board, parents, attributes) {
      * Synchronize the center and focused point. It is called when
      * a projection point is dragged, not when the focus point
      * is dragged.
-     * 
+     *
      * The focus point might lag one update behind.
      *
      * @name projections#_projectionssSync
