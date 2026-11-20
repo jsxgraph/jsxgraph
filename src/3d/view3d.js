@@ -3050,15 +3050,6 @@ JXG.createView3D = function (board, parents, attributes) {
             arr, infobox,
             p = null;
 
-        if (this.mode === this.BOARD_MODE_DRAG) {
-            // Drag direction is only shown during dragging
-            if (view.isVerticalDrag()) {
-                pre = '<span style="color:black; font-size:200%">\u21C5 &nbsp;</span>';
-            } else {
-                pre = '<span style="color:black; font-size:200%">\u21C4 &nbsp;</span>';
-            }
-        }
-
         // Search 3D parent
         for (i = 0; i < el.parents.length; i++) {
             p = brd.objects[el.parents[i]];
@@ -3068,6 +3059,17 @@ JXG.createView3D = function (board, parents, attributes) {
         }
 
         if (p && Type.exists(p.element2D)) {
+            if (this.mode === this.BOARD_MODE_DRAG && !Type.exists(p.slide)) {
+                // Drag direction is only shown during dragging
+                if (view.isVerticalDrag()) {
+                    pre = '<span style="color:black; font-size:200%">\u21C5 &nbsp;</span>';
+                } else {
+                    pre = '<span style="color:black; font-size:200%">\u21C4 &nbsp;</span>';
+                }
+            }
+
+
+
             foot = [1, 0, 0, p.coords[3]];
             view._w0 = Mat.innerProduct(view.matrix3D[0], foot, 4);
 
