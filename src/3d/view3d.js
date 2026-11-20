@@ -3068,16 +3068,15 @@ JXG.createView3D = function (board, parents, attributes) {
                 }
             }
 
-
-
             foot = [1, 0, 0, p.coords[3]];
             view._w0 = Mat.innerProduct(view.matrix3D[0], foot, 4);
 
-            c3d = view.project2DTo3DPlane(p.element2D, [1, 0, 0, 1], foot);
-            if (!view.isInCube(c3d)) {
-                view.board.highlightCustomInfobox('', p);
-                return;
-            }
+            // // Do not show infobox if point is outside of cube
+            // c3d = view.project2DTo3DPlane(p.element2D, [1, 0, 0, 1], foot);
+            // if (!Type.exists(p.slide) && !view.isInCube(c3d)) {
+            //     view.board.highlightCustomInfobox('', p);
+            //     return;
+            // }
             d = p.evalVisProp('infoboxdigits');
             infobox = view.board.infobox;
             if (d === 'auto') {
