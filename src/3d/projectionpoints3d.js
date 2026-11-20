@@ -166,6 +166,7 @@ JXG.createProjectionPoints3D = function (board, parents, attributes) {
 
     /**
      * Update all visible projection points to match the current coordinates of the hidden center anchor.
+     * It is called whenever the `focus` point or one of the projection points is dragged.
      *
      * @name projections#_sync
      * @function
@@ -186,7 +187,11 @@ JXG.createProjectionPoints3D = function (board, parents, attributes) {
 
     /**
      * Event handler for interactions with the projection points.
-     * Synchronize the center and focused point
+     * Synchronize the center and focused point. It is called when
+     * a projection point is dragged, not when the focus point
+     * is dragged.
+     * 
+     * The focus point might lag one update behind.
      *
      * @name projections#_projectionssSync
      * @function
