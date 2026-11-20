@@ -289,8 +289,8 @@ JXG.Math = {
     matVecMult: function (mat, vec) {
         var i, k, s,
             v0, v1, v2, v3,
-            m = mat.length,
-            n = vec.length,
+            m = mat.length, // #rows
+            n = vec.length, // #cols
             res = [];
 
         if (n === 3) {
@@ -313,7 +313,7 @@ JXG.Math = {
                 res[3] = mat[3][0] * v0 + mat[3][1] * v1 + mat[3][2] * v2 + mat[3][3] * v3;
             } else {
                 for (i = 0; i < m; i++) {
-                    res[i] = mat[i][0] * vec[0] + mat[i][1] * vec[1] + mat[i][2] * vec[2];
+                    res[i] = mat[i][0] * vec[0] + mat[i][1] * vec[1] + mat[i][2] * vec[2] + mat[i][3] * vec[3];
                 }
             }
         } else {
