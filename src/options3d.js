@@ -1129,6 +1129,95 @@ JXG.extend(Options, {
         /**#@-*/
     },
 
+    projectionpoints3d: {
+
+        points: {
+            xRear: {
+                fillColor: JXG.palette.red,
+                visible: true,
+                name: ''
+            },
+            yRear: {
+                fillColor: JXG.palette.red,
+                visible: true,
+                name: ''
+            },
+            zRear: {
+                fillColor: JXG.palette.red,
+                visible: true,
+                name: ''
+            },
+            xFront: {
+                fillColor: JXG.palette.red,
+                visible: false,
+                name: ''
+            },
+            yFront: {
+                fillColor: JXG.palette.red,
+                visible: false,
+                name: ''
+            },
+            zFront: {
+                fillColor: JXG.palette.red,
+                visible: false,
+                name: ''
+            }
+        },
+
+        lines: {
+            lineXRear: {
+                dash: 1,
+                strokeColor: JXG.palette.red,
+                visible: true
+            },
+            lineYRear: {
+                dash: 1,
+                strokeColor: JXG.palette.red,
+                visible: true
+            },
+            lineZRear: {
+                dash: 1,
+                strokeColor: JXG.palette.red,
+                visible: true
+            },
+            lineXFront: {
+                dash: 1,
+                strokeColor: JXG.palette.red,
+                visible: false
+            },
+            lineYFront: {
+                dash: 1,
+                strokeColor: JXG.palette.red,
+                visible: false
+            },
+            lineZFront: {
+                dash: 1,
+                strokeColor: JXG.palette.red,
+                visible: false
+            }
+        },
+
+        guideLines: {
+            guideLine1XRear: { visible: true, strokeColor: 'grey', strokeOpacity: 0.4, dash: 2, strokeWidth: 2 },
+            guideLine2XRear: { visible: true, strokeColor: 'grey', strokeOpacity: 0.4, dash: 2, strokeWidth: 2 },
+
+            guideLine1YRear: { visible: true, strokeColor: 'grey', strokeOpacity: 0.4, dash: 2, strokeWidth: 2 },
+            guideLine2YRear: { visible: true, strokeColor: 'grey', strokeOpacity: 0.4, dash: 2, strokeWidth: 2 },
+
+            guideLine1ZRear: { visible: true, strokeColor: 'grey', strokeOpacity: 0.4, dash: 2, strokeWidth: 2 },
+            guideLine2ZRear: { visible: true, strokeColor: 'grey', strokeOpacity: 0.4, dash: 2, strokeWidth: 2 },
+
+            guideLine1XFront: { visible: false, strokeColor: 'grey', strokeOpacity: 0.4, dash: 2, strokeWidth: 2 },
+            guideLine2XFront: { visible: false, strokeColor: 'grey', strokeOpacity: 0.4, dash: 2, strokeWidth: 2 },
+
+            guideLine1YFront: { visible: false, strokeColor: 'grey', strokeOpacity: 0.4, dash: 2, strokeWidth: 2 },
+            guideLine2YFront: { visible: false, strokeColor: 'grey', strokeOpacity: 0.4, dash: 2, strokeWidth: 2 },
+
+            guideLine1ZFront: { visible: false, strokeColor: 'grey', strokeOpacity: 0.4, dash: 2, strokeWidth: 2 },
+            guideLine2ZFront: { visible: false, strokeColor: 'grey', strokeOpacity: 0.4, dash: 2, strokeWidth: 2 }
+        }
+    },
+
     sphere3d: {
         /**#@+
          * @visprop
