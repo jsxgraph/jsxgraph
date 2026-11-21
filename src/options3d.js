@@ -1131,91 +1131,410 @@ JXG.extend(Options, {
 
     projectionpoints3d: {
 
-        points: {
-            xRear: {
-                fillColor: JXG.palette.red,
-                visible: true,
-                name: ''
-            },
-            yRear: {
-                fillColor: JXG.palette.red,
-                visible: true,
-                name: ''
-            },
-            zRear: {
-                fillColor: JXG.palette.red,
-                visible: true,
-                name: ''
-            },
-            xFront: {
-                fillColor: JXG.palette.red,
-                visible: false,
-                name: ''
-            },
-            yFront: {
-                fillColor: JXG.palette.red,
-                visible: false,
-                name: ''
-            },
-            zFront: {
-                fillColor: JXG.palette.red,
-                visible: false,
-                name: ''
-            }
+        /**
+         * {@link Point3D} attributes of the point projected to the rear x-plane.
+         *
+         * @type Object
+         * @name ProjectionPoints3D#pointXRear
+         * @attribute
+         * @default {
+         *   fillColor: JXG.palette.red,
+         *   visible: true,
+         *   withLabel: false,
+         *   name: ''
+         * }
+         */
+        pointXRear: {
+            fillColor: JXG.palette.red,
+            visible: true,
+            withLabel: false,
+            name: ''
+        },
+        /**
+         * {@link Point3D} attributes of the point projected to the rear y-plane.
+         *
+         * @type Object
+         * @name ProjectionPoints3D#pointYRear
+         * @attribute
+         * @default {
+         *   fillColor: JXG.palette.red,
+         *   visible: true,
+         *   withLabel: false,
+         *   name: ''
+         * }
+         */
+        pointYRear: {
+            fillColor: JXG.palette.red,
+            visible: true,
+            withLabel: false,
+            name: ''
+        },
+        /**
+         * {@link Point3D} attributes of the point projected to the rear z-plane.
+         *
+         * @type Object
+         * @name ProjectionPoints3D#pointZRear
+         * @attribute
+         * @default {
+         *   fillColor: JXG.palette.red,
+         *   visible: true,
+         *   withLabel: false,
+         *   name: ''
+         * }
+         */
+        pointZRear: {
+            fillColor: JXG.palette.red,
+            visible: true,
+            withLabel: false,
+            name: ''
+        },
+        /**
+         * {@link Point3D} attributes of the point projected to the front x-plane.
+         *
+         * @type Object
+         * @name ProjectionPoints3D#pointXFront
+         * @attribute
+         * @default {
+         *   fillColor: JXG.palette.red,
+         *   visible: false,
+         *   withLabel: false,
+         *   name: ''
+         * }
+         */
+        pointXFront: {
+            fillColor: JXG.palette.red,
+            visible: false,
+            withLabel: false,
+            name: ''
+        },
+        /**
+         * {@link Point3D} attributes of the point projected to the front y-plane.
+         *
+         * @type Object
+         * @name ProjectionPoints3D#pointYFront
+         * @attribute
+         * @default {
+         *   fillColor: JXG.palette.red,
+         *   visible: false,
+         *   withLabel: false,
+         *   name: ''
+         * }
+         */
+        pointYFront: {
+            fillColor: JXG.palette.red,
+            visible: false,
+            withLabel: false,
+            name: ''
+        },
+        /**
+         * {@link Point3D} attributes of the point projected to the front z-plane.
+         *
+         * @type Object
+         * @name ProjectionPoints3D#pointZFront
+         * @attribute
+         * @default {
+         *   fillColor: JXG.palette.red,
+         *   visible: false,
+         *   withLabel: false,
+         *   name: ''
+         * }
+         */
+        pointZFront: {
+            fillColor: JXG.palette.red,
+            visible: false,
+            withLabel: false,
+            name: ''
         },
 
-        lines: {
-            lineXRear: {
-                dash: 1,
-                strokeColor: JXG.palette.red,
-                visible: true
-            },
-            lineYRear: {
-                dash: 1,
-                strokeColor: JXG.palette.red,
-                visible: true
-            },
-            lineZRear: {
-                dash: 1,
-                strokeColor: JXG.palette.red,
-                visible: true
-            },
-            lineXFront: {
-                dash: 1,
-                strokeColor: JXG.palette.red,
-                visible: false
-            },
-            lineYFront: {
-                dash: 1,
-                strokeColor: JXG.palette.red,
-                visible: false
-            },
-            lineZFront: {
-                dash: 1,
-                strokeColor: JXG.palette.red,
-                visible: false
-            }
+
+        /**
+         * {@link Line3D} attributes of the segment from focus point to the rear x-plane.
+         *
+         * @type Object
+         * @name ProjectionPoints3D#lineXRear
+         * @attribute
+         * @default {
+         *   dash: 1,
+         *   strokeColor: JXG.palette.red,
+         *   visible: true
+         * }
+         */
+        lineXRear: {
+            dash: 1,
+            strokeColor: JXG.palette.red,
+            visible: true
+        },
+        /**
+         * {@link Line3D} attributes of the segment from focus point to the rear y-plane.
+         *
+         * @type Object
+         * @name ProjectionPoints3D#lineYRear
+         * @attribute
+         * @default {
+         *   dash: 1,
+         *   strokeColor: JXG.palette.red,
+         *   visible: true
+         * }
+         */
+        lineYRear: {
+            dash: 1,
+            strokeColor: JXG.palette.red,
+            visible: true
+        },
+        /**
+         * {@link Line3D} attributes of the segment from focus point to the rear z-plane.
+         *
+         * @type Object
+         * @name ProjectionPoints3D#lineZRear
+         * @attribute
+         * @default {
+         *   dash: 1,
+         *   strokeColor: JXG.palette.red,
+         *   visible: true
+         * }
+         */
+        lineZRear: {
+            dash: 1,
+            strokeColor: JXG.palette.red,
+            visible: true
+        },
+        /**
+         * {@link Line3D} attributes of the segment from focus point to the front x-plane.
+         *
+         * @type Object
+         * @name ProjectionPoints3D#lineXFront
+         * @attribute
+         * @default {
+         *   dash: 1,
+         *   strokeColor: JXG.palette.red,
+         *   visible: false
+         * }
+         */
+        lineXFront: {
+            dash: 1,
+            strokeColor: JXG.palette.red,
+            visible: false
+        },
+        /**
+         * {@link Line3D} attributes of the segment from focus point to the front y-plane.
+         *
+         * @type Object
+         * @name ProjectionPoints3D#lineYFront
+         * @attribute
+         * @default {
+         *   dash: 1,
+         *   strokeColor: JXG.palette.red,
+         *   visible: false
+         * }
+         */
+        lineYFront: {
+            dash: 1,
+            strokeColor: JXG.palette.red,
+            visible: false
+        },
+        /**
+         * {@link Line3D} attributes of the segment from focus point to the front z-plane.
+         *
+         * @type Object
+         * @name ProjectionPoints3D#lineZFront
+         * @attribute
+         * @default {
+         *   dash: 1,
+         *   strokeColor: JXG.palette.red,
+         *   visible: false
+         * }
+         */
+        lineZFront: {
+            dash: 1,
+            strokeColor: JXG.palette.red,
+            visible: false
         },
 
-        guideLines: {
-            guideLine1XRear: { visible: true, strokeColor: 'grey', strokeOpacity: 0.4, dash: 2, strokeWidth: 2 },
-            guideLine2XRear: { visible: true, strokeColor: 'grey', strokeOpacity: 0.4, dash: 2, strokeWidth: 2 },
+        /**
+         * {@link Line3D} attributes of the first guide line at the rear x-plane.
+         *
+         * @type Object
+         * @name ProjectionPoints3D#guideLine1XRear
+         * @attribute
+         * @default {
+         *   dash: 2,
+         *   strokeColor: 'grey',
+         *   strokeOpacity: 0.4,
+         *   strokeWidth: 2,
+         *   visible: true
+         * }
+         */
+        guideLine1XRear: { visible: true, strokeColor: 'grey', strokeOpacity: 0.4, dash: 2, strokeWidth: 2 },
+        /**
+         * {@link Line3D} attributes of the second guide line at the rear x-plane.
+         *
+         * @type Object
+         * @name ProjectionPoints3D#guideLine2XRear
+         * @attribute
+         * @default {
+         *   dash: 2,
+         *   strokeColor: 'grey',
+         *   strokeOpacity: 0.4,
+         *   strokeWidth: 2,
+         *   visible: true
+         * }
+         */
+        guideLine2XRear: { visible: true, strokeColor: 'grey', strokeOpacity: 0.4, dash: 2, strokeWidth: 2 },
 
-            guideLine1YRear: { visible: true, strokeColor: 'grey', strokeOpacity: 0.4, dash: 2, strokeWidth: 2 },
-            guideLine2YRear: { visible: true, strokeColor: 'grey', strokeOpacity: 0.4, dash: 2, strokeWidth: 2 },
+        /**
+         * {@link Line3D} attributes of the first guide line at the rear y-plane.
+         *
+         * @type Object
+         * @name ProjectionPoints3D#guideLine1YRear
+         * @attribute
+         * @default {
+         *   dash: 2,
+         *   strokeColor: 'grey',
+         *   strokeOpacity: 0.4,
+         *   strokeWidth: 2,
+         *   visible: true
+         * }
+         */
+        guideLine1YRear: { visible: true, strokeColor: 'grey', strokeOpacity: 0.4, dash: 2, strokeWidth: 2 },
+        /**
+         * {@link Line3D} attributes of the second guide line at the rear y-plane.
+         *
+         * @type Object
+         * @name ProjectionPoints3D#guideLine2YRear
+         * @attribute
+         * @default {
+         *   dash: 2,
+         *   strokeColor: 'grey',
+         *   strokeOpacity: 0.4,
+         *   strokeWidth: 2,
+         *   visible: true
+         * }
+         */
+        guideLine2YRear: { visible: true, strokeColor: 'grey', strokeOpacity: 0.4, dash: 2, strokeWidth: 2 },
 
-            guideLine1ZRear: { visible: true, strokeColor: 'grey', strokeOpacity: 0.4, dash: 2, strokeWidth: 2 },
-            guideLine2ZRear: { visible: true, strokeColor: 'grey', strokeOpacity: 0.4, dash: 2, strokeWidth: 2 },
+        /**
+         * {@link Line3D} attributes of the first guide line at the rear z-plane.
+         *
+         * @type Object
+         * @name ProjectionPoints3D#guideLine1ZRear
+         * @attribute
+         * @default {
+         *   dash: 2,
+         *   strokeColor: 'grey',
+         *   strokeOpacity: 0.4,
+         *   strokeWidth: 2,
+         *   visible: true
+         * }
+         */
+        guideLine1ZRear: { visible: true, strokeColor: 'grey', strokeOpacity: 0.4, dash: 2, strokeWidth: 2 },
+        /**
+         * {@link Line3D} attributes of the second guide line at the rear z-plane.
+         *
+         * @type Object
+         * @name ProjectionPoints3D#guideLine2ZRear
+         * @attribute
+         * @default {
+         *   dash: 2,
+         *   strokeColor: 'grey',
+         *   strokeOpacity: 0.4,
+         *   strokeWidth: 2,
+         *   visible: true
+         * }
+         */
+        guideLine2ZRear: { visible: true, strokeColor: 'grey', strokeOpacity: 0.4, dash: 2, strokeWidth: 2 },
 
-            guideLine1XFront: { visible: false, strokeColor: 'grey', strokeOpacity: 0.4, dash: 2, strokeWidth: 2 },
-            guideLine2XFront: { visible: false, strokeColor: 'grey', strokeOpacity: 0.4, dash: 2, strokeWidth: 2 },
+        /**
+         * {@link Line3D} attributes of the first guide line at the front x-plane.
+         *
+         * @type Object
+         * @name ProjectionPoints3D#guideLine1XFront
+         * @attribute
+         * @default {
+         *   dash: 2,
+         *   strokeColor: 'grey',
+         *   strokeOpacity: 0.4,
+         *   strokeWidth: 2,
+         *   visible: false
+         * }
+         */
+        guideLine1XFront: { visible: false, strokeColor: 'grey', strokeOpacity: 0.4, dash: 2, strokeWidth: 2 },
+        /**
+         * {@link Line3D} attributes of the second guide line at the front x-plane.
+         *
+         * @type Object
+         * @name ProjectionPoints3D#guideLine2XFront
+         * @attribute
+         * @default {
+         *   dash: 2,
+         *   strokeColor: 'grey',
+         *   strokeOpacity: 0.4,
+         *   strokeWidth: 2,
+         *   visible: false
+         * }
+         */
+        guideLine2XFront: { visible: false, strokeColor: 'grey', strokeOpacity: 0.4, dash: 2, strokeWidth: 2 },
 
-            guideLine1YFront: { visible: false, strokeColor: 'grey', strokeOpacity: 0.4, dash: 2, strokeWidth: 2 },
-            guideLine2YFront: { visible: false, strokeColor: 'grey', strokeOpacity: 0.4, dash: 2, strokeWidth: 2 },
+        /**
+         * {@link Line3D} attributes of the first guide line at the front y-plane.
+         *
+         * @type Object
+         * @name ProjectionPoints3D#guideLine1YFront
+         * @attribute
+         * @default {
+         *   dash: 2,
+         *   strokeColor: 'grey',
+         *   strokeOpacity: 0.4,
+         *   strokeWidth: 2,
+         *   visible: false
+         * }
+         */
+        guideLine1YFront: { visible: false, strokeColor: 'grey', strokeOpacity: 0.4, dash: 2, strokeWidth: 2 },
+        /**
+         * {@link Line3D} attributes of the second guide line at the front y-plane.
+         *
+         * @type Object
+         * @name ProjectionPoints3D#guideLine2YFront
+         * @attribute
+         * @default {
+         *   dash: 2,
+         *   strokeColor: 'grey',
+         *   strokeOpacity: 0.4,
+         *   strokeWidth: 2,
+         *   visible: false
+         * }
+         */
+        guideLine2YFront: { visible: false, strokeColor: 'grey', strokeOpacity: 0.4, dash: 2, strokeWidth: 2 },
 
-            guideLine1ZFront: { visible: false, strokeColor: 'grey', strokeOpacity: 0.4, dash: 2, strokeWidth: 2 },
-            guideLine2ZFront: { visible: false, strokeColor: 'grey', strokeOpacity: 0.4, dash: 2, strokeWidth: 2 }
-        }
+        /**
+         * {@link Line3D} attributes of the first guide line at the front z-plane.
+         *
+         * @type Object
+         * @name ProjectionPoints3D#guideLine1ZFront
+         * @attribute
+         * @default {
+         *   dash: 2,
+         *   strokeColor: 'grey',
+         *   strokeOpacity: 0.4,
+         *   strokeWidth: 2,
+         *   visible: false
+         * }
+         */
+        guideLine1ZFront: { visible: false, strokeColor: 'grey', strokeOpacity: 0.4, dash: 2, strokeWidth: 2 },
+        /**
+         * {@link Line3D} attributes of the second guide line at the front z-plane.
+         *
+         * @type Object
+         * @name ProjectionPoints3D#guideLine2ZFront
+         * @attribute
+         * @default {
+         *   dash: 2,
+         *   strokeColor: 'grey',
+         *   strokeOpacity: 0.4,
+         *   strokeWidth: 2,
+         *   visible: false
+         * }
+         */
+        guideLine2ZFront: { visible: false, strokeColor: 'grey', strokeOpacity: 0.4, dash: 2, strokeWidth: 2 }
     },
 
     sphere3d: {
