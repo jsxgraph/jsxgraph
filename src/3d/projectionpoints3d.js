@@ -26,6 +26,16 @@
     and <https://opensource.org/licenses/MIT/>.
  */
 
+// Some notes: (21.11.2026)
+//
+// - In Chromium browsers (chrome, brave), point3d does not
+//   react to event 'click' if it is in a depthorder layer.
+//   However, it reacts on 'up' event...
+//
+// - Point dragging might be slow because of depth ordering,
+//   see line 1082 in view3d.js, updateDepthOrdering.
+//   This can be experienced if the console is open on Chromium browsers
+
 import JXG from "../jxg.js";
 import Type from "../utils/type.js";
 
