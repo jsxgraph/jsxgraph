@@ -23,6 +23,7 @@ import './math/clip.js';
 import './math/poly.js';
 import './math/complex.js';
 import './math/tiling.js';
+import './math/fft.js';
 import './renderer/abstract.js';
 import './reader/file.js';
 import './parser/geonext.js';
