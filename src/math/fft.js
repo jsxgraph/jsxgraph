@@ -118,10 +118,12 @@ Mat.FFT = {
     },
 
     /**
-     * Wrapper function for {@link JXG.Math.FFT.fft_flat}. Length of input data for `fft_flat` must be power of two (larger than 1).
-     * Prepares input data array.
+     * Wrapper function for {@link JXG.Math.FFT.fft_flat}. Length of input data for `fft_flat` must be a power of two
+     * (larger than 1).
+     * Prepares input data array as flat `Float64Array` for {@link JXG.Math.FFT.fft_flat}.
      *
      * The inverse FFT can be computed with `JXG.FFT.fft(data, -1)`.
+     *
      * @param {Array} signal Input data array. Length must be power of two (larger than 1). May contain floating point numbers or entries of type {@link JXG.Complex}.
      * @param {number} [isign=1] If -1 the inverse FFT is performed
      * @returns {Array} array with entries of type {@link JXG.Complex}
