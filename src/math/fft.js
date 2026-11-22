@@ -46,7 +46,7 @@ Mat.FFT = {
 
     /**
      * Danielson-Lanczos algorithm for fast Fourier transform, transcribed from Numerical Recipes in C (3rd ed, 2007).
-     * The algorithm performs the FFT in place of the input array.
+     * The algorithm performs the FFT inplace of the input array.
      *
      * @param {Float64Array} data Data array of length 2 * 2**n containing subsequently real and imaginary
      * parts of the input array.
