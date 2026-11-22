@@ -37,7 +37,7 @@
 import Mat from "./math.js";
 
 /**
- * The JXG.Math.FFT namespace. Contains the fast Fourier transformatioon for discrete data and some helper routines.
+ * The JXG.Math.FFT namespace. Contains the discrete fast Fourier transformation and some helper routines.
  * @name JXG.Math.FFT
  * @exports Mat.FFT as JXG.Math.FFT
  * @namespace
@@ -52,6 +52,7 @@ Mat.FFT = {
      * parts of the input array.
      * @param {number} [isign=1] If -1, the inverse FFT is performed
      * @memberof JXG.Math.FFT
+     * @see JXG.Math.FFT#fft
      */
     fft_flat: function (data, isign) {
         var i, j, istep,
@@ -117,7 +118,7 @@ Mat.FFT = {
     },
 
     /**
-     * Wrapper function for {@link JXG.Math.FFT.fft_flat}. Length of input data must be power of two (larger than 1).
+     * Wrapper function for {@link JXG.Math.FFT.fft_flat}. Length of input data for `fft_flat` must be power of two (larger than 1).
      * Prepares input data array.
      *
      * The inverse FFT can be computed with `JXG.FFT.fft(data, -1)`.
@@ -125,6 +126,7 @@ Mat.FFT = {
      * @param {number} [isign=1] If -1 the inverse FFT is performed
      * @returns {Array} array with entries of type {@link JXG.Complex}
      * @memberof JXG.Math.FFT
+     * @see JXG.Math.FFT.fft_flat
      *
      * @example
      *         var s1 = board.create('htmlslider', [[50, -4], [0, 8, 32]], {
