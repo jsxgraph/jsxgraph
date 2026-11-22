@@ -52,7 +52,7 @@ Mat.FFT = {
      * parts of the input array.
      * @param {number} [isign=1] If -1, the inverse FFT is performed
      * @memberof JXG.Math.FFT
-     * @see JXG.Math.FFT#fft
+     * @see JXG.Math.FFT.fft
      */
     fft_flat: function (data, isign) {
         var i, j, istep,

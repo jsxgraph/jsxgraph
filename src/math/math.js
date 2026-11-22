@@ -43,9 +43,9 @@ var undef,
     /*
      * Dynamic programming approach for recursive functions.
      * From "Speed up your JavaScript, Part 3" by Nicholas C. Zakas.
+     * {@link http://blog.thejit.org/2008/09/05/memoization-in-javascript/}
      * @see JXG.Math.factorial
      * @see JXG.Math.binomial
-     * http://blog.thejit.org/2008/09/05/memoization-in-javascript/
      *
      * This method is hidden, because it is only used in JXG.Math. If someone wants
      * to use it in JSXGraph outside of JXG.Math, it should be moved to jsxgraph.js
@@ -1026,7 +1026,7 @@ JXG.Math = {
      * @param  {Number} a First number, not zero, Infinity, or NaN
      * @param  {Number} b Second number, not zero, Infinity, or NaN
      * @returns {Number} gcd(a, b) if a and b are finite, non-zero numbers, NaN else.
-     * @see JXG.Math#lcm
+     * @see JXG.Math.lcm
      */
     gcd: function (a, b) {
         var tmp,
@@ -1075,7 +1075,7 @@ JXG.Math = {
      * @param  {Number} a First number
      * @param  {Number} b Second number
      * @returns {Number} lcm(a, b) if a and b are finite integer numbers, NaN else.
-     * @see JXG.Math#gcd
+     * @see JXG.Math.gcd
      */
     lcm: function (a, b) {
         var ret;
