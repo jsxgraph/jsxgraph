@@ -868,7 +868,7 @@ JXG.Math = {
      * @returns {Number} log10(x) Logarithm of x to base 10.
      */
     log10: function (x) {
-        return Math.log(x) / Math.log(10.0);
+        return Math.log10(x);
     },
 
     /**
@@ -877,7 +877,7 @@ JXG.Math = {
      * @returns {Number} log2(x) Logarithm of x to base 2.
      */
     log2: function (x) {
-        return Math.log(x) / Math.log(2.0);
+        return Math.log2(x);
     },
 
     /**

@@ -835,7 +835,7 @@ JXG.extend(
                 minDist *= (ev_mt + 1);
 
                 // Determine minimal delta to fulfill the minTicksDistance constraint
-                delta = Math.pow(10, Math.floor(Math.log(minDist) / Math.LN10));
+                delta = Math.pow(10, Math.floor(Mat.log10(minDist)));
                 if (2 * delta >= minDist) {
                     delta *= 2;
                 } else if (5 * delta >= minDist) {
@@ -843,7 +843,7 @@ JXG.extend(
                 }
 
                 // Determine maximal delta to fulfill the constraint to have approx. "numberMajorTicks" majorTicks
-                delta2 = Math.pow(10, Math.floor(Math.log(maxDist) / Math.LN10));
+                delta2 = Math.pow(10, Math.floor(Mat.log10(maxDist)));
                 if (5 * delta2 < maxDist) {
                     delta2 *= 5;
                 } else if (2 * delta2 < maxDist) {

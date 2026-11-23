@@ -500,7 +500,7 @@ JXG.createGrid = function (board, parents, attributes) {
         if (majorStep[0] === 'auto') {
             // majorStep[0] = 1; // parentAxes[0] may not be defined
             // Prevent too many grid lines if majorstep:'auto'
-            delta = Math.pow(10, Math.floor(Math.log(50 / this.board.unitX) / Math.LN10));
+            delta = Math.pow(10, Math.floor(Mat.log10(50 / this.board.unitX)));
             majorStep[0] = delta;
 
             if (Type.exists(parentAxes[0])) {
@@ -514,7 +514,7 @@ JXG.createGrid = function (board, parents, attributes) {
         if (majorStep[1] === 'auto') {
             // majorStep[1] = 1; // parentAxes[1] may not be defined
             // Prevent too many grid lines if majorstep:'auto'
-            delta = Math.pow(10, Math.floor(Math.log(50 / this.board.unitY) / Math.LN10));
+            delta = Math.pow(10, Math.floor(Mat.log10(50 / this.board.unitY)));
             majorStep[1] = delta;
 
             if (Type.exists(parentAxes[1])) {
