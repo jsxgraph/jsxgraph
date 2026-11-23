@@ -670,9 +670,10 @@ Mat.Statistics = {
 
             for (j = 0; j < coords.length; j++) {
                 if (Math.abs(coords[j].usrCoords[1] - coords[i].usrCoords[1]) > Mat.eps) {
-                    tmpslopes[j] =
+                    tmpslopes.push(
                         (coords[j].usrCoords[2] - coords[i].usrCoords[2]) /
-                        (coords[j].usrCoords[1] - coords[i].usrCoords[1]);
+                            (coords[j].usrCoords[1] - coords[i].usrCoords[1])
+                    );
                 }
             }
 

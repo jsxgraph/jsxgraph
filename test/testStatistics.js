@@ -52,4 +52,19 @@ describe("Test JXG.Mat.Statistics", function () {
         expect(JXG.Math.Statistics.boxplot(data)).toEqual([1, 3, 5.5, 8, 10, []]);
         expect(JXG.Math.Statistics.boxplot(new Float64Array(data))).toEqual([1, 3, 5.5, 8, 10, []]);
     });
+
+    it("TheilSenRegression", function () {
+        var coords = function (x, y) {
+            return x.map(function (v, i) {
+                return { usrCoords: [1, v, y[i]] };
+            });
+        };
+
+        expect(
+            JXG.Math.Statistics.TheilSenRegression(coords([0, 1, 2, 3], [0, 1, 4, 9]))
+        ).toEqual([-2, 3, -1]);
+        expect(JXG.Math.Statistics.TheilSenRegression(coords([0, 3, 0], [0, 0, 3]))).toEqual([
+            1.5, -0.5, -1
+        ]);
+    });
 });
