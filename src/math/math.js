@@ -207,7 +207,7 @@ JXG.Math = {
     identity: function (n, m) {
         var r, i;
 
-        if (m === undef && typeof m !== 'number') {
+        if (m === undef || typeof m !== 'number') {
             m = n;
         }
 

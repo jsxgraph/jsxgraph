@@ -68,6 +68,12 @@ describe("Test JXG.Math", function () {
             [1, 0, 0],
             [0, 1, 0]
         ]);
+        // JXG.Math.identity, m is not a number
+        expect(JXG.Math.identity(3, null)).toEqual([
+            [1, 0, 0],
+            [0, 1, 0],
+            [0, 0, 1]
+        ]);
     });
 
     it("MatMatMult", function () {
