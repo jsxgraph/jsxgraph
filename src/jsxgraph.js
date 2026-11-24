@@ -298,6 +298,8 @@ JXG.JSXGraph = {
     /**
      * Initialize a new board.
      *
+     * See {@link JXG.Board} for methods. members, and attributes.
+     *
      * @param {String|Object} box id of or reference to the HTML element in which the board is painted.
      * @param {Object} attributes An object that sets some of the board attributes.
      * See {@link JXG.Board} for a list of available attributes of the board.
@@ -305,6 +307,7 @@ JXG.JSXGraph = {
      *
      * @returns {JXG.Board} Reference to the created board.
      *
+     * @see JXG.Board
      * @see JXG.AbstractRenderer#drawNavigationBar
      *
      * @example

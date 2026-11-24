@@ -253,7 +253,7 @@ JXG.Options = {
 
         /**
          * Attributes for the default axes in case of the attribute
-         * axis:true in {@link JXG.JSXGraph#initBoard}.
+         * axis:true in {@link JXG.JSXGraph.initBoard} and {@link JXG.board}.
          *
          * @name JXG.Board#defaultAxes
          * @attribute

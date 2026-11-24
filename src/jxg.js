@@ -439,6 +439,8 @@ jxg.extend(
         /**
          * Initialize a new board.
          * Alias of {@link JXG.JSXGraph.initBoard}.
+         *
+         * See {@link JXG.Board} for methods. members, and attributes.
          * @param {String|Object} box id of or reference to the HTML element in which the board is painted.
          * @param {Object} attributes An object that sets some of the board attributes.
          * See {@link JXG.Board} for a list of available attributes of the board.
@@ -447,6 +449,8 @@ jxg.extend(
          * @returns {JXG.Board} Reference to the created board.
          *
          * @see JXG.AbstractRenderer#drawNavigationBar
+         * @see JXG.Board
+         *
          * @example
          * var board = JXG.board('jxgbox', {
          *     boundingbox: [-10, 5, 10, -5],
