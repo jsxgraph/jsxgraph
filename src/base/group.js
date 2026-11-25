@@ -749,7 +749,7 @@ JXG.extend(
          */
         setProperty: function () {
             JXG.deprecated("Group.setProperty", "Group.setAttribute()");
-            this.setAttribute.apply(this, arguments);
+            return this.setAttribute.apply(this, arguments);
         },
 
         setAttribute: function () {

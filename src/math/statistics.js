@@ -474,7 +474,7 @@ Mat.Statistics = {
      */
     divide: function () {
         JXG.deprecated("Statistics.divide()", "Statistics.div()");
-        Mat.Statistics.div.apply(Mat.Statistics, arguments);
+        return Mat.Statistics.div.apply(Mat.Statistics, arguments);
     },
 
     /**

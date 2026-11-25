@@ -442,7 +442,7 @@ JXG.extend(
          */
         circumcenterMidpoint: function () {
             JXG.deprecated("Geometry.circumcenterMidpoint()", "Geometry.circumcenter()");
-            this.circumcenter.apply(this, arguments);
+            return this.circumcenter.apply(this, arguments);
         },
 
         /**
