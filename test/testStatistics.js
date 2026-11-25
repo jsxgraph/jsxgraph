@@ -67,4 +67,9 @@ describe("Test JXG.Mat.Statistics", function () {
             1.5, -0.5, -1
         ]);
     });
+
+    it("divide returns the result of div", function () {
+        expect(JXG.Math.Statistics.divide([4, 6], 2)).toEqual([2, 3]);
+        expect(JXG.Math.Statistics.divide(6, 3)).toEqual(2);
+    });
 });

@@ -51,4 +51,10 @@ describe("Test JXG.Group", function () {
         var g = board.create("group", [A, B, C]);
         expect(g).toBeInstanceOf(JXG.Group);
     });
+
+    it("setProperty returns the group", function () {
+        var g = board.create("group", [A, B, C]);
+        expect(g.setProperty({ strokeColor: "blue" })).toBe(g);
+        expect(A.getAttribute("strokeColor")).toEqual("blue");
+    });
 });

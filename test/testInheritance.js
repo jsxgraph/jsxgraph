@@ -51,4 +51,12 @@ describe("Test geometry functions", function () {
         expect(poly.borders[0].visProp.strokecolor).toEqual('#0072B2');
     });
 
+    it("getProperty and setProperty", function () {
+        var A = board.create('point', [0, 0], { strokeColor: 'red' });
+
+        expect(A.getProperty('strokeColor')).toEqual('red');
+        expect(A.setProperty({ strokeColor: 'blue' })).toBe(A);
+        expect(A.getAttribute('strokeColor')).toEqual('blue');
+    });
+
 });

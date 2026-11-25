@@ -1252,7 +1252,7 @@ JXG.extend(
          */
         setProperty: function () {
             JXG.deprecated("setProperty()", "setAttribute()");
-            this.setAttribute.apply(this, arguments);
+            return this.setAttribute.apply(this, arguments);
         },
 
         /**
@@ -1582,7 +1582,7 @@ JXG.extend(
          */
         getProperty: function () {
             JXG.deprecated("getProperty()", "getAttribute()");
-            this.getProperty.apply(this, arguments);
+            return this.getAttribute.apply(this, arguments);
         },
 
         /**

@@ -50,6 +50,16 @@ describe("Test geometry functions", function () {
         expect(JXG.Math.Geometry.affineRatio(a, b, c)).toEqual(3);
     });
 
+    it("circumcenterMidpoint returns the circumcenter", function () {
+        var A = board.create("point", [0, 0]),
+            B = board.create("point", [2, 0]),
+            C = board.create("point", [0, 2]),
+            c = JXG.Math.Geometry.circumcenterMidpoint(A, B, C, board);
+
+        expect(c.usrCoords).toEqual(JXG.Math.Geometry.circumcenter(A, B, C, board).usrCoords);
+        expect(c.usrCoords).toEqual([1, 1, 1]);
+    });
+
     it("affineRatio Array", function () {
         var a = [1, 0, 0],
             b = [1, 1, 0],
