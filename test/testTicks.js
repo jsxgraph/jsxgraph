@@ -61,4 +61,31 @@ describe("Test ticks", function () {
         expect(board.defaultAxes.x.ticks[0].labels[0].plaintext).toEqual("0.5");
         expect(board.defaultAxes.x.ticks[0].labels[1].plaintext).toEqual("1");
     });
+
+    it("Test minTicksDistance when the minimal distance is a power of ten", function () {
+        var brd, ticks, delta, div;
+
+        div = document.createElement("div");
+        div.id = "jxgbox_ticks_pow10";
+        div.style.width = "500px";
+        div.style.height = "500px";
+        document.body.appendChild(div);
+
+        // 0.25 px per unit, minTicksDistance 50 px and 4 minor ticks:
+        // the major tick distance has to be at least 50 / 0.25 * 5 = 1000 units.
+        brd = JXG.JSXGraph.initBoard("jxgbox_ticks_pow10", {
+            boundingbox: [-1000, 1000, 1000, -1000],
+            axis: true,
+            resize: {enabled: false},
+            defaultAxes: {
+                x: {ticks: {minTicksDistance: 50, minorTicks: 4}}
+            }
+        });
+        ticks = brd.defaultAxes.x.ticks[0];
+        delta = ticks.getDistanceMajorTicks();
+        expect(delta).toBeGreaterThanOrEqual(1000);
+        expect(delta * brd.unitX / (ticks.evalVisProp('minorticks') + 1)).toBeGreaterThanOrEqual(50);
+        JXG.JSXGraph.freeBoard(brd);
+        document.body.removeChild(div);
+    });
 });

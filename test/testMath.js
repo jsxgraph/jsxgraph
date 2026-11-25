@@ -211,11 +211,22 @@ describe("Test JXG.Math", function () {
     });
 
     it("log10", function () {
+        var k;
+
         expect(JXG.Math.log10(1000)).toBeCloseTo(3, 15);
+        // Exact for powers of ten, so that Math.floor(log10(x)) gives the exponent
+        for (k = -20; k <= 20; k++) {
+            expect(Math.floor(JXG.Math.log10(Number("1e" + k)))).toEqual(k);
+        }
     });
 
     it("log2", function () {
+        var k;
+
         expect(JXG.Math.log2(8)).toBeCloseTo(3, 15);
+        for (k = -100; k <= 100; k++) {
+            expect(Math.floor(JXG.Math.log2(Math.pow(2, k)))).toEqual(k);
+        }
     });
 
     it("gcd", function () {

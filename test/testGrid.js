@@ -61,6 +61,42 @@ describe("Test grid", function () {
 
   });
 
+  it("Grid: automatic major step when 50 px is a power of ten in user units", function () {
+    var brd, g, xs, i, div;
+
+    div = document.createElement('div');
+    div.id = 'jxgbox_grid_pow10';
+    div.style.width = '500px';
+    div.style.height = '500px';
+    document.body.appendChild(div);
+
+    // 0.05 px per unit, so 50 px are 1000 units
+    brd = JXG.JSXGraph.initBoard('jxgbox_grid_pow10', {
+      renderer: 'svg',
+      axis: false,
+      grid: true,
+      boundingbox: [-5000, 5000, 5000, -5000],
+      resize: { enabled: false },
+      showCopyright: false,
+      showNavigation: false
+    });
+    g = brd.grids[0];
+
+    // x coordinates of the vertical lines
+    xs = [];
+    for (i = 0; i < g.dataX.length; i += 3) {
+      if (g.dataX[i] === g.dataX[i + 1]) {
+        xs.push(g.dataX[i]);
+      }
+    }
+    expect(xs.length).toBeGreaterThan(1);
+    for (i = 1; i < xs.length; i++) {
+      expect((xs[i] - xs[i - 1]) * brd.unitX).toBeGreaterThanOrEqual(50);
+    }
+    JXG.JSXGraph.freeBoard(brd);
+    document.body.removeChild(div);
+  });
+
 
 });
 
