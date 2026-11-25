@@ -29,35 +29,35 @@
     and <https://opensource.org/licenses/MIT/>.
  */
 
-describe("Further tests", function () {
-    // These tests have to run after all other tests
-    var board;
+// describe("Further tests", function () {
+//     // These tests have to run after all other tests
+//     var board;
 
-    beforeEach(function () {
-        jasmine.clock().install();
-    });
+//     beforeEach(function () {
+//         jasmine.clock().install();
+//     });
 
-    afterEach(function () {
-        jasmine.clock().uninstall();
-    });
+//     afterEach(function () {
+//         jasmine.clock().uninstall();
+//     });
 
-    document.getElementsByTagName("body")[0].innerHTML +=
-        '<div id="jxgboxZZZZ" style="width: 100px; height: 100px;"></div>';
-    board = JXG.JSXGraph.initBoard("jxgboxZZZZ", {
-        renderer: "svg",
-        axis: false,
-        grid: false,
-        boundingbox: [-5, 5, 5, -5],
-        resize: {enabled: false},
-        showCopyright: false,
-        showNavigation: false
-    });
+//     document.getElementsByTagName("body")[0].innerHTML +=
+//         '<div id="jxgboxZZZZ" style="width: 100px; height: 100px;"></div>';
+//     board = JXG.JSXGraph.initBoard("jxgboxZZZZ", {
+//         renderer: "svg",
+//         axis: false,
+//         grid: false,
+//         boundingbox: [-5, 5, 5, -5],
+//         resize: {enabled: false},
+//         showCopyright: false,
+//         showNavigation: false
+//     });
 
-    // // Fails sometimes, maybe due to timing issues
-    // it("size", function () {
-    //     var el = board.create("text", [0, 10, "test"]);
+//     // // Fails sometimes, maybe due to timing issues
+//     // it("size", function () {
+//     //     var el = board.create("text", [0, 10, "test"]);
 
-    //     jasmine.clock().tick(100);
-    //     expect(el.size).toEqual([19, 14]);
-    // });
-});
+//     //     jasmine.clock().tick(100);
+//     //     expect(el.size).toEqual([19, 14]);
+//     // });
+// });

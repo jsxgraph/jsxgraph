@@ -315,14 +315,13 @@ JXG.extend(
          * @deprecated
          */
         isWebkitApple: function () {
-            var is = ('GestureEvent' in window) && // Desktop and mobile
-                    (
-                        ('ongesturechange' in window) || // mobile webkit browsers and webview iOS
-                        (window !== undefined && // Desktop Safari
-                         'safari' in window &&
-                         'pushNotification' in window.safari)
-                    );
-            return is;
+            return ('GestureEvent' in window); // Desktop and mobile
+                    // && (
+                    //     ('ongesturechange' in window) || // mobile webkit browsers and webview iOS
+                    //     (window !== undefined && // Desktop Safari
+                    //      'safari' in window &&   //  not longer working (11.26)
+                    //      'pushNotification' in window.safari)
+                    // );
 
             // return (
             //     this.isApple() && navigator.userAgent.search(/Mobile\/[0-9A-Za-z.]*Safari/) > -1
