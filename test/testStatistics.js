@@ -53,6 +53,16 @@ describe("Test JXG.Mat.Statistics", function () {
         expect(JXG.Math.Statistics.boxplot(new Float64Array(data))).toEqual([1, 3, 5.5, 8, 10, []]);
     });
 
+    it("Median ignores NaN entries", function () {
+        expect(JXG.Math.Statistics.median([3, 1, NaN, 2, 5])).toEqual(2.5);
+        expect(JXG.Math.Statistics.median([5, NaN, 1, 4])).toEqual(4);
+        expect(JXG.Math.Statistics.median([NaN, 1, 2, 3])).toEqual(2);
+        expect(JXG.Math.Statistics.median(new Float64Array([3, NaN, 1]))).toEqual(2);
+        expect(JXG.Math.Statistics.median([4, 1, 3, 2])).toEqual(2.5);
+        expect(JXG.Math.Statistics.median([NaN, NaN])).toBeNaN();
+        expect(JXG.Math.Statistics.median([])).toEqual(0);
+    });
+
     it("TheilSenRegression", function () {
         var coords = function (x, y) {
             return x.map(function (v, i) {

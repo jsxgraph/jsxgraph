@@ -93,25 +93,20 @@ Mat.Statistics = {
 
     /**
      * The median of a finite set of values is the value that divides the set
-     * into two equal sized subsets.
+     * into two equal sized subsets. NaN entries are ignored.
      * @param {Array} arr The set of values.
-     * @returns {Number}
+     * @returns {Number} The median, NaN if all entries are NaN, 0 for an empty array.
      * @memberof JXG.Math.Statistics
      */
     median: function (arr) {
         var tmp, len;
 
         if (arr.length > 0) {
-            if (ArrayBuffer.isView(arr)) {
-                tmp = new Float64Array(arr);
-                tmp.sort();
-            } else {
-                tmp = arr.slice(0);
-                tmp.sort(function (a, b) {
-                    return a - b;
-                });
-            }
+            tmp = this._sortWithoutNaN(arr);
             len = tmp.length;
+            if (len === 0) {
+                return NaN;
+            }
 
             if (len & 1) {
                 // odd
