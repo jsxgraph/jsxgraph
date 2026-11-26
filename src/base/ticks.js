@@ -1619,7 +1619,7 @@ JXG.extend(
             JXG.deprecated("Element.showElement()", "Element.setDisplayRendNode()");
 
             this.visPropCalc.visible = true;
-            this.board.renderer.display(this, false);
+            this.board.renderer.display(this, true);
 
             for (i = 0; i < this.labels.length; i++) {
                 if (Type.exists(this.labels[i])) {

@@ -88,4 +88,34 @@ describe("Test ticks", function () {
         JXG.JSXGraph.freeBoard(brd);
         document.body.removeChild(div);
     });
+
+    it("showElement shows ticks hidden by hideElement", function () {
+        var brd, ticks, div;
+
+        div = document.createElement("div");
+        div.id = "jxgbox_ticks_show";
+        div.style.width = "500px";
+        div.style.height = "500px";
+        document.body.appendChild(div);
+
+        brd = JXG.JSXGraph.initBoard("jxgbox_ticks_show", {
+            boundingbox: [-4, 4, 4, -4],
+            axis: true,
+            resize: {enabled: false},
+            defaultAxes: {
+                x: {ticks: {drawLabels: false}}
+            }
+        });
+        ticks = brd.defaultAxes.x.ticks[0];
+
+        ticks.hideElement();
+        expect(ticks.rendNode.getAttribute("display")).toEqual("none");
+
+        ticks.showElement();
+        expect(ticks.visPropCalc.visible).toBe(true);
+        expect(ticks.rendNode.getAttribute("display")).toEqual("inline");
+        expect(ticks.rendNode.style.visibility).toEqual("inherit");
+        JXG.JSXGraph.freeBoard(brd);
+        document.body.removeChild(div);
+    });
 });
