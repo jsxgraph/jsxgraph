@@ -329,6 +329,33 @@ JXG.extend(
         },
 
         /**
+         * Use the method `CSS.supports()` to test if a CSS feature is supported by the browser.
+         * Can also be used for SVG.
+         *
+         * Available since approx. 2017 in browsers.
+         *
+         * @param {String} key
+         * @param {String} [value]
+         * @returns {Boolean}
+         * @see https://developer.mozilla.org/en-US/docs/Web/API/CSS/supports_static
+         *
+         * @example
+         * JXG.supportsCSSFeature("text-decoration-style", "blink");
+         * JXG.supportsCSSFeature("display: flex");
+         * JXG.supportsCSSFeature("fill", "context-stroke"); // Tests SVG attribute
+         *
+         */
+        supportsCSSFeature: function(key, value) {
+            if (window.CSS) {
+                if (Type.exists(value)) {
+                    return CSS.supports(key, value);
+                }
+                return CSS.supports(key);
+            }
+            return false;
+        },
+
+        /**
          * Returns true if the run inside a Windows 8 "Metro" App.
          * @returns {Boolean}
          * @deprecated

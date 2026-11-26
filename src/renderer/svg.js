@@ -374,13 +374,15 @@ JXG.extend(
             node2 = this.createPrim('marker', id);
 
             // 'context-stroke': property is inherited from line or curve
-            if (JXG.isWebkitApple()) {
+            // All non-Safari browsers support it since 2024
+            // supportsCSSFeature is available since 2017
+            if (Env.supportsCSSFeature('stroke', 'context-stroke') /*&& !Env.isWebkitApple()*/) {
+                node2.setAttributeNS(null, 'fill', 'context-stroke');
+                node2.setAttributeNS(null, 'stroke', 'context-stroke');
+            } else {
                 // 2025: Safari does not support 'context-stroke'
                 node2.setAttributeNS(null, 'fill', el.evalVisProp('strokecolor'));
                 node2.setAttributeNS(null, 'stroke', el.evalVisProp('strokecolor'));
-            } else {
-                node2.setAttributeNS(null, 'fill', 'context-stroke');
-                node2.setAttributeNS(null, 'stroke', 'context-stroke');
             }
             node2.setAttributeNS(null, 'stroke-width', 0); // this is the stroke-width of the arrow head.
 
@@ -566,21 +568,22 @@ JXG.extend(
                     if (type !== 7) {
                         this._setAttribute(function () {
                             node.setAttributeNS(null, 'fill-opacity', opacity);
-                            if (JXG.isWebkitApple()) {
+                            if (Env.supportsCSSFeature('fill', 'context-stroke') /*|| !Env.isWebkitApple()*/ ) {
+                                node.setAttributeNS(null, 'fill', 'context-stroke');
+                            } else {
                                 // 2025: Safari does not support 'context-stroke'
                                 node.setAttributeNS(null, 'fill', color);
-                            } else {
-                                node.setAttributeNS(null, 'fill', 'context-stroke');
                             }
                         }, el.visPropOld.fillcolor);
                     } else {
                         this._setAttribute(function () {
                             node.setAttributeNS(null, 'fill', 'none');
                             node.setAttributeNS(null, 'stroke-opacity', opacity);
-                            if (JXG.isWebkitApple()) {
-                                node.setAttributeNS(null, 'stroke', color);
-                            } else {
+                            if (Env.supportsCSSFeature('stroke', 'context-stroke') /*|| !Env.isWebkitApple()*/) {
                                 node.setAttributeNS(null, 'stroke', 'context-stroke');
+                            } else {
+                                // 2025: Safari does not support 'context-stroke'
+                                node.setAttributeNS(null, 'stroke', color);
                             }
                         }, el.visPropOld.fillcolor);
                     }
