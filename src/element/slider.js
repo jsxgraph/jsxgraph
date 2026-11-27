@@ -288,11 +288,20 @@ JXG.createSlider = function (board, parents, attributes) {
      */
     p3.Value = function () {
         var d = this._smax - this._smin,
-            ev_sw = this.evalVisProp('snapwidth');
+            ev_sw = this.evalVisProp('snapwidth'),
+            n;
 
-        return ev_sw === -1
-            ? this.position * d + this._smin
-            : Math.round((this.position * d) / ev_sw) * ev_sw  + this._smin;
+        if (ev_sw === -1) {
+            return this.position * d + this._smin;
+        }
+
+        n = Math.round((this.position * d) / ev_sw);
+        // If snapWidth does not divide the range, rounding up can pass the end of the slider.
+        // Stop at the last multiple of snapWidth inside the range instead.
+        if (d > 0) {
+            n = Math.min(n, Math.floor(d / ev_sw + Mat.eps));
+        }
+        return n * ev_sw + this._smin;
     };
 
     /**
