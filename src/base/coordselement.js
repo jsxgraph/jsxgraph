@@ -405,7 +405,12 @@ JXG.extend(
                         // v = newPos * (this._smax - this._smin) + this._smin;
                         // v = Math.round(v / ev_sw) * ev_sw;
                         v = newPos * (this._smax - this._smin);
-                        v = Math.round(v / ev_sw) * ev_sw + this._smin;
+                        v = Math.round(v / ev_sw);
+                        // Don't snap past the end of the slider if snapWidth does not divide its range
+                        if (this._smax > this._smin) {
+                            v = Math.min(v, Math.floor((this._smax - this._smin) / ev_sw + Mat.eps));
+                        }
+                        v = v * ev_sw + this._smin;
                         newPos = (v - this._smin) / (this._smax - this._smin);
                         this.update(true);
                     }

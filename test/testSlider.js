@@ -82,6 +82,33 @@ describe("Test slider", function () {
         expect(slider.Value()).toEqual(5);
     });
 
+    it("Snapped value stays inside the range when snapWidth does not divide it", function () {
+        var s = board.create(
+            "slider",
+            [
+                [0, 1],
+                [1, 1],
+                [0, 0.5, 1]
+            ],
+            { snapWidth: 0.4 }
+        );
+
+        // the end of the slider: 1 / 0.4 = 2.5 rounds up to 3 steps, which would be 1.2
+        s.setValue(1);
+        expect(s.Value()).toBeCloseTo(0.8, 12);
+        s.setValue(0.95);
+        expect(s.Value()).toBeCloseTo(0.8, 12);
+        s.setValue(0.5);
+        expect(s.Value()).toBeCloseTo(0.4, 12);
+
+        // a snapWidth that divides the range still reaches the end
+        s.setAttribute({ snapWidth: 0.1 });
+        s.setValue(1);
+        expect(s.Value()).toBeCloseTo(1, 12);
+
+        board.removeObject(s);
+    });
+
     it("Slider ids", function () {
         expect(slider.id).toEqual("_glider");
         expect(slider.point1.id).toEqual("_point1");
