@@ -1157,7 +1157,7 @@ Mat.Statistics = {
             do {
                 x += 1;
                 y += Math.floor(Math.log(Math.random()) / c) + 1;
-            } while (y < n);
+            } while (y <= n);
         } else {
             // n large:
             // Knuth, TAOCP 2, p 131
