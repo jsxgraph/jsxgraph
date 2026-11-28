@@ -78,6 +78,14 @@ describe("Test JXG.Mat.Statistics", function () {
         ]);
     });
 
+    it("randomBinomial counts a success on the last trial", function () {
+        // Math.random() = 0.4 puts every success at trial 2, 4, 6, ... for p = 0.5
+        spyOn(Math, "random").and.returnValue(0.4);
+        expect(JXG.Math.Statistics.randomBinomial(2, 0.5)).toEqual(1);
+        expect(JXG.Math.Statistics.randomBinomial(4, 0.5)).toEqual(2);
+        expect(JXG.Math.Statistics.randomBinomial(5, 0.5)).toEqual(2);
+    });
+
     it("divide returns the result of div", function () {
         expect(JXG.Math.Statistics.divide([4, 6], 2)).toEqual([2, 3]);
         expect(JXG.Math.Statistics.divide(6, 3)).toEqual(2);
